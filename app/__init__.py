@@ -1,0 +1,1 @@
+"""Tripse demo application foundation."""

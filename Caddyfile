@@ -1,0 +1,26 @@
+http://{$CADDY_SITE:localhost} {
+    redir {$HTTPS_ORIGIN:https://localhost:8443}{uri} 308
+}
+
+{$CADDY_SITE:localhost} {
+    encode zstd gzip
+
+    # Explicit public application routes. WAHA and Caddy administration never proxy.
+    @read {
+        method GET HEAD
+        path / /health /static/* /trip/* /api/viewer/* /api/trips/*
+    }
+    @create {
+        method POST
+        path /api/trips /api/webhooks/waha
+    }
+    handle @read {
+        reverse_proxy api:8000
+    }
+    handle @create {
+        reverse_proxy api:8000
+    }
+    handle {
+        respond "Not found" 404
+    }
+}

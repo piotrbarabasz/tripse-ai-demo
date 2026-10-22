@@ -1,0 +1,17 @@
+# Public single-host DEV deployment. Requires Compose >= 2.24.4 and a real DNS name.
+services:
+  api:
+    ports: !reset []
+  worker:
+    environment:
+      PUBLIC_BASE_URL: https://${DEV_DOMAIN:?Set DEV_DOMAIN to your DEV hostname}
+  waha:
+    profiles: !reset []
+  caddy:
+    profiles: !reset []
+    environment:
+      CADDY_SITE: ${DEV_DOMAIN:?Set DEV_DOMAIN to your DEV hostname}
+      HTTPS_ORIGIN: https://${DEV_DOMAIN:?Set DEV_DOMAIN to your DEV hostname}
+    ports: !override
+      - "80:80"
+      - "443:443"

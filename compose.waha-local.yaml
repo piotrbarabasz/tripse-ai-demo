@@ -1,0 +1,5 @@
+# Optional pairing access from this computer only; never change to 0.0.0.0.
+services:
+  waha:
+    ports:
+      - "127.0.0.1:3000:3000"
