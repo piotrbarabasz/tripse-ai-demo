@@ -8,10 +8,15 @@
   fetch("/health", {cache: "no-store", signal: AbortSignal.timeout(10000)})
     .then((response) => response.json())
     .then((health) => { $("mode").textContent = health.generation_mode === "mock"
-      ? "MOCK DEMO · No real places or routes will be calculated."
+      ? "DEMO — przykładowe miejsca, czasy i schemat mapy. Bez AI i Google."
       : "Live demo · A draft with Google place matches and driving estimates; review all warnings."; })
     .catch(() => { $("mode").textContent = "Demo status unavailable. You can still try submitting your request."; });
 
+  fetch('/api/demo/scenarios').then(r => r.ok ? r.json() : null).then(data => {
+    if (!data) return;
+    $('demo-link').hidden = false;
+    data.scenarios.forEach(s => {const b=document.createElement('button'); b.type='button'; b.className='secondary-button'; b.textContent=s.name; b.onclick=()=>{$('request-text').value=s.text;}; $('examples').append(b);});
+  }).catch(()=>{});
   async function checkStatus() {
     if (checking || !tripId) return;
     checking = true;
@@ -23,9 +28,9 @@
         });
         if (!response.ok) throw new Error("Status is temporarily unavailable. Your job may still be processing.");
         const job = await response.json();
-        $("job-status").textContent = `Status: ${job.status}`;
+        $("job-status").textContent = `Status: ${{queued:"W kolejce",running:"Przygotowanie planu",completed:"Plan gotowy",failed:"Błąd"}[job.status]}`;
         if (job.status === "failed") {
-          $("job-warning").textContent = job.error || "The trip could not be generated.";
+          $("job-warning").textContent = job.error || "Nie udało się przygotować planu.";
           $("submit-trip").disabled = false;
           return;
         }
@@ -37,7 +42,7 @@
           $("open-trip").href = url.pathname;
           $("open-trip").hidden = false;
           $("job-warning").textContent = result.is_mock
-            ? "MOCK result · No map data is verified."
+            ? "Plan DEMO gotowy — wszystkie dane są przykładowe."
             : result.verification_status === "verified"
               ? "The draft is ready. Review daily driving limits and all plan notes."
               : "The draft is ready with unverified places or routes. Review its warnings.";

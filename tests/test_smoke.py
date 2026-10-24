@@ -7,7 +7,7 @@ from app.smoke import run
 
 @pytest.mark.parametrize("mode", ["mock", "live"])
 def test_smoke_never_claims_real_routes_for_mock_or_partial_results(mode):
-    plan = generate_mock_trip("id", "request")
+    plan = generate_mock_trip("id", "Zaplanuj 2 dni we Wrocławiu")
     plan["viewer_url"] = "https://demo.example.test/trip/" + "x" * 43
     if mode == "live":
         plan["is_mock"] = False

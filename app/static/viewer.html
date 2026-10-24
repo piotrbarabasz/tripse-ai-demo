@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,14 +7,15 @@
   <title>Trip plan · Tripse</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/static/viewer.css">
+  <script src="/static/demo-map.js" defer></script>
   <script src="/static/viewer.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#itinerary">Skip to itinerary</a>
+  <a class="skip-link" href="#itinerary">Przejdź do planu</a>
   <div class="page">
     <header class="page-header">
       <div class="brand">tripse<span class="brand-dot">.</span> <span class="demo-label">AI TRIP PLANNER · DEMO</span></div>
-      <p class="eyebrow">A LITTLE DIRECTION. A LOT TO DISCOVER.</p>
+      <p class="eyebrow">TWÓJ POMYSŁ NA WYCIECZKĘ</p>
       <h1 id="trip-title">Your trip plan</h1>
       <p id="trip-summary" class="summary">A read-only draft of your journey.</p>
       <div id="plan-status" class="plan-status" hidden></div>
@@ -26,8 +27,8 @@
     <noscript><p class="page-message">Enable JavaScript to view the itinerary and interactive map.</p></noscript>
     <main id="viewer" class="viewer-layout" hidden>
       <section id="itinerary" class="itinerary" aria-labelledby="itinerary-title" tabindex="-1">
-        <div class="section-heading"><h2 id="itinerary-title">Your itinerary</h2><span class="read-only">Read only</span></div>
-        <p class="hint">Choose a day to highlight its route on the map.</p>
+        <div class="section-heading"><h2 id="itinerary-title">Twój plan</h2><span class="read-only">Tylko do odczytu</span></div>
+        <p class="hint">Wybierz dzień, aby podświetlić go na mapie.</p>
         <div id="day-cards"></div>
         <details id="plan-notes" class="plan-notes" hidden>
           <summary id="notes-heading">Plan notes</summary>
@@ -35,7 +36,7 @@
         </details>
       </section>
       <section class="map-panel" aria-labelledby="map-heading">
-        <div class="map-toolbar"><h2 id="map-heading">The journey</h2><button id="show-all" class="secondary-button">Show all days</button></div>
+        <div class="map-toolbar"><h2 id="map-heading">Mapa wycieczki</h2><button id="show-all" class="secondary-button">Wszystkie dni</button></div>
         <div class="map-frame">
           <div id="map" aria-label="Map of verified itinerary stops and routes"></div>
           <div id="map-status" class="map-message" role="status" aria-live="polite"><p>Loading the map…</p></div>
@@ -43,7 +44,7 @@
         <p id="map-caption" class="map-caption">Only verified places and calculated routes appear on this map.</p>
       </section>
     </main>
-    <footer>Tripse demo · A suggested itinerary, ready for your review. Opening hours and seasonal access are unverified.</footer>
+    <footer>Tripse · Sprawdź dostępność i warunki przed wyjazdem.</footer>
   </div>
 </body>
 </html>

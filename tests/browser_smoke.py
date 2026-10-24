@@ -135,7 +135,7 @@ def run():
                     assert page.evaluate("window.mapTest.lines[1].options.strokeWeight") == 7
                     assert page.evaluate("window.mapTest.lines[0].options.strokeOpacity") == .25
                     expect(page.locator('[data-day="2"]')).to_have_class("day-card selected")
-                    page.get_by_role("button", name="Show all days").click()
+                    page.get_by_role("button", name="Wszystkie dni").click()
                     assert page.evaluate("window.mapTest.lines[0].options.strokeOpacity") == .95
                     left = page.locator(".itinerary").bounding_box()
                     right = page.locator(".map-panel").bounding_box()
@@ -165,8 +165,8 @@ def run():
                     expect(page.locator("#map-status")).to_be_hidden()
                     assert page.evaluate("window.mapTest.markers.length") == 5
                     assert page.evaluate("window.mapTest.lines.length") == 1
-                    expect(page.locator('[data-day="2"] .drive-stats')).to_have_text("Driving time & distance unverified")
-                    expect(page.locator('[data-day="2"] .route-badge')).to_have_text("Route unverified")
+                    expect(page.locator('[data-day="2"] .drive-stats')).to_have_text("Czas i odległość niedostępne")
+                    expect(page.locator('[data-day="2"] .route-badge')).to_have_text("Brak trasy")
                     expect(page.locator('[data-day="2"] a')).to_have_count(0)
                     assert page.locator("#trip-title img").count() == 0
                     assert page.evaluate("window.injected === undefined")
@@ -212,7 +212,7 @@ def run():
                     page.route("**/api/trips/browser-job", lambda route: route.fulfill(json={"status": "completed", "result": browser_result}))
                     page.goto(base + "/")
                     expect(page.locator("#request-text")).to_contain_text("Zaplanuj 2 dni")
-                    page.get_by_role("button", name="Create trip draft").click()
+                    page.get_by_role("button", name="Przygotuj plan").click()
                     expect(page.locator("#open-trip")).to_be_visible()
                     page.locator("#open-trip").click()
                     expect(page.locator(".day-card")).to_have_count(2)

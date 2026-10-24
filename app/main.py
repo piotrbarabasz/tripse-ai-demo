@@ -45,6 +45,8 @@ def create_app(database_path=None, *, waha_settings=None):
     app = FastAPI(title="Tripse AI Trip Planner Demo v0.1", lifespan=lifespan)
     app.include_router(webhook_router(database, waha_settings or WahaSettings.from_env()))
     app.include_router(viewer_router(database))
+    from app.demo import demo_router
+    app.include_router(demo_router(database))
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
     @app.get("/health")

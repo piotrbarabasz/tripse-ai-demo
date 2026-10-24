@@ -30,6 +30,8 @@ class Database:
     def initialize(self):
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.connect() as connection:
+            from app.demo import initialize
+            initialize(connection)
             connection.execute("PRAGMA journal_mode=WAL")
             connection.execute("""
                 CREATE TABLE IF NOT EXISTS trips (
@@ -109,7 +111,7 @@ class Database:
                 ("sent" if sent else "pending", time.time() + 30, notification["trip_id"]),
             )
 
-    def create_waha_trip(self, session, message_id, sender, text):
+    def create_waha_trip(self, session, message_id, sender, text, demo_case=None):
         # Deduplication, job and pending acknowledgement commit together.
         with self.connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -128,6 +130,8 @@ class Database:
                 "INSERT INTO waha_messages (session, message_id, sender, trip_id) VALUES (?, ?, ?, ?)",
                 (session, message_id, sender, trip_id),
             )
+            if demo_case is not None:
+                connection.execute('INSERT INTO demo_options VALUES (?,?)', (trip_id, demo_case))
             return trip_id, True
 
     def claim_ack(self):

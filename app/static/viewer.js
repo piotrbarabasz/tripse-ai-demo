@@ -30,8 +30,8 @@
     return hours ? `${hours}h${rounded % 60 ? ` ${rounded % 60}min` : ""}` : `${rounded}min`;
   }
   function warningText(text) {
-    if (text === "daily_drive_limit_exceeded") return "Daily driving limit exceeded. Review this day before travelling.";
-    if (text === "route_calculation_failed") return "Route calculation failed. Driving time, distance and route are unverified.";
+    if (text === "daily_drive_limit_exceeded") return "Przekroczony limit jazdy. Sprawdź plan tego dnia.";
+    if (text === "route_calculation_failed") return "Nie udało się przygotować trasy. Brak czasu, odległości i przebiegu.";
     if (text.startsWith("unresolved_place:")) return `Place not verified: ${text.slice(17).trim()}`;
     if (text.startsWith("route_unverified:")) return "Route unverified: a required place or route endpoint is missing.";
     if (text.startsWith("candidate_limit:")) return "Some suggested stops were omitted to keep the itinerary short.";
@@ -47,6 +47,7 @@
   }
   function selectDay(number) {
     selectedDay = number;
+    if (plan.is_mock && window.selectDemoDay) window.selectDemoDay(number);
     document.querySelectorAll(".day-card").forEach((card) => {
       const selected = Number(card.dataset.day) === number;
       card.classList.toggle("selected", selected);
@@ -57,7 +58,7 @@
       strokeWeight: day === number ? 7 : 4, zIndex: day === number ? 10 : 1,
     }));
     markers.forEach(({marker, days}) => { marker.zIndex = number !== null && days.has(number) ? 20 : 1; });
-    $("map-caption").textContent = number === null
+    if (!plan.is_mock) $("map-caption").textContent = number === null
       ? "All days · Only verified places and calculated routes appear on this map."
       : `Day ${number} highlighted · Missing routes are never drawn as straight lines.`;
     if (map) {
@@ -69,12 +70,12 @@
     $("trip-title").textContent = plan.title || "Your trip plan";
     document.title = `${plan.title || "Trip plan"} · Tripse`;
     const brief = plan.requirements || {};
-    const summary = [`${plan.days.length} ${plan.days.length === 1 ? "day" : "days"}`];
+    const summary = [`${plan.days.length} ${plan.days.length === 1 ? "dzień" : "dni"}`];
     if (Array.isArray(brief.preferences) && brief.preferences.length) summary.push(brief.preferences.join(", "));
-    if (numeric(brief.max_daily_drive_min)) summary.push(`Driving limit: ${duration(brief.max_daily_drive_min)}/day`);
+    if (numeric(brief.max_daily_drive_min)) summary.push(`Limit jazdy: ${duration(brief.max_daily_drive_min)}/dzień`);
     $("trip-summary").textContent = summary.join(" · ");
     const complete = !plan.is_mock && plan.verification_status === "verified" && plan.days.every(verifiedRoute);
-    $("plan-status").textContent = plan.is_mock ? "MOCK DEMO · No places or routes are verified."
+    $("plan-status").textContent = plan.is_mock ? "DEMO — przykładowe miejsca, czasy i schemat mapy. Bez weryfikacji Google."
       : complete ? "Draft itinerary · Map data checked with Google; review all plan notes."
         : "Draft itinerary · Some places or routes are unverified. Review the warnings.";
     $("plan-status").classList.toggle("caution", !complete);
@@ -88,18 +89,20 @@
       const button = element("button", undefined, "day-button");
       button.setAttribute("aria-pressed", "false");
       button.setAttribute("aria-label", `Highlight Day ${day.number} on map`);
-      button.append(element("span", "", "day-swatch"), element("span", `Day ${day.number}`));
+      button.append(element("span", "", "day-swatch"), element("span", `Dzień ${day.number}`));
       const verified = verifiedRoute(day);
-      heading.append(button, element("span", verified ? "Route calculated" : "Route unverified",
+      const demo = plan.is_mock && day.routing_status === "demo";
+      heading.append(button, element("span", demo ? "Trasa DEMO" : verified ? "Route calculated" : "Brak trasy",
         `route-badge${verified ? "" : " unverified"}`));
       card.append(heading);
-      card.append(element("p", verified ? `${duration(day.drive_minutes)} driving · ${day.distance_km.toLocaleString(undefined, {maximumFractionDigits: 1})} km`
-        : "Driving time & distance unverified", "drive-stats"));
-      card.append(element("p", verified ? "Google Routes · Estimate without live traffic" : "No verified driving calculation available", "source-note"));
+      card.append(element("p", (verified || demo) ? `${duration(day.drive_minutes)} jazdy · ${day.distance_km.toLocaleString(undefined, {maximumFractionDigits: 1})} km`
+        : "Czas i odległość niedostępne", "drive-stats"));
+      card.append(element("p", demo ? "Dane przykładowe — bez obliczeń Google Routes" : verified ? "Google Routes · Estimate without live traffic" : "Brak obliczonej trasy", "source-note"));
       const stops = element("ol", undefined, "stops");
       (day.stops || []).forEach((stop) => {
         const item = element("li", stop.name || stop.query || "Unnamed stop");
-        if (plan.is_mock || !verifiedStop(stop)) item.append(element("span", "Location unverified · Not shown on map", "stop-unverified"));
+        if (stop.description) item.append(element("span", stop.description, "hint"));
+        if (!plan.is_mock && !verifiedStop(stop)) item.append(element("span", "Location unverified · Not shown on map", "stop-unverified"));
         stops.append(item);
       });
       card.append(stops.children.length ? stops : element("p", "No verified stops available for this day.", "empty-stops"));
@@ -116,14 +119,15 @@
         link.href = href; link.target = "_blank"; link.rel = "noopener noreferrer";
         link.setAttribute("aria-label", `Open Day ${day.number} in Google Maps`);
         card.append(link);
-      } else card.append(element("p", "Google Maps link unavailable — verified places are needed.", "maps-link unavailable"));
+      } else card.append(element("p", "Mapa DEMO pokazuje schemat. Brak obliczonej trasy Google Maps.", "maps-link unavailable"));
       card.addEventListener("click", (event) => { if (!event.target.closest("a")) selectDay(day.number); });
       $("day-cards").append(card);
     });
-    const warnings = (plan.warnings || []).filter((text) => !/^day_\d+:/.test(text));
+    const missing = (plan.unresolved_places || []).map(p => `Nieznalezione miejsce: ${p.query}. ${p.reason}`);
+    const warnings = [...(plan.warnings || []), ...missing].filter((text) => !/^day_\d+:/.test(text));
     $("warning-list").replaceChildren();
     warnings.forEach((text) => $("warning-list").append(element("li", warningText(text))));
-    $("notes-heading").textContent = `Plan notes (${warnings.length})`;
+    $("notes-heading").textContent = `Uwagi do planu (${warnings.length})`;
     $("plan-notes").hidden = warnings.length === 0;
     $("viewer").hidden = false;
     $("page-status").hidden = true;
@@ -153,7 +157,7 @@
     });
   }
   async function renderMap(config) {
-    if (plan.is_mock) { mapMessage("MOCK DEMO · No verified places or routes to display."); return; }
+    if (plan.is_mock) { window.renderDemoMap(plan, selectDay); return; }
     const places = new Map();
     plan.days.forEach((day) => (day.stops || []).filter(verifiedStop).forEach((stop) => {
       if (!places.has(stop.place_id)) places.set(stop.place_id, {stop, days: new Set()});

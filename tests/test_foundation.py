@@ -48,16 +48,20 @@ def test_trip_lifecycle_and_persistence(setup):
     assert result["verification_status"] == "unverified"
     assert result["request_text"] == request
     for day in result["days"]:
-        assert day["routing_status"] == "unverified"
-        assert day["stops"] == []
-        for field in ("drive_minutes", "distance_km", "encoded_polyline", "google_maps_url"):
+        assert day["routing_status"] == "demo"
+        assert day["stops"]
+        assert all(p["source"] == "demo_fixture" for p in day["stops"])
+        assert day["drive_minutes"] > 0
+        assert day["distance_km"] > 0
+        assert day["demo_geometry"]
+        for field in ("encoded_polyline", "google_maps_url"):
             assert day[field] is None
     assert process_next(database) is False
 
 
 def test_worker_failure_does_not_block_next_job(setup):
     client, database = setup
-    failed_id = client.post("/api/trips", json={"text": "A trip"}).json()["trip_id"]
+    failed_id = client.post("/api/trips", json={"text": "Zaplanuj 2 dni we Wrocławiu"}).json()["trip_id"]
 
     def broken_generator(*args):
         raise RuntimeError("private error details")
@@ -67,14 +71,14 @@ def test_worker_failure_does_not_block_next_job(setup):
     assert failed["status"] == "failed"
     assert failed["result"] is None
     assert failed["error"] == "Trip generation failed. See worker logs."
-    next_id = database.create_trip("Another trip")
+    next_id = database.create_trip("Zaplanuj 2 dni we Wrocławiu")
     assert process_next(database)
     assert database.get_trip(next_id)["status"] == "completed"
 
 
 def test_interrupted_job_recovery_and_exclusive_claim(setup):
     _, database = setup
-    trip_id = database.create_trip("A trip")
+    trip_id = database.create_trip("Zaplanuj 2 dni we Wrocławiu")
     assert database.claim_next()["trip_id"] == trip_id
     other_connection = Database(database.path)
     assert other_connection.claim_next() is None

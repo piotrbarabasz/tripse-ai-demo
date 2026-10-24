@@ -1,5 +1,18 @@
 # Tripse AI Trip Planner — Demo v0.1
 
+## Pełne demo offline (mock)
+
+Tryb `PLANNING_MODE=mock` zawiera teraz trzy przykładowe wycieczki, lokalną mapę
+interaktywną i symulator WhatsApp bez konta telefonu oraz kluczy API.
+Uruchom `docker compose up --build -d` i otwórz
+[symulator rozmowy](http://localhost:8000/demo/chat) lub
+[formularz](http://localhost:8000/). Instrukcja i scenariusze:
+[docs/MOCK_DEMO.md](docs/MOCK_DEMO.md).
+
+Wszystkie miejsca, czasy i odległości mocka są demonstracyjne. Linie na mapie
+są schematem połączeń, a nie obliczonym przebiegiem dróg. Starszy opis pustego
+mocka poniżej dokumentuje wcześniejszą wersję; aktualny mock prezentuje pełny plan.
+
 ## Task 01 — application foundation
 
 Implemented: FastAPI, persistent SQLite jobs, and one separate polling worker.

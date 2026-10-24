@@ -58,8 +58,9 @@ def run(client, *, expect_mode, trip_id=None, timeout=240):
             link = urlsplit(day["google_maps_url"] or "")
             assert link.scheme == "https" and link.netloc == "www.google.com" and link.path == "/maps/dir/"
         else:
-            assert day["routing_status"] == "unverified"
-            assert day["distance_km"] is None and day["drive_minutes"] is None
+            assert day["routing_status"] == "demo"
+            assert day["distance_km"] > 0 and day["drive_minutes"] > 0
+            assert all(p["source"] == "demo_fixture" for p in day["stops"])
     if expect_mode == "live":
         assert plan["verification_status"] == "verified" and not plan["unresolved_places"]
         assert len(plan["places"]) >= 4, "Demo needs at least four matched places"

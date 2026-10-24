@@ -15,10 +15,10 @@ def saved_plan(tmp_path):
     path = tmp_path / "viewer.sqlite3"
     with TestClient(create_app(path)) as client:
         database = Database(path)
-        trip_id = database.create_trip("private original request")
+        trip_id = database.create_trip("private original request Wrocław")
         database.claim_next()
         token = secrets.token_urlsafe(32)
-        result = generate_mock_trip(trip_id, "private original request")
+        result = generate_mock_trip(trip_id, "private original request Wrocław")
         result["viewer_url"] = "http://localhost:8000/trip/" + token
         database.finish(trip_id, result=result, viewer_token=token,
                         viewer_expires_at=time.time() + 600)
@@ -35,13 +35,13 @@ def test_html_and_private_data(saved_plan, monkeypatch):
     assert 'id="day-cards"' in page.text
     assert 'id="map"' in page.text
     assert 'name="viewport"' in page.text
-    assert "private original request" not in page.text
+    assert "private original request Wrocław" not in page.text
     assert page.headers["Cache-Control"] == "no-store"
     assert page.headers["Referrer-Policy"] == "strict-origin"
     assert "frame-ancestors 'none'" in page.headers["Content-Security-Policy"]
     data = client.get("/api/viewer/" + token)
     assert data.json()["maps"]["browser_key"] == "public-browser-key"
-    assert "private original request" not in data.text
+    assert "private original request Wrocław" not in data.text
     assert "viewer_url" not in data.json()["plan"]
     for response in (page, data):
         assert "server-secret" not in response.text
@@ -61,7 +61,7 @@ def test_expired_and_unknown_rejected(saved_plan, path):
     expired = client.get(path + token)
     assert expired.status_code == 404
     assert expired.headers["Cache-Control"] == "no-store"
-    assert "private original request" not in expired.text
+    assert "private original request Wrocław" not in expired.text
 
 
 def test_browser_never_falls_back_to_server_key(monkeypatch):

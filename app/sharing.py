@@ -24,7 +24,10 @@ def viewer_link():
 
 def result_summary(result):
     if result.get("is_mock"):
-        return f"Tripse DEMO — MOCK result (no verified maps). {result['viewer_url']}"
+        days = result['days']
+        summary = '; '.join(f"Dzień {d['number']}: przykładowo {d['distance_km']} km / {d['drive_minutes']} min" if d['routing_status'] == 'demo' else f"Dzień {d['number']}: brak trasy" for d in days)
+        alerts = ' Uwaga: przekroczony limit jazdy.' if any('daily_drive_limit_exceeded' in d['warnings'] for d in days) else ''
+        return f"Tripse DEMO — MOCK, dane przykładowe. {result['title']}. {summary}.{alerts} Plan i ostrzeżenia: {result['viewer_url']}"
     days = result["days"]
     parts = []
     for day in days:

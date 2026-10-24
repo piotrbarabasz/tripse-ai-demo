@@ -8,6 +8,8 @@ from app.messaging import MessagingProvider, WahaMessagingProvider
 from app.planning import configured_generator
 from app.planning_providers import PlanningError
 from app.sharing import result_summary, viewer_link
+from app.demo import ChannelMessagingProvider, options, progress
+from app.demo_data import generate_demo
 
 logger = logging.getLogger(__name__)
 
@@ -17,12 +19,13 @@ def process_ack(database: Database, provider: MessagingProvider) -> bool:
     if ack is None:
         return False
     try:
+        if ack['session'] == 'demo':
+            text = f"Przyjęto prośbę. Numer zadania: {ack['trip_id']}. Przygotowuję plan DEMO z przykładowymi danymi."
+        else:
+            text = f"Tripse DEMO: request accepted. trip_id: {ack['trip_id']}. " + ("Generation is MOCK ONLY; no places or routes are verified." if os.getenv('PLANNING_MODE','live') == 'mock' else "Preparing a draft; maps and limits will be checked.")
         provider.send_text(
             session=ack["session"], chat_id=ack["sender"],
-            text=f"Tripse DEMO: request accepted. trip_id: {ack['trip_id']}. "
-                 + ("Generation is MOCK ONLY; no places or routes are verified."
-                  if os.getenv("PLANNING_MODE", "live") == "mock"
-                  else "Preparing a draft; maps and limits will be checked."),
+            text=text,
         )
     except Exception:
         # Do not log HTTP bodies, keys or sender numbers.
@@ -38,6 +41,12 @@ def process_result(database: Database, provider: MessagingProvider) -> bool:
     if notification is None:
         return False
     try:
+        if notification['session'] == 'demo' and options(database, notification['trip_id']) == 'delivery':
+            with database.connect() as c:
+                previous = c.execute('SELECT stage FROM demo_progress WHERE trip_id=?',(notification['trip_id'],)).fetchone()
+            if previous and previous['stage'] != 'Symulowana awaria wysyłki — oczekiwanie na ponowienie':
+                progress(database,notification['trip_id'],'Symulowana awaria wysyłki — oczekiwanie na ponowienie')
+                raise RuntimeError('Demo delivery failure')
         provider.send_text(session=notification["session"], chat_id=notification["sender"],
                            text=notification["text"])
     except Exception:
@@ -45,6 +54,8 @@ def process_result(database: Database, provider: MessagingProvider) -> bool:
         database.finish_result(notification, sent=False)
     else:
         database.finish_result(notification, sent=True)
+        if notification['session'] == 'demo':
+            progress(database, notification['trip_id'], 'Odpowiedź dostarczona do symulatora')
     return True
 
 
@@ -53,16 +64,25 @@ def process_next(database: Database, generator=None) -> bool:
     if job is None:
         return False
     try:
-        result = (generator or configured_generator())(job["trip_id"], job["request_text"])
+        progress(database, job['trip_id'], 'Przygotowanie planu i mapy demonstracyjnej')
+        case = options(database,job['trip_id'])
+        if generator is None and os.getenv('PLANNING_MODE','live') == 'mock':
+            result = generate_demo(job['trip_id'], job['request_text'], case)
+        else:
+            result = (generator or configured_generator())(job["trip_id"], job["request_text"])
         token, url, expires_at = viewer_link()
+        if result.get('is_mock') and case == 'expired':
+            expires_at = 0
         result.update(viewer_url=url, viewer_expires_at=expires_at)
         database.finish(job["trip_id"], result=result, viewer_token=token,
                         viewer_expires_at=expires_at, notification=result_summary(result))
+        progress(database,job['trip_id'],'Plan gotowy')
     except Exception as error:
         logger.warning("Trip generation failed for %s (%s)", job["trip_id"], type(error).__name__)
         message = str(error) if isinstance(error, PlanningError) else "Trip generation failed. See worker logs."
         database.finish(job["trip_id"], error=message,
                         notification=f"Tripse: trip {job['trip_id']} failed. {message}")
+        progress(database,job['trip_id'],'Błąd przygotowania planu')
     return True
 
 
@@ -74,7 +94,7 @@ def main():
     database = Database(os.getenv("DATABASE_PATH", "data/tripse.sqlite3"))
     database.initialize()
     database.recover_interrupted()
-    provider = WahaMessagingProvider.from_env()
+    provider = ChannelMessagingProvider(database, WahaMessagingProvider.from_env())
     stop = threading.Event()
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, lambda *_: stop.set())

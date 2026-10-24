@@ -33,8 +33,9 @@ class Place(StrictModel):
     name: str = Field(min_length=1)
     lat: float = Field(ge=-90, le=90)
     lng: float = Field(ge=-180, le=180)
-    verification_status: Literal["verified"] = "verified"
-    source: Literal["google_places"] = "google_places"
+    verification_status: Literal["verified", "demo"] = "verified"
+    source: Literal["google_places", "demo_fixture"] = "google_places"
+    description: str | None = None
 
 
 class UnresolvedPlace(StrictModel):
@@ -52,7 +53,8 @@ class Route(StrictModel):
 class TripDay(StrictModel):
     number: int
     stops: list[Place]
-    routing_status: Literal["verified", "unverified", "routing_failed"] = "unverified"
+    routing_status: Literal["verified", "unverified", "routing_failed", "demo"] = "unverified"
+    demo_geometry: list[list[float]] | None = None
     distance_meters: int | None = None
     duration_seconds: float | None = None
     drive_minutes: float | None = None
@@ -66,8 +68,8 @@ class TripPlan(StrictModel):
     trip_id: str
     status: Literal["completed"] = "completed"
     title: str
-    generation_mode: Literal["live"] = "live"
-    is_mock: Literal[False] = False
+    generation_mode: Literal["live", "mock"] = "live"
+    is_mock: bool = False
     verification_status: Literal["verified", "partial", "unverified"]
     requirements: Requirements
     places: list[Place]
