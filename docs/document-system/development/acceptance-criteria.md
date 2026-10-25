@@ -69,4 +69,4 @@ Sprawdzać automatycznie format, liczbę stron, brak wyjątków renderera, oraz 
 
 Zarchiwizować przykładowe (fikcyjne) dane JSON, rendered PDF/obrazy, raporty walidacji, snapshoty wizualne, checklistę ręcznego przeglądu oraz podpisaną decyzję recenzenta. Nie dodawać do repo prawdziwych danych osobowych ani sekretów rezerwacyjnych.
 
-**Powiązania:** [roadmap](roadmap.md) · [reguły układu](../design/layout-rules.md) · [walidacja treści](../data/content-validation.md).
+**Powiązania:** [roadmap](roadmap.md) · [reguły układu](../design/layout-rules.md) · [walidacja treści](../system-data/content-validation.md).

@@ -59,4 +59,4 @@ Okładka → cele zespołu → highlights → program → **hotel i przestrzenie
 
 Kierownik HR umie odpowiedzieć: co zespół robi, gdzie śpi, jak wygląda standard obiektu, jak są zorganizowane posiłki/transport, co wynika z integracji/szkoleń i jakie są koszty oraz warianty. Żaden obiekt ani usługa nie są podawane jako potwierdzone bez weryfikacji.
 
-**Powiązania:** [styl](../../design/brand-guidelines.md) · [pola](../../data/template-fields.md).
+**Powiązania:** [styl](../../design/brand-guidelines.md) · [pola](../../system-data/template-fields.md).

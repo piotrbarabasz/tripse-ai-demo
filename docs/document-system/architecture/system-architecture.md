@@ -115,4 +115,4 @@ Adapter importuje miejsca/Google Places ID, oszacowania Routes i ostrzeżenia, a
 - Próba pobrania `pilot.basic` przez nieuprawnionego użytkownika kończy się odmową.
 - Awaria eksportu nie gubi danych i nie zwraca fałszywego `succeeded`.
 
-**Powiązania:** [GCP](gcp-deployment.md) · [security](security.md) · [model danych](../data/trip-data-model.md).
+**Powiązania:** [GCP](gcp-deployment.md) · [security](security.md) · [model danych](../system-data/trip-data-model.md).

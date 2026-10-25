@@ -36,7 +36,7 @@ Zmiany po `approved`: utwórz nową rewizję `draft` i zachowaj wcześniejszą. 
 
 - AI może zaproponować opis, skrót, ciekawostkę lub hasło; edytor pokazuje, co powstało automatycznie.
 - AI nie może samodzielnie zmieniać danych źródłowych o cenie, statusie rezerwacji, locie, noclegu, wymaganiach zdrowotnych lub bezpieczeństwie.
-- Każde pole posiada `value`, `source`, `verification_status` i opcjonalne `last_verified_at`; ograniczenia szczegółowo opisano w [content-validation.md](../data/content-validation.md).
+- Każde pole posiada `value`, `source`, `verification_status` i opcjonalne `last_verified_at`; ograniczenia szczegółowo opisano w [content-validation.md](../system-data/content-validation.md).
 - Podgląd dokumentów poufnych wymaga uwierzytelnienia tak samo jak pobranie.
 
 ## 5. Obsługa wyjątków

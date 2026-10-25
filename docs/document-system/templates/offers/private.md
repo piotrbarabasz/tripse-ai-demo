@@ -67,4 +67,4 @@ Wizerunkowa okładka + czytelne dzienne karty; 1 zdjęcie na rozdział/dzień ty
 
 Klient rozumie, dokąd i na jak długo jedzie, co robi, za co płaci i co zostaje do potwierdzenia; opisy dni wynikają z danych wycieczki; oferta nie zawiera PII uczestników, PIN-ów ani wewnętrznych notatek. PDF jest czytelny po wydruku i na telefonie.
 
-**Powiązania:** [model danych](../../data/trip-data-model.md) · [pola](../../data/template-fields.md) · [walidacja](../../data/content-validation.md).
+**Powiązania:** [model danych](../../system-data/trip-data-model.md) · [pola](../../system-data/template-fields.md) · [walidacja](../../system-data/content-validation.md).

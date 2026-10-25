@@ -61,4 +61,4 @@ Dzień N / atrakcje → kontekst i fakty → historie, obserwacje i źródła. P
 
 Każde istotne twierdzenie ma precyzyjne źródło; nie pojawiają się atrakcje spoza zatwierdzonego programu; każda historia nadaje się do wykorzystania z grupą; brak przypadkowej kopii danych operacyjnych i niepotwierdzonych ciekawostek.
 
-**Powiązania:** [walidacja faktów](../../data/content-validation.md) · [model wiedzy](../../data/trip-data-model.md).
+**Powiązania:** [walidacja faktów](../../system-data/content-validation.md) · [model wiedzy](../../system-data/trip-data-model.md).

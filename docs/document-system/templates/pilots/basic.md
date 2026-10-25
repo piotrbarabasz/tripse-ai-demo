@@ -55,4 +55,4 @@ Metryka wyjazdu → kluczowe telefony i zbiórki → loty → uczestnicy (opcjon
 
 Pilot potrafi znaleźć kontakt, następny nocleg i godziny kluczowych biletów w kilkanaście sekund; brak niepotwierdzonych wartości prezentowanych jako pewne; PDF nie może być dostępny przez publiczny link planera.
 
-**Powiązania:** [security](../../architecture/security.md) · [advanced](advanced.md) · [pola](../../data/template-fields.md).
+**Powiązania:** [security](../../architecture/security.md) · [advanced](advanced.md) · [pola](../../system-data/template-fields.md).

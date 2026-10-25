@@ -57,4 +57,4 @@ Metryka → 1-stronicowe podsumowanie całej wycieczki → loty/noclegi → dzie
 
 Co najmniej jeden pełny dzień z licznymi postojami renderuje się bez ucięcia; czasy i daty są spójne; pilot odróżnia propozycje od rezerwacji; dla 10–15 dni nie ma ograniczenia do dwóch dni wynikającego z obecnego demo planera; poufne dane pozostają pod kontrolą dostępu.
 
-**Powiązania:** [basic](basic.md) · [model](../../data/trip-data-model.md) · [content-validation](../../data/content-validation.md).
+**Powiązania:** [basic](basic.md) · [model](../../system-data/trip-data-model.md) · [content-validation](../../system-data/content-validation.md).

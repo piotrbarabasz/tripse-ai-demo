@@ -47,7 +47,7 @@ Wersja startowa nie mnoży wariantów dla każdego szablonu. Wariant jest uzasad
 
 ## Wymagania wspólne
 
-Logo (jeśli dostępne), tytuł, wyraźny typ/odbiorca, data i/lub termin wycieczki, wersja, spójne formatowanie, źródła gdy potrzebne, walidacja braków i bezpieczny eksport. Konkretny minimalny zestaw pól: [template-fields.md](../data/template-fields.md).
+Logo (jeśli dostępne), tytuł, wyraźny typ/odbiorca, data i/lub termin wycieczki, wersja, spójne formatowanie, źródła gdy potrzebne, walidacja braków i bezpieczny eksport. Konkretny minimalny zestaw pól: [template-fields.md](../system-data/template-fields.md).
 
 ## Rejestr otwartych decyzji
 

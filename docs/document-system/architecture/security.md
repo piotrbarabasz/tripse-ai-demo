@@ -48,4 +48,4 @@ Przygotowanie dokumentu ≠ publikacja. Wysyłka do klienta, link do pliku i pos
 
 Testy negatywne: rola `viewer` nie pobierze `pilot.basic`; `pilot` nie otworzy wyjazdu innej grupy; marketing nie zawiera danych uczestników/rezerwacji w HTML ani PDF; ujawnienie ID nie umożliwia pobrania; stary token wygasły nie działa; logi i wyjątki nie ujawniają kodów dostępu.
 
-**Powiązania:** [walidacja](../data/content-validation.md) · [workflow](../general/document-workflow.md).
+**Powiązania:** [walidacja](../system-data/content-validation.md) · [workflow](../general/document-workflow.md).

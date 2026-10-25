@@ -65,4 +65,4 @@ Brak fotografii → materiał do uzupełnienia lub zaakceptowany placeholder mar
 
 Każdą nazwę i datę da się przeczytać na telefonie, każda fotografia ma potwierdzone prawa użycia, brak fikcyjnego statusu miejsc/ceny, logo i CTA są widoczne, a warianty `new_trips` / `theme_collection` generują różne układy z tego samego modułu.
 
-**Powiązania:** [katalog](../../general/template-catalog.md) · [pola](../../data/template-fields.md).
+**Powiązania:** [katalog](../../general/template-catalog.md) · [pola](../../system-data/template-fields.md).

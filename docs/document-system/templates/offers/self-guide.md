@@ -56,4 +56,4 @@ Okładka → Self-Guide w praktyce → mapa i zalety → program dnia 1–N → 
 
 Czytelnik bez kontaktu z organizatorem potrafi wskazać: czy pilot jedzie, kto dokonuje rezerwacji, kto organizuje transport, co dostanie przed podróżą, kiedy i jak może liczyć na pomoc. Nieoparte na danych deklaracje są blokowane przed publikacją.
 
-**Powiązania:** [model danych](../../data/trip-data-model.md) · [bezpieczeństwo](../../architecture/security.md).
+**Powiązania:** [model danych](../../system-data/trip-data-model.md) · [bezpieczeństwo](../../architecture/security.md).

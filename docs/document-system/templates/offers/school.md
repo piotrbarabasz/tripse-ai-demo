@@ -58,4 +58,4 @@ Okładka → 3 filary wartości → ramowy program → szczegóły logistyczne i
 
 Co najmniej jeden sprawdzalny punkt programu na każdy deklarowany główny cel, jasne założenia grupy i ceny, zrozumiały zakres obowiązków, brak danych uczniów oraz brak niepotwierdzonych obietnic bezpieczeństwa.
 
-**Powiązania:** [pola](../../data/template-fields.md) · [walidacja](../../data/content-validation.md).
+**Powiązania:** [pola](../../system-data/template-fields.md) · [walidacja](../../system-data/content-validation.md).

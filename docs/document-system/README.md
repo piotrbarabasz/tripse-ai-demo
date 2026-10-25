@@ -16,7 +16,7 @@ Jeden uporządkowany opis wycieczki ma zasilać wiele dokumentów: oferty dla kl
 | [General](general/overview.md) | [overview](general/overview.md), [template-catalog](general/template-catalog.md), [document-workflow](general/document-workflow.md) | Zakres produktu, katalog i przebieg pracy |
 | [Templates](templates/offers/private.md) | 4 oferty, marketing, 3 materiały pilota | Budowanie określonego szablonu |
 | [Design](design/brand-guidelines.md) | [brand-guidelines](design/brand-guidelines.md), [layout-rules](design/layout-rules.md), [asset-guidelines](design/asset-guidelines.md) | Logo, fonty, układy, zdjęcia |
-| [Data](data/trip-data-model.md) | [trip-data-model](data/trip-data-model.md), [template-fields](data/template-fields.md), [content-validation](data/content-validation.md) | Dane, mapowanie, statusy i kontrola faktów |
+| [Data](system-data/trip-data-model.md) | [trip-data-model](system-data/trip-data-model.md), [template-fields](system-data/template-fields.md), [content-validation](system-data/content-validation.md) | Dane, mapowanie, statusy i kontrola faktów |
 | [Architecture](architecture/system-architecture.md) | [system-architecture](architecture/system-architecture.md), [gcp-deployment](architecture/gcp-deployment.md), [security](architecture/security.md) | Backend, GCP, uprawnienia |
 | [Development](development/roadmap.md) | [roadmap](development/roadmap.md), [acceptance-criteria](development/acceptance-criteria.md) | Realizacja i testowanie |
 
@@ -33,10 +33,10 @@ Jeden uporządkowany opis wycieczki ma zasilać wiele dokumentów: oferty dla kl
 ## Punkt startowy do implementacji
 
 1. Zdefiniuj katalog i identyfikatory w [template-catalog.md](general/template-catalog.md).
-2. Zatwierdź słownik pól w [trip-data-model.md](data/trip-data-model.md) i [template-fields.md](data/template-fields.md).
+2. Zatwierdź słownik pól w [trip-data-model.md](system-data/trip-data-model.md) i [template-fields.md](system-data/template-fields.md).
 3. Zatwierdź identyfikację marki w [brand-guidelines.md](design/brand-guidelines.md).
 4. Zrób MVP: `marketing.collection`, `pilot.basic`, `offer.private` — patrz [roadmap.md](development/roadmap.md).
-5. Każdy eksport musi przejść [content-validation.md](data/content-validation.md) oraz [acceptance-criteria.md](development/acceptance-criteria.md).
+5. Każdy eksport musi przejść [content-validation.md](system-data/content-validation.md) oraz [acceptance-criteria.md](development/acceptance-criteria.md).
 
 ## Powiązanie z istniejącym repozytorium
 

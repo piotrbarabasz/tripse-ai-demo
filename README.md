@@ -1,5 +1,14 @@
 # Tripse AI Trip Planner — Demo v0.1
 
+## Decyzje architektoniczne i rejestr prac
+
+[Rejestr ADR i zasady pracy agentów](docs/adr/README.md) ·
+[Rejestr prac](docs/tracking/README.md) ·
+[Audyt repozytorium](docs/tracking/repository-audit.md) ·
+[Podstawy przyszłego kosztorysu](docs/tracking/estimates.md).
+Retrospektywne ADR-y opisują wdrożone rozwiązania; status `proposed` oznacza
+brak potwierdzenia decyzji przez właściciela, nie brak implementacji.
+
 ## TRIPSE Document Studio — lokalne demo
 
 Panel dokumentów: [http://localhost:8000/documents/demo](http://localhost:8000/documents/demo).

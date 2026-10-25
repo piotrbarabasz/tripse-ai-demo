@@ -51,4 +51,4 @@ Panel WWW dostępny dla uprawnionych pracowników TRIPSE, hostowany docelowo w G
 
 ## 7. Powiązane dokumenty
 
-[Typy szablonów](template-catalog.md) · [Przepływ](document-workflow.md) · [Model danych](../data/trip-data-model.md) · [Roadmapa](../development/roadmap.md)
+[Typy szablonów](template-catalog.md) · [Przepływ](document-workflow.md) · [Model danych](../system-data/trip-data-model.md) · [Roadmapa](../development/roadmap.md)
