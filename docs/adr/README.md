@@ -15,8 +15,9 @@ task opisuje pracę, a [worklog](../tracking/worklog.csv) jej udokumentowany prz
 | [ADR-0005](0005-local-only-studio.md) | Lokalny dostęp do studia bez logowania w demo | proposed | Wdrożone |
 | [ADR-0006](0006-template-registry-shared-components.md) | Wspólny rejestr szablonów, komponenty i tokeny | proposed | Wdrożone częściowo: 3 generatory, 8 ID |
 | [ADR-0007](0007-sqlite-single-worker.md) | Kolejka planera w SQLite i jeden osobny worker | proposed | Wdrożone |
+| [ADR-0008](0008-local-demo-hub.md) | Lokalny Hub jako nawigacja istniejących modułów | proposed | Wdrożone w HUB-01 |
 
-Wszystkie powyższe ADR-y sporządzono retrospektywnie 25.10.2026. Kod potwierdza
+ADR-0001–0007 sporządzono retrospektywnie 25.10.2026. Kod potwierdza
 implementację, ale dostępne repozytorium nie zawiera jednoznacznej akceptacji
 tych ADR-ów przez właściciela. **`proposed` nie oznacza tu „jeszcze nie wdrożono”.**
 Nie potwierdzamy za właściciela historycznej motywacji ani docelowego zastosowania
@@ -31,9 +32,9 @@ Powiązane aspekty jednej decyzji można połączyć, jak FastAPI i izolację mo
 
 ## Numeracja i metadane
 
-- Następny wolny numer: **ADR-0008**. Sprawdź rejestr i pliki przed nadaniem numeru;
+- Następny wolny numer: **ADR-0009**. Sprawdź rejestr i pliki przed nadaniem numeru;
   po dodaniu wpisu zaktualizuj tę wskazówkę. Nie używaj ponownie opublikowanego numeru.
-- Plik: `0008-short-decision-name.md`; nagłówek i YAML: `ADR-0008`.
+- Plik: `0009-short-decision-name.md`; nagłówek i YAML: `ADR-0009`.
 - Skopiuj [szablon](template.md). Wypełnij wszystkie dziewięć sekcji.
 - YAML: `id`, `title`, `status`, `date`, `author`, `area`, `related_tasks`,
   `related_prs`, `supersedes`. Data ISO `YYYY-MM-DD`; trzy ostatnie pola są listami.
@@ -108,3 +109,4 @@ Sam ten standard nie wdraża automatycznej walidacji CI ani wieloosobowego workf
 | Data | Autor | Zmiana | Podstawa |
 |---|---|---|---|
 | 2026-10-25 | Codex | Utworzenie standardu i rejestru retrospektywnego | ADR-SETUP-01, zlecenie użytkownika |
+| 2026-10-25 | Codex | Dodanie ADR-0008 dla lokalnego Hubu; zachowanie statusów i treści wcześniejszych decyzji | HUB-01 |

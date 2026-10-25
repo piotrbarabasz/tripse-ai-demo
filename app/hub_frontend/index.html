@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Lokalny punkt startowy demonstracji TRIPSE: planer podróży, dokumenty i symulator rozmowy.">
+  <title>TRIPSE AI Hub — przestrzeń demonstracyjna</title>
+  <link rel="stylesheet" href="/documents/assets/brand-tokens.css">
+  <link rel="stylesheet" href="/static/hub.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Przejdź do treści</a>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-route" viewBox="0 0 24 24"><path d="M8 4H6a3 3 0 0 0 0 6h12a3 3 0 0 1 0 6h-2"/><circle cx="11" cy="4" r="3"/><path d="m13 20 3-4-3-4"/><circle cx="4" cy="19" r="2"/></symbol>
+    <symbol id="i-document" viewBox="0 0 24 24"><path d="M14 3H5v18h14V8Zm0 0v5h5M8 12h8M8 16h5"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11a8 8 0 0 1-8 8H6l-4 3V7a4 4 0 0 1 4-4h7a8 8 0 0 1 8 8Z"/><path d="M7 8h9M7 12h6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Zm6-2v16m6-14v16"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z"/></symbol>
+  </svg>
+  <header class="hub-header">
+    <a class="hub-brand" href="/hub" aria-label="TRIPSE AI Hub — strona startowa">TRIPSE<span>AI HUB</span></a>
+    <nav aria-label="Nawigacja Hubu"><a href="#how-it-works">Jak to działa</a><span class="environment"><span></span>Lokalne demo · {{MODE}}</span></nav>
+  </header>
+  <main id="main" tabindex="-1">
+    <section class="hero" aria-labelledby="hub-title">
+      <div class="hero-copy"><p class="eyebrow"><span class="eyebrow-line"></span> TWOJA PRZESTRZEŃ TRIPSE</p>
+        <h1 id="hub-title">Twoje narzędzia.<br><span>Jedno miejsce startu.</span></h1>
+        <p class="hero-description">Zaplanuj trasę, przygotuj dokument lub sprawdź rozmowę.<br class="desktop-break"> Wybierz moduł i przejdź prosto do demonstracji.</p>
+        <a class="text-link" href="#modules">Wybierz, od czego zaczynasz <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </div>
+      <div class="workspace-visual" aria-hidden="true">
+        <div class="orbital orbital-one"></div><div class="orbital orbital-two"></div>
+        <svg class="visual-route" viewBox="0 0 400 230"><path d="M40 170C85 170 80 62 160 70S245 220 350 105"/></svg>
+        <div class="visual-node node-route"><svg class="icon"><use href="#i-route"/></svg></div>
+        <div class="visual-node node-doc"><svg class="icon"><use href="#i-document"/></svg></div>
+        <div class="visual-node node-chat"><svg class="icon"><use href="#i-chat"/></svg></div>
+        <div class="visual-caption"><span class="visual-caption-mark">T.</span><div><strong>Przestrzeń do odkrywania</strong><span>Planowanie · treści · rozmowa</span></div></div>
+      </div>
+    </section>
+
+    <section class="modules" id="modules" aria-labelledby="modules-title">
+      <div class="section-heading"><div><p class="eyebrow">ZACZNIJ TUTAJ</p><h2 id="modules-title">Co chcesz dziś przygotować?</h2></div><p>Trzy moduły. Wybierz swój punkt wejścia.</p></div>
+      <div class="module-grid">
+        <article class="module-card planner-card" aria-labelledby="planner-title">
+          <div class="card-art map-art" aria-hidden="true"><span class="art-label">OD POMYSŁU DO TRASY</span>
+            <svg viewBox="0 0 360 175" class="map-illustration"><path class="map-road" d="M-20 125 100 55l75 115 105-100 100 45M60-20l60 180M250-20l-70 195M-10 30l380 80"/><path class="map-trail" d="M65 120c55 20 54-62 105-65s35 73 112 43"/><circle cx="65" cy="120" r="7"/><circle cx="170" cy="55" r="7"/><circle cx="282" cy="98" r="7"/></svg><span class="art-chip"><svg class="icon"><use href="#i-map"/></svg> Plan + mapa</span>
+          </div>
+          <div class="card-content"><div class="card-category"><span class="module-icon"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg></span><span>PLANOWANIE PODRÓŻY</span><span class="module-number">01</span></div>
+            <h3 id="planner-title">AI Trip Planner<br>&amp; Maps</h3><p class="card-description">Zamień pomysł na wyjazd w szkic trasy. Obejrzyj miejsca, plan dni i mapę w jednym widoku.</p>
+            <div class="card-mode"><span class="mode-dot"></span>{{PLANNER_BADGE}}</div><p class="card-note">{{PLANNER_NOTE}}</p>
+            <a class="module-link" id="planner-link" href="/">Otwórz planer <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+        <article class="module-card documents-card" aria-labelledby="documents-title">
+          <div class="card-art document-art" aria-hidden="true"><span class="art-label">JEDEN PROGRAM, WIELE DOKUMENTÓW</span><div class="paper paper-back"></div><div class="paper paper-front"><div class="paper-brand">TRIPSE</div><div class="paper-landscape"><span></span></div><div class="paper-heading"></div><div class="paper-line"></div><div class="paper-line short"></div></div><span class="art-chip">A4 <span class="chip-divider"></span> PDF</span></div>
+          <div class="card-content"><div class="card-category"><span class="module-icon"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span><span>DOKUMENTY PODRÓŻNICZE</span><span class="module-number">02</span></div>
+            <h3 id="documents-title">Document<br>Studio</h3><p class="card-description">Ułóż ofertę, rozpiskę dla pilota lub kolekcję kierunków. Edytuj treści, sprawdź podgląd i zapisz PDF.</p>
+            <div class="card-mode"><span class="mode-dot"></span>Lokalny edytor · dane demo</div><p class="card-note">Marketing, oferta indywidualna i pilot. Wersje robocze zapisujesz na tym komputerze.</p>
+            <a class="module-link" id="documents-link" href="/documents/demo">Otwórz studio <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+        <article class="module-card assistant-card" aria-labelledby="assistant-title">
+          <div class="card-art chat-art" aria-hidden="true"><span class="art-label">PODRÓŻ ZACZYNA SIĘ OD WIADOMOŚCI</span><div class="mini-chat"><div class="mini-chat-header"><span class="chat-avatar">T.</span><span>TRIPSE <small>ROZMOWA DEMO</small></span><svg class="icon"><use href="#i-chat"/></svg></div><div class="mini-bubble">Zaplanuj 2 dni w Karkonoszach.</div><div class="mini-reply"><span></span><span></span><span></span></div></div><span class="art-chip">Symulator rozmowy</span></div>
+          <div class="card-content"><div class="card-category"><span class="module-icon"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span><span>ROZMOWA I SCENARIUSZE</span><span class="module-number">03</span></div>
+            <h3 id="assistant-title">WhatsApp<br>Assistant</h3><p class="card-description">Sprawdź, jak wiadomość uruchamia przygotowanie planu. Przejdź przez gotowy scenariusz rozmowy.</p>
+            <div class="card-mode"><span class="mode-dot"></span>{{CHAT_BADGE}}</div><p class="card-note">Bez telefonu i prawdziwego WhatsApp. Symulator korzysta z przygotowanych przykładów.</p>
+            <a class="module-link" id="assistant-link" href="{{CHAT_HREF}}">{{CHAT_CTA}} <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="demo-config" id="demo-mode" {{CONFIG_HIDDEN}} aria-labelledby="config-title"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><div><h2 id="config-title">Symulator jest dostępny w trybie mock</h2><p>Ustaw <code>PLANNING_MODE=mock</code> dla API i workera, a następnie je uruchom ponownie. Hub pozostaje dostępny także w trybie live. Konfiguracja nie jest zmieniana przez tę stronę.</p></div></section>
+
+    <section class="how-it-works" id="how-it-works" aria-labelledby="flow-title">
+      <div class="flow-intro"><p class="eyebrow">SZERSZY OBRAZ</p><h2 id="flow-title">Jak działa TRIPSE AI</h2><p>Od wiadomości do materiałów podróży.<br>Tak wygląda docelowy przepływ.</p><span class="flow-label">Kierunek rozwoju</span></div>
+      <div class="flow-content"><ol class="flow-steps"><li><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span><span>Wiadomość</span></li><li><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg></span><span>Planowanie</span></li><li><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg></span><span>Mapa</span></li><li><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span><span>Dokument</span></li></ol>
+        <p class="flow-note"><strong>Dziś:</strong> symulator w trybie mock prowadzi do planu i mapy. Dokument Studio działa osobno — dane wycieczki uzupełniasz ręcznie. Hub łączy nawigację, a cały pokaz wymaga uruchomionego API; planer i rozmowa wymagają także workera.</p>
+      </div>
+    </section>
+  </main>
+  <footer class="hub-footer"><span><strong>TRIPSE</strong> AI Hub <span class="footer-divider">/</span> Przestrzeń demonstracyjna</span><span>Robocza identyfikacja wizualna · lokalny dostęp</span></footer>
+</body>
+</html>

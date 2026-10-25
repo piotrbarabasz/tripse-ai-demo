@@ -37,9 +37,11 @@ akceptacji ADR, wdrożenia produkcyjnego ani rozliczenia finansowego.
   `f9035e5`, więc nie wolno liczyć go trzy razy jako trzy osobne okresy pracy.
 - `HIST-PLANNER-01`, `HIST-MOCK-01`, `HIST-SPEC-01`, `HIST-DATA-PATH-01` to
   lokalne etykiety utworzone w audycie do pogrupowania zakresu commitów.
-- `ADR-SETUP-01` to lokalne ID bieżącego zadania dokumentacyjnego z 25.10.2026.
-  Nie ma jeszcze commitu ani PR tego zadania; nie wpisujemy hasha punktu
-  odniesienia jako dowodu commitowania nowych dokumentów.
+- `ADR-SETUP-01` to lokalne ID zadania dokumentacyjnego z 25.10.2026.
+  W HUB-01 uzupełniono jego dowodowy commit `c232670` na podstawie Git;
+  nie rekonstruowano czasu pracy ani kosztów.
+- `HUB-01` to lokalne ID zlecenia Hubu z 25.10.2026. Jego commit/PR pozostaje
+  pusty do czasu faktycznego utworzenia; zakres i kontrole opisuje [HUB.md](../HUB.md).
 - Daty commitów dowodzą obecności artefaktów, nie dat ani długości wykonywania
   etapów. Dokumenty DEMO raportują weryfikację 24.10; commit jest z 25.10.
 - Liczby z [BUILD_DAY.md](../BUILD_DAY.md) są historycznym orientacyjnym budżetem,

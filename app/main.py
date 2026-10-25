@@ -54,6 +54,8 @@ def create_app(database_path=None, *, waha_settings=None, document_data_path=Non
     from app.demo import demo_router
     app.include_router(demo_router(database))
     app.include_router(document_router(document_repository))
+    from app.hub import hub_router
+    app.include_router(hub_router())
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
     @app.get("/health")

@@ -1,5 +1,21 @@
 # Tripse AI Trip Planner — Demo v0.1
 
+## TRIPSE AI Hub — start demonstracji
+
+Otwórz **[http://localhost:8000/hub](http://localhost:8000/hub)**, aby przejść do
+planera i map, Document Studio lub lokalnego symulatora WhatsApp.
+W PowerShell uruchom cały pokaz w trybie mock:
+
+```powershell
+$env:PLANNING_MODE = "mock"
+docker compose up --build -d api worker
+```
+
+Hub jest dostępny lokalnie; stare adresy `/`, `/documents/demo` i `/demo/chat`
+pozostają zachowane. W trybie live karta symulatora pokazuje instrukcję jego
+włączenia. Moduły mają powroty do Hubu; mapa publiczna nadal ma dotychczasową nawigację.
+Szczegóły, zakres i testy: [docs/HUB.md](docs/HUB.md).
+
 ## Decyzje architektoniczne i rejestr prac
 
 [Rejestr ADR i zasady pracy agentów](docs/adr/README.md) ·
