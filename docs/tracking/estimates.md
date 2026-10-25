@@ -59,6 +59,18 @@ nie publikuj w repo wrażliwych rachunków. Prognoz nie wpisuj jako kosztów rze
 ## Czego nie potwierdzono
 
 Brak wiarygodnego podziału historycznego czasu na DEMO-01–03, rachunków usług,
-decyzji o centralnej bazie, wyboru hostingu, wymaganego SLA i zatwierdzonego brandingu.
+decyzji o centralnej bazie, wyboru hostingu pełnej produkcji, wymaganego SLA i zatwierdzonego brandingu.
 README i instrukcje zawierają wyniki lokalnych testów; nie dowodzą opłacenia
 infrastruktury, działania realnego WhatsApp ani produkcyjnej akceptacji rozwiązania.
+
+## CLOUD-01 — przygotowanie infrastruktury demo
+
+[ADR-0009](../adr/0009-cloud-run-readonly-preview.md) i [instrukcja](../DEPLOY_GCP.md)
+przygotowują ręczny Cloud Run DEV/PROD bez uruchomienia zasobów. Nie ma kosztów
+rzeczywistych ani pomiaru pracy. COST-06 obejmuje przyszły bootstrap/IAM, QA live,
+utrzymanie Run/Build/Artifact Registry/Storage/Logging, alerty i retencję.
+Migracja zapisu oraz kolejki, autoryzacja i sekrety należą do powiązanych pakietów
+danych/bezpieczeństwa/integracji; nie są ukończonym zakresem tego zadania.
+Do kalkulacji potrzebne są region, ruch, rozmiar/liczba obrazów i buildów,
+retencja logów, polityki organizacji i aktualne cenniki. Nie zakładamy kosztu 0
+na podstawie min-instances=0 ani nie wpisujemy prognozy jako rachunku.

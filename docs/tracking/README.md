@@ -71,6 +71,10 @@ tej samej płatności jako nowego wydatku.
 
 ## Granice
 
+`CLOUD-01` to lokalny identyfikator zlecenia z 2026-10-25: audyt wzorców,
+przygotowanie Cloud Preview i ręcznych skryptów DEV/PROD. Ukończenie oznacza
+przygotowanie i lokalną kontrolę, bez rzeczywistego wdrożenia do GCP.
+
 Worklog nie jest fakturą ani zatwierdzonym kosztorysem klienta. Nie ma pomiaru
 czasu, integracji billingowej ani automatycznego egzekwowania reguł w CI.
 Puste kwoty i godziny w pierwszym wykazie są celowe, nie oznaczają prac bezpłatnych.

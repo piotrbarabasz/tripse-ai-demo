@@ -87,6 +87,8 @@ def process_next(database: Database, generator=None) -> bool:
 
 
 def main():
+    if os.getenv("K_SERVICE") or os.getenv("CLOUD_FEATURE_MODE", "local") != "local":
+        raise ValueError("Worker is disabled in cloud preview")
     logging.basicConfig(level=logging.INFO)
     poll_seconds = float(os.getenv("WORKER_POLL_SECONDS", "1"))
     if not 0 < poll_seconds <= 60:

@@ -1,6 +1,10 @@
 .env
 .env.*
 !.env.example
+!infra/gcp/.env.dev.example
+!infra/gcp/.env.prod.example
+.gcp-state/
+app/_build_version.txt
 .venv/
 venv/
 __pycache__/

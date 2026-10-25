@@ -12,3 +12,14 @@ local-data
 *.db*
 tests
 docs
+**/.env
+**/.env.*
+**/*.sqlite3*
+**/*.db*
+**/*.pem
+**/*.key
+**/*credentials*.json
+**/*service-account*.json
+.gcp-state
+scripts
+infra

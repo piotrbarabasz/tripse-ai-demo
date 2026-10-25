@@ -1,5 +1,13 @@
 # Tripse AI Trip Planner — Demo v0.1
 
+## Cloud Run DEV/PROD — przygotowany deployment
+
+Ręczne skrypty PowerShell, dwa przykłady konfiguracji i bezstanowy
+`CLOUD_FEATURE_MODE=readonly_demo`: publiczny Hub, gotowe trasy i kolekcje PDF.
+Bez zapisu, uploadów, pilota i WhatsApp w chmurze; lokalne demo zachowuje funkcje.
+Instrukcja DEV, promocji tego samego obrazu do PROD, smoke i rollback:
+[docs/DEPLOY_GCP.md](docs/DEPLOY_GCP.md). **Nie wykonano rzeczywistego wdrożenia GCP.**
+
 ## TRIPSE AI Hub — start demonstracji
 
 Otwórz **[http://localhost:8000/hub](http://localhost:8000/hub)**, aby przejść do

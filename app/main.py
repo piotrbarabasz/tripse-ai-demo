@@ -35,6 +35,10 @@ class TripStatus(BaseModel):
 
 
 def create_app(database_path=None, *, waha_settings=None, document_data_path=None, document_fixtures_path=None):
+    from app.cloud_preview import CloudSettings, create_preview_app
+    cloud = CloudSettings.from_env()
+    if cloud is not None:
+        return create_preview_app(cloud)
     database = Database(database_path or os.getenv("DATABASE_PATH", "data/tripse.sqlite3"))
     from app.document_studio.api import document_router
     from app.document_studio.repository import JsonRepository
