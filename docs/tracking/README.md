@@ -75,6 +75,11 @@ tej samej płatności jako nowego wydatku.
 
 ## Granice
 
+`GCP-ACCESS-001` to identyfikator zlecenia użytkownika z 2026-10-25:
+zmiana publikacji DEV/PROD na `--no-invoker-iam-check`, obsługa błędów,
+regresje offline i dokumentacja. Nie oznacza wykonania deploymentu GCP.
+Decyzja i ograniczenia: [ADR-0010](../adr/0010-cloud-run-public-access.md).
+
 `CLOUD-01` to lokalny identyfikator zlecenia z 2026-10-25: audyt wzorców,
 przygotowanie Cloud Preview i ręcznych skryptów DEV/PROD. Ukończenie oznacza
 przygotowanie i lokalną kontrolę, bez rzeczywistego wdrożenia do GCP.

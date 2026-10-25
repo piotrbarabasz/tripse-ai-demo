@@ -4,6 +4,7 @@ Stan 2026-10-25, task `CLOUD-01`. Przygotowano kod i skrypty; **nie wykonano
 wdrożenia GCP ani smoke live**. PROD w tej instrukcji to druga instancja
 demonstracji tylko do odczytu. Nie oznacza gotowości pełnego systemu produkcyjnego.
 Decyzja: [ADR-0009](adr/0009-cloud-run-readonly-preview.md).
+Zmiana dostępu `GCP-ACCESS-001`: [ADR-0010](adr/0010-cloud-run-public-access.md).
 Źródła i adaptacje: [audyt trzech repozytoriów](DEPLOY_GCP_AUDIT.md).
 
 ## Kontrakt
@@ -165,11 +166,44 @@ bezwarunkowe `allUsers/roles/run.invoker`; nietypowe publiczne bindingi wymagaj�
 ręcznego audytu. Wdraża rewizję prywatnie, kieruje 100% ruchu na nią, odczytuje faktyczny `status.url`,
 sprawdza Ready i digest, zapisuje osobno `.gcp-state/dev.json` / `prod.json`
 (ignorowane przez Git), a następnie wykonuje smoke z tokenem operatora. Dopiero
-po jego sukcesie nadaje anonimowy invoker, jeśli wymaga tego konfiguracja,
-i powtarza smoke anonimowo. Oznacza to krótką przerwę publicznego dostępu podczas
+po jego sukcesie, dla `GCP_PUBLIC_ACCESS=true`, wykonuje `gcloud run services update
+SERVICE --no-invoker-iam-check --project=PROJECT --region=REGION` i powtarza smoke
+anonimowo (`/hub` musi zwrócić 200). Nie dodaje bindingu `allUsers` ani nie używa
+`--allow-unauthenticated`. Dla `GCP_PUBLIC_ACCESS=false` pozostawia włączony
+`--invoker-iam-check` i wymaga tokenu. Dotyczy to również ponownego deploymentu
+usługi, która wcześniej miała wyłączoną kontrolę IAM.
+Oznacza to krótką przerwę publicznego dostępu podczas
 deploy; to świadomy kompromis tego demo. Błąd smoke oznacza niezerowy
 exit code, mimo że rewizja mogła już zostać wdrożona. Nie ma automatycznego rollbacku.
 Stan zapisany przed smoke pomaga odnaleźć usługę; nie jest dowodem udanego QA.
+
+### Polityki organizacji i błąd publikacji
+
+Błąd `FAILED_PRECONDITION: One or more users named in the policy do not belong
+to a permitted customer` przy nadawaniu `allUsers` jest zgodny z ograniczeniem
+Domain Restricted Sharing. Wyłączenie kontroli invokera jest osobnym,
+[udokumentowanym mechanizmem Cloud Run](https://docs.cloud.google.com/run/docs/authenticating/public).
+Wymaga uprawnień `run.services.create`, `run.services.update` oraz
+`run.services.setIamPolicy`; online preflight już je sprawdza. Operator wykonujący
+private smoke potrzebuje również prawa wywołania usługi i niepustego identity tokenu.
+
+Organizacja może zabronić tej operacji przez
+`constraints/run.managed.requireInvokerIam` lub starsze `constraints/run.requireInvokerIam`.
+Jeśli aktualizacja dostępu zostanie odrzucona, deployment kończy się błędem,
+bez publicznego smoke i bez alternatywy przez `allUsers`. Skrypt jawnie przywraca
+`--invoker-iam-check` i wykonuje private smoke. Tak samo zamyka dostęp po błędzie
+publicznego smoke lub niejednoznacznym błędzie połączenia z CLI. Zachowuje kod
+wyjścia pierwotnego błędu gcloud; nie wypisuje surowych odpowiedzi CLI ani tokenów.
+Jeśli przywrócenia prywatności nie uda się potwierdzić, raportuje to jawnie;
+operator musi natychmiast sprawdzić dostęp w Cloud Console. Nie deklaruje wtedy,
+że usługa jest prywatna. Nie zmienia polityk organizacji ani nie próbuje ich obchodzić.
+Odrzucenie publikacji przez politykę pozostawia wcześniej prywatną usługę prywatną.
+
+Diagnostyka operatora: sprawdź powyższe polityki w autoryzowanej konsoli,
+uprawnienia oraz wsparcie flag w aktualnym SDK (`gcloud run services update --help`).
+Jeśli polityka wymaga IAM, ustaw `GCP_PUBLIC_ACCESS=false` dla odpowiedniego
+środowiska i wdrażaj je prywatnie. Publiczny deployment pozostaje nieudany do
+czasu zgodnego z polityką rozwiązania uzgodnionego z administratorem.
 
 ## Promocja PROD i rollback
 
@@ -213,6 +247,11 @@ Dla publicznej konfiguracji robi to anonimowo. Dla prywatnej testuje anonimowe
 tokenu. Jeśli organizacja blokuje anonimowość albo token operatora nie daje
 Invoker, smoke zakończy się błędem, a nie deklaracją sukcesu.
 
+Etap private smoke jest obowiązkowy również dla konfiguracji publicznej:
+anonimowy `/hub` musi zwrócić 403, a trasy podglądu są sprawdzane z tokenem.
+Po publikacji `/hub` zwraca 200 bez tokenu; niedozwolone API i operacje zapisu
+nadal muszą zwracać 403/404. Samodzielny `smoke.ps1` nie zmienia dostępu usługi.
+
 URL można odczytać z `.gcp-state/dev.json`, wypisany jest też po udanym deploy.
 Ręcznie, z parametrami odpowiedniego środowiska:
 
@@ -240,6 +279,14 @@ rachunku. Nie dodano automatycznego kasowania zasobów ani fikcyjnych kwot.
 [Artifact Registry](https://cloud.google.com/artifact-registry/pricing).
 
 ## Kontrole lokalne i ograniczenia
+
+GCP-ACCESS-001 (2026-10-25): pełny pytest **311 PASS** (w tym 52 przypadki
+deploymentu; jedno ostrzeżenie deprecacji Starlette/AnyIO), offline preflight
+DEV/PROD oraz dry-run deploymentu DEV/PROD PASS. Nie wykonano zmian ani testów
+live GCP; nie uruchamiano ponownie browser/Docker QA dla tej zmiany skryptów.
+`deployment_contract.py` i adapter `scripts/dev.py` przeanalizowano: istniejący
+kontrakt true/false, izolacja środowisk i promocja SHA nie wymagają zmiany.
+Poniższy raport 264 PASS dotyczy wcześniejszego CLOUD-01.
 
 ```powershell
 ./.venv/Scripts/python.exe -m pytest -q

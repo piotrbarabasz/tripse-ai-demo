@@ -23,8 +23,8 @@ APIS = ("run.googleapis.com", "artifactregistry.googleapis.com", "cloudbuild.goo
 
 
 class CommandError(RuntimeError):
-    def __init__(self, name, code):
-        super().__init__(f"{name} failed (exit {code}); operation stopped")
+    def __init__(self, name, code, detail=None):
+        super().__init__(f"{name} failed (exit {code}); operation stopped" + (f". {detail}" if detail else ""))
         self.code = code
 
 
@@ -303,17 +303,43 @@ def deploy(g, sha):
     # Verify the actual runtime before opening anonymous access. Failure leaves it private.
     smoke(g, state, private=True)
     if c["GCP_PUBLIC_ACCESS"] == "true":
-        g("run", "services", "add-iam-policy-binding", c["GCP_SERVICE_NAME"], f'--region={c["GCP_REGION"]}',
-          "--member=allUsers", "--role=roles/run.invoker", "--condition=None")
-        smoke(g, state)
+        publish(g, state)
     print(f'{c["APP_ENV"]}: {state["url"]} ({sha})')
+
+
+def publish(g, state):
+    """Publish only after private QA; close access again on any publication failure."""
+    c = g.config
+    command = ("run", "services", "update", c["GCP_SERVICE_NAME"], f'--region={c["GCP_REGION"]}')
+    try:
+        g(*command, "--no-invoker-iam-check")
+        smoke(g, state)
+    except (CommandError, ValueError, OSError) as error:
+        # A CLI/network failure need not mean that the server rejected the update.
+        # Re-enable IAM explicitly and verify access instead of assuming it is private.
+        try:
+            g(*command, "--invoker-iam-check")
+            smoke(g, state, private=True)
+        except (CommandError, ValueError, OSError):
+            detail = "Publication failed; could not confirm private access restoration. Operator must inspect service access immediately."
+        else:
+            detail = "Publication failed; IAM check restored and private smoke passed."
+        detail += (" Check organization policy constraints/run.managed.requireInvokerIam"
+                   " (and legacy constraints/run.requireInvokerIam), operator permissions and gcloud flag support."
+                   " No allUsers fallback or organization policy changes were attempted.")
+        if isinstance(error, CommandError):
+            raise CommandError("Cloud Run publication", error.code, detail) from None
+        raise ValueError(detail) from None
 
 
 def smoke(g, state, *, private=False):
     c = g.config
     headers = {}
     if private or c["GCP_PUBLIC_ACCESS"] == "false":
-        headers["Authorization"] = "Bearer " + g("auth", "print-identity-token")
+        token = g("auth", "print-identity-token")
+        if not token:
+            raise ValueError("Private smoke requires an identity token")
+        headers["Authorization"] = "Bearer " + token
     def get(path, expected, method="GET", authenticated=True):
         request = Request(state["url"]+path, headers=headers if authenticated else {}, method=method)
         try:

@@ -65,6 +65,12 @@ infrastruktury, działania realnego WhatsApp ani produkcyjnej akceptacji rozwią
 
 ## CLOUD-01 — przygotowanie infrastruktury demo
 
+GCP-ACCESS-001 doprecyzowuje istniejący COST-06: weryfikacja polityk
+`run.managed.requireInvokerIam`, uprawnień i publikacji DEV/PROD przez operatora
+oraz kontrola przywracania IAM. Przygotowanie i testy offline nie potwierdzają
+działania live; brak danych do estymacji godzin lub rzeczywistych kosztów.
+Mechanizm: [ADR-0010](../adr/0010-cloud-run-public-access.md).
+
 [ADR-0009](../adr/0009-cloud-run-readonly-preview.md) i [instrukcja](../DEPLOY_GCP.md)
 przygotowują ręczny Cloud Run DEV/PROD bez uruchomienia zasobów. Nie ma kosztów
 rzeczywistych ani pomiaru pracy. COST-06 obejmuje przyszły bootstrap/IAM, QA live,

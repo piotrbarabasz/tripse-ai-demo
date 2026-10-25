@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import subprocess
 from types import SimpleNamespace
+from urllib.error import HTTPError
 
 import pytest
 
@@ -95,8 +96,12 @@ def test_context_only_committed_allowlist():
     assert not any("document-presets" in name for name in files)
 
 
-def test_deploy_pins_digest_and_separate_runtime(config_dir, monkeypatch, tmp_path):
-    config = load_pair("prod", config_dir)
+@pytest.mark.parametrize("environment", ["dev", "prod"])
+@pytest.mark.parametrize("public", ["true", "false"])
+@pytest.mark.parametrize("existing", [False, True])
+def test_deploy_pins_digest_and_separate_runtime(config_dir, monkeypatch, tmp_path, environment, public, existing):
+    config = load_pair(environment, config_dir)
+    config.values["GCP_PUBLIC_ACCESS"] = public
     calls = []
     class Fake:
         def __init__(self): self.config = config
@@ -109,7 +114,7 @@ def test_deploy_pins_digest_and_separate_runtime(config_dir, monkeypatch, tmp_pa
                 assert json.loads(Path(env_arg.split("=",1)[1]).read_text()) == config.runtime("a"*40)
     monkeypatch.setattr(deploy, "repository", lambda g: True)
     monkeypatch.setattr(deploy, "check_release_source", lambda sha: None)
-    monkeypatch.setattr(deploy, "service", lambda g: True)
+    monkeypatch.setattr(deploy, "service", lambda g: existing)
     monkeypatch.setattr(deploy, "check_act_as", lambda *a: None)
     monkeypatch.setattr(deploy, "digest", lambda *a: "sha256:"+"b"*64)
     monkeypatch.setattr(deploy, "deployed_state", lambda *a: {"url":"https://tripse-ai-prod.example.run.app"})
@@ -120,14 +125,25 @@ def test_deploy_pins_digest_and_separate_runtime(config_dir, monkeypatch, tmp_pa
     assert f"--image={config.image}@sha256:{'b'*64}" in args
     assert "--port=8000" in args and "--min-instances=0" in args
     assert "--no-allow-unauthenticated" in args
+    assert "--invoker-iam-check" in args
+    assert f"--service-account={config.runtime_account}" in args
     private_index=calls.index(("smoke",True))
-    public_index=next(i for i,c in enumerate(calls) if c[:3]==("run","services","add-iam-policy-binding"))
-    assert private_index<public_index<calls.index(("smoke",False))
-    remove_index=next(i for i,c in enumerate(calls) if c[:3]==("run","services","remove-iam-policy-binding"))
-    assert remove_index<calls.index(args)
+    if public == "true":
+        public_index=next(i for i,c in enumerate(calls) if "--no-invoker-iam-check" in c)
+        assert private_index<public_index<calls.index(("smoke",False))
+        assert calls[public_index][:3] == ("run", "services", "update")
+        assert calls[public_index][3] == config["GCP_SERVICE_NAME"]
+    else:
+        assert not any("--no-invoker-iam-check" in c for c in calls)
+        assert ("smoke", False) not in calls
+    if existing:
+        remove_index=next(i for i,c in enumerate(calls) if c[:3]==("run","services","remove-iam-policy-binding"))
+        assert remove_index<calls.index(args)
+    assert not any(c[:3]==("run","services","add-iam-policy-binding") for c in calls)
     assert not any("builds" in c or "config" in c for c in calls)
-    assert (tmp_path / ".gcp-state/prod.json").exists()
-    assert not (tmp_path / ".gcp-state/dev.json").exists()
+    assert (tmp_path / f".gcp-state/{environment}.json").exists()
+    other = "dev" if environment == "prod" else "prod"
+    assert not (tmp_path / f".gcp-state/{other}.json").exists()
     calls.clear()
     def failed_smoke(*args,**kwargs):
         raise ValueError("Fixture smoke deliberately failed")
@@ -135,6 +151,101 @@ def test_deploy_pins_digest_and_separate_runtime(config_dir, monkeypatch, tmp_pa
     with pytest.raises(ValueError,match="deliberately failed"):
         deploy.deploy(Fake(),"a"*40)
     assert not any(c[:3]==("run","services","add-iam-policy-binding") for c in calls)
+    assert not any("--no-invoker-iam-check" in c for c in calls)
+
+
+@pytest.mark.parametrize("failure", ["policy", "public-smoke", "network"])
+@pytest.mark.parametrize("restore_fails", [False, True])
+def test_publication_failure_closes_access(config_dir, monkeypatch, failure, restore_fails):
+    config = load_pair("dev", config_dir)
+    calls = []
+    def g(*args):
+        calls.append(args)
+        if "--no-invoker-iam-check" in args:
+            if failure == "policy":
+                raise deploy.CommandError("gcloud", 17)
+            if failure == "network":
+                raise OSError("sensitive response")
+        if "--invoker-iam-check" in args and restore_fails:
+            raise deploy.CommandError("gcloud", 19)
+    g.config = config
+    def smoke(g, state, *, private=False):
+        calls.append(("smoke", private))
+        if not private:
+            raise ValueError("public smoke failed")
+    monkeypatch.setattr(deploy, "smoke", smoke)
+    expected_error = deploy.CommandError if failure == "policy" else ValueError
+    with pytest.raises(expected_error) as error:
+        deploy.publish(g, {})
+    assert "requireInvokerIam" in str(error.value)
+    assert "sensitive response" not in str(error.value)
+    if failure == "policy":
+        assert error.value.code == 17
+        assert ("smoke", False) not in calls
+    assert calls[0][-1] == "--no-invoker-iam-check"
+    restore = next(c for c in calls if "--invoker-iam-check" in c)
+    assert restore[:4] == ("run", "services", "update", "tripse-ai-dev")
+    if restore_fails:
+        assert "could not confirm" in str(error.value)
+    else:
+        assert calls[-1] == ("smoke", True)
+        assert "private smoke passed" in str(error.value)
+    assert not any("--member=allUsers" in c for c in calls)
+
+
+@pytest.mark.parametrize("public,private", [("true", True), ("false", False), ("true", False)])
+@pytest.mark.parametrize("unexpected_ok", [None, "/api/trips", "anonymous-hub"])
+def test_smoke_authentication_and_route_isolation(config_dir, monkeypatch, public, private, unexpected_ok):
+    from app.cloud_preview import create_preview_app, CloudSettings
+    from fastapi.testclient import TestClient
+
+    config = load_pair("dev", config_dir)
+    config.values["GCP_PUBLIC_ACCESS"] = public
+    # Exercise real readonly routes, with Cloud Run's IAM boundary simulated offline.
+    client = TestClient(create_preview_app(CloudSettings("dev", "a"*40, "tripse-ai-dev")))
+    requires_token = private or public == "false"
+    requests = []
+    tokens = []
+    class Response:
+        def __init__(self, status, body): self.status, self.body = status, body
+        def __enter__(self): return self
+        def __exit__(self, *args): pass
+        def read(self): return self.body
+    def urlopen(request, **kwargs):
+        requests.append(request)
+        authorization = request.get_header("Authorization")
+        assert authorization == ("Bearer offline-token" if requires_token and len(requests) > 1 else None)
+        if requires_token and not authorization:
+            if unexpected_ok == "anonymous-hub":
+                return Response(200, b"TRIPSE")
+            raise HTTPError(request.full_url, 403, "Forbidden", {}, None)
+        path = request.full_url.removeprefix("https://test.run.app")
+        if path == unexpected_ok:
+            return Response(200, b"unexpected API access")
+        response = client.request(request.method, path)
+        return Response(response.status_code, response.content)
+    def g(*args):
+        tokens.append(args)
+        return "offline-token"
+    g.config = config
+    monkeypatch.setattr(deploy, "urlopen", urlopen)
+    if unexpected_ok == "/api/trips" or (unexpected_ok == "anonymous-hub" and requires_token):
+        with pytest.raises(ValueError, match="Smoke failed"):
+            deploy.smoke(g, {"url": "https://test.run.app", "image_sha": "a"*40}, private=private)
+    else:
+        deploy.smoke(g, {"url": "https://test.run.app", "image_sha": "a"*40}, private=private)
+    assert tokens == ([("auth", "print-identity-token")] if requires_token else [])
+    if unexpected_ok != "anonymous-hub" or not requires_token:
+        assert any(r.method == "POST" and r.full_url.endswith("/api/trips") for r in requests)
+    client.close()
+
+
+def test_private_smoke_requires_token(config_dir, monkeypatch):
+    g = lambda *args: ""
+    g.config = load_pair("dev", config_dir)
+    monkeypatch.setattr(deploy, "urlopen", lambda *a, **kw: pytest.fail("Request without token"))
+    with pytest.raises(ValueError, match="requires an identity token"):
+        deploy.smoke(g, {}, private=True)
 
 
 def test_url_validation():
