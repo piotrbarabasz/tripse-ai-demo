@@ -34,12 +34,18 @@ class TripStatus(BaseModel):
     updated_at: str
 
 
-def create_app(database_path=None, *, waha_settings=None):
+def create_app(database_path=None, *, waha_settings=None, document_data_path=None, document_fixtures_path=None):
     database = Database(database_path or os.getenv("DATABASE_PATH", "data/tripse.sqlite3"))
+    from app.document_studio.api import document_router
+    from app.document_studio.repository import JsonRepository
+    document_repository = JsonRepository(
+        document_data_path or os.getenv("DOCUMENT_STUDIO_DATA_PATH"), document_fixtures_path,
+    )
 
     @asynccontextmanager
     async def lifespan(app):
         database.initialize()
+        document_repository.initialize()
         yield
 
     app = FastAPI(title="Tripse AI Trip Planner Demo v0.1", lifespan=lifespan)
@@ -47,6 +53,7 @@ def create_app(database_path=None, *, waha_settings=None):
     app.include_router(viewer_router(database))
     from app.demo import demo_router
     app.include_router(demo_router(database))
+    app.include_router(document_router(document_repository))
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
     @app.get("/health")

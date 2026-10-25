@@ -1,0 +1,44 @@
+{
+  "campaign_id": "demo-northern-journeys",
+  "title": "Północne inspiracje 2027 (DEMO)",
+  "season": "2027 - fikcyjna kolekcja",
+  "layout_variant": "new_trips",
+  "theme": "Góry, woda i przestrzeń",
+  "cta": "Poznaj przykładowe programy. Materiał demonstracyjny, nie oferta handlowa.",
+  "updated_at": "2026-10-24T10:00:00Z",
+  "items": [
+    {
+      "trip_id": "demo-iceland",
+      "short_hook": "Wyspa kontrastów",
+      "date_range_or_label": "Termin do ustalenia - DEMO",
+      "highlights": [
+        "Wodospady",
+        "Lodowce",
+        "10 dni"
+      ],
+      "publication_status": "draft"
+    },
+    {
+      "trip_id": "demo-canada",
+      "short_hook": "Przestrzeń kanadyjskich gór",
+      "date_range_or_label": "Termin do ustalenia - DEMO",
+      "highlights": [
+        "Góry",
+        "Jeziora",
+        "15 dni"
+      ],
+      "publication_status": "draft"
+    },
+    {
+      "trip_id": "demo-norway",
+      "short_hook": "Spokojne spotkanie z fiordami",
+      "date_range_or_label": "Termin do ustalenia - DEMO",
+      "highlights": [
+        "Fiordy",
+        "Miasteczka",
+        "5 dni"
+      ],
+      "publication_status": "draft"
+    }
+  ]
+}

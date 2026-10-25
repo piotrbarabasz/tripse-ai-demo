@@ -1,0 +1,28 @@
+{
+  "notice": "FIKCYJNE DANE DEMO. Bez rzeczywistych osób, rezerwacji i sekretów.",
+  "date_label": "01–10.06.2027 — FIKCYJNY TERMIN DEMO",
+  "offer_data": {
+    "summary": "Islandia Road Trip — fikcyjny pomysł na dziesięć dni pośród wodospadów, fiordów i krajobrazów wulkanicznych. Program wymaga weryfikacji organizatora.",
+    "highlights": ["Wodospady południowego wybrzeża", "Kraina lodowców", "Spokojne odkrywanie fiordów"],
+    "accommodation": "FIKCYJNA PROPOZYCJA DEMO: kameralne pensjonaty i pokoje dwuosobowe. Standard oraz dostępność do potwierdzenia. Brak dokonanych rezerwacji.",
+    "transport": "FIKCYJNA PROPOZYCJA DEMO: przejazdy wynajętym busem. Loty i transfery nie są zarezerwowane.",
+    "included": ["Przykładowe przejazdy według programu — DEMO", "Przykładowe noclegi — DEMO"],
+    "excluded": ["Loty międzynarodowe — DEMO", "Posiłki i wydatki własne — DEMO"],
+    "price": {
+      "amount": "12345.00", "currency": "PLN", "unit": "person", "participant_count": 12,
+      "status": "example",
+      "assumptions": "FIKCYJNA CENA DEMO. Założenie: 12 osób, przykładowe świadczenia powyżej. Kwota nie wynika z wyceny usług i nie stanowi oferty handlowej."
+    },
+    "cta": "Porozmawiajmy o Twojej podróży. Przykładowy kontakt DEMO: oferta@example.invalid"
+  },
+  "pilot_data": {
+    "leader": "Pilot demonstracyjny — rola fikcyjna",
+    "participant_count": 12,
+    "meeting": "FIKCYJNA ZBIÓRKA DEMO: 01.06.2027, 10:00, Atlantic/Reykjavik, punkt przykładowy A. Do potwierdzenia.",
+    "contacts": [{"label": "Koordynator DEMO", "value": "koordynator@example.invalid — adres fikcyjny"}],
+    "flights": [{"title": "Przykładowy lot A → B — DEMO", "start_local": "2027-06-01T08:00:00", "end_local": "2027-06-01T09:00:00", "time_zone": "Europe/Warsaw", "end_time_zone": "Atlantic/Reykjavik", "status": "planned", "details": "Nie jest to rozkład przewoźnika ani rezerwacja. Fikcyjne godziny do demonstracji stref czasu."}],
+    "transfers": [{"title": "Transfer z punktu A do punktu B — DEMO", "start_local": "2027-06-01T10:00:00", "time_zone": "Atlantic/Reykjavik", "status": "unknown", "details": "Fikcyjny przejazd, szczegóły do ustalenia."}],
+    "open_items": [{"title": "Sprawdzenie noclegów i transportu — DEMO", "status": "unknown", "details": "Odpowiedzialny: koordynator demonstracyjny. Termin przykładowy: przed rozpoczęciem wyjazdu."}],
+    "internal_notes": "WEWNĘTRZNE / FIKCYJNE DEMO: omówić z zespołem kolejność postojów. Ta notatka nie może trafić do oferty."
+  }
+}

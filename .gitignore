@@ -9,6 +9,7 @@ __pycache__/
 .coverage
 htmlcov/
 data/
+local-data/
 *.sqlite3
 *.sqlite3-*
 *.db

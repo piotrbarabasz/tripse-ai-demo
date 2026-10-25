@@ -5,6 +5,8 @@ services:
       - "127.0.0.1:${API_PORT:-8000}:8000"
     environment:
       DATABASE_PATH: /data/tripse.sqlite3
+      DOCUMENT_STUDIO_DATA_PATH: /app/local-data/document-studio
+      DOCUMENT_STUDIO_DOCKER_LOCAL: "1"
       WAHA_WEBHOOK_HMAC_KEY: ${WAHA_WEBHOOK_HMAC_KEY:-}
       WAHA_ALLOWED_SENDERS: ${WAHA_ALLOWED_SENDERS:-}
       WAHA_SESSION: default
@@ -13,6 +15,7 @@ services:
       GOOGLE_MAPS_MAP_ID: ${GOOGLE_MAPS_MAP_ID:-DEMO_MAP_ID}
     volumes:
       - tripse_data:/data
+      - ./local-data/document-studio:/app/local-data/document-studio
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]

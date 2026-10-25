@@ -1,0 +1,289 @@
+from datetime import date as Date, datetime, timedelta, timezone
+from typing import Annotated, Literal
+from uuid import uuid4
+from decimal import Decimal
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+
+Identifier = Annotated[str, StringConstraints(pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$")]
+Title = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
+Text = Annotated[str, StringConstraints(max_length=20000)]
+Verification = Literal["unverified", "proposed", "verified", "rejected"]
+Confidentiality = Literal["public", "client", "internal", "internal_restricted"]
+
+
+def new_id():
+    return uuid4().hex
+
+
+def now():
+    return datetime.now(timezone.utc)
+
+
+class Model(BaseModel):
+    model_config = ConfigDict(extra="forbid", revalidate_instances="always")
+
+
+class Stop(Model):
+    stop_id: Identifier = Field(default_factory=new_id)
+    name: Title
+    place_id: str | None = None
+    location: str = ""
+    description: Text = ""
+    verification_status: Verification = "unverified"
+    source: str | None = None
+    estimated_visit_duration_min: int | None = Field(default=None, ge=1)
+
+
+class TripDay(Model):
+    day_id: Identifier = Field(default_factory=new_id)
+    day_number: int = Field(ge=1)
+    date: Date | None = None
+    title: Title
+    stops: list[Stop] = Field(default_factory=list)
+    public_description: Text = ""
+    internal_notes: Text = ""
+    time_zone: str | None = None
+
+
+class Trip(Model):
+    trip_id: Identifier = Field(default_factory=new_id)
+    schema_version: Literal[1] = 1
+    revision: int = Field(default=1, ge=1)
+    title: Title
+    destinations: list[Title] = Field(default_factory=list)
+    description: Text = ""
+    start_date: Date | None = None
+    end_date: Date | None = None
+    duration_days: int = Field(default=0, ge=0)
+    status: Literal["idea", "draft", "planned", "confirmed", "completed", "cancelled"] = "draft"
+    days: list[TripDay] = Field(default_factory=list)
+    updated_at: datetime = Field(default_factory=now)
+
+    @model_validator(mode="after")
+    def consistent_days(self):
+        if self.duration_days != len(self.days):
+            raise ValueError("duration_days must equal the number of days")
+        if [d.day_number for d in self.days] != list(range(1, len(self.days) + 1)):
+            raise ValueError("Days must be consecutively numbered from 1")
+        ids = [d.day_id for d in self.days]
+        stop_ids = [s.stop_id for d in self.days for s in d.stops]
+        if len(ids) != len(set(ids)) or len(stop_ids) != len(set(stop_ids)):
+            raise ValueError("Day and stop IDs must be unique within a trip")
+        if self.start_date and self.end_date:
+            if self.end_date < self.start_date:
+                raise ValueError("End date precedes start date")
+            if self.days and (self.end_date - self.start_date).days + 1 != len(self.days):
+                raise ValueError("Date range must match duration_days")
+        dates = [d.date for d in self.days if d.date]
+        if dates != sorted(set(dates)):
+            raise ValueError("Day dates must be unique and increasing")
+        for day in self.days:
+            if day.date and self.start_date and day.date != self.start_date + timedelta(days=day.day_number - 1):
+                raise ValueError("Day date does not match start date and day number")
+            if day.date and self.end_date and day.date > self.end_date:
+                raise ValueError("Day date exceeds end date")
+        return self
+
+
+class ImagePosition(Model):
+    x: float = Field(default=50, ge=0, le=100, allow_inf_nan=False)
+    y: float = Field(default=50, ge=0, le=100, allow_inf_nan=False)
+    zoom: float = Field(default=1, ge=1, le=3, allow_inf_nan=False)
+
+
+class ImageAsset(Model):
+    asset_id: Identifier = Field(default_factory=new_id)
+    schema_version: Literal[1] = 1
+    revision: int = Field(default=1, ge=1)
+    original_name: Annotated[str, StringConstraints(max_length=200)]
+    media_type: Literal["image/jpeg", "image/png", "image/webp"]
+    width: int = Field(gt=0)
+    height: int = Field(gt=0)
+    rights_confirmed: Literal[True]
+    created_at: datetime = Field(default_factory=now)
+
+
+class CampaignItem(Model):
+    trip_id: Identifier
+    display_title: Annotated[str, StringConstraints(max_length=200)] = ""
+    short_hook: Annotated[str, StringConstraints(max_length=500)] = ""
+    date_range_or_label: Title = "Termin do ustalenia"
+    highlights: list[Title] = Field(default_factory=list)
+    image_asset_id: Identifier | None = None
+    image_position: ImagePosition = Field(default_factory=ImagePosition)
+    badge: Literal["concept", "new", "pilot"] = "concept"
+    publication_status: Literal["draft", "approved"] = "draft"
+
+
+class Campaign(Model):
+    campaign_id: Identifier = Field(default_factory=new_id)
+    schema_version: Literal[1] = 1
+    revision: int = Field(default=1, ge=1)
+    title: Title
+    season: str = ""
+    layout_variant: Literal["new_trips", "theme_collection"] = "new_trips"
+    theme: str = ""
+    cta: str = ""
+    description: Annotated[str, StringConstraints(max_length=1000)] = ""
+    hero_asset_id: Identifier | None = None
+    hero_position: ImagePosition = Field(default_factory=ImagePosition)
+    items: list[CampaignItem] = Field(min_length=1)
+    updated_at: datetime = Field(default_factory=now)
+
+    @model_validator(mode="after")
+    def unique_trips(self):
+        if len({i.trip_id for i in self.items}) != len(self.items):
+            raise ValueError("Campaign trips must be unique")
+        return self
+
+
+class DocumentTemplate(Model):
+    template_id: str
+    name: Title
+    template_version: str = "0.1.0"
+    family: Literal["offer", "marketing", "pilot"]
+    audience: str
+    confidentiality: Confidentiality
+    source_type: Literal["trip", "campaign"]
+    layout_variants: list[str] = Field(default_factory=lambda: ["standard"])
+    description: str
+
+
+class DayOverride(Model):
+    day_id: Identifier
+    title: Annotated[str, StringConstraints(max_length=200)] = ""
+    description: Text = ""
+
+
+class OfferPrice(Model):
+    amount: Decimal | None = Field(default=None, ge=0, max_digits=12, decimal_places=2)
+    currency: Literal["PLN", "EUR", "USD"] = "PLN"
+    unit: Literal["person", "group"] = "person"
+    participant_count: int | None = Field(default=None, ge=1)
+    status: Literal["unknown", "example", "confirmed"] = "unknown"
+    assumptions: Text = ""
+    source: Annotated[str, StringConstraints(max_length=1000)] = ""
+
+    @model_validator(mode="after")
+    def confirmed_price(self):
+        if self.status == "confirmed" and (self.amount is None or not self.source.strip()):
+            raise ValueError("Potwierdzona cena wymaga kwoty i źródła organizatora")
+        return self
+
+
+class OfferData(Model):
+    summary: Text = ""
+    highlights: list[Title] = Field(default_factory=list)
+    accommodation: Text = ""
+    transport: Text = ""
+    included: list[Title] = Field(default_factory=list)
+    excluded: list[Title] = Field(default_factory=list)
+    price: OfferPrice = Field(default_factory=OfferPrice)
+    concept_only: bool = False
+    cta: Text = ""
+    cover_asset_id: Identifier | None = None
+    cover_position: ImagePosition = Field(default_factory=ImagePosition)
+    photo_asset_ids: list[Identifier] = Field(default_factory=list, max_length=10)
+
+
+class OperationalEntry(Model):
+    entry_id: Identifier = Field(default_factory=new_id)
+    day_id: Identifier | None = None
+    title: Title
+    start_local: datetime | None = None
+    end_local: datetime | None = None
+    time_zone: Annotated[str, StringConstraints(max_length=100)] = ""
+    end_time_zone: Annotated[str, StringConstraints(max_length=100)] = ""
+    status: Literal["unknown", "planned", "confirmed"] = "unknown"
+    details: Text = ""
+    booking_reference: Annotated[str, StringConstraints(max_length=200)] = ""
+    source: Annotated[str, StringConstraints(max_length=1000)] = ""
+
+    @model_validator(mode="after")
+    def local_times(self):
+        for zone in (self.time_zone, self.end_time_zone):
+            if zone:
+                try:
+                    ZoneInfo(zone)
+                except ZoneInfoNotFoundError:
+                    raise ValueError("Nieznana strefa czasu IANA") from None
+        for value in (self.start_local, self.end_local):
+            if value and value.tzinfo is not None:
+                raise ValueError("Podaj lokalny czas bez offsetu i osobną strefę IANA")
+        if (self.start_local or self.end_local) and not self.time_zone:
+            raise ValueError("Lokalna godzina wymaga strefy IANA, np. Atlantic/Reykjavik")
+        if self.start_local and self.end_local:
+            start = self.start_local.replace(tzinfo=ZoneInfo(self.time_zone))
+            end = self.end_local.replace(tzinfo=ZoneInfo(self.end_time_zone or self.time_zone))
+            if end.astimezone(timezone.utc) < start.astimezone(timezone.utc):
+                raise ValueError("Koniec zdarzenia poprzedza początek")
+        if self.status == "confirmed" and not self.source.strip():
+            raise ValueError("Potwierdzenie wymaga źródła")
+        return self
+
+
+class OrganizationContact(Model):
+    label: Title
+    value: Annotated[str, StringConstraints(max_length=1000)]
+
+
+class PilotData(Model):
+    leader: Annotated[str, StringConstraints(max_length=200)] = ""
+    participant_count: int | None = Field(default=None, ge=1)
+    meeting: Text = ""
+    flights: list[OperationalEntry] = Field(default_factory=list)
+    transfers: list[OperationalEntry] = Field(default_factory=list)
+    accommodations: list[OperationalEntry] = Field(default_factory=list)
+    activity_bookings: list[OperationalEntry] = Field(default_factory=list)
+    schedule: list[OperationalEntry] = Field(default_factory=list)
+    contacts: list[OrganizationContact] = Field(default_factory=list)
+    open_items: list[OperationalEntry] = Field(default_factory=list)
+    internal_notes: Text = ""
+
+
+class DocumentDraft(Model):
+    document_id: Identifier = Field(default_factory=new_id)
+    schema_version: Literal[1] = 1
+    revision: int = Field(default=1, ge=1)
+    title: Title
+    template_id: str
+    template_version: str
+    layout_variant: str = "standard"
+    language: Literal["pl"] = "pl"
+    confidentiality: Confidentiality
+    status: Literal["draft"] = "draft"
+    trip_snapshot: Trip | None = None
+    campaign_snapshot: Campaign | None = None
+    campaign_trip_snapshots: list[Trip] = Field(default_factory=list)
+    editorial_notes: Text = ""
+    date_label: Annotated[str, StringConstraints(max_length=200)] = ""
+    demo_example: bool = False
+    day_overrides: list[DayOverride] = Field(default_factory=list)
+    offer_data: OfferData | None = None
+    pilot_data: PilotData | None = None
+    created_at: datetime = Field(default_factory=now)
+    updated_at: datetime = Field(default_factory=now)
+
+    @model_validator(mode="after")
+    def valid_source(self):
+        if (self.trip_snapshot is None) == (self.campaign_snapshot is None):
+            raise ValueError("Exactly one trip or campaign snapshot is required")
+        expected = [i.trip_id for i in self.campaign_snapshot.items] if self.campaign_snapshot else []
+        if [t.trip_id for t in self.campaign_trip_snapshots] != expected:
+            raise ValueError("Campaign snapshots must match its trips in order")
+        if self.offer_data is not None and self.template_id != "offer.private":
+            raise ValueError("Pola oferty należą wyłącznie do offer.private")
+        if self.pilot_data is not None and self.template_id != "pilot.basic":
+            raise ValueError("Pola operacyjne należą wyłącznie do pilot.basic")
+        day_ids = {d.day_id for d in self.trip_snapshot.days} if self.trip_snapshot else set()
+        override_ids = [d.day_id for d in self.day_overrides]
+        if len(set(override_ids)) != len(override_ids) or not set(override_ids) <= day_ids:
+            raise ValueError("Nadpisania muszą wskazywać unikalne dni snapshotu")
+        if self.pilot_data:
+            for group in ("flights", "transfers", "accommodations", "activity_bookings", "schedule", "open_items"):
+                for event in getattr(self.pilot_data, group):
+                    if event.day_id and event.day_id not in day_ids:
+                        raise ValueError("Zdarzenie wskazuje dzień spoza snapshotu")
+        return self

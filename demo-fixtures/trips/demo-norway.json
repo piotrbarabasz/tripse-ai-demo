@@ -1,0 +1,98 @@
+{
+  "trip_id": "demo-norway",
+  "title": "Norwegia — fiordy i małe miasteczka (DEMO)",
+  "destinations": [
+    "Norwegia"
+  ],
+  "description": "Fikcyjny program do demonstracji kampanii obejmującej trzy kierunki. Bez cen, rezerwacji i danych osobowych.",
+  "duration_days": 5,
+  "status": "draft",
+  "updated_at": "2026-10-24T10:00:00Z",
+  "days": [
+    {
+      "day_id": "demo-norway-day-01",
+      "day_number": 1,
+      "title": "Bergen",
+      "public_description": "Przykładowy etap podróży. Szczegóły wymagają opracowania i weryfikacji przez organizatora.",
+      "time_zone": "Europe/Oslo",
+      "stops": [
+        {
+          "stop_id": "demo-norway-stop-01",
+          "name": "Bryggen",
+          "location": "Norwegia",
+          "description": "Propozycja atrakcji w fikcyjnym programie DEMO.",
+          "verification_status": "unverified",
+          "source": "fictional_demo_fixture"
+        }
+      ]
+    },
+    {
+      "day_id": "demo-norway-day-02",
+      "day_number": 2,
+      "title": "W stronę fiordów",
+      "public_description": "Przykładowy etap podróży. Szczegóły wymagają opracowania i weryfikacji przez organizatora.",
+      "time_zone": "Europe/Oslo",
+      "stops": [
+        {
+          "stop_id": "demo-norway-stop-02",
+          "name": "Hardangerfjord",
+          "location": "Norwegia",
+          "description": "Propozycja atrakcji w fikcyjnym programie DEMO.",
+          "verification_status": "unverified",
+          "source": "fictional_demo_fixture"
+        }
+      ]
+    },
+    {
+      "day_id": "demo-norway-day-03",
+      "day_number": 3,
+      "title": "Dzień nad fiordem",
+      "public_description": "Przykładowy etap podróży. Szczegóły wymagają opracowania i weryfikacji przez organizatora.",
+      "time_zone": "Europe/Oslo",
+      "stops": [
+        {
+          "stop_id": "demo-norway-stop-03",
+          "name": "Eidfjord",
+          "location": "Norwegia",
+          "description": "Propozycja atrakcji w fikcyjnym programie DEMO.",
+          "verification_status": "unverified",
+          "source": "fictional_demo_fixture"
+        }
+      ]
+    },
+    {
+      "day_id": "demo-norway-day-04",
+      "day_number": 4,
+      "title": "Okolice Voss",
+      "public_description": "Przykładowy etap podróży. Szczegóły wymagają opracowania i weryfikacji przez organizatora.",
+      "time_zone": "Europe/Oslo",
+      "stops": [
+        {
+          "stop_id": "demo-norway-stop-04",
+          "name": "Vangsvatnet",
+          "location": "Norwegia",
+          "description": "Propozycja atrakcji w fikcyjnym programie DEMO.",
+          "verification_status": "unverified",
+          "source": "fictional_demo_fixture"
+        }
+      ]
+    },
+    {
+      "day_id": "demo-norway-day-05",
+      "day_number": 5,
+      "title": "Powrót do Bergen",
+      "public_description": "Przykładowy etap podróży. Szczegóły wymagają opracowania i weryfikacji przez organizatora.",
+      "time_zone": "Europe/Oslo",
+      "stops": [
+        {
+          "stop_id": "demo-norway-stop-05",
+          "name": "Bergen",
+          "location": "Norwegia",
+          "description": "Propozycja atrakcji w fikcyjnym programie DEMO.",
+          "verification_status": "unverified",
+          "source": "fictional_demo_fixture"
+        }
+      ]
+    }
+  ]
+}

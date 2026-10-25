@@ -1,0 +1,12 @@
+/* PROPOSED branding, not an approved TRIPSE brand book.
+   Replace this one file to change the shared visual identity. No remote fonts. */
+:root {
+  --brand-ink:#172b41; --brand-accent:#e5a01d; --brand-dark:#171717;
+  --brand-paper:#fff; --brand-surface:#edf3f2; --brand-muted:#506672;
+  --brand-line:#d6e2de; --brand-error:#8b2727;
+  --font-body:"Segoe UI",Arial,sans-serif;
+  --font-heading:"Segoe UI",Arial,sans-serif;
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
+  --space-6:24px; --space-8:32px; --space-12:48px;
+  --page-margin:56px; --section-gap:20px;
+}

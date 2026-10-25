@@ -1,5 +1,24 @@
 # Tripse AI Trip Planner — Demo v0.1
 
+## TRIPSE Document Studio — lokalne demo
+
+Panel dokumentów: [http://localhost:8000/documents/demo](http://localhost:8000/documents/demo).
+Oddzielne modele wielodniowych wycieczek, kampanie wielu kierunków i zapisywane
+snapshoty dokumentów; dane w lokalnych plikach JSON, bez zmian SQLite planera.
+Start: `docker compose up --build -d api` lub lokalny Uvicorn.
+Pełna instrukcja, architektura, API, testy i ograniczenia:
+[docs/DOCUMENT_STUDIO.md](docs/DOCUMENT_STUDIO.md).
+
+Generator `marketing.collection` ma teraz dwa warianty, edytor kampanii,
+lokalne zdjęcia i kadrowanie, podgląd A4 / 1080×1350 oraz druk do PDF.
+Otwórz **Kampanie → Otwórz → Edytuj kolekcję / podgląd PDF**.
+Instrukcja eksportu i QA: [docs/MARKETING_COLLECTION.md](docs/MARKETING_COLLECTION.md).
+
+Z jednej wycieczki można też utworzyć edytowalną ofertę `offer.private`
+i rozpiskę `pilot.basic`: własne treści, logistyka, statusy, rewizje, podgląd A4
+i PDF. Dla Islandii dostępny jest jawnie fikcyjny przykład demonstracyjny.
+Scenariusz prezentacji: [docs/TRIP_DOCUMENTS.md](docs/TRIP_DOCUMENTS.md).
+
 ## Pełne demo offline (mock)
 
 Tryb `PLANNING_MODE=mock` zawiera teraz trzy przykładowe wycieczki, lokalną mapę
