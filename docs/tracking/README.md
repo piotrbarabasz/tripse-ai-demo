@@ -40,8 +40,12 @@ akceptacji ADR, wdrożenia produkcyjnego ani rozliczenia finansowego.
 - `ADR-SETUP-01` to lokalne ID zadania dokumentacyjnego z 25.10.2026.
   W HUB-01 uzupełniono jego dowodowy commit `c232670` na podstawie Git;
   nie rekonstruowano czasu pracy ani kosztów.
-- `HUB-01` to lokalne ID zlecenia Hubu z 25.10.2026. Jego commit/PR pozostaje
-  pusty do czasu faktycznego utworzenia; zakres i kontrole opisuje [HUB.md](../HUB.md).
+- `HUB-01` to lokalne ID zlecenia Hubu z 25.10.2026. Commit `4624760`
+  uzupełniono w CLOUD-01 po sprawdzeniu Git; zakres opisuje [HUB.md](../HUB.md).
+- `MAKE-001` to identyfikator zlecenia Unified Development Makefile z 25.10.2026.
+  Interfejs do istniejących operacji nie wymagał nowego ADR. Zakres i kontrole:
+  [MAKEFILE.md](../MAKEFILE.md). Commit CLOUD-01 `049f0cc` uzupełniono na podstawie
+  dostępnej historii Git; nie odtwarzano godzin ani kosztów.
 - Daty commitów dowodzą obecności artefaktów, nie dat ani długości wykonywania
   etapów. Dokumenty DEMO raportują weryfikację 24.10; commit jest z 25.10.
 - Liczby z [BUILD_DAY.md](../BUILD_DAY.md) są historycznym orientacyjnym budżetem,

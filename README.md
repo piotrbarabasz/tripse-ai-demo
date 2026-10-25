@@ -1,5 +1,43 @@
 # Tripse AI Trip Planner — Demo v0.1
 
+## Quick Start — GNU Make
+
+Python 3.12+ i GNU Make; nie trzeba aktywować `.venv` ani instalować Bash na Windows.
+
+```text
+make help
+make install-dev
+make dev-mock
+```
+
+W osobnym terminalu dla planera/czatu: `make worker PLANNING_MODE=mock`.
+Testy: `make test`. Panel: `make demo-hub`. Dla browser QA najpierw
+`make install-browser`; pełny zestaw: `make test-all` (wymaga też Dockera).
+Instrukcje instalacji Make, wszystkie targety i zasady:
+[docs/MAKEFILE.md](docs/MAKEFILE.md).
+
+### Docker
+
+```text
+make docker-up
+make docker-logs
+make docker-down
+```
+
+Tryb mock: `make docker-mock`. Zwykły start nie uruchamia WAHA;
+`docker-down` zachowuje wolumeny i dokumenty.
+
+### GCP
+
+```text
+make gcp-preflight ENV=dev
+make gcp-dry-run ENV=dev
+```
+
+Wymagane oba pliki konfiguracyjne GCP. Preflight online wymaga gcloud;
+wariant bez chmury: `make gcp-preflight ENV=dev OFFLINE=1`.
+PROD: wyłącznie jawne `make deploy-prod TAG=<COMMIT_SHA> CONFIRM=prod`.
+
 ## Cloud Run DEV/PROD — przygotowany deployment
 
 Ręczne skrypty PowerShell, dwa przykłady konfiguracji i bezstanowy

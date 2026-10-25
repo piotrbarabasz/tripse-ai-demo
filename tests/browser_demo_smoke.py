@@ -1,7 +1,9 @@
 """Run against the local mock API and worker: python tests/browser_demo_smoke.py."""
 from pathlib import Path
+import os
 from playwright.sync_api import sync_playwright, expect
 
+BASE_URL=os.getenv('TRIPSE_BROWSER_BASE_URL','http://localhost:8000').rstrip('/')
 def run():
     artifacts=Path('data/demo-screenshots')
     artifacts.mkdir(parents=True,exist_ok=True)
@@ -13,7 +15,7 @@ def run():
         requests=[]
         page.on('request',lambda request:requests.append(request.url))
         for scenario,count in [('Karkonosze',2),('Ojców',1),('Trójmiasto',2)]:
-            page.goto('http://localhost:8000/demo/chat')
+            page.goto(BASE_URL+'/demo/chat')
             page.locator('#new-chat').click()
             page.get_by_role('button',name=scenario).click()
             page.locator('#send').click()
@@ -43,7 +45,7 @@ def run():
                 assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
                 page.set_viewport_size({'width':1440,'height':1000})
         for case in ('missing','routing','limit','failure','expired','delivery'):
-            page.goto('http://localhost:8000/demo/chat')
+            page.goto(BASE_URL+'/demo/chat')
             page.locator('#new-chat').click()
             page.locator('#case').select_option(case)
             page.locator('#send').click()
@@ -61,11 +63,11 @@ def run():
                 if case=='missing': expect(page.locator('#warning-list')).to_contain_text('Nieznalezione miejsce')
             elif case=='limit': expect(page.locator('.day-warnings').first).to_contain_text('Przekroczony limit')
         page.set_viewport_size({'width':390,'height':844})
-        page.goto('http://localhost:8000/demo/chat')
+        page.goto(BASE_URL+'/demo/chat')
         page.screenshot(path=str(artifacts/'chat-mobile.png'),full_page=True)
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         assert not errors, errors
-        assert all(url.startswith('http://localhost:8000/') for url in requests), requests
+        assert all(url.startswith(BASE_URL+'/') for url in requests), requests
         browser.close()
     print('Demo browser smoke PASS: three trips, chat, duplicate, map interactions, mobile, failures, expiry and delivery retry. No external requests.')
 
