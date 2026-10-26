@@ -6,6 +6,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import tempfile
 from unittest.mock import patch
@@ -16,10 +17,13 @@ REPO = "piotrbarabasz/tripse-ai-demo"
 
 
 def command(args):
+    executable = shutil.which(args[0])
+    if executable is None:
+        raise ValueError("Required operator CLI not found on PATH; install gh/gcloud as appropriate.")
     try:
-        result = subprocess.run(args, capture_output=True, check=False)
+        result = subprocess.run([executable, *args[1:]], capture_output=True, check=False)
     except OSError:
-        raise ValueError("Required operator CLI unavailable; install gh/gcloud as appropriate.") from None
+        raise ValueError("Required operator CLI was found but could not be started; check its installation and executable access.") from None
     if result.returncode:
         if args[0] == "gh":
             raise ValueError("GitHub configuration unavailable: verify gh authentication and repository Environment/variable read visibility; no settings changed. See docs/CICD_BOOTSTRAP.md.")

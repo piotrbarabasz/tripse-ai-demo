@@ -17,6 +17,59 @@ def settings(environment="dev", mode="cloud_demo"):
                                       "EXPECTED_CLOUD_FEATURE_MODE": mode}
 
 
+@pytest.mark.parametrize("program,executable", [
+    ("gcloud", r"C:\Program Files\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.CMD"),
+    ("gh", r"C:\Program Files\GitHub CLI\gh.exe"),
+    ("gcloud", "/opt/google-cloud-sdk/bin/gcloud"),
+    ("gh", "/usr/bin/gh"),
+])
+def test_command_resolves_cli_and_preserves_arguments(monkeypatch, program, executable):
+    lookups, calls = [], []
+    def which(name):
+        lookups.append(name)
+        return executable
+    def run(args, **kwargs):
+        calls.append((args, kwargs))
+        return subprocess.CompletedProcess(args, 0, stdout=b'{"ready": true}')
+    monkeypatch.setattr(bootstrap.shutil, "which", which)
+    monkeypatch.setattr(bootstrap.subprocess, "run", run)
+    args = [program, "describe", "name with spaces", "--format=json"]
+    assert bootstrap.command(args) == {"ready": True}
+    assert lookups == [program]
+    assert calls == [([executable, *args[1:]], {"capture_output": True, "check": False})]
+    assert args[0] == program  # Caller arguments are not mutated.
+
+
+@pytest.mark.parametrize("program", ["gh", "gcloud"])
+def test_command_missing_cli_fails_before_process_launch(monkeypatch, program):
+    monkeypatch.setattr(bootstrap.shutil, "which", lambda _: None)
+    monkeypatch.setattr(bootstrap.subprocess, "run", lambda *a, **k: pytest.fail("CLI must not start"))
+    with pytest.raises(ValueError, match="not found on PATH"):
+        bootstrap.command([program, "--format=json"])
+
+
+@pytest.mark.parametrize("program,diagnostic", [("gh", "GitHub configuration unavailable"),
+                                               ("gcloud", "GCP bootstrap MISSING/INACCESSIBLE")])
+def test_command_nonzero_exit_preserves_cli_diagnostic_without_output_leak(monkeypatch, program, diagnostic):
+    monkeypatch.setattr(bootstrap.shutil, "which", lambda _: "/resolved/" + program)
+    monkeypatch.setattr(bootstrap.subprocess, "run", lambda *a, **k:
+                        subprocess.CompletedProcess(a[0], 1, stdout=b"private-output", stderr=b"private-credential"))
+    with pytest.raises(ValueError, match=diagnostic) as error:
+        bootstrap.command([program, "describe"])
+    assert "private-output" not in str(error.value) and "private-credential" not in str(error.value)
+    assert "not found" not in str(error.value)
+
+
+def test_command_start_failure_is_distinct_from_missing_cli_and_api_failure(monkeypatch):
+    monkeypatch.setattr(bootstrap.shutil, "which", lambda _: "/resolved/gcloud")
+    def run(*args, **kwargs):
+        raise OSError("private system details")
+    monkeypatch.setattr(bootstrap.subprocess, "run", run)
+    with pytest.raises(ValueError, match="found but could not be started") as error:
+        bootstrap.command(["gcloud", "describe"])
+    assert "private system details" not in str(error.value)
+
+
 @pytest.mark.parametrize("key", REQUIRED)
 @pytest.mark.parametrize("value", [None, "", " \t\n"])
 def test_missing_environment_settings_are_actionable_and_do_not_print_values(key, value):
