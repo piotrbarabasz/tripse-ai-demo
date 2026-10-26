@@ -19,6 +19,7 @@ import zipfile
 
 from scripts.gcp import deployment as d
 from scripts.gcp.deployment_contract import FIELDS, ROOT, image_tag, load_pair
+from scripts.gcp.ci_config import validate as validate_environment, failure_summary
 
 REPOSITORY = "piotrbarabasz/tripse-ai-demo"
 WORKFLOW = ".github/workflows/delivery.yml"
@@ -27,10 +28,9 @@ DIGEST = re.compile(r"sha256:[a-f0-9]{64}")
 
 
 def config_from_environment(environment, directory):
-    values = json.loads(os.environ.get("DEPLOY_CONFIG_JSON", "{}"))
-    expected = os.environ.get("EXPECTED_CLOUD_FEATURE_MODE")
-    if not isinstance(values, dict) or expected not in {"readonly_demo", "cloud_demo"}:
-        raise ValueError("Set explicit DEPLOY_CONFIG_JSON and EXPECTED_CLOUD_FEATURE_MODE environment variables")
+    values = validate_environment(environment)
+    expected = os.environ["EXPECTED_CLOUD_FEATURE_MODE"]
+    os.environ["GCP_SMOKE_ACCOUNT"] = os.environ["CI_PROBE_ACCOUNT"]
     for key, value in {"GCP_PROJECT_ID": "tripse-ai", "GCP_REGION": "europe-central2",
                        "GCP_SERVICE_NAME": f"tripse-ai-{environment}", "APP_ENV": environment,
                        "CLOUD_FEATURE_MODE": expected, "PLANNING_MODE": "mock"}.items():
@@ -47,7 +47,10 @@ def config_from_environment(environment, directory):
                    CLOUD_FEATURE_MODE="readonly_demo", GCP_PUBLIC_ACCESS="false")
     for name, data in ((environment, values), (other, sibling)):
         (directory / f".env.{name}").write_text("".join(f"{k}={v}\n" for k, v in sorted(data.items())), encoding="utf-8")
-    config = load_pair(environment, directory)
+    try:
+        config = load_pair(environment, directory)
+    except ValueError:
+        raise ValueError("Invalid runtime schema: deployment contract rejected configuration. Review the environment template and docs/GITHUB_CICD.md.") from None
     if expected == "cloud_demo":
         settings = config.demo_settings()
         probe = os.environ.get("GCP_SMOKE_ACCOUNT", "")
@@ -82,6 +85,10 @@ def prerequisites(g):
     if c["CLOUD_FEATURE_MODE"] == "readonly_demo":
         return current
     settings = c.demo_settings()
+    for identity in (c.runtime_account, f"tripse-ai-{c['APP_ENV']}-ci-probe@tripse-ai.iam.gserviceaccount.com"):
+        account = g("iam", "service-accounts", "describe", identity, json_output=True)
+        if account.get("email") != identity or account.get("disabled", False):
+            raise ValueError("Dedicated runtime or CI probe account unavailable")
     bucket = g("storage", "buckets", "describe", "gs://" + settings.bucket, json_output=True)
     iam = bucket.get("iamConfiguration", {})
     pap = bucket.get("public_access_prevention", iam.get("publicAccessPrevention"))
@@ -324,6 +331,9 @@ def execute():
         or (environment == "prod" and (ref != "refs/heads/master" or operation == "dev"))
         or (environment == "dev" and operation == "promote")):
         raise ValueError("Event, ref or deployment target is not permitted")
+    if event == "push" and (ref not in {"refs/heads/dev", "refs/heads/master"}
+                            or os.getenv("CI_RELEASE_SHA") not in {None, "", os.getenv("GITHUB_SHA")}):
+        raise ValueError("Automatic deployment requires dev/master and the exact pushed commit SHA")
     if operation != "dev" and event != "workflow_dispatch" and not (operation == "promote" and ref == "refs/heads/master"):
         raise ValueError("Rollback is manual; promotion requires a master release")
     directory = Path(os.environ["RUNNER_TEMP"]) / "tripse-deployment"
@@ -342,8 +352,21 @@ def execute():
     g = d.Gcloud(config)
     proof = release_proof(environment if operation == "rollback" else "dev", sha,
                           config["CLOUD_FEATURE_MODE"], production=environment == "prod") if operation != "dev" else None
-    d.online_preflight(g, "build" if operation == "dev" else "deploy")
-    current = prerequisites(g)
+    try:
+        if not g("auth", "print-access-token"):
+            raise ValueError("No usable runner credential")
+    except (ValueError, d.CommandError):
+        raise ValueError("IAM/WIF authentication error: runner cannot obtain a short-lived access token. Review environment trust and impersonation bindings; no deployment attempted.") from None
+    try:
+        d.online_preflight(g, "build" if operation == "dev" else "deploy")
+    except (ValueError, d.CommandError):
+        raise ValueError("GCP preflight blocked: check WIF authentication/IAM, enabled APIs and reviewed GCP bootstrap. See docs/GITHUB_CICD.md; no application deployment attempted.") from None
+    try:
+        current = prerequisites(g)
+    except d.CommandError:
+        raise ValueError("GCP bootstrap check failed: resource missing or metadata IAM denied. Review private resources and probe access in docs/GITHUB_CICD.md; no application deployment attempted.") from None
+    except ValueError as exc:
+        raise ValueError("GCP bootstrap blocked: " + str(exc) + ". See docs/GITHUB_CICD.md; no application deployment attempted.") from None
     fresh(current, int(os.environ["GITHUB_RUN_NUMBER"]))
     # A delayed push from an obsolete branch head must not deploy after a newer
     # push; a manual dispatch is the explicit way to select an older SHA.
@@ -395,6 +418,7 @@ def execute():
         with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as stream:
             stream.write(f"sha={sha}\ndigest={selected_digest}\n")
     except Exception:
+        record["failure_stage"] = "Application deployment or deployed acceptance failed; release not accepted"
         try:
             restore(g, previous)
             record["recovery"] = "Previous traffic and health verified; access retained private. Deployment FAILED."
@@ -426,12 +450,16 @@ def offline():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=["offline", "configure", "execute"])
+    parser.add_argument("--basic", action="store_true", help="Dependency-free configuration check only")
     args = parser.parse_args()
     try:
         if args.action == "offline":
             offline()
         elif args.action == "configure":
-            config_from_environment(os.environ["CI_TARGET_ENV"], Path(os.environ["RUNNER_TEMP"]) / "tripse-deployment/config")
+            if args.basic:
+                validate_environment(os.environ["CI_TARGET_ENV"])
+            else:
+                config_from_environment(os.environ["CI_TARGET_ENV"], Path(os.environ["RUNNER_TEMP"]) / "tripse-deployment/config")
             print("Explicit target and runtime configuration validated; no cloud credentials requested")
         else:
             execute()
@@ -439,6 +467,8 @@ def main():
         # Do not dump HTTP Request objects, external-account credentials or raw
         # cloud response bodies. Known validation messages contain no values.
         message = str(exc) if isinstance(exc, (ValueError, d.CommandError)) else type(exc).__name__
+        if args.action == "configure":
+            failure_summary(message)
         print("CI blocked: " + message, file=sys.stderr)
         raise SystemExit(1) from None
 

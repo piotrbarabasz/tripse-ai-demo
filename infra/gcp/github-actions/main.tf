@@ -53,7 +53,7 @@ resource "google_iam_workload_identity_pool_provider" "github" {
     local.base_condition,
     "assertion.sub == 'repo:${local.repository}:environment:${local.gh_env[each.key]}'",
     "assertion.environment == '${local.gh_env[each.key]}'",
-    each.key == "prod" ? "assertion.ref == 'refs/heads/master'" : "assertion.ref.startsWith('refs/heads/')",
+    each.key == "prod" ? "assertion.ref == 'refs/heads/master'" : "((assertion.event_name == 'push' && assertion.ref in ['refs/heads/dev', 'refs/heads/master']) || (assertion.event_name == 'workflow_dispatch' && assertion.ref.startsWith('refs/heads/')))",
     "assertion.workflow_ref == '${local.repository}/.github/workflows/delivery.yml@' + assertion.ref"
   ])
   oidc { issuer_uri = "https://token.actions.githubusercontent.com" }

@@ -34,7 +34,7 @@ GitHub acceptance proof and independently protected PROD.
 ## 3. Decision
 
 Use reusable unprivileged `ci.yml` for PRs and Delivery's test dependency.
-`delivery.yml` handles all branch pushes and explicit deploy/promote/rollback
+`delivery.yml` handles dev/master pushes and explicit deploy/promote/rollback
 dispatches. PROD is master-only, a protected GitHub environment and a separate
 restricted WIF identity. Pushes execute trusted repository code on DEV; fork PRs
 never receive cloud identity. Actions are pinned to full upstream SHAs.
@@ -54,7 +54,15 @@ Keep one cross-branch DEV lock through acceptance/artifact upload and reject sta
 sequence/head runs. Freeze tested SHA/digest/mode/revision/run provenance in an
 immutable artifact. PROD verifies trusted master workflow/job evidence, digest
 and branch ancestry, then deploys that exact image without building. DEV can move
-to another feature release during approval without changing the frozen proof.
+to another dev release during approval without changing the frozen proof.
+
+CI-CD-FIX-002 narrows automatic DEV delivery to dev/master, while keeping explicit
+manual branch deployment. GCP trust enforces the same push restriction. Validate
+all five GitHub Environment settings with a dependency-free check before package
+installation and authentication, then run the full runtime schema. An operator-only
+read-only bootstrap checker and exclusively created local nonsecret config bundle
+make setup reviewable; neither helper provisions GitHub/WIF/resources. Terraform
+application/IAM and GitHub approval protection remain separate manual gates.
 
 ## 4. Rationale and evidence
 
@@ -107,3 +115,4 @@ automated data migration/restore require renewed design and acceptance.
 | Date | Author | Change | Task |
 |---|---|---|---|
 | 2026-10-26 | Codex | Proposed WIF delivery and tested-release evidence; no activation | GITHUB-CICD-001 |
+| 2026-10-26 | Codex | Narrow automatic pushes to dev/master; early safe config diagnostics and operator bootstrap/check; no remote mutation | CI-CD-FIX-002 |

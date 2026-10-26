@@ -8,10 +8,17 @@ import yaml
 
 from scripts.gcp import ci, deployment as d, smoke_auth
 from scripts.gcp.deployment_contract import Config, ROOT
+from scripts.gcp.ci_config import identities
 
 SHA = "a" * 40
 IMAGE_DIGEST = "sha256:" + "b" * 64
 ORIGIN = "https://tripse-ai-dev-example.run.app"
+
+
+@pytest.fixture(autouse=True)
+def reviewed_ci_identity_settings(monkeypatch):
+    for key, value in identities("dev").items():
+        monkeypatch.setenv(key, value)
 
 
 def values(environment="dev", mode="readonly_demo"):
@@ -41,7 +48,7 @@ def test_workflows_events_credentials_and_environment_boundaries():
     assert "pull_request_target" not in checks["on"] | delivery["on"]
     assert checks["permissions"] == {"contents": "read"}
     assert not any("auth@" in step.get("uses", "") for step in checks["jobs"]["checks"]["steps"])
-    assert delivery["on"]["push"]["branches"] == ["**"]
+    assert delivery["on"]["push"]["branches"] == ["dev", "master"]
     assert delivery["jobs"]["dev"]["concurrency"] == {"group": "tripse-dev-global", "cancel-in-progress": "false"}
     assert delivery["jobs"]["prod"]["concurrency"]["group"] == "tripse-prod-global"
     prod = delivery["jobs"]["prod"]
@@ -280,7 +287,7 @@ def test_wif_bootstrap_requires_exact_repo_environment_event_and_prod_ref():
 
 
 @pytest.mark.parametrize("failure", [None, "public_bucket", "unbounded_retry", "missing_minter", "unscoped_database",
-    "iap_disabled", "wrong_origin", "missing_probe", "missing_oauth", "probe_denied"])
+    "iap_disabled", "wrong_origin", "missing_probe", "missing_oauth", "probe_denied", "runtime_disabled", "probe_disabled"])
 def test_concrete_cloud_prerequisites_are_read_only_and_fail_closed(monkeypatch, failure):
     config = Config(values(mode="cloud_demo"))
     settings = config.demo_settings()
@@ -311,6 +318,10 @@ def test_concrete_cloud_prerequisites_are_read_only_and_fail_closed(monkeypatch,
     calls = []
     def g(*args, **kwargs):
         calls.append(args)
+        if args[:3] == ("iam", "service-accounts", "describe") and args[3] != settings.task_account:
+            return {"email": args[3], "disabled":
+                    (failure == "runtime_disabled" and args[3] == config.runtime_account) or
+                    (failure == "probe_disabled" and "ci-probe@" in args[3])}
         key = {("storage", "buckets", "describe"): "bucket", ("storage", "buckets", "get-iam-policy"): "bucket_iam",
                ("firestore", "databases", "describe"): "db", ("tasks", "queues", "describe"): "queue",
                ("tasks", "queues", "get-iam-policy"): "queue_iam", ("iam", "service-accounts", "describe"): "account",

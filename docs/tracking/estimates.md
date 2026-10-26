@@ -111,3 +111,14 @@ or billed amounts are available. Budget Actions/browser minutes/artifact retenti
 Cloud Build/Registry, synthetic DEV GCS/Firestore/Tasks traffic, backups, IAM/OAuth
 maintenance and incident recovery. Do not conflate every-push testing/build cost
 with application traffic or assume that mock planning makes infrastructure free.
+
+### CI-CD-FIX-002 — 2026-10-26
+
+Early dependency-free config validation, operator read-only metadata checks and
+nonsecret bundle preparation reduce wasted runner setup on missing configuration.
+Automatic cloud delivery is limited to dev/master. Remaining operator work:
+GitHub Environment variables/reviewers/branch rules, separate reviewed WIF/IAM and
+private app resource bootstrap, first real DEV/master acceptance and recovery
+drills. See [Windows setup](../CICD_BOOTSTRAP.md) and ADR-0012. No measured hours,
+cost or savings; expected cost categories remain Actions/build/registry, synthetic
+GCS/Firestore/Tasks traffic, runtime, retention/backups and IAM/IAP maintenance.
