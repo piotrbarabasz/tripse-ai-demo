@@ -25,3 +25,4 @@ local-data/
 *.tfstate.*
 *.tfvars
 *.tfplan
+gha-creds-*.json

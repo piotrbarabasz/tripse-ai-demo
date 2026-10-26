@@ -19,6 +19,7 @@ task opisuje pracę, a [worklog](../tracking/worklog.csv) jej udokumentowany prz
 | [ADR-0009](0009-cloud-run-readonly-preview.md) | Cloud Run DEV/PROD jako bezstanowy podgląd tylko do odczytu | superseded | ADR-0011 extends cloud functionality; readonly_demo retained |
 | [ADR-0010](0010-cloud-run-public-access.md) | Publiczny Cloud Run przez wyłączenie kontroli IAM invokera | proposed | Kod i testy offline; bez zmian GCP |
 | [ADR-0011](0011-authenticated-cloud-demo.md) | Shared authenticated cloud_demo with GCS and Firestore/Tasks | proposed | Offline implementation and parity tests; no GCP deployment |
+| [ADR-0012](0012-github-actions-delivery.md) | GitHub Actions, WIF and immutable DEV acceptance before PROD | proposed | Workflows/scripts tested locally; operator bootstrap and real runner acceptance pending |
 
 ADR-0001–0007 sporządzono retrospektywnie 25.10.2026. Kod potwierdza
 implementację, ale dostępne repozytorium nie zawiera jednoznacznej akceptacji
@@ -35,7 +36,7 @@ Powiązane aspekty jednej decyzji można połączyć, jak FastAPI i izolację mo
 
 ## Numeracja i metadane
 
-- Następny wolny numer: **ADR-0012**. Sprawdź rejestr i pliki przed nadaniem numeru;
+- Następny wolny numer: **ADR-0013**. Sprawdź rejestr i pliki przed nadaniem numeru;
   po dodaniu wpisu zaktualizuj tę wskazówkę. Nie używaj ponownie opublikowanego numeru.
 - Plik: `0011-short-decision-name.md`; nagłówek i YAML: `ADR-0011`.
 - Skopiuj [szablon](template.md). Wypełnij wszystkie dziewięć sekcji.

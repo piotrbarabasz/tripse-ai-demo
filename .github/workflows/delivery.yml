@@ -1,0 +1,159 @@
+name: Delivery
+
+on:
+  push:
+    branches: ['**']
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: DEV deploy, master release promotion, or accepted-release rollback
+        type: choice
+        options: [dev, promote, rollback]
+        default: dev
+      target_environment:
+        description: Rollback target (promotion always targets PROD)
+        type: choice
+        options: [dev, prod]
+        default: dev
+      release_sha:
+        description: Full commit SHA; empty only for DEV deployment of this workflow commit
+        type: string
+      evidence_run_id:
+        description: Accepted DEV run for promotion; accepted target-environment run for rollback
+        type: string
+      evidence_artifact_id:
+        description: Immutable GitHub artifact ID from that successful deployment job
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  dev:
+    name: DEV deployment
+    needs: ci
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (inputs.operation == 'dev' ||
+        (inputs.operation == 'rollback' && inputs.target_environment == 'dev')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    environment: development
+    # One mutex for every feature/master/manual DEV deployment AND acceptance.
+    concurrency:
+      group: tripse-dev-global
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    outputs:
+      sha: ${{ steps.release.outputs.sha }}
+      digest: ${{ steps.release.outputs.digest }}
+      artifact_id: ${{ steps.proof.outputs.artifact-id }}
+    env:
+      DEPLOY_CONFIG_JSON: ${{ vars.DEPLOY_CONFIG_JSON }}
+      EXPECTED_CLOUD_FEATURE_MODE: ${{ vars.EXPECTED_CLOUD_FEATURE_MODE }}
+      DEPLOY_SERVICE_ACCOUNT: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
+      GCP_SMOKE_ACCOUNT: ${{ vars.CI_PROBE_ACCOUNT }}
+      GH_TOKEN: ${{ github.token }}
+      CI_OPERATION: ${{ inputs.operation || 'dev' }}
+      CI_TARGET_ENV: dev
+      CI_RELEASE_SHA: ${{ inputs.release_sha || github.sha }}
+      CI_EVIDENCE_RUN_ID: ${{ inputs.evidence_run_id }}
+      CI_EVIDENCE_ARTIFACT_ID: ${{ inputs.evidence_artifact_id }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - run: make install-dev
+      - run: .venv/bin/python -m playwright install --with-deps chromium
+      - name: Validate target configuration before requesting credentials
+        run: .venv/bin/python -m scripts.gcp.ci configure
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          project_id: tripse-ai
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
+      - name: Build, deploy and accept exact DEV image
+        id: release
+        run: make gcp-ci PYTHON=.venv/bin/python
+      - name: Record accepted immutable release
+        id: proof
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: dev-accepted-${{ steps.release.outputs.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/tripse-deployment/release.json
+          if-no-files-found: error
+          retention-days: 90
+
+  prod:
+    name: PROD deployment
+    needs: [ci, dev]
+    if: >-
+      always() && needs.ci.result == 'success' && github.ref == 'refs/heads/master' &&
+      ((github.event_name == 'push' && needs.dev.result == 'success') ||
+       (github.event_name == 'workflow_dispatch' &&
+        (inputs.operation == 'promote' ||
+         (inputs.operation == 'rollback' && inputs.target_environment == 'prod'))))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    # Configure required reviewers + master-only branches in GitHub settings.
+    environment: production
+    concurrency:
+      group: tripse-prod-global
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    env:
+      DEPLOY_CONFIG_JSON: ${{ vars.DEPLOY_CONFIG_JSON }}
+      EXPECTED_CLOUD_FEATURE_MODE: ${{ vars.EXPECTED_CLOUD_FEATURE_MODE }}
+      DEPLOY_SERVICE_ACCOUNT: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
+      GCP_SMOKE_ACCOUNT: ${{ vars.CI_PROBE_ACCOUNT }}
+      GH_TOKEN: ${{ github.token }}
+      CI_OPERATION: ${{ inputs.operation || 'promote' }}
+      CI_TARGET_ENV: prod
+      CI_RELEASE_SHA: ${{ needs.dev.outputs.sha || inputs.release_sha }}
+      CI_EVIDENCE_RUN_ID: ${{ github.event_name == 'push' && github.run_id || inputs.evidence_run_id }}
+      CI_EVIDENCE_ARTIFACT_ID: ${{ needs.dev.outputs.artifact_id || inputs.evidence_artifact_id }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - run: make install-dev
+      - name: Validate target configuration before requesting credentials
+        run: .venv/bin/python -m scripts.gcp.ci configure
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          project_id: tripse-ai
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
+      - name: Verify accepted evidence and promote without rebuilding
+        id: release
+        run: make gcp-ci PYTHON=.venv/bin/python
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: prod-accepted-${{ steps.release.outputs.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/tripse-deployment/release.json
+          if-no-files-found: error
+          retention-days: 90

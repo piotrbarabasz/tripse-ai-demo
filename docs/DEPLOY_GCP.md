@@ -1,5 +1,12 @@
 # TRIPSE Cloud Run — ręczne DEV i PROD
 
+GITHUB-CICD-001 (2026-10-26): [GitHub delivery/bootstrap and recovery](GITHUB_CICD.md)
+adds branch DEV deployment and protected master promotion using WIF, dedicated
+probe identities and immutable accepted digest evidence. Existing Make targets
+remain available. Workflows do not provision application resources or silently
+select readonly_demo. No IAM changes, activation or deployment was performed
+during implementation. Real Actions/IAP acceptance remains an operator gate.
+
 ## CLOUD-PARITY-001 — opt-in authenticated demo (2026-10-26)
 
 Prepared offline; **no GCP resources or deployed services were changed**. The

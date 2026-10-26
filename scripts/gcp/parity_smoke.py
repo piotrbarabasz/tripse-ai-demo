@@ -94,6 +94,7 @@ class Acceptance:
         self.wait(expired["trip_id"], expired=True)
         self.call("/api/viewer/invalid", expected=404)
         print(f"DEV synthetic trip for restart/read-back check: {trip.trip_id}")
+        return {"trip_id": trip.trip_id, "campaign_id": campaign["campaign_id"], "asset_id": asset["asset_id"]}
 
     def wait(self, trip_id, *, expired=False):
         for _ in range(60):

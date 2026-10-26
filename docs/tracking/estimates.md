@@ -99,3 +99,15 @@ OpenAI/Places/Routes remain disabled and need a separate LIVE budget/quotas,
 admission rate limits, timeout review and deployment work. WAHA sessions/Business
 Platform are separate integration work. Use measured DEV traffic, billing export
 and approved retention/RPO/RTO to estimate these; do not assume free tiers apply.
+
+### GITHUB-CICD-001 — 2026-10-26
+
+Prepared GitHub CI/Delivery, WIF identity definitions, noninteractive keyless IAP
+probes, immutable acceptance evidence, shared-DEV freshness protection and private
+traffic recovery. Remaining work is operator bootstrap, environment reviewers/
+branch rules and real runner/DEV/PROD acceptance; local checks do not establish
+those boundaries. See [runbook](../GITHUB_CICD.md) and ADR-0012. No measured hours
+or billed amounts are available. Budget Actions/browser minutes/artifact retention,
+Cloud Build/Registry, synthetic DEV GCS/Firestore/Tasks traffic, backups, IAM/OAuth
+maintenance and incident recovery. Do not conflate every-push testing/build cost
+with application traffic or assume that mock planning makes infrastructure free.

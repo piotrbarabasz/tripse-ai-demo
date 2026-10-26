@@ -79,14 +79,22 @@ def check_permissions(g, permissions):
 
 
 def online_preflight(g, action):
-    if not g("auth", "list", "--filter=status:ACTIVE", "--format=value(account)"):
-        raise ValueError("No active gcloud account")
+    # WIF uses external-account credentials, not an interactive gcloud login.
+    if not g("auth", "print-access-token"):
+        raise ValueError("No usable gcloud credentials")
     project = g("projects", "describe", g.config["GCP_PROJECT_ID"], json_output=True)
     if project.get("lifecycleState") != "ACTIVE":
         raise ValueError("Project must be ACTIVE with billing enabled by the operator")
     if g.config["CLOUD_FEATURE_MODE"] == "cloud_demo" and str(project.get("projectNumber")) != g.config["GCP_PROJECT_NUMBER"]:
         raise ValueError("IAP project number does not match the selected GCP project")
     permissions = ["resourcemanager.projects.get"]
+    if os.getenv("GCP_CI") == "1":
+        permissions += ["run.services.list", "artifactregistry.repositories.list"]
+        if action == "build":
+            permissions += ["cloudbuild.builds.create"]
+        check_region(g)
+        check_permissions(g, permissions)
+        return
     if action == "setup":
         permissions += ["serviceusage.services.enable", "artifactregistry.repositories.create", "iam.serviceAccounts.create", "resourcemanager.projects.setIamPolicy"]
     else:
@@ -278,16 +286,25 @@ def deployed_state(g, sha):
     conditions = deployed.get("status", {}).get("conditions", [])
     if not any(x.get("type") == "Ready" and x.get("status") == "True" for x in conditions):
         raise ValueError("Cloud Run service is not Ready")
+    status = deployed["status"]
+    revision = status.get("latestReadyRevisionName")
+    traffic = [t for t in status.get("traffic", []) if t.get("percent", 0)]
+    if not revision or status.get("latestCreatedRevisionName") != revision or len(traffic) != 1 or traffic[0].get("revisionName") != revision or traffic[0].get("percent") != 100:
+        raise ValueError("Requested READY revision is not receiving all traffic")
+    actual = g("run", "revisions", "describe", revision, f'--region={c["GCP_REGION"]}', json_output=True)
+    if actual.get("status", {}).get("imageDigest") != f"{c.image}@{expected_digest}":
+        raise ValueError("Traffic revision digest differs from requested image")
     return {"environment": c["APP_ENV"], "project": c["GCP_PROJECT_ID"], "region": c["GCP_REGION"],
             "service": c["GCP_SERVICE_NAME"], "url": validate_url(deployed["status"]["url"]),
-            "image_sha": sha, "image_digest": expected_digest}
+            "image_sha": sha, "image_digest": expected_digest, "revision": revision, "traffic": traffic,
+            "feature_mode": c["CLOUD_FEATURE_MODE"]}
 
 
 def deploy(g, sha):
     if g.config["CLOUD_FEATURE_MODE"] == "cloud_demo":
         # Require smoke credentials before the first mutation. OAuth/IAP setup
         # remains an explicit operator step; never silently publish this mode.
-        if not os.getenv("CLOUD_DEMO_SMOKE_TOKEN"):
+        if not (os.getenv("CLOUD_DEMO_SMOKE_TOKEN") or os.getenv("GCP_SMOKE_ACCOUNT")):
             raise ValueError("cloud_demo deployment requires CLOUD_DEMO_SMOKE_TOKEN from the approved IAP OAuth flow")
     c = g.config
     files = check_release_source(sha)
@@ -312,6 +329,12 @@ def deploy(g, sha):
         env_path.write_text(json.dumps(c.runtime(sha)), encoding="utf-8")
         secret_ref = c.values.get("GCP_BROWSER_MAPS_SECRET")
         secret_flags = ["--set-secrets=GOOGLE_MAPS_BROWSER_KEY=" + secret_ref.replace("/versions/", ":")] if secret_ref else ["--clear-secrets"]
+        labels = "--labels=app=tripse-ai,managed-by=tripse-scripts,environment=" + c["APP_ENV"]
+        if os.getenv("GCP_CI") == "1":
+            sequence = os.getenv("GITHUB_RUN_NUMBER", "")
+            if not re.fullmatch(r"[1-9][0-9]*", sequence):
+                raise ValueError("CI deployment requires a workflow sequence")
+            labels += ",github-workflow=delivery-v1,github-run-number=" + sequence
         g("run", "deploy", c["GCP_SERVICE_NAME"], f"--image={pinned}", f'--region={c["GCP_REGION"]}',
           "--port=8000", f"--service-account={c.runtime_account}", f"--env-vars-file={env_path}",
           f'--min-instances={c["GCP_MIN_INSTANCES"]}', f'--max-instances={c["GCP_MAX_INSTANCES"]}',
@@ -319,7 +342,7 @@ def deploy(g, sha):
           f'--cpu={c["GCP_CPU"]}', f'--memory={c["GCP_MEMORY"]}', "--cpu-throttling", "--concurrency=16", "--timeout=60",
           "--ingress=all", *secret_flags, "--clear-volumes", "--clear-volume-mounts",
           "--command=", "--args=",
-          "--labels=app=tripse-ai,managed-by=tripse-scripts,environment=" + c["APP_ENV"],
+          labels,
           "--startup-probe=httpGet.path=/health,httpGet.port=8000,initialDelaySeconds=0,timeoutSeconds=2,periodSeconds=5,failureThreshold=12",
           "--no-allow-unauthenticated", *(["--iap"] if c["CLOUD_FEATURE_MODE"] == "cloud_demo" else ["--no-iap"]))
     g("run", "services", "update-traffic", c["GCP_SERVICE_NAME"], f'--region={c["GCP_REGION"]}', "--to-latest")
@@ -371,7 +394,11 @@ def smoke(g, state, *, private=False):
         return cloud_demo_smoke(g, state)
     headers = {}
     if private or c["GCP_PUBLIC_ACCESS"] == "false":
-        token = g("auth", "print-identity-token")
+        if os.getenv("GCP_SMOKE_ACCOUNT"):
+            from scripts.gcp.smoke_auth import probe_token
+            token = probe_token(g, state["url"], iap=False)
+        else:
+            token = g("auth", "print-identity-token")
         if not token:
             raise ValueError("Private smoke requires an identity token")
         headers["Authorization"] = "Bearer " + token
@@ -408,7 +435,11 @@ def smoke(g, state, *, private=False):
 
 def cloud_demo_smoke(g, state):
     """Read-only authenticated acceptance; no fixture writes or paid operations."""
-    token = os.getenv("CLOUD_DEMO_SMOKE_TOKEN")
+    if os.getenv("GCP_SMOKE_ACCOUNT"):
+        from scripts.gcp.smoke_auth import probe_token
+        token = probe_token(g, state["url"], iap=True)
+    else:
+        token = os.getenv("CLOUD_DEMO_SMOKE_TOKEN")
     if not token:
         raise ValueError("Set CLOUD_DEMO_SMOKE_TOKEN in the shell, never in deployment dotenv")
     origin = g.config["PUBLIC_BASE_URL"]
@@ -509,7 +540,8 @@ def main(argv=None):
             raise ValueError("Artifact Registry missing; run setup first")
         service(g)
         check_act_as(g, c.runtime_account)
-        check_act_as(g, c.build_account)
+        if os.getenv("GCP_CI") != "1" or c["APP_ENV"] == "dev":
+            check_act_as(g, c.build_account)
         if args.image_tag:
             check_release_source(sha)
             digest(g, sha)

@@ -1,5 +1,11 @@
 # CLOUD-PARITY-001 — audit and delivery matrix
 
+GITHUB-CICD-001 update (2026-10-26): CI/CD now has prepared workflows, explicit
+mode/resource/IAP gates, keyless probes and recorded deployed acceptance before
+PROD. See [GitHub runbook](GITHUB_CICD.md) and [ADR-0012](adr/0012-github-actions-delivery.md).
+This does not close the existing real-GCP parity, IAM, restart/restore or LIVE
+gates. No deployment was performed in the CI/CD implementation task.
+
 Date: 2026-10-26. Evidence: this checkout, not a live inspection of GCP.
 Existing DEV/PROD configuration selects `readonly_demo`; deployed revisions,
 IAM, billing and data durability have not been independently verified.

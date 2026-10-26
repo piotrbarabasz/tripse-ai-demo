@@ -57,6 +57,7 @@ GCP Deployment (delegates to scripts/gcp/deployment.py):
   gcp-smoke        ENV=dev|prod [TAG=SHA]; PROD requires TAG, default ENV=dev
   gcp-rollback     ENV=dev|prod TAG=SHA CONFIRM=rollback
   gcp-dry-run      ENV=dev|prod [TAG=SHA]; default ENV=dev, PROD requires TAG
+  gcp-ci           GitHub release coordinator (explicit CI environment required)
 Maintenance:
   clean            Only Python/test caches outside user data; no .env/DB/volumes/assets
 
@@ -102,6 +103,9 @@ demo-hub demo-docs demo-planner demo-whatsapp:
 gcp-preflight gcp-setup gcp-build deploy-dev deploy-prod gcp-smoke gcp-rollback gcp-dry-run:
 	@"$(PYTHON)" scripts/dev.py $@
 
+gcp-ci:
+	@"$(PYTHON)" -m scripts.gcp.ci execute
+
 # 8. Maintenance / Configuration
 clean doctor:
 	@"$(PYTHON)" scripts/dev.py $@
@@ -110,4 +114,4 @@ clean doctor:
  docker-up docker-down docker-build docker-logs docker-ps docker-restart docker-mock docker-waha \
  test test-unit test-browser test-container test-all check \
  demo-hub demo-docs demo-planner demo-whatsapp \
- gcp-preflight gcp-setup gcp-build deploy-dev deploy-prod gcp-smoke gcp-rollback gcp-dry-run clean
+ gcp-preflight gcp-setup gcp-build deploy-dev deploy-prod gcp-smoke gcp-rollback gcp-dry-run gcp-ci clean

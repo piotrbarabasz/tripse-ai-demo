@@ -21,3 +21,4 @@ tests/**
 docs/**
 scripts/**
 infra/**
+gha-creds-*.json
