@@ -20,14 +20,15 @@ class CloudSettings:
     environment: str
     version: str
     service: str
+    mode: str = "readonly_demo"
 
     @classmethod
     def from_env(cls):
         mode = os.getenv("CLOUD_FEATURE_MODE", "local")
         if mode == "local" and not os.getenv("K_SERVICE"):
             return None
-        if mode != "readonly_demo" or os.getenv("PLANNING_MODE") != "mock":
-            raise ValueError("Cloud Run requires CLOUD_FEATURE_MODE=readonly_demo and PLANNING_MODE=mock")
+        if mode not in {"readonly_demo", "cloud_demo"} or os.getenv("PLANNING_MODE") != "mock":
+            raise ValueError("Cloud Run requires readonly_demo or cloud_demo and PLANNING_MODE=mock")
         environment = os.getenv("APP_ENV", "")
         if environment not in {"dev", "prod"}:
             raise ValueError("Cloud preview requires APP_ENV=dev or prod")
@@ -36,14 +37,14 @@ class CloudSettings:
             raise ValueError("Cloud service does not match APP_ENV")
         if any(os.getenv(key) for key in (
             "OPENAI_API_KEY", "GOOGLE_MAPS_API_KEY", "GOOGLE_PLACES_API_KEY", "GOOGLE_ROUTES_API_KEY",
-            "WAHA_API_KEY", "WAHA_WEBHOOK_SECRET",
+            "WAHA_API_KEY", "WAHA_WEBHOOK_SECRET", "WAHA_WEBHOOK_HMAC_KEY",
         )):
-            raise ValueError("Provider credentials are forbidden in readonly_demo")
+            raise ValueError("Server provider credentials are forbidden in cloud mock modes")
         version = VERSION_FILE.read_text(encoding="utf-8").strip() if VERSION_FILE.exists() else "unversioned"
         expected = os.getenv("EXPECTED_IMAGE_SHA")
         if os.getenv("K_SERVICE") and (not re.fullmatch(r"[0-9a-f]{40}", version) or expected != version):
             raise ValueError("Cloud image must contain the expected commit SHA")
-        return cls(environment, version, service)
+        return cls(environment, version, service, mode)
 
 
 def page(title, content):

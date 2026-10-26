@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, Response
 from pydantic import Field
 
 from app.document_studio.models import Campaign, DocumentDraft, Identifier, Model, Title, Trip, Text, OfferData, PilotData, DayOverride
@@ -68,10 +68,10 @@ class MarketingPreviewRequest(Model):
     output_format: Literal["a4", "social"] = "a4"
 
 
-def document_router(repository: JsonRepository):
-    router = APIRouter(dependencies=[Depends(local_only)])
+def document_router(repository, *, access_policy=local_only, asset_store=None, cloud_mode=False):
+    router = APIRouter(dependencies=[Depends(access_policy)])
     service = DocumentService(repository)
-    assets = AssetStore(repository)
+    assets = asset_store or AssetStore(repository)
 
     def marketing_data(campaign, trips=None, label="Podgląd roboczy"):
         trips = trips if trips is not None else [repository.get("trips", i.trip_id) for i in campaign.items]
@@ -93,10 +93,12 @@ def document_router(repository: JsonRepository):
         except ValueError as exc:
             raise HTTPException(422, str(exc)) from None
         except StorageError:
-            raise HTTPException(503, "Błąd lokalnego magazynu JSON. Sprawdź pliki i uprawnienia.") from None
+            raise HTTPException(503, "Magazyn dokumentów jest niedostępny. Spróbuj ponownie.") from None
 
     @router.get("/documents/demo", include_in_schema=False)
     def panel():
+        if cloud_mode:
+            return HTMLResponse((WEB / "index.html").read_text(encoding="utf-8").replace("Lokalne demo", "Demo w chmurze"), headers={"Cache-Control": "no-store"})
         return FileResponse(WEB / "index.html", headers={"Cache-Control": "no-store"})
 
     @router.get("/documents/assets/{filename}", include_in_schema=False)
@@ -192,6 +194,8 @@ def document_router(repository: JsonRepository):
     def asset_content(identifier: Identifier):
         def content():
             asset, path = assets.get(identifier)
+            if isinstance(path, bytes):
+                return Response(path, media_type=asset.media_type, headers={"X-Content-Type-Options":"nosniff", "Cache-Control":"private, no-store"})
             return FileResponse(path, media_type=asset.media_type, headers={"X-Content-Type-Options":"nosniff", "Cache-Control":"private, no-store"})
         return run(content)
 

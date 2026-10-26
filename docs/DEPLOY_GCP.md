@@ -1,5 +1,176 @@
 # TRIPSE Cloud Run — ręczne DEV i PROD
 
+## CLOUD-PARITY-001 — opt-in authenticated demo (2026-10-26)
+
+Prepared offline; **no GCP resources or deployed services were changed**. The
+historical sections below describe `readonly_demo`. Full authenticated demo is
+governed by [ADR-0011](adr/0011-authenticated-cloud-demo.md) and the
+[audit/acceptance matrix](CLOUD_PARITY_AUDIT.md). Keep current PROD configuration
+and data intact. No automatic migration, deployment or promotion is performed.
+
+### Configuration and access
+
+Use existing Make/deployment commands and the existing project/region/image
+registry. In an operator-reviewed DEV configuration directory, keep both dotenv
+files and change **only DEV** to `CLOUD_FEATURE_MODE=cloud_demo` and
+`GCP_PUBLIC_ACCESS=false`. Uncomment/fill every required field shown in
+`infra/gcp/.env.dev.example`; values are literal and no interpolation occurs.
+Resources must use exactly the selected environment's names. `PUBLIC_BASE_URL`
+is the existing service's reviewed HTTPS `run.app` origin. Members are explicit
+email addresses separated by `|`; `DEMO_READERS=` is allowed, editors cannot be empty.
+Readers can read internal demo documents; only editors can mutate them. Members
+share Studio data inside an environment. Jobs, viewer tokens and conversations
+are scoped to the verified IAP subject as well as environment.
+
+Direct IAP protects `run.app` without a load balancer or custom domain:
+[Google setup](https://docs.cloud.google.com/run/docs/securing/identity-aware-proxy-cloud-run).
+Bootstrap the custom OAuth client and IAP service agent in Console, initially on
+DEV only. For external Google accounts configure External audience, consent/test
+users as required, and explicit IAP access. A non-Workspace Google account works;
+non-Google identities require a separate Identity Platform/federation design and
+validation. No broad domain, allUsers or allAuthenticatedUsers grant is needed.
+Mirror approved members in IAP and the application lists. Remove revoked users
+from both. Never use unsigned identity headers as proof of authorization.
+
+The application verifies the ES256 IAP signature and service-specific audience
+`/projects/PROJECT_NUMBER/locations/europe-central2/services/tripse-ai-dev`, issuer,
+subject, email and time claims:
+[signed-header contract](https://docs.cloud.google.com/iap/docs/signed-headers-howto).
+It also requires exact configured Origin for writes, rejects cross-site requests,
+protects private images/frontend assets and disables public API docs. `/health`
+is the probe exception and returns only deployment metadata, not private data.
+
+### Declarative resources and least privilege
+
+`infra/gcp/cloud-demo/main.tf` is an additive, opt-in module. It does not own
+existing Cloud Run services or deploy images. Review/import existing matching
+resources before applying; do not create duplicate resources or overwrite state.
+Use distinct secured Terraform state for DEV/PROD, and do not commit tfvars,
+state or plan files. The checked provider lock is included. After an operator
+chooses to provision DEV, the sequence is:
+
+1. Bootstrap external custom OAuth/IAP on DEV and establish the IAP and Tasks
+   service agents. Existing zero-role runtime identities come from `make gcp-setup`.
+2. Copy `dev.tfvars.example` to a private tfvars file; replace project identity and
+   approved human members. `terraform init`, `terraform validate`, then review a
+   DEV-only plan before an explicitly authorized apply. No `destroy` or PROD apply.
+3. Verify bucket public-access prevention, uniform access, versioning/soft delete;
+   database PITR/delete protection; separate queue/task account. Runtime gets only
+   bucket object access, database-conditioned `datastore.user`, queue enqueue and
+   actAs on its dedicated task account. The Tasks agent mints tokens for that
+   account; the IAP agent invokes the selected Run service. The task account has
+   IAP access but no document/API membership in the application.
+4. For Tasks OIDC, configure the reviewed OAuth client in IAP's programmatic
+   access allowlist and grant the dedicated task caller IAP access. OAuth client
+   ID is the task token audience; the application's signed-header audience is the
+   Cloud Run resource path. These are different values. A Google-managed default
+   OAuth client is insufficient for this OIDC flow:
+   [programmatic auth](https://docs.cloud.google.com/iap/docs/authentication-howto).
+5. Acquire an operator IAP token through the approved OAuth flow and set
+   `CLOUD_DEMO_SMOKE_TOKEN` **only in the shell**, never dotenv, argv, logs or Git.
+   Inspect configured OAuth consent/programmatic access before deployment.
+
+Optional browser Maps uses a pinned Secret Manager reference
+`GCP_BROWSER_MAPS_SECRET=projects/PROJECT/secrets/tripse-ai-dev-maps-browser/versions/N`.
+Grant `secretAccessor` only on that environment's secret, using the module's
+`live_secret_ids` list (references only; no payloads/state). Configure Maps JS API
+and exact referrer restrictions/budget first. Never reuse a server key. The
+application deliberately returns the browser key to its authenticated browser;
+it is distinct from OpenAI/Places/Routes keys. Leaving this reference unset keeps
+the schematic map and makes no Google Maps request. No server provider secrets
+are accepted in either cloud mock mode. Future live secrets need separate IDs,
+Secret Manager injection, quotas and a reviewed deployment extension; LIVE is
+currently rejected for both DEV and PROD.
+
+### Staged rollout and acceptance
+
+Before building, commit reviewed changes so the image SHA represents the source.
+Continue using immutable SHA tags/digests; never `latest`:
+
+```powershell
+make test
+make test-browser
+make gcp-preflight ENV=dev OFFLINE=1 CONFIG_DIR=PRIVATE_CONFIG_DIRECTORY
+make gcp-dry-run ENV=dev CONFIG_DIR=PRIVATE_CONFIG_DIRECTORY
+# Only following a separate operator deployment decision:
+make gcp-build ENV=dev CONFIG_DIR=PRIVATE_CONFIG_DIRECTORY
+make deploy-dev TAG=FULL_COMMIT_SHA CONFIG_DIR=PRIVATE_CONFIG_DIRECTORY
+make gcp-smoke ENV=dev TAG=FULL_COMMIT_SHA CONFIG_DIR=PRIVATE_CONFIG_DIRECTORY
+```
+
+The cloud deployment branch uses IAM enforcement plus `--iap`, verifies the
+reviewed origin and runs authenticated read smoke. It never calls `publish`.
+Preview retains private smoke followed by its existing public-access procedure;
+preview rollback explicitly disables IAP before optional preview publication.
+Cloud offline preflight validates configuration only; full fake-adapter/router
+coverage is in pytest/browser smoke, and neither proves deployed IAM behavior.
+
+Controlled DEV acceptance is supplied and **has not been run against GCP**:
+
+```powershell
+.venv\Scripts\python.exe -m scripts.gcp.parity_smoke --config-dir PRIVATE_CONFIG_DIRECTORY
+# Separate operator choice: persist synthetic fixtures and enqueue mock jobs:
+.venv\Scripts\python.exe -m scripts.gcp.parity_smoke --config-dir PRIVATE_CONFIG_DIRECTORY --allow-writes
+```
+
+The write smoke creates a clearly named 15-day trip, offer/pilot, campaign and
+photo, verifies 409 conflicts and runs planner/chat mock jobs, dedup and token
+expiry. It leaves synthetic data for investigation and prints its trip ID.
+It performs no deploy or paid generation. Separately verify browser forms,
+image upload, A4/social printing, and an operator-triggered DEV revision restart
+followed by read-back of the printed ID. Use two authenticated users to verify
+job/conversation/viewer isolation and read-only membership. Attempt access using
+the DEV runtime identity to each PROD bucket/database/queue and vice versa;
+expect IAM denial. Record the tested identities, revision and digest. Verify
+an expired/forged IAP assertion, missing/cross-site Origin, and anonymous private
+document/image denial. Never accept an IAP login HTML page as a successful API read.
+
+### Retry recovery and backups
+
+Tasks retries delivery up to 12 times within one hour; job processing has a
+120-second fenced lease and at most 3 claims. Mock semantic failures are terminal.
+The simulator's delivery-failure case exercises one durable retry. Terminal
+results/outbox commit together. Named tasks prevent ambiguous enqueue duplication.
+Clients retain idempotency/event keys across failed submission retries; cloud
+POST `/api/trips` accepts an optional `Idempotency-Key` UUID (the shared UI supplies
+it). Existing JSON-only clients still receive 202; without a key, repeated POSTs
+are separate submissions and cannot recover an ambiguous enqueue as one request.
+
+Enqueue and Firestore cannot commit atomically. Failed enqueue returns 503 with
+the job retained. Retry the same key/event, or inspect task/log/job state and use
+the explicit recovery command after an expired lease/queue exhaustion:
+
+```powershell
+.venv\Scripts\python.exe -m scripts.gcp.recover_job --environment dev --trip-id JOB_UUID --config-dir PRIVATE_CONFIG_DIRECTORY
+```
+
+This uses ADC and creates a replacement task only for a nonterminal expired job;
+it does not reset attempts or run generation locally. No automatic reconciler is
+included. Monitor queued/running age and terminal failures during DEV acceptance.
+
+GCS keeps object versions and seven-day soft delete; noncurrent versions are
+bounded by the configured newer-version count. Firestore PITR is enabled. These
+are the baseline recovery strategy, not proof of restore readiness. Before
+customer data or PROD acceptance, perform a DEV restore drill into isolated
+resources: restore a prior document generation with generation-match against the
+current generation; check its referenced immutable image blobs; recover a
+Firestore PITR copy; verify jobs/tokens without replaying notifications. Preserve
+current data before restoring. Define retention/RPO/RTO and independently managed
+exports if required; budget storage, access controls and maintenance. No backup
+restore or deletion has been executed in this task.
+
+PROD remains unchanged until a separate manual acceptance and promotion of the
+tested DEV digest (`make deploy-prod TAG=... CONFIRM=prod`). Create/review separate
+PROD resources and configuration first; no copying DEV drafts, photos, jobs or
+tokens into PROD. Keep the previous SHA and matching mode configuration for
+`make gcp-rollback ENV=... TAG=... CONFIRM=rollback`. Rollback changes code, not
+stored data; retain format compatibility and take a backup before any future
+schema migration. No automatic migration or promotion exists.
+
+See audit for separate cost categories and OPEN/BLOCKED gates. No hours or
+billed amounts are available. DEV is for experiments; PROD is a stable client
+demo, not approved for real customer data.
+
 Stan 2026-10-25, task `CLOUD-01`. Przygotowano kod i skrypty; **nie wykonano
 wdrożenia GCP ani smoke live**. PROD w tej instrukcji to druga instancja
 demonstracji tylko do odczytu. Nie oznacza gotowości pełnego systemu produkcyjnego.

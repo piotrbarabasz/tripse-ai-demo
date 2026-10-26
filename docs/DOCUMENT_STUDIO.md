@@ -1,5 +1,21 @@
 # TRIPSE Document Studio — funkcjonalne DEMO lokalne
 
+CLOUD-PARITY-001 (2026-10-26): the existing models, service, editors and renderer
+are shared with opt-in authenticated `cloud_demo`. The cloud repository uses
+private GCS JSON overlays and generation-match optimistic concurrency (409),
+immutable validated image bytes, fixture fallback, snapshots and revisions.
+No persistent cloud data is written to Cloud Run disk. Both metadata and image
+content require verified membership; only editors with exact Origin may write.
+Approved members share Studio documents within DEV or PROD; those environments
+use independent buckets. Pilot documents remain internal, and offer rendering
+retains its operational-data whitelist. No additional templates were implemented.
+
+LOCAL continues to use JSON/files and the unchanged localhost policy without
+GCP configuration. Public `readonly_demo` does not register this private API/UI.
+Cloud deployment, IAP/OAuth acceptance and restore testing are still pending;
+see [audit](CLOUD_PARITY_AUDIT.md), [ADR-0011](adr/0011-authenticated-cloud-demo.md)
+and [operator instructions](DEPLOY_GCP.md). Browser PDF remains client-side.
+
 **DEMO-03:** edytowalne `offer.private` i `pilot.basic`, wspólny Trip i renderer,
 lokalna logistyka oraz druk A4: [TRIP_DOCUMENTS.md](TRIP_DOCUMENTS.md).
 

@@ -16,8 +16,9 @@ task opisuje pracę, a [worklog](../tracking/worklog.csv) jej udokumentowany prz
 | [ADR-0006](0006-template-registry-shared-components.md) | Wspólny rejestr szablonów, komponenty i tokeny | proposed | Wdrożone częściowo: 3 generatory, 8 ID |
 | [ADR-0007](0007-sqlite-single-worker.md) | Kolejka planera w SQLite i jeden osobny worker | proposed | Wdrożone |
 | [ADR-0008](0008-local-demo-hub.md) | Lokalny Hub jako nawigacja istniejących modułów | proposed | Wdrożone w HUB-01 |
-| [ADR-0009](0009-cloud-run-readonly-preview.md) | Cloud Run DEV/PROD jako bezstanowy podgląd tylko do odczytu | proposed | Kod i skrypty przygotowane; bez wdrożenia GCP |
+| [ADR-0009](0009-cloud-run-readonly-preview.md) | Cloud Run DEV/PROD jako bezstanowy podgląd tylko do odczytu | superseded | ADR-0011 extends cloud functionality; readonly_demo retained |
 | [ADR-0010](0010-cloud-run-public-access.md) | Publiczny Cloud Run przez wyłączenie kontroli IAM invokera | proposed | Kod i testy offline; bez zmian GCP |
+| [ADR-0011](0011-authenticated-cloud-demo.md) | Shared authenticated cloud_demo with GCS and Firestore/Tasks | proposed | Offline implementation and parity tests; no GCP deployment |
 
 ADR-0001–0007 sporządzono retrospektywnie 25.10.2026. Kod potwierdza
 implementację, ale dostępne repozytorium nie zawiera jednoznacznej akceptacji
@@ -34,7 +35,7 @@ Powiązane aspekty jednej decyzji można połączyć, jak FastAPI i izolację mo
 
 ## Numeracja i metadane
 
-- Następny wolny numer: **ADR-0011**. Sprawdź rejestr i pliki przed nadaniem numeru;
+- Następny wolny numer: **ADR-0012**. Sprawdź rejestr i pliki przed nadaniem numeru;
   po dodaniu wpisu zaktualizuj tę wskazówkę. Nie używaj ponownie opublikowanego numeru.
 - Plik: `0011-short-decision-name.md`; nagłówek i YAML: `ADR-0011`.
 - Skopiuj [szablon](template.md). Wypełnij wszystkie dziewięć sekcji.
@@ -114,3 +115,4 @@ Sam ten standard nie wdraża automatycznej walidacji CI ani wieloosobowego workf
 | 2026-10-25 | Codex | Dodanie ADR-0008 dla lokalnego Hubu; zachowanie statusów i treści wcześniejszych decyzji | HUB-01 |
 | 2026-10-25 | Codex | Dodanie ADR-0009 dla przygotowania Cloud Preview; bez zmiany lokalnego zakresu wcześniejszych ADR | CLOUD-01 |
 | 2026-10-25 | Codex | Dodanie ADR-0010 dla publikacji bez bindingu allUsers; uzupełnienie ADR-0009 | GCP-ACCESS-001 |
+| 2026-10-26 | Codex | ADR-0011 extends cloud_demo; ADR-0009 superseded with historical content retained | CLOUD-PARITY-001 |

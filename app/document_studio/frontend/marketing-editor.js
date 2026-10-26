@@ -41,7 +41,7 @@ window.MarketingEditor = (() => {
       <label>Oznaczenie<select data-m-field="items.${index}.badge">${[['concept','Propozycja'],['new','Nowość'],['pilot','Pilotaż']].map(([key,label])=>`<option value="${key}" ${(item.badge || 'concept')===key?'selected':''}>${label}</option>`).join('')}</select></label>
       ${photoFields(`items.${index}`,item.image_asset_id,item.image_position)}</article>`;
     }).join('')}</div><label>Dodaj wycieczkę<select id="m-add-trip"><option value="">Wybierz z biblioteki…</option>${catalog.filter(trip=>!campaign.items.some(item=>item.trip_id===trip.trip_id)).map(trip=>`<option value="${trip.trip_id}">${e(trip.title)}</option>`).join('')}</select></label><button type="button" id="m-add">+ Dodaj kierunek</button></section></form>
-    <section class="panel"><h2>Twoje zdjęcia</h2><p class="muted">JPG, PNG lub WebP · do 8 MB i 24 MP. Zdjęcia pozostają w lokalnym magazynie.</p><label>Przypisz nowe zdjęcie<select id="m-upload-target"><option value="hero">Zdjęcie główne kolekcji</option>${campaign.items.map((item,i)=>`<option value="${i}">Kierunek ${i+1}</option>`).join('')}</select></label><label>Plik zdjęcia<input type="file" id="m-file" accept="image/jpeg,image/png,image/webp"></label><label class="rights-check"><input type="checkbox" id="m-rights">Mam prawo użyć tego zdjęcia w tym materiale.</label><button type="button" id="m-upload">Wgraj i wybierz zdjęcie</button><p id="m-upload-status" role="status"></p></section></div>
+    <section class="panel"><h2>Twoje zdjęcia</h2><p class="muted">JPG, PNG lub WebP · do 8 MB i 24 MP. Zdjęcia pozostają w prywatnym magazynie demo.</p><label>Przypisz nowe zdjęcie<select id="m-upload-target"><option value="hero">Zdjęcie główne kolekcji</option>${campaign.items.map((item,i)=>`<option value="${i}">Kierunek ${i+1}</option>`).join('')}</select></label><label>Plik zdjęcia<input type="file" id="m-file" accept="image/jpeg,image/png,image/webp"></label><label class="rights-check"><input type="checkbox" id="m-rights">Mam prawo użyć tego zdjęcia w tym materiale.</label><button type="button" id="m-upload">Wgraj i wybierz zdjęcie</button><p id="m-upload-status" role="status"></p></section></div>
     <div class="marketing-preview"><div class="preview-heading"><div><p class="eyebrow">PODGLĄD NA ŻYWO</p><small>Kolory, typografia i tekstowy znak TRIPSE są propozycją roboczą.</small></div><label>Format<select id="m-format"><option value="a4" ${format==='a4'?'selected':''}>A4 / PDF</option><option value="social" ${format==='social'?'selected':''}>1080 × 1350</option></select></label></div><div id="m-validation" role="status"></div><iframe id="m-preview" title="Podgląd dokumentu marketingowego"></iframe></div></div>`;
     find('#m-form').addEventListener('submit',event=>event.preventDefault());
     find('#m-form').addEventListener('input',changeField);
@@ -99,7 +99,7 @@ window.MarketingEditor = (() => {
     saving=true;ui.busy(true);find('#m-save').disabled=true;
     try{
       campaign=await ui.api('campaigns/'+campaign.campaign_id,{method:'PUT',body:JSON.stringify(normalize())});
-      ui.dirty(false);await ui.refresh();ui.message('Kampania zapisana lokalnie.');return true;
+      ui.dirty(false);await ui.refresh();ui.message('Kampania zapisana.');return true;
     }catch(error){ui.message(error.message,true);return false;}
     finally{saving=false;ui.busy(false);if(find('#m-save'))find('#m-save').disabled=false;}
   }
@@ -126,7 +126,7 @@ window.MarketingEditor = (() => {
       const result=await response.json();if(!response.ok)throw new Error(typeof result.detail==='string'?result.detail:'Nie udało się wgrać zdjęcia.');
       assets.push(result);
       if(target==='hero')campaign.hero_asset_id=result.asset_id;else campaign.items[Number(target)].image_asset_id=result.asset_id;
-      ui.dirty(true);draw();ui.message('Zdjęcie wgrane lokalnie. Zapisz kampanię, aby zachować wybór.');
+      ui.dirty(true);draw();ui.message('Zdjęcie wgrane. Zapisz kampanię, aby zachować wybór.');
     }catch(error){ui.message(error.message,true);if(find('#m-upload'))find('#m-upload').disabled=false;}
   }
   return {async open(source,trips,context){

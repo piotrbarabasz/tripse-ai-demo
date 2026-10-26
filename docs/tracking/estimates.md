@@ -80,3 +80,22 @@ danych/bezpieczeństwa/integracji; nie są ukończonym zakresem tego zadania.
 Do kalkulacji potrzebne są region, ruch, rozmiar/liczba obrazów i buildów,
 retencja logów, polityki organizacji i aktualne cenniki. Nie zakładamy kosztu 0
 na podstawie min-instances=0 ani nie wpisujemy prognozy jako rachunku.
+
+### CLOUD-PARITY-001 — 2026-10-26
+
+Offline preparation now includes shared authenticated composition, GCS documents
+and image bytes, Firestore/Tasks mock jobs and simulator, declarative resources,
+and parity tests. This is not deployed cloud parity or an accepted customer-data
+production system. See [audit and OPEN/BLOCKED gates](../CLOUD_PARITY_AUDIT.md).
+No actual/estimated hours or monetary amounts were supplied or measured.
+
+Remaining cost packages: DEV OAuth/IAP and external-user acceptance; narrow IAM
+and cross-environment negative tests; Cloud Run load/restart tests; GCS bytes,
+operations, version/soft-delete retention and restore drills; Firestore read/write,
+indexes and PITR retention; Tasks dispatch/retries and failed-job monitoring;
+Secret Manager versions/access; browser Maps budget/referrer restrictions;
+independent backup exports/restore access and routine operator maintenance.
+OpenAI/Places/Routes remain disabled and need a separate LIVE budget/quotas,
+admission rate limits, timeout review and deployment work. WAHA sessions/Business
+Platform are separate integration work. Use measured DEV traffic, billing export
+and approved retention/RPO/RTO to estimate these; do not assume free tiers apply.

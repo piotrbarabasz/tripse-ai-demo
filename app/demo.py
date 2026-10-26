@@ -18,19 +18,15 @@ def initialize(connection):
     connection.execute('CREATE TABLE IF NOT EXISTS demo_outbox (id INTEGER PRIMARY KEY, conversation TEXT NOT NULL, text TEXT NOT NULL, UNIQUE(conversation, text))')
 
 def options(database, trip_id):
-    with database.connect() as c:
-        row = c.execute('SELECT scenario FROM demo_options WHERE trip_id=?',(trip_id,)).fetchone()
-    return row['scenario'] if row else 'success'
+    return database.demo_options(trip_id)
 
 def progress(database, trip_id, stage):
-    with database.connect() as c:
-        c.execute('INSERT OR REPLACE INTO demo_progress VALUES (?,?)',(trip_id,stage))
+    database.demo_progress(trip_id, stage)
 
 class DemoMessagingProvider:
     def __init__(self, database): self.database = database
     def send_text(self, *, session, chat_id, text):
-        with self.database.connect() as c:
-            c.execute('INSERT OR IGNORE INTO demo_outbox(conversation,text) VALUES (?,?)',(chat_id,text))
+        self.database.demo_send(chat_id, text)
 
 class ChannelMessagingProvider:
     def __init__(self, database, waha):
@@ -74,8 +70,5 @@ def demo_router(database):
     @router.get('/api/demo/conversations/{conversation}')
     def messages(conversation: UUID):
         guard()
-        with database.connect() as c:
-            rows = c.execute('SELECT id,text FROM demo_outbox WHERE conversation=? ORDER BY id',(str(conversation),)).fetchall()
-            jobs = c.execute('SELECT t.trip_id,t.status,t.error,p.stage,r.status AS delivery_status FROM trips t JOIN waha_messages m USING(trip_id) LEFT JOIN demo_progress p USING(trip_id) LEFT JOIN waha_results r USING(trip_id) WHERE m.session=? AND m.sender=? ORDER BY t.created_at',('demo',str(conversation))).fetchall()
-        return {'messages':[dict(row) for row in rows],'jobs':[dict(row) for row in jobs]}
+        return database.demo_conversation(str(conversation))
     return router

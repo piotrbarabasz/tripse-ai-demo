@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BROWSERS = (
     "browser_smoke.py", "browser_hub_smoke.py", "browser_document_studio_smoke.py",
     "browser_marketing_smoke.py", "browser_trip_documents_smoke.py", "browser_cloud_preview_smoke.py",
+    "browser_cloud_demo_smoke.py",
 )
 
 

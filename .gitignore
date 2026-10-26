@@ -20,3 +20,8 @@ local-data/
 *.db-*
 .idea/
 .vscode/
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfplan

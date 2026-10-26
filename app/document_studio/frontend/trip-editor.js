@@ -17,7 +17,7 @@ window.TripDocumentEditor = (() => {
       ${area('W cenie (każde świadczenie w osobnym wierszu)','offer_data.included',offer.included)}${area('Poza ceną (każdy element w osobnym wierszu)','offer_data.excluded',offer.excluded)}
       ${select('Zdjęcie okładki','offer_data.cover_asset_id',offer.cover_asset_id,[['','Neutralny placeholder'],...assets.map(a=>[a.asset_id,a.original_name])])}
       <label>Zdjęcia kierunku (możesz zaznaczyć kilka)<select multiple data-d-field="offer_data.photo_asset_ids">${assets.map(a=>`<option value="${a.asset_id}" ${offer.photo_asset_ids.includes(a.asset_id)?'selected':''}>${e(a.original_name)}</option>`).join('')}</select></label>
-      <p class="muted">Zdjęcia z lokalnej biblioteki DEMO-02. Wgraj własny JPG/PNG/WebP w sekcji poniżej.</p></section>
+      <p class="muted">Zdjęcia z biblioteki demo. Wgraj własny JPG/PNG/WebP w sekcji poniżej.</p></section>
       <section class="panel"><h2>Cena i zakres oferty</h2><label class="document-check"><input type="checkbox" data-d-field="offer_data.concept_only" ${offer.concept_only?'checked':''}>Świadomie wybieram wersję koncepcyjną BEZ WYCENY</label>
       <div class="fields">${field('Kwota','offer_data.price.amount',offer.price.amount,'number','min="0" step="0.01"')}${select('Waluta','offer_data.price.currency',offer.price.currency,[['PLN','PLN'],['EUR','EUR'],['USD','USD']])}
       ${select('Jednostka','offer_data.price.unit',offer.price.unit,[['person','Za osobę'],['group','Za grupę']])}${field('Założona liczba uczestników','offer_data.price.participant_count',offer.price.participant_count,'number','min="1" step="1"')}
@@ -27,7 +27,7 @@ window.TripDocumentEditor = (() => {
   }
   function pilotFields() {
     const pilot=draft.pilot_data;
-    return `<section class="panel"><h2>Organizacja wyjazdu</h2><div class="notice">WEWNĘTRZNE. Dostęp lokalny. Nie wpisuj PIN-ów ani kodów dostępu.</div>
+    return `<section class="panel"><h2>Organizacja wyjazdu</h2><div class="notice">WEWNĘTRZNE. Tylko dla uprawnionych użytkowników. Nie wpisuj PIN-ów ani kodów dostępu.</div>
       ${field('Pilot','pilot_data.leader',pilot.leader,'text','maxlength="200"')}${field('Liczba uczestników','pilot_data.participant_count',pilot.participant_count,'number','min="1" step="1"')}${area('Miejsce i lokalna godzina zbiórki / strefa','pilot_data.meeting',pilot.meeting)}
       <h3>Kontakty organizacyjne</h3>${pilot.contacts.map((contact,index)=>`<div class="document-entry">${field('Rola / organizacja',`pilot_data.contacts.${index}.label`,contact.label,'text','required maxlength="200"')}${field('Kontakt',`pilot_data.contacts.${index}.value`,contact.value,'text','maxlength="1000"')}<button type="button" class="danger" data-d-remove="contacts.${index}">Usuń kontakt</button></div>`).join('')}<button type="button" data-d-add="contacts">+ Dodaj kontakt</button>
       ${area('Wewnętrzne notatki pilota','pilot_data.internal_notes',pilot.internal_notes)}</section>` + Object.entries(groups).map(([group,title])=>`<section class="panel"><div class="section-heading"><h2>${title}</h2><button type="button" data-d-add="${group}">+ Dodaj wpis</button></div>${pilot[group].map((entry,index)=>eventFields(group,index,entry)).join('')}${pilot[group].length?'':'<p class="muted">Brak wpisów — do ustalenia.</p>'}</section>`).join('');

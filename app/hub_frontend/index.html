@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Lokalny punkt startowy demonstracji TRIPSE: planer podróży, dokumenty i symulator rozmowy.">
+  <meta name="description" content="Punkt startowy demonstracji TRIPSE: planer podróży, dokumenty i symulator rozmowy.">
   <title>TRIPSE AI Hub — przestrzeń demonstracyjna</title>
   <link rel="stylesheet" href="/documents/assets/brand-tokens.css">
   <link rel="stylesheet" href="/static/hub.css">
@@ -20,7 +20,7 @@
   </svg>
   <header class="hub-header">
     <a class="hub-brand" href="/hub" aria-label="TRIPSE AI Hub — strona startowa">TRIPSE<span>AI HUB</span></a>
-    <nav aria-label="Nawigacja Hubu"><a href="#how-it-works">Jak to działa</a><span class="environment"><span></span>Lokalne demo · {{MODE}}</span></nav>
+    <nav aria-label="Nawigacja Hubu"><a href="#how-it-works">Jak to działa</a><span class="environment"><span></span>{{ENVIRONMENT_LABEL}} · {{MODE}}</span></nav>
   </header>
   <main id="main" tabindex="-1">
     <section class="hero" aria-labelledby="hub-title">
@@ -56,7 +56,7 @@
           <div class="card-art document-art" aria-hidden="true"><span class="art-label">JEDEN PROGRAM, WIELE DOKUMENTÓW</span><div class="paper paper-back"></div><div class="paper paper-front"><div class="paper-brand">TRIPSE</div><div class="paper-landscape"><span></span></div><div class="paper-heading"></div><div class="paper-line"></div><div class="paper-line short"></div></div><span class="art-chip">A4 <span class="chip-divider"></span> PDF</span></div>
           <div class="card-content"><div class="card-category"><span class="module-icon"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span><span>DOKUMENTY PODRÓŻNICZE</span><span class="module-number">02</span></div>
             <h3 id="documents-title">Document<br>Studio</h3><p class="card-description">Ułóż ofertę, rozpiskę dla pilota lub kolekcję kierunków. Edytuj treści, sprawdź podgląd i zapisz PDF.</p>
-            <div class="card-mode"><span class="mode-dot"></span>Lokalny edytor · dane demo</div><p class="card-note">Marketing, oferta indywidualna i pilot. Wersje robocze zapisujesz na tym komputerze.</p>
+            <div class="card-mode"><span class="mode-dot"></span>{{DOCUMENT_MODE}}</div><p class="card-note">Marketing, oferta indywidualna i pilot. {{DOCUMENT_NOTE}}</p>
             <a class="module-link" id="documents-link" href="/documents/demo">Otwórz studio <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
           </div>
         </article>
@@ -76,7 +76,7 @@
     <section class="how-it-works" id="how-it-works" aria-labelledby="flow-title">
       <div class="flow-intro"><p class="eyebrow">SZERSZY OBRAZ</p><h2 id="flow-title">Jak działa TRIPSE AI</h2><p>Od wiadomości do materiałów podróży.<br>Tak wygląda docelowy przepływ.</p><span class="flow-label">Kierunek rozwoju</span></div>
       <div class="flow-content"><ol class="flow-steps"><li><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span><span>Wiadomość</span></li><li><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg></span><span>Planowanie</span></li><li><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg></span><span>Mapa</span></li><li><span class="flow-icon"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span><span>Dokument</span></li></ol>
-        <p class="flow-note"><strong>Dziś:</strong> symulator w trybie mock prowadzi do planu i mapy. Dokument Studio działa osobno — dane wycieczki uzupełniasz ręcznie. Hub łączy nawigację, a cały pokaz wymaga uruchomionego API; planer i rozmowa wymagają także workera.</p>
+        <p class="flow-note"><strong>Dziś:</strong> symulator w trybie mock prowadzi do planu i mapy. Dokument Studio działa osobno — dane wycieczki uzupełniasz ręcznie. Hub łączy nawigację, a cały pokaz wymaga uruchomionego API; {{RUNTIME_NOTE}}</p>
       </div>
     </section>
   </main>

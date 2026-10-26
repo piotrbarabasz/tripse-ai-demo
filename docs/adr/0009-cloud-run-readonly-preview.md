@@ -1,7 +1,7 @@
 ---
 id: ADR-0009
 title: "Cloud Run DEV/PROD jako bezstanowy podgląd tylko do odczytu"
-status: proposed
+status: superseded
 date: 2026-10-25
 author: "Codex — zapis propozycji"
 area: "deployment, security, storage"
@@ -11,6 +11,10 @@ supersedes: []
 ---
 
 # ADR-0009: Cloud Run DEV/PROD jako bezstanowy podgląd tylko do odczytu
+
+2026-10-26: superseded by [ADR-0011](0011-authenticated-cloud-demo.md) for the
+restriction to preview-only Cloud Run. The readonly_demo mode remains supported.
+Historical reasoning and evidence below are preserved; no deployment is implied.
 
 Stan implementacji: przygotowano kod/skrypty; nie wykonano wdrożenia GCP.
 Akceptacja właściciela ADR: brak odrębnego potwierdzenia. `proposed` nie blokuje
@@ -96,3 +100,4 @@ storage i kolejki; samo włączenie lokalnych routerów nie realizuje migracji.
 | Data | Autor | Zmiana i uzasadnienie | Powiązanie |
 |---|---|---|---|
 | 2026-10-25 | Codex | Propozycja ograniczonego Cloud Preview i ręcznego deploymentu | CLOUD-01 |
+| 2026-10-26 | Codex | Superseded preview-only restriction by ADR-0011; preserve historical body and public preview | CLOUD-PARITY-001 |

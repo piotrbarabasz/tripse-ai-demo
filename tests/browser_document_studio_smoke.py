@@ -79,7 +79,7 @@ def run():
                 page.locator('[data-add-stop="1"]').click()
                 page.locator('[data-remove-stop="1.0"]').click()
                 page.locator("#save-trip").click()
-                expect(page.locator("#message")).to_have_text("Wycieczka zapisana lokalnie.")
+                expect(page.locator("#message")).to_have_text("Wycieczka zapisana.")
                 trip_hash = page.evaluate("location.hash")
                 page.screenshot(path=str(artifacts / "editor-desktop.png"), full_page=True)
                 page.locator("#editorial-notes").fill("Notatka do zachowania po restarcie")

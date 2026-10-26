@@ -3,6 +3,7 @@
   const $ = (id) => document.getElementById(id);
   let tripId = null;
   let checking = false;
+  let submissionKey = null, submissionText = null;
   const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
   fetch("/health", {cache: "no-store", signal: AbortSignal.timeout(10000)})
@@ -70,10 +71,14 @@
     $("job-id").textContent = "";
     $("job-status").textContent = "Submitting your request…";
     try {
-      const response = await fetch("/api/trips", {method: "POST", headers: {"Content-Type": "application/json"},
+      if (!submissionKey || submissionText !== text) {
+        submissionKey = crypto.randomUUID(); submissionText = text;
+      }
+      const response = await fetch("/api/trips", {method: "POST", headers: {"Content-Type": "application/json", "Idempotency-Key": submissionKey},
         body: JSON.stringify({text}), signal: AbortSignal.timeout(10000)});
       if (response.status !== 202) throw new Error("The request could not be accepted. Check your description and try again.");
       const job = await response.json();
+      submissionKey = null;
       tripId = job.trip_id;
       $("job-id").textContent = `Trip ID: ${tripId}`;
       await checkStatus();

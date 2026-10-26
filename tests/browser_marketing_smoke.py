@@ -144,7 +144,7 @@ def run():
                 page.locator('[data-m-field="items.0.image_asset_id"]').select_option(selected)
                 page.locator('[data-m-field="items.0.image_position.x"]').evaluate('(el)=>{el.value=25;el.dispatchEvent(new Event("input",{bubbles:true}));}')
                 page.locator('#m-save').click()
-                expect(page.locator('#message')).to_have_text('Kampania zapisana lokalnie.')
+                expect(page.locator('#message')).to_have_text('Kampania zapisana.')
                 page.screenshot(path=str(artifacts/'editor-desktop.png'),full_page=True)
                 with page.expect_popup() as popup:
                     page.locator('#m-export').click()
@@ -159,7 +159,7 @@ def run():
                 expect(frame.locator('#print-document')).to_be_disabled()
                 page.locator('[data-m-field="cta"]').fill('Kontakt po restarcie')
                 page.locator('#m-save').click()
-                expect(page.locator('#message')).to_have_text('Kampania zapisana lokalnie.')
+                expect(page.locator('#message')).to_have_text('Kampania zapisana.')
                 page.set_viewport_size({"width":390,"height":844})
                 assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
                 page.screenshot(path=str(artifacts/'editor-mobile.png'),full_page=True)

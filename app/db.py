@@ -238,3 +238,22 @@ class Database:
     def check(self):
         with self.connect() as connection:
             connection.execute("SELECT trip_id FROM trips LIMIT 1").fetchall()
+
+    def demo_options(self, trip_id):
+        with self.connect() as c:
+            row = c.execute('SELECT scenario FROM demo_options WHERE trip_id=?', (trip_id,)).fetchone()
+        return row['scenario'] if row else 'success'
+
+    def demo_progress(self, trip_id, stage):
+        with self.connect() as c:
+            c.execute('INSERT OR REPLACE INTO demo_progress VALUES (?,?)', (trip_id, stage))
+
+    def demo_send(self, conversation, text):
+        with self.connect() as c:
+            c.execute('INSERT OR IGNORE INTO demo_outbox(conversation,text) VALUES (?,?)', (conversation, text))
+
+    def demo_conversation(self, conversation):
+        with self.connect() as c:
+            rows = c.execute('SELECT id,text FROM demo_outbox WHERE conversation=? ORDER BY id', (conversation,)).fetchall()
+            jobs = c.execute('SELECT t.trip_id,t.status,t.error,p.stage,r.status AS delivery_status FROM trips t JOIN waha_messages m USING(trip_id) LEFT JOIN demo_progress p USING(trip_id) LEFT JOIN waha_results r USING(trip_id) WHERE m.session=? AND m.sender=? ORDER BY t.created_at', ('demo', conversation)).fetchall()
+        return {'messages': [dict(row) for row in rows], 'jobs': [dict(row) for row in jobs]}

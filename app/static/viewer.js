@@ -157,9 +157,12 @@
     });
   }
   async function renderMap(config) {
-    if (plan.is_mock) { window.renderDemoMap(plan, selectDay); return; }
+    if (plan.is_mock && !config.browser_key) { window.renderDemoMap(plan, selectDay); return; }
+    const visibleStop = plan.is_mock ? (stop) =>
+      Number.isFinite(stop.lat) && Math.abs(stop.lat) <= 90 && Number.isFinite(stop.lng) && Math.abs(stop.lng) <= 180
+      : verifiedStop;
     const places = new Map();
-    plan.days.forEach((day) => (day.stops || []).filter(verifiedStop).forEach((stop) => {
+    plan.days.forEach((day) => (day.stops || []).filter(visibleStop).forEach((stop) => {
       if (!places.has(stop.place_id)) places.set(stop.place_id, {stop, days: new Set()});
       places.get(stop.place_id).days.add(day.number);
     }));
@@ -181,10 +184,13 @@
     let invalidGeometry = false;
     plan.days.forEach((day, index) => {
       const bounds = new maps.LatLngBounds();
-      (day.stops || []).filter(verifiedStop).forEach((stop) => bounds.extend({lat: stop.lat, lng: stop.lng}));
-      if (!verifiedRoute(day) || !day.encoded_polyline || !(day.stops || []).every(verifiedStop)) return;
+        (day.stops || []).filter(visibleStop).forEach((stop) => bounds.extend({lat: stop.lat, lng: stop.lng}));
+      if (plan.is_mock ? day.routing_status !== "demo" || !day.demo_geometry
+        : !verifiedRoute(day) || !day.encoded_polyline || !(day.stops || []).every(verifiedStop)) return;
       try {
-        const path = maps.geometry.encoding.decodePath(day.encoded_polyline);
+        const path = plan.is_mock
+          ? (day.demo_geometry || []).map(([lng, lat]) => new maps.LatLng(lat, lng))
+          : maps.geometry.encoding.decodePath(day.encoded_polyline);
         if (path.length < 2 || path.some((point) => !Number.isFinite(point.lat()) || !Number.isFinite(point.lng())
           || Math.abs(point.lat()) > 90 || Math.abs(point.lng()) > 180)) throw new Error("Invalid geometry");
         path.forEach((point) => { bounds.extend(point); allBounds.extend(point); });
@@ -198,6 +204,7 @@
     map.fitBounds(allBounds, 45);
     maps.event.addListenerOnce(map, "idle", () => { if (map.getZoom() > 15) map.setZoom(15); });
     if (selectedDay !== null) selectDay(selectedDay);
+    if (plan.is_mock) $("map-caption").textContent = "Mapa Google · linie DEMO są schematem, nie przebiegiem drogi. Czasy i dystanse są przykładowe.";
     if (invalidGeometry) $("map-caption").textContent = "Some route geometry could not be displayed. No replacement routes have been drawn.";
   }
   async function start() {

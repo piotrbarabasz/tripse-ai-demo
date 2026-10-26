@@ -93,7 +93,9 @@ def test_context_only_committed_allowlist():
     assert "Dockerfile" in files and "app/main.py" in files
     assert all(not name.startswith(("local-data/", "data/", "docs/", "tests/", "scripts/")) for name in files)
     assert not any(".env" in Path(name).parts for name in files)
-    assert not any("document-presets" in name for name in files)
+    # Authenticated Studio uses the reviewed fictional example. Preview still
+    # registers no preset/draft route; other presets are outside the build allowlist.
+    assert {name for name in files if "document-presets" in name} == {"demo-fixtures/document-presets/iceland.json"}
 
 
 @pytest.mark.parametrize("environment", ["dev", "prod"])

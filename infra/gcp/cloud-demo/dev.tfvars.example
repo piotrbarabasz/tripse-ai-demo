@@ -1,0 +1,5 @@
+project_id     = "REPLACE_WITH_EXISTING_PROJECT"
+project_number = "REPLACE_WITH_PROJECT_NUMBER"
+environment    = "dev"
+demo_members   = ["user:REPLACE_WITH_OPERATOR_EMAIL"]
+live_secret_ids = []

@@ -20,8 +20,9 @@ EXTENSIONS = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}
 
 
 class AssetStore:
-    def __init__(self, repository):
+    def __init__(self, repository, binary_store=None):
         self.repository = repository
+        self.binary_store = binary_store
 
     def image_path(self, asset):
         metadata = self.repository._path(self.repository.root, "assets", asset.asset_id)
@@ -32,6 +33,8 @@ class AssetStore:
 
     def get(self, identifier):
         asset = self.repository.get("assets", identifier)
+        if self.binary_store is not None:
+            return asset, self.binary_store.read(asset)
         path = self.image_path(asset)
         if not path.is_file():
             raise StorageError("Asset file unavailable")
@@ -69,6 +72,13 @@ class AssetStore:
         except (UnidentifiedImageError, OSError, SyntaxError, Image.DecompressionBombError, Image.DecompressionBombWarning) as exc:
             raise ValueError("Nie można odczytać bezpiecznego zdjęcia JPG/PNG/WebP.") from exc
         asset = ImageAsset(original_name=filename, media_type=actual, width=clean.width, height=clean.height, rights_confirmed=True)
+        if self.binary_store is not None:
+            self.binary_store.write(asset, encoded.getvalue())
+            try:
+                return self.repository.save("assets", asset, create=True)
+            except Exception:
+                self.binary_store.delete(asset)
+                raise
         path = self.image_path(asset)
         temporary = None
         try:

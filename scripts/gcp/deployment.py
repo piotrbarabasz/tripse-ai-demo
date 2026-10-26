@@ -11,7 +11,7 @@ import sys
 import tarfile
 import tempfile
 from urllib.error import HTTPError
-from urllib.request import Request, urlopen
+from urllib.request import Request, urlopen, HTTPRedirectHandler, build_opener
 
 try:
     from .deployment_contract import ROOT, image_tag, load_pair
@@ -84,6 +84,8 @@ def online_preflight(g, action):
     project = g("projects", "describe", g.config["GCP_PROJECT_ID"], json_output=True)
     if project.get("lifecycleState") != "ACTIVE":
         raise ValueError("Project must be ACTIVE with billing enabled by the operator")
+    if g.config["CLOUD_FEATURE_MODE"] == "cloud_demo" and str(project.get("projectNumber")) != g.config["GCP_PROJECT_NUMBER"]:
+        raise ValueError("IAP project number does not match the selected GCP project")
     permissions = ["resourcemanager.projects.get"]
     if action == "setup":
         permissions += ["serviceusage.services.enable", "artifactregistry.repositories.create", "iam.serviceAccounts.create", "resourcemanager.projects.setIamPolicy"]
@@ -134,10 +136,29 @@ def service(g):
     value = find_named(items, c["GCP_SERVICE_NAME"])
     if value:
         assert_owned(value.get("metadata", {}).get("labels", {}), environment=c["APP_ENV"])
-        # Refuse sidecars, volumes or secret-bearing prior configurations.
-        spec = value.get("spec", {}).get("template", {}).get("spec", {})
+        # Only the known environment browser-key reference may be rotated or
+        # cleared. Other secret-bearing prior configurations require inspection.
+        template = value.get("spec", {}).get("template", {})
+        spec = template.get("spec", {})
         containers = spec.get("containers", [])
-        if len(containers) != 1 or spec.get("volumes") or any(e.get("valueFrom") for e in containers[0].get("env", [])):
+        references = [e for e in containers[0].get("env", []) if e.get("valueFrom")] if containers else []
+        safe_refs = []
+        aliases = dict(entry.split(":", 1) for entry in template.get("metadata", {}).get("annotations", {}).get("run.googleapis.com/secrets", "").split(",") if ":" in entry)
+        secret_name = f'tripse-ai-{c["APP_ENV"]}-maps-browser'
+        allowed = {secret_name, f'projects/{c["GCP_PROJECT_ID"]}/secrets/{secret_name}'}
+        for item in references:
+            ref = item.get("valueFrom", {}).get("secretKeyRef", {})
+            resolved = aliases.get(ref.get("name"), ref.get("name"))
+            if item.get("name") != "GOOGLE_MAPS_BROWSER_KEY" or not re.fullmatch(r"[1-9][0-9]*", str(ref.get("key", ""))):
+                continue
+            if resolved not in allowed and re.fullmatch(rf"projects/[0-9]+/secrets/{secret_name}", resolved or ""):
+                # Cross-project aliases are rejected, including when rolling
+                # back to preview config without a project-number field.
+                number = c.values.get("GCP_PROJECT_NUMBER") or g("projects", "describe", c["GCP_PROJECT_ID"], "--format=value(projectNumber)")
+                allowed.add(f"projects/{number}/secrets/{secret_name}")
+            if resolved in allowed:
+                safe_refs.append(item)
+        if len(containers) != 1 or spec.get("volumes") or len(references) != len(safe_refs):
             raise ValueError("Existing service has unexpected containers, volumes or secret references; inspect manually")
     return value
 
@@ -182,7 +203,7 @@ def source_files(sha):
     with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
         for member in tar.getmembers():
             name = member.name
-            allowed = name in {"Dockerfile", "requirements.txt", ".dockerignore", ".gcloudignore"} or name.startswith(("app/", "demo-fixtures/trips/", "demo-fixtures/campaigns/"))
+            allowed = name in {"Dockerfile", "requirements.txt", ".dockerignore", ".gcloudignore", "demo-fixtures/document-presets/iceland.json"} or name.startswith(("app/", "demo-fixtures/trips/", "demo-fixtures/campaigns/"))
             if not allowed or member.isdir():
                 continue
             path = Path(name)
@@ -214,6 +235,7 @@ def check_release_source(sha):
     files = dict(source_files(sha))
     if "app/cloud_preview.py" not in files or b"CloudSettings.from_env()" not in files.get("app/main.py", b""):
         raise ValueError("Selected commit predates the readonly cloud runtime; refusing to expose the local application")
+    return files
 
 
 def build(g, sha):
@@ -262,8 +284,15 @@ def deployed_state(g, sha):
 
 
 def deploy(g, sha):
+    if g.config["CLOUD_FEATURE_MODE"] == "cloud_demo":
+        # Require smoke credentials before the first mutation. OAuth/IAP setup
+        # remains an explicit operator step; never silently publish this mode.
+        if not os.getenv("CLOUD_DEMO_SMOKE_TOKEN"):
+            raise ValueError("cloud_demo deployment requires CLOUD_DEMO_SMOKE_TOKEN from the approved IAP OAuth flow")
     c = g.config
-    check_release_source(sha)
+    files = check_release_source(sha)
+    if c["CLOUD_FEATURE_MODE"] == "cloud_demo" and not {"app/cloud_runtime.py", "app/cloud_access.py", "app/cloud_jobs.py", "app/document_studio/cloud_storage.py"} <= files.keys():
+        raise ValueError("Selected immutable image source predates authenticated cloud_demo")
     if not repository(g):
         raise ValueError("Run setup first")
     existing = service(g)
@@ -281,16 +310,18 @@ def deploy(g, sha):
     with tempfile.TemporaryDirectory(prefix="tripse-runtime-") as directory:
         env_path = Path(directory) / "runtime.json"
         env_path.write_text(json.dumps(c.runtime(sha)), encoding="utf-8")
+        secret_ref = c.values.get("GCP_BROWSER_MAPS_SECRET")
+        secret_flags = ["--set-secrets=GOOGLE_MAPS_BROWSER_KEY=" + secret_ref.replace("/versions/", ":")] if secret_ref else ["--clear-secrets"]
         g("run", "deploy", c["GCP_SERVICE_NAME"], f"--image={pinned}", f'--region={c["GCP_REGION"]}',
           "--port=8000", f"--service-account={c.runtime_account}", f"--env-vars-file={env_path}",
           f'--min-instances={c["GCP_MIN_INSTANCES"]}', f'--max-instances={c["GCP_MAX_INSTANCES"]}',
           "--min=0", f'--max={c["GCP_MAX_INSTANCES"]}', "--invoker-iam-check",
           f'--cpu={c["GCP_CPU"]}', f'--memory={c["GCP_MEMORY"]}', "--cpu-throttling", "--concurrency=16", "--timeout=60",
-          "--ingress=all", "--clear-secrets", "--clear-volumes", "--clear-volume-mounts",
+          "--ingress=all", *secret_flags, "--clear-volumes", "--clear-volume-mounts",
           "--command=", "--args=",
           "--labels=app=tripse-ai,managed-by=tripse-scripts,environment=" + c["APP_ENV"],
           "--startup-probe=httpGet.path=/health,httpGet.port=8000,initialDelaySeconds=0,timeoutSeconds=2,periodSeconds=5,failureThreshold=12",
-          "--no-allow-unauthenticated")
+          "--no-allow-unauthenticated", *(["--iap"] if c["CLOUD_FEATURE_MODE"] == "cloud_demo" else ["--no-iap"]))
     g("run", "services", "update-traffic", c["GCP_SERVICE_NAME"], f'--region={c["GCP_REGION"]}', "--to-latest")
     state = deployed_state(g, sha)
     # Record the actual URL even if smoke subsequently fails; failure is still propagated.
@@ -310,6 +341,8 @@ def deploy(g, sha):
 def publish(g, state):
     """Publish only after private QA; close access again on any publication failure."""
     c = g.config
+    if c["CLOUD_FEATURE_MODE"] != "readonly_demo":
+        raise ValueError("Anonymous publication is restricted to readonly_demo")
     command = ("run", "services", "update", c["GCP_SERVICE_NAME"], f'--region={c["GCP_REGION"]}')
     try:
         g(*command, "--no-invoker-iam-check")
@@ -334,6 +367,8 @@ def publish(g, state):
 
 def smoke(g, state, *, private=False):
     c = g.config
+    if c["CLOUD_FEATURE_MODE"] == "cloud_demo":
+        return cloud_demo_smoke(g, state)
     headers = {}
     if private or c["GCP_PUBLIC_ACCESS"] == "false":
         token = g("auth", "print-identity-token")
@@ -371,7 +406,48 @@ def smoke(g, state, *, private=False):
     print("Smoke PASS: readonly routes, assets, environment and baked image SHA")
 
 
+def cloud_demo_smoke(g, state):
+    """Read-only authenticated acceptance; no fixture writes or paid operations."""
+    token = os.getenv("CLOUD_DEMO_SMOKE_TOKEN")
+    if not token:
+        raise ValueError("Set CLOUD_DEMO_SMOKE_TOKEN in the shell, never in deployment dotenv")
+    origin = g.config["PUBLIC_BASE_URL"]
+    if state["url"] != origin:
+        raise ValueError("Deployed origin differs from reviewed PUBLIC_BASE_URL")
+
+    class NoRedirect(HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
+    opener = build_opener(NoRedirect())
+
+    def get(path, authenticated=True):
+        headers = {"Authorization": "Bearer " + token} if authenticated else {}
+        try:
+            with opener.open(Request(origin + path, headers=headers), timeout=30) as response:
+                return response.status, response.read()
+        except HTTPError as error:
+            return error.code, b""
+    status, body = get("/health")
+    if status != 200:
+        raise ValueError("Authenticated health failed")
+    health = json.loads(body)
+    expected = {"feature_mode": "cloud_demo", "generation_mode": "mock", "storage": "gcs_firestore",
+                "environment": g.config["APP_ENV"], "image_version": state["image_sha"]}
+    if any(health.get(key) != value for key, value in expected.items()):
+        raise ValueError("cloud_demo runtime mismatch")
+    for path in ("/hub", "/documents/demo", "/documents/assets/studio.js", "/api/document-studio/trips", "/api/demo/scenarios"):
+        if get(path)[0] != 200:
+            raise ValueError(f"cloud_demo authenticated read failed: {path}")
+        if get(path, False)[0] not in {302, 303, 401, 403}:
+            raise ValueError("Anonymous denial was not established")
+    print("Smoke PASS: authenticated cloud_demo reads; writes/jobs/browser/restore require DEV acceptance")
+
+
 def offline_runtime(config):
+    if config["CLOUD_FEATURE_MODE"] == "cloud_demo":
+        config.demo_settings()
+        print("cloud_demo configuration validated offline; adapter/router parity is covered by tests/test_cloud_demo.py")
+        return
     # Run in a child process with a minimal environment: no inherited credentials/config.
     env = {k:v for k,v in os.environ.items() if k.upper() in {"SYSTEMROOT", "WINDIR", "PATH", "TEMP", "TMP", "HOME", "USERPROFILE"}}
     env.update({key:config[key] for key in ("APP_ENV", "CLOUD_FEATURE_MODE", "PLANNING_MODE")})

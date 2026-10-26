@@ -1,5 +1,13 @@
 # HUB-01 — TRIPSE AI Hub
 
+CLOUD-PARITY-001 (2026-10-26): the same Hub/router/frontend now supports the
+authenticated `cloud_demo` composition. It links to the complete Studio,
+planner and mock simulator; labels reflect cloud persistence. LOCAL retains
+`local_only`; public `readonly_demo` retains its reviewed preview Hub. Cloud
+membership and storage/task configuration are mandatory. No GCP deployment was
+performed. See [parity status](CLOUD_PARITY_AUDIT.md) and
+[DEV acceptance](DEPLOY_GCP.md). Existing local instructions follow.
+
 ## Uruchomienie i pokaz
 
 W PowerShell, z katalogu repozytorium:

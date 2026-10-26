@@ -59,6 +59,19 @@ def process_result(database: Database, provider: MessagingProvider) -> bool:
     return True
 
 
+def generate_job_result(job, case="success", generator=None):
+    """Shared local/cloud generation and viewer contract; mock never builds live providers."""
+    if generator is None and os.getenv('PLANNING_MODE', 'live') == 'mock':
+        result = generate_demo(job['trip_id'], job['request_text'], case)
+    else:
+        result = (generator or configured_generator())(job['trip_id'], job['request_text'])
+    token, url, expires_at = viewer_link()
+    if result.get('is_mock') and case == 'expired':
+        expires_at = 0
+    result.update(viewer_url=url, viewer_expires_at=expires_at)
+    return result, token, expires_at
+
+
 def process_next(database: Database, generator=None) -> bool:
     job = database.claim_next()
     if job is None:
@@ -66,14 +79,7 @@ def process_next(database: Database, generator=None) -> bool:
     try:
         progress(database, job['trip_id'], 'Przygotowanie planu i mapy demonstracyjnej')
         case = options(database,job['trip_id'])
-        if generator is None and os.getenv('PLANNING_MODE','live') == 'mock':
-            result = generate_demo(job['trip_id'], job['request_text'], case)
-        else:
-            result = (generator or configured_generator())(job["trip_id"], job["request_text"])
-        token, url, expires_at = viewer_link()
-        if result.get('is_mock') and case == 'expired':
-            expires_at = 0
-        result.update(viewer_url=url, viewer_expires_at=expires_at)
+        result, token, expires_at = generate_job_result(job, case, generator)
         database.finish(job["trip_id"], result=result, viewer_token=token,
                         viewer_expires_at=expires_at, notification=result_summary(result))
         progress(database,job['trip_id'],'Plan gotowy')

@@ -92,7 +92,7 @@ async function saveTrip() {
     current.days.forEach((d,i)=> {d.day_number = i+1; d.date = current.start_date ? dateOffset(current.start_date,i) : null;});
     current = await api('trips' + (creating ? '' : '/' + current.trip_id), {method:creating ? 'POST' : 'PUT',body:JSON.stringify(current)});
     creating = false; dirty = false; await refresh();
-    history.replaceState(null,'','#trips/' + current.trip_id); renderTrip(); message('Wycieczka zapisana lokalnie.'); return true;
+    history.replaceState(null,'','#trips/' + current.trip_id); renderTrip(); message('Wycieczka zapisana.'); return true;
   } catch(error) {message(error.message,true); return false;}
   finally {busy = false; if ($('#save-trip')) $('#save-trip').disabled = false;}
 }
