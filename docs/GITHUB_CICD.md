@@ -1,5 +1,10 @@
 # GITHUB-CICD-001 — GitHub Actions delivery
 
+TRIPSE-WIF-AUTH-003: [DEV immutable-subject diagnosis and reviewed recovery](WIF_AUTH_003.md).
+GitHub repo settings use immutable subjects; the former DEV condition expected
+the legacy subject. The DEV-only declarative correction and temporary safe claim
+diagnostic preserve all trust checks; applying/verifying it remains operator work.
+
 ## CI-CD-FIX-002: dev/master bootstrap correction
 
 Follow the [Windows operator setup and first-run procedure](CICD_BOOTSTRAP.md).

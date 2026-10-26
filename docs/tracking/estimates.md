@@ -122,3 +122,13 @@ private app resource bootstrap, first real DEV/master acceptance and recovery
 drills. See [Windows setup](../CICD_BOOTSTRAP.md) and ADR-0012. No measured hours,
 cost or savings; expected cost categories remain Actions/build/registry, synthetic
 GCS/Firestore/Tasks traffic, runtime, retention/backups and IAM/IAP maintenance.
+
+### TRIPSE-WIF-AUTH-003 — 2026-10-26
+
+DEV legacy-vs-immutable OIDC subject mismatch audited using read-only metadata.
+Prepared declarative DEV subject/mapping correction, temporary safe selected-claim
+diagnostics and operator plan/apply/rerun/disable runbook. PROD remains unchanged.
+Remaining work: reviewed in-place provider update, actual runner/STS verification,
+then disabling temporary diagnostics and normal DEV application acceptance. No
+hours/cost measurements; runner reruns and subsequent build/deployment operations
+may incur the existing delivery/runtime costs. See [WIF incident](../WIF_AUTH_003.md).

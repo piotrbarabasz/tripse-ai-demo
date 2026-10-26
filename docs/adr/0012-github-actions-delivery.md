@@ -106,6 +106,13 @@ it does not supersede the app's storage/auth decisions or remove manual Make.
 
 ## 9. Reconsideration
 
+TRIPSE-WIF-AUTH-003 audits the repository's immutable OIDC subject setting and
+corrects only the DEV subject contract, preserving exact owner/repository IDs,
+environment/event/ref/workflow checks. DEV mappings cover all condition claims.
+Temporary selected-claim diagnostics cannot authorize access and must be disabled
+after successful operator verification. PROD policy remains unchanged and requires
+separate review. See [incident runbook](../WIF_AUTH_003.md); no automatic apply.
+
 Untrusted branch deployments, private runner requirements, artifact retention
 beyond 90 days, multi-project tenants, live paid planning, canary traffic or
 automated data migration/restore require renewed design and acceptance.
@@ -116,3 +123,4 @@ automated data migration/restore require renewed design and acceptance.
 |---|---|---|---|
 | 2026-10-26 | Codex | Proposed WIF delivery and tested-release evidence; no activation | GITHUB-CICD-001 |
 | 2026-10-26 | Codex | Narrow automatic pushes to dev/master; early safe config diagnostics and operator bootstrap/check; no remote mutation | CI-CD-FIX-002 |
+| 2026-10-26 | Codex | DEV immutable subject correction and temporary safe OIDC diagnostics; PROD unchanged; no apply/deployment | TRIPSE-WIF-AUTH-003 |
