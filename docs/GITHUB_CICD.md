@@ -1,5 +1,12 @@
 # GITHUB-CICD-001 — GitHub Actions delivery
 
+2026-10-27 latest: master was merged; run 40550402214 accepted DEV artifact
+12753973550 then failed PROD before auth because all five Environment variables
+were missing. Follow [PROD-BOOTSTRAP-002](PROD_BOOTSTRAP_002.md) for current audit,
+protections, staged plans and separate manual promotion. Do not repeat the merge
+or rerun only failed PROD: strict source run-attempt provenance would reject its
+older artifact. Older dated notes below retain the incident/preparation history.
+
 2026-10-27: DEV run 40523770207 is accepted. Continue with the
 [operator-ready PROD bootstrap plans and approval/cutover runbook](PROD_BOOTSTRAP_001.md).
 The accepted artifact is from dev, not eligible master release evidence. PROD is

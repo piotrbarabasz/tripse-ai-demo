@@ -1,5 +1,16 @@
 # TRIPSE-PROD-BOOTSTRAP-001: operator-ready production preparation
 
+**2026-10-27 continuation: [PROD-BOOTSTRAP-002](PROD_BOOTSTRAP_002.md) is the
+current execution/resume procedure.** The merge already happened: master is
+78919b0f17805529fff7a0cfd289ad460c93403b. Run 40550402214 accepted DEV artifact
+12753973550, then failed PROD before authentication because all five production
+variables were absent. GitHub auto-created production without protections.
+Fresh state/resource audits and plans are recorded in the continuation; the
+counts below are historical preparation results, not evidence of an apply.
+Do not repeat the old PR/merge step or rerun that failed PROD job: its attempt
+would advance beyond the accepted artifact. Use the documented separate manual
+promotion after bootstrap and explicit approval, preserving strict proof checks.
+
 Prepared 2026-10-27 on clean dev HEAD
 `cf94e20a7f53c2d7674d83319704a54e2a92889e`. No apply, GitHub settings write, IAP
 enablement, build, deployment, workflow rerun, commit, push or master merge was
@@ -20,7 +31,7 @@ Artifact metadata was read, not application documents. No DEV object/database
 data or application source archive was copied to PROD. The shared image is the
 intended release mechanism; PROD must have its own app configuration/data.
 
-**This dev-branch artifact cannot authorize PROD.** Current master is
+**This dev-branch artifact cannot authorize PROD.** At this initial preparation master was
 `2c8e79b7b4c521eaf15ce2cf17e09f8b3b830171`. Merge produces a new exact master
 commit: CI builds/reuses that SHA, accepts it on DEV, freezes its digest/proof,
 then waits for production approval. Production deploys that same digest without
@@ -208,8 +219,9 @@ if ($LASTEXITCODE -ne 0) { throw 'Master protection failed' }
 
 Do not blindly repeat create/update if settings now exist: re-read/review them and
 merge intent rather than overwriting someone else's changes. In Settings ->
-Environments -> production, disable administrator bypass. REST's reviewed schema
-does not expose that toggle; it is NOT claimed verified by the CLI checker.
+Environments -> production, disable administrator bypass. BOOTSTRAP-002 observed
+can_admins_bypass in live GET metadata and now requires explicit false in the
+CLI checker; use the UI to change it and re-read the API to verify.
 Confirm reviewer piotrbarabasz, self-review allowed and only master (not wildcard/
 tag). Public repo supports required reviewers. This is a single-owner human gate;
 it does not claim independent approval. Verify the exact direct PR CI check name
@@ -313,7 +325,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Production approval/branch protection not read
 
 STDIN preserves JSON quotes in Windows PowerShell; no secrets/values are printed.
 The readiness helper is read-only and operator-invoked, not a runner admin-permission
-dependency. API checks must PASS; additionally verify admin-bypass disabled in UI.
+dependency. API checks must PASS, including explicit administrator bypass false.
 Signed probe access/prerequisites will be checked under actual PROD WIF by delivery.
 
 ### 7. PR dev -> master, exact master DEV acceptance, then human PROD approval
