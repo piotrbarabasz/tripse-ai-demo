@@ -564,3 +564,15 @@ Sources: [GitHub re-runs](https://docs.github.com/en/actions/how-tos/manage-work
 | `module.cloud_demo.google_service_account_iam_member.task_token` | create |
 | `module.cloud_demo.google_storage_bucket.documents` | create |
 | `module.cloud_demo.google_storage_bucket_iam_member.runtime` | create |
+
+## Builder IAM hardening — operator verification (2026-10-27)
+
+- GitHub production protections: PASS.
+- Initial builder IAM plan: 9 additions, 0 modifications, 1 legacy IAM grant removal.
+- Initial apply partially succeeded; two bucket IAM grants failed during custom-role propagation.
+- Confirmed tripseBuildBucketMetadata exists with storage.buckets.get permission.
+- Generated a fresh recovery plan: 2 additions, 0 modifications, 0 deletions.
+- Recovery apply: SUCCESS.
+- Final DEV-only Terraform plan: zero changes.
+- The legacy project-wide Cloud Build builder grant was removed.
+- Fresh DEV Cloud Build and full deployment acceptance remain required before provisioning PROD.
