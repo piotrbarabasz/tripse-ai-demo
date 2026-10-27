@@ -20,7 +20,9 @@ def probe_token(g, origin, *, iap):
     method = "signJwt" if iap else "generateIdToken"
     if iap:
         timestamp = int(time.time())
-        payload = {"payload": json.dumps({"iss": account, "sub": account, "aud": origin,
+        # IAP service-account JWTs scope an exact URL, not an OIDC service origin.
+        # The smoke/API/browser suite visits multiple paths on this one origin.
+        payload = {"payload": json.dumps({"iss": account, "sub": account, "aud": origin + "/*",
                                           "iat": timestamp, "exp": timestamp + 600})}
         field = "signedJwt"
     else:
@@ -38,3 +40,18 @@ def probe_token(g, origin, *, iap):
     # Keep the token in memory only; do not print it, write it to an artifact,
     # or pass it as a command-line argument.
     return token
+
+
+def safe_auth_metadata(headers):
+    """Static classifications only: never return raw challenges/redirects/headers."""
+    headers = headers or {}
+    challenge = headers.get("WWW-Authenticate", "")
+    scheme = challenge.split(" ", 1)[0].lower()
+    scheme = scheme if scheme in {"bearer", "basic", "negotiate"} else "absent_or_other"
+    match = re.search(r'\berror\s*=\s*"([a-z_]+)"', challenge, flags=re.IGNORECASE)
+    error = match.group(1).lower() if match else "absent_or_other"
+    if error not in {"invalid_token", "invalid_request", "insufficient_scope"}:
+        error = "absent_or_other"
+    generated = headers.get("X-Goog-IAP-Generated-Response", "").lower() in {"true", "1"}
+    return (f"iap_generated={str(generated).lower()}, www_auth_scheme={scheme}, "
+            f"www_auth_error={error}, redirect={str(bool(headers.get('Location'))).lower()}")

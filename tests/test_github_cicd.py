@@ -154,7 +154,7 @@ def test_keyless_probe_signs_short_lived_jwt_or_generates_explicit_id_token(monk
     payload = json.loads(requests[0].data)
     if iap:
         claims = json.loads(payload["payload"])
-        assert claims["aud"] == ORIGIN and claims["exp"] - claims["iat"] == 600
+        assert claims["aud"] == ORIGIN + "/*" and claims["exp"] - claims["iat"] == 600
         assert claims["iss"] == claims["sub"] == "tripse-ai-dev-ci-probe@tripse-ai.iam.gserviceaccount.com"
         assert requests[0].full_url.endswith(":signJwt")
     else:
@@ -339,7 +339,9 @@ def test_concrete_cloud_prerequisites_are_read_only_and_fail_closed(monkeypatch,
         return "private-token"
     monkeypatch.setattr(smoke_auth, "probe_token", token)
     from scripts.gcp.parity_smoke import Acceptance
-    monkeypatch.setattr(Acceptance, "call", lambda *args, **kwargs: {"status": "ok"})
+    # Initial bootstrap must authenticate to the old revision without requiring
+    # that the new cloud_demo runtime is already deployed. Post-deploy is strict.
+    monkeypatch.setattr(Acceptance, "call", lambda *args, **kwargs: {"status": "ok", "feature_mode": "readonly_demo"})
     if failure:
         with pytest.raises(ValueError):ci.prerequisites(g)
     else:

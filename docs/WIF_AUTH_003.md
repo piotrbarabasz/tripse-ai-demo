@@ -1,5 +1,10 @@
 # TRIPSE-WIF-AUTH-003: DEV STS rejection
 
+2026-10-27 follow-up: operator applied the reviewed DEV correction and WIF auth
+now succeeds in examined runs. The next blocker is authenticated IAP health 401;
+see [AUTH-004 incident and handoff](DEV_AUTH_004_INCIDENT.md). Original findings
+and NOT TESTED statements below are retained as the 26 October historical record.
+
 ## Verified audit and diagnosis
 
 Started on clean `dev` at `9883955dc21c92153609647171cef21fd7fefac5`.

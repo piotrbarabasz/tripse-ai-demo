@@ -1,5 +1,10 @@
 # TRIPSE Cloud Run — ręczne DEV i PROD
 
+2026-10-27: [DEV bootstrap history and IAP 401 investigation](DEV_AUTH_004_INCIDENT.md).
+DEV infrastructure/WIF are now provisioned by the operator; first cloud_demo
+rollout remains blocked. AUTH-004 prepares a keyless JWT path-audience correction
+without disabling IAP/Run IAM. No rollout or GCP mutation was performed by Codex.
+
 GITHUB-CICD-001 (2026-10-26): [GitHub delivery/bootstrap and recovery](GITHUB_CICD.md)
 adds automatic dev/master DEV deployment and protected master promotion using WIF, dedicated
 probe identities and immutable accepted digest evidence. Existing Make targets

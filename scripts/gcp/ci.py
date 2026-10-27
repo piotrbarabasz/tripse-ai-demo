@@ -153,6 +153,9 @@ def prerequisites(g):
     from scripts.gcp.smoke_auth import probe_token
     from scripts.gcp.parity_smoke import Acceptance
     token = probe_token(g, settings.origin, iap=True)
+    # The receiving revision may still be readonly_demo on the first rollout.
+    # Require real authenticated HTTP 200 here; validate cloud_demo only after
+    # deployment, never by accepting an authentication failure during bootstrap.
     Acceptance(settings.origin, token).call("/health")
     return current
 

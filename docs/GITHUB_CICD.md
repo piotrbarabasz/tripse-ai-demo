@@ -1,5 +1,11 @@
 # GITHUB-CICD-001 — GitHub Actions delivery
 
+2026-10-27: [DEV IAP 401 incident, verified bootstrap history and session handoff](DEV_AUTH_004_INCIDENT.md).
+Operator bootstrap and WIF exchange now pass; authenticated preflight health
+still blocks the first cloud_demo rollout. AUTH-004 corrects JWT URL scope and
+adds safe response classifications; no successful live fix or PROD readiness is
+claimed. This dated update supersedes older pending-bootstrap statements below.
+
 TRIPSE-WIF-AUTH-003: [DEV immutable-subject diagnosis and reviewed recovery](WIF_AUTH_003.md).
 GitHub repo settings use immutable subjects; the former DEV condition expected
 the legacy subject. The DEV-only declarative correction and temporary safe claim
@@ -144,7 +150,9 @@ providers that could mint the same environment attribute. Ownership transfer,
 renaming or workflow path changes deliberately require trust review.
 
 Cloud_demo probes use IAM Credentials `signJwt`: issuer/subject is the dedicated
-probe account, audience is the reviewed HTTPS service origin, lifetime 10 minutes.
+probe account, audience is the reviewed HTTPS service origin plus `/*` for the
+multi-path IAP JWT suite, lifetime 10 minutes. A bare URL scopes only that exact
+URL and cannot authorize `/health` or private paths (AUTH-004 correction).
 IAP supports this service-account flow without a reusable human session or local
 private key. For private preview, `generateIdToken` explicitly targets the Run
 origin and includes email. Tokens remain in process memory; they are not printed,

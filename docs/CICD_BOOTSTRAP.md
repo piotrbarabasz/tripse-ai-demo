@@ -1,5 +1,11 @@
 # CI-CD-FIX-002: Windows operator setup
 
+2026-10-27 status: DEV environment/WIF and application resources have been
+bootstrapped by the operator. WIF works; authenticated health 401 blocks rollout.
+Do not repeat resource creation to fix authentication. Continue from the
+[AUTH-004 incident ledger and handoff](DEV_AUTH_004_INCIDENT.md). Historical
+validation observations below describe their original dates.
+
 Code changes are prepared on `dev`. This procedure is operator-invoked; no part
 was executed to mutate GitHub/GCP in implementation. See [architecture, evidence
 and recovery](GITHUB_CICD.md) and [application bootstrap](DEPLOY_GCP.md).

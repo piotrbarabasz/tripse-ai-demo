@@ -5,7 +5,7 @@ status: proposed
 date: 2026-10-26
 author: "Codex — implementation proposal"
 area: "CI/CD, IAM, release evidence, rollback"
-related_tasks: [GITHUB-CICD-001]
+related_tasks: [GITHUB-CICD-001, TRIPSE-CICD-DEV-AUTH-004]
 related_prs: []
 supersedes: []
 ---
@@ -14,6 +14,12 @@ supersedes: []
 
 Implementation: workflow/scripts/tests prepared locally; no push, IAM apply or
 cloud deployment. Owner acceptance and real runner acceptance remain unrecorded.
+
+2026-10-27 evidence update: the preceding statement describes original local
+preparation. Operator reports reviewed DEV WIF/application bootstrap applies;
+examined runs confirm WIF success and no application deployment after health 401.
+AUTH-004 prepares a JWT URL-audience correction and safe failure metadata; its
+live result is unverified. No ADR acceptance or production readiness is inferred.
 
 ## 1. Context and problem
 
@@ -73,6 +79,19 @@ reduces deployment ambiguity without redesigning the app/storage. **Unconfirmed:
 real WIF claims/refresh, scoped IAM, runner IAP and reviewer configuration; local
 tests cannot prove those operational boundaries.
 
+**Verified 2026-10-27:** runs 40343957774 (attempt 5) and 40483100238 authenticate
+through WIF, then fail closed on GET /health 401 before deploying. Read-only DEV
+metadata confirms IAP enabled, invoker IAM enforced, expected probe/IAP-agent
+roles and the old readonly revision. The signed service-account JWT incorrectly
+scoped the bare origin instead of the requested path; use the documented `/*`
+scope on that one validated origin for multi-path acceptance. Non-IAP ID-token
+audience is unchanged. New errors expose only allowlisted static auth metadata,
+never tokens, header values or response bodies. Local signJwt diagnostic was
+denied (403); the live effect remains unverified. See the
+[incident and handoff](../DEV_AUTH_004_INCIDENT.md) for chronology and hypotheses.
+ADR-0013 is not warranted: this corrects the existing keyless/fail-closed decision
+without introducing a new trust boundary. The next free ADR number remains 0013.
+
 ## 5. Consequences
 
 Feature branches share DEV deliberately; accepted master proof remains stable.
@@ -124,3 +143,4 @@ automated data migration/restore require renewed design and acceptance.
 | 2026-10-26 | Codex | Proposed WIF delivery and tested-release evidence; no activation | GITHUB-CICD-001 |
 | 2026-10-26 | Codex | Narrow automatic pushes to dev/master; early safe config diagnostics and operator bootstrap/check; no remote mutation | CI-CD-FIX-002 |
 | 2026-10-26 | Codex | DEV immutable subject correction and temporary safe OIDC diagnostics; PROD unchanged; no apply/deployment | TRIPSE-WIF-AUTH-003 |
+| 2026-10-27 | Codex | Record operator bootstrap/WIF evidence and health 401; correct JWT URL scope and add safe failure metadata; no new ADR or cloud mutation | TRIPSE-CICD-DEV-AUTH-004 |

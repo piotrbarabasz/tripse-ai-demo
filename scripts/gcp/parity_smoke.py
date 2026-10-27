@@ -15,6 +15,7 @@ from urllib.error import HTTPError
 from urllib.request import Request, build_opener, HTTPRedirectHandler
 
 from scripts.gcp.deployment_contract import ROOT, load_pair
+from scripts.gcp.smoke_auth import safe_auth_metadata
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -37,11 +38,13 @@ class Acceptance:
         try:
             with self.opener.open(Request(self.origin + path, data=raw, method=method, headers=request_headers), timeout=30) as response:
                 status, data = response.status, response.read()
+                response_headers = response.headers
         except HTTPError as error:
             status, data = error.code, error.read()
+            response_headers = error.headers
         expected = {expected} if isinstance(expected, int) else expected
         if status not in expected:
-            raise ValueError(f"DEV acceptance failed: {method} {path} status {status}")
+            raise ValueError(f"DEV acceptance failed: {method} {path} status {status}; " + safe_auth_metadata(response_headers))
         return json.loads(data) if data.startswith((b"{", b"[")) else data
 
     def read_only(self, environment):

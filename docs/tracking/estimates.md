@@ -132,3 +132,15 @@ Remaining work: reviewed in-place provider update, actual runner/STS verificatio
 then disabling temporary diagnostics and normal DEV application acceptance. No
 hours/cost measurements; runner reruns and subsequent build/deployment operations
 may incur the existing delivery/runtime costs. See [WIF incident](../WIF_AUTH_003.md).
+
+### TRIPSE-CICD-DEV-AUTH-004 — 2026-10-27
+
+Prepared verified operator/bootstrap history and a resume ledger; corrected the
+IAP signed-JWT URL scope and added safe HTTP failure classifications. Existing
+ADR-0012 covers the architecture; no redundant ADR-0013. Remaining work: actual
+CI probe/DEV cloud_demo rollout and acceptance, then any evidence-backed next
+blocker; local operator signing is denied and no IAM expansion is proposed.
+Budget runner retries, build/registry, ordinary health/probe traffic and synthetic
+GCS/Firestore/Tasks operations. No hours, costs or savings measured. Production
+rollout, live providers, backup/restart/isolation drills remain separate gates.
+See [incident/handoff](../DEV_AUTH_004_INCIDENT.md).
