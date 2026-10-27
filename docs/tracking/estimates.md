@@ -144,3 +144,15 @@ Budget runner retries, build/registry, ordinary health/probe traffic and synthet
 GCS/Firestore/Tasks operations. No hours, costs or savings measured. Production
 rollout, live providers, backup/restart/isolation drills remain separate gates.
 See [incident/handoff](../DEV_AUTH_004_INCIDENT.md).
+
+### TRIPSE-CICD-BUILD-005 — 2026-10-27
+
+Audited source upload/discovery and initiator/builder/service-agent authority;
+prepared explicit existing-bucket staging with direct ownership/region validation,
+safe Google-error categories and regressions. Existing CI identity plan is zero
+changes; no new IAM grant/resource is proposed. Remaining work: approved real CI
+source upload/build/registry/log verification and private DEV full acceptance;
+historical raw error/effective CI simulation remain unavailable. No measured
+hours/costs. Expected paid validation includes Actions, build compute, source/log
+object retention, registry and later synthetic runtime traffic. See
+[BUILD-005](../BUILD_005_INCIDENT.md); existing ADR-0012 applies.

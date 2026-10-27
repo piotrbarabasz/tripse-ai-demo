@@ -1,5 +1,12 @@
 # TRIPSE-CICD-DEV-AUTH-004: DEV IAP 401 and deployment handoff
 
+2026-10-27 BUILD-005 continuation: [source staging investigation and permanent
+least-privilege correction](BUILD_005_INCIDENT.md). Run 40509727837 identifies
+build.submit; implicit SDK ownership discovery requires project buckets.list,
+which the configured CI grants omit. New code explicitly selects the existing
+bucket and directly verifies its owner/name/region. No IAM expansion/apply;
+historical Google error remains unrecovered and live fix unverified.
+
 Date: 2026-10-27 (Europe/Warsaw). Scope: **DEV only**, project `tripse-ai`
 (`690165197462`), region `europe-central2`, service `tripse-ai-dev`, origin
 `https://tripse-ai-dev-64ctpggq3a-lm.a.run.app`. Target: private `cloud_demo`,

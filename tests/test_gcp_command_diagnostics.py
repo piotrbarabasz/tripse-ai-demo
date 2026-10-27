@@ -85,6 +85,16 @@ def test_build_failure_identifies_actual_suboperation_without_fallback(monkeypat
             output = json.dumps([{"tags": [config.image + ":" + SHA]}] if failure == "reuse_digest" else [])
         elif operation == "gcloud auth print-access-token":
             output = SECRET
+        elif operation == "gcloud version":
+            output = json.dumps({"Google Cloud SDK": "590.0.1"})
+        elif operation == "gcloud projects describe":
+            output = json.dumps({"projectNumber": "690165197462"})
+        elif operation == "gcloud storage buckets describe":
+            output = json.dumps({"name": "tripse-ai_europe-central2_cloudbuild", "projectNumber": "690165197462", "location": "EUROPE-CENTRAL2"})
+        elif operation == "gcloud builds submit":
+            output = json.dumps({"id": "9c54ce2d-d425-44cd-9328-a765affb8bad"})
+        elif operation == "gcloud builds describe":
+            output = json.dumps({"status": "SUCCESS"})
         else:
             output = ""
         return SimpleNamespace(returncode=0, stdout=output.encode(), stderr=b"")
@@ -116,10 +126,11 @@ def test_ci_prints_and_summarizes_safe_command_failure_without_acceptance_artifa
     summary = tmp_path / "summary.md"
     monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary))
     monkeypatch.setattr(sys, "argv", ["ci", "execute"])
-    monkeypatch.setattr(d.subprocess, "run", lambda *a, **kw: SimpleNamespace(returncode=1, stdout=SECRET.encode(), stderr=SECRET.encode()))
+    monkeypatch.setattr(d.subprocess, "run", lambda *a, **kw: SimpleNamespace(returncode=1, stdout=SECRET.encode(),
+        stderr=("PERMISSION_DENIED storage.objects.create " + SECRET).encode()))
     def execute():
-        with d.command_stage("build.image_lookup"):
-            d.run(["gcloud", "artifacts", "docker", "images", "list", SECRET])
+        with d.command_stage("build.submit"):
+            d.run(["gcloud", "builds", "submit", SECRET])
     monkeypatch.setattr(ci, "execute", execute)
     with pytest.raises(SystemExit) as error:
         ci.main()
@@ -127,7 +138,8 @@ def test_ci_prints_and_summarizes_safe_command_failure_without_acceptance_artifa
     stderr = capsys.readouterr().err
     content = summary.read_text()
     for output in (stderr, content):
-        assert "build.image_lookup" in output and "gcloud artifacts docker images list" in output and SECRET not in output
+        assert "build.submit" in output and "gcloud builds submit" in output and SECRET not in output
+        assert "PERMISSION_DENIED" in output and "storage.objects.create" in output
     assert "exit code: `1`" in content and "Release not accepted" in content
     assert not (tmp_path / "release.json").exists()
 

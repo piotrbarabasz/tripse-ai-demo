@@ -1,5 +1,10 @@
 # GITHUB-CICD-001 — GitHub Actions delivery
 
+BUILD-005: [source staging diagnosis, code correction and zero-change IAM plan](BUILD_005_INCIDENT.md).
+CI explicitly stages to the existing verified project/region source bucket rather
+than using implicit SDK project-wide bucket discovery. No IAM widening; actual
+new DEV build/acceptance remains an operator gate.
+
 2026-10-27: [DEV IAP 401 incident, verified bootstrap history and session handoff](DEV_AUTH_004_INCIDENT.md).
 Operator bootstrap and WIF exchange now pass; authenticated preflight health
 still blocks the first cloud_demo rollout. AUTH-004 corrects JWT URL scope and

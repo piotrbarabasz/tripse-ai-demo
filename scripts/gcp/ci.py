@@ -489,6 +489,7 @@ def main():
                     with open(path, "a", encoding="utf-8") as stream:
                         stream.write("\n## Deployment command failed\n\n"
                                      f"Stage: `{exc.stage}`; operation: `{exc.operation}`; exit code: `{exc.code}`.\n\n"
+                                     + (f"Safe classification: `{exc.diagnostic}`.\n\n" if exc.diagnostic else "") +
                                      "Release not accepted. No stderr, command arguments or credential details are included. "
                                      "See docs/DEV_AUTH_004_INCIDENT.md.\n")
                 except OSError:

@@ -101,6 +101,14 @@ artifact or stale rerun fails closed and requires a new acceptance run.
 
 ## 6. Debt and limitations
 
+BUILD-005 operational correction (2026-10-27): explicit existing source staging
+with API-reported owner/name/region validation replaces implicit SDK project
+bucket discovery. Existing narrow IAM, builder, log settings, SHA/digest/source
+proof and separate states remain unchanged. Safe allowlisted Google error
+classification supplies missing next-run evidence. Historical source-list denial
+is probable, not certified by effective CI simulation; live validation remains
+open. See [BUILD-005](../BUILD_005_INCIDENT.md). No new architecture/ADR is needed.
+
 Required reviewers and branch protection cannot be guaranteed by YAML and must
 be configured by an operator. Real app infrastructure remains a prerequisite.
 GitHub locks cannot serialize a separate operator terminal. No automatic schema
@@ -144,3 +152,4 @@ automated data migration/restore require renewed design and acceptance.
 | 2026-10-26 | Codex | Narrow automatic pushes to dev/master; early safe config diagnostics and operator bootstrap/check; no remote mutation | CI-CD-FIX-002 |
 | 2026-10-26 | Codex | DEV immutable subject correction and temporary safe OIDC diagnostics; PROD unchanged; no apply/deployment | TRIPSE-WIF-AUTH-003 |
 | 2026-10-27 | Codex | Record operator bootstrap/WIF evidence and health 401; correct JWT URL scope and add safe failure metadata; no new ADR or cloud mutation | TRIPSE-CICD-DEV-AUTH-004 |
+| 2026-10-27 | Codex | Explicit verified source staging avoids implicit project bucket discovery; no IAM expansion, plan has zero changes; live build not run | TRIPSE-CICD-BUILD-005 |

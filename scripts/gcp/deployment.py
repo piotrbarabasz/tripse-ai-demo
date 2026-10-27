@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen, HTTPRedirectHandler, build_opener
 
@@ -26,12 +27,12 @@ APIS = ("run.googleapis.com", "artifactregistry.googleapis.com", "cloudbuild.goo
 # Only fixed command words are eligible for logs. Never derive labels by joining
 # argv: positional resource names, paths and flag values may contain credentials.
 GCLOUD_OPERATIONS = tuple(tuple(value.split()) for value in (
-    "auth print-access-token", "auth print-identity-token", "projects describe",
+    "version", "auth print-access-token", "auth print-identity-token", "projects describe",
     "projects get-iam-policy", "projects add-iam-policy-binding", "services list", "services enable",
     "run regions list", "run services list", "run services describe", "run revisions describe",
     "run services get-iam-policy", "run services remove-iam-policy-binding", "run services update",
     "run services update-traffic", "run deploy", "artifacts repositories list", "artifacts repositories create",
-    "artifacts docker images list", "artifacts docker images describe", "builds submit", "builds list",
+    "artifacts docker images list", "artifacts docker images describe", "builds submit", "builds list", "builds describe",
     "iam service-accounts describe", "iam service-accounts create", "iam service-accounts get-iam-policy",
     "storage buckets describe", "storage buckets get-iam-policy", "storage cat",
     "firestore databases describe", "tasks queues describe", "tasks queues get-iam-policy",
@@ -39,7 +40,7 @@ GCLOUD_OPERATIONS = tuple(tuple(value.split()) for value in (
 ))
 COMMAND_STAGES = frozenset({"unspecified", "credentials", "preflight", "prerequisites",
     "build", "build.repository", "build.image_lookup", "build.reuse_digest", "build.act_as",
-    "build.source", "build.submit", "build.verify_digest", "release.digest", "release.source_proof",
+    "build.client", "build.source_bucket", "build.source", "build.submit", "build.wait", "build.verify_digest", "release.digest", "release.source_proof",
     "release.snapshot", "release.deploy", "release.verify", "release.acceptance", "release.restore"})
 _COMMAND_STAGE = ContextVar("gcp_command_stage", default="unspecified")
 
@@ -70,12 +71,51 @@ def safe_command_operation(args):
 
 
 class CommandError(RuntimeError):
-    def __init__(self, name, code, detail=None, *, operation=None, stage=None):
+    def __init__(self, name, code, detail=None, *, operation=None, stage=None, diagnostic=None):
         self.operation = operation or "unclassified"
         self.stage = stage or _COMMAND_STAGE.get()
+        self.diagnostic = diagnostic or ""
         super().__init__(f"{name} failed (exit {code}); operation stopped"
-                         f" [stage={self.stage}; operation={self.operation}]" + (f". {detail}" if detail else ""))
+                         f" [stage={self.stage}; operation={self.operation}]"
+                         + (f" [{self.diagnostic}]" if self.diagnostic else "") + (f". {detail}" if detail else ""))
         self.code = code
+
+
+def safe_build_error(stderr, *, source_metadata=False):
+    """Classify known Google/CLI errors; no substring of raw stderr is returned."""
+    if isinstance(stderr, bytes):
+        stderr = stderr[:1_000_000].decode("utf-8", errors="replace")
+    text = (stderr or "")[:1_000_000]
+    phase = "source_bucket_metadata" if source_metadata else "submit_or_wait"
+    if "forbidden from accessing the bucket" in text:
+        phase = "source_bucket_validation"
+    elif "Could not upload file" in text:
+        phase = "source_upload"
+    elif "unrecognized arguments:" in text:
+        phase = "client_arguments"
+    elif "already exists in another project" in text or "already exists and is owned by another project" in text:
+        phase = "source_bucket_ownership"
+    elif "build.service_account" in text and ("logs_bucket" in text or "default_logs_bucket_behavior" in text):
+        phase = "build_log_configuration"
+    categories = ("PERMISSION_DENIED", "UNAUTHENTICATED", "INVALID_ARGUMENT", "NOT_FOUND",
+                  "RESOURCE_EXHAUSTED", "FAILED_PRECONDITION", "SERVICE_DISABLED", "QUOTA_EXCEEDED")
+    category = next((code for code in categories if re.search(r"\b" + code + r"\b", text)), "UNCLASSIFIED")
+    if category == "UNCLASSIFIED":
+        category = next(("HTTP_" + code for code in ("400", "401", "403", "404", "409", "429", "500", "503")
+                         if re.search(r"\bHTTP(?:Error| error)?[ :]+" + code + r"\b", text, re.IGNORECASE)), category)
+    if phase == "client_arguments":
+        category = "CLI_ARGUMENT_ERROR"
+    elif phase == "source_bucket_validation":
+        category = "SOURCE_BUCKET_ACCESS_DENIED"
+    elif phase == "source_bucket_ownership":
+        category = "BUCKET_PROJECT_MISMATCH"
+    permissions = ("storage.buckets.get", "storage.buckets.list", "storage.buckets.create",
+                   "storage.objects.create", "storage.objects.get", "storage.objects.list",
+                   "cloudbuild.builds.create", "cloudbuild.builds.get", "iam.serviceAccounts.actAs", "serviceusage.services.use",
+                   "artifactregistry.repositories.uploadArtifacts", "logging.logEntries.create")
+    recognized = [permission for permission in permissions if re.search(r"(?<![\w.])" + re.escape(permission) + r"(?![\w.])", text)]
+    return (f"google_category={category}; submit_phase={phase}; "
+            "recognized_permissions=" + (",".join(recognized) or "none"))
 
 
 def run(args, *, binary=False):
@@ -83,7 +123,10 @@ def run(args, *, binary=False):
     result = subprocess.run(args, cwd=ROOT, capture_output=True)
     if result.returncode:
         name, operation = safe_command_operation(args)
-        raise CommandError(name, result.returncode, operation=operation)
+        diagnostic = safe_build_error(getattr(result, "stderr", b"")) if operation in {"gcloud builds submit", "gcloud builds describe"} else None
+        if _COMMAND_STAGE.get() == "build.source_bucket" and operation in {"gcloud storage buckets describe", "gcloud projects describe"}:
+            diagnostic = safe_build_error(getattr(result, "stderr", b""), source_metadata=True)
+        raise CommandError(name, result.returncode, operation=operation, diagnostic=diagnostic)
     return result.stdout if binary else result.stdout.decode("utf-8").strip()
 
 
@@ -301,6 +344,45 @@ def check_release_source(sha):
     return files
 
 
+def build_source_staging(g):
+    """Validate an existing bucket's owner directly; never discover/create buckets.
+
+    Implicit gcloud staging validates ownership via project-wide buckets.list.
+    Explicit staging omits that SDK check, so we enforce owner/name/location here
+    with buckets.get before any source upload. Missing metadata fails closed.
+    """
+    c = g.config
+    bucket = f'{c["GCP_PROJECT_ID"]}_{c["GCP_REGION"]}_cloudbuild'
+    project = g("projects", "describe", c["GCP_PROJECT_ID"], json_output=True)
+    metadata = g("storage", "buckets", "describe", "gs://" + bucket, "--raw", json_output=True)
+    number = str(project.get("projectNumber", ""))
+    if (not re.fullmatch(r"[1-9][0-9]*", number) or metadata.get("name") != bucket
+        or str(metadata.get("projectNumber", "")) != number
+        or metadata.get("location", "").lower() != c["GCP_REGION"]):
+        raise ValueError("Build source bucket missing or owner/name/region differs; operator bootstrap required; no source uploaded")
+    return "gs://" + bucket + "/source"
+
+
+def wait_for_build(g, build_id):
+    """Poll metadata only. SDK --suppress-logs still reads the GCS log object."""
+    if not isinstance(build_id, str) or not re.fullmatch(r"[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}", build_id):
+        raise ValueError("Cloud Build did not return a valid build ID")
+    print("Cloud Build accepted: " + build_id)
+    deadline = time.monotonic() + 900
+    while time.monotonic() < deadline:
+        state = g("builds", "describe", build_id, f'--region={g.config["GCP_REGION"]}', json_output=True)
+        status = state.get("status")
+        if status == "SUCCESS":
+            return
+        if status in {"FAILURE", "INTERNAL_ERROR", "TIMEOUT", "CANCELLED", "EXPIRED"}:
+            raise ValueError(f"Cloud Build {build_id} ended with status {status}; release not accepted")
+        if status not in {"QUEUED", "PENDING", "WORKING"}:
+            raise ValueError("Cloud Build returned an unrecognized status; release not accepted")
+        time.sleep(3)
+    # Never cancel a possibly running build or start another automatically.
+    raise ValueError(f"Cloud Build {build_id} status wait expired; inspect existing build before any retry; release not accepted")
+
+
 def build(g, sha):
     with command_stage("build.repository"):
         if not repository(g):
@@ -316,6 +398,13 @@ def build(g, sha):
         return
     with command_stage("build.act_as"):
         check_act_as(g, g.config.build_account)
+    with command_stage("build.client"):
+        version = g("version", json_output=True).get("Google Cloud SDK", "")
+        if not isinstance(version, str) or not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version):
+            raise ValueError("Cannot determine Cloud Build client version safely")
+        print("Cloud Build client SDK version: " + version)
+    with command_stage("build.source_bucket"):
+        source_staging = build_source_staging(g)
     with tempfile.TemporaryDirectory(prefix="tripse-build-") as directory:
         staging = Path(directory)
         with command_stage("build.source"):
@@ -325,9 +414,12 @@ def build(g, sha):
                 target.write_bytes(content)
         (staging / "app/_build_version.txt").write_text(sha, encoding="utf-8")
         with command_stage("build.submit"):
-            g("builds", "submit", str(staging), f"--tag={g.config.image}:{sha}", f'--region={g.config["GCP_REGION"]}',
+            submitted = g("builds", "submit", str(staging), f"--tag={g.config.image}:{sha}", f'--region={g.config["GCP_REGION"]}',
               f'--service-account=projects/{g.config["GCP_PROJECT_ID"]}/serviceAccounts/{g.config.build_account}',
-              "--default-buckets-behavior=regional-user-owned-bucket", "--timeout=600", "--suppress-logs")
+              f"--gcs-source-staging-dir={source_staging}",
+              "--default-buckets-behavior=regional-user-owned-bucket", "--timeout=600", "--suppress-logs", "--async", json_output=True)
+        with command_stage("build.wait"):
+            wait_for_build(g, submitted.get("id"))
     with command_stage("build.verify_digest"):
         digest(g, sha)
 
@@ -447,7 +539,7 @@ def publish(g, state):
                    " No allUsers fallback or organization policy changes were attempted.")
         if isinstance(error, CommandError):
             raise CommandError("Cloud Run publication", error.code, detail,
-                               operation=error.operation, stage=error.stage) from None
+                               operation=error.operation, stage=error.stage, diagnostic=error.diagnostic) from None
         raise ValueError(detail) from None
 
 
