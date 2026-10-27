@@ -40,7 +40,7 @@ GCLOUD_OPERATIONS = tuple(tuple(value.split()) for value in (
 ))
 COMMAND_STAGES = frozenset({"unspecified", "credentials", "preflight", "prerequisites",
     "build", "build.repository", "build.image_lookup", "build.reuse_digest", "build.act_as",
-    "build.client", "build.source_bucket", "build.source", "build.submit", "build.wait", "build.verify_digest", "release.digest", "release.source_proof",
+    "build.client", "build.source_bucket", "build.log_bucket", "build.source", "build.submit", "build.wait", "build.verify_digest", "release.digest", "release.source_proof",
     "release.snapshot", "release.deploy", "release.verify", "release.acceptance", "release.restore"})
 _COMMAND_STAGE = ContextVar("gcp_command_stage", default="unspecified")
 
@@ -299,8 +299,9 @@ def setup(g):
     policy = g("projects", "get-iam-policy", c["GCP_PROJECT_ID"], json_output=True)
     member = f"serviceAccount:{c.build_account}"
     role = "roles/cloudbuild.builds.builder"
-    if not any(b["role"] == role and member in b.get("members", []) and not b.get("condition") for b in policy.get("bindings", [])):
-        g("projects", "add-iam-policy-binding", c["GCP_PROJECT_ID"], f"--member={member}", f"--role={role}", "--condition=None")
+    scoped = f'projects/{c["GCP_PROJECT_ID"]}/roles/tripseBuildMetadata'
+    if not any(b["role"] in {role, scoped} and member in b.get("members", []) and not b.get("condition") for b in policy.get("bindings", [])):
+        raise ValueError("Provision reviewed scoped builder IAM with infra/gcp/github-actions; setup never grants project-wide build/data access")
 
 
 def source_files(sha):
@@ -383,6 +384,21 @@ def wait_for_build(g, build_id):
     raise ValueError(f"Cloud Build {build_id} status wait expired; inspect existing build before any retry; release not accepted")
 
 
+def build_log_destination(g):
+    # Explicit pre-existing logs bucket avoids backend bucket-create authority
+    # when the shared builder is hardened before PROD receives private data.
+    project = g("projects", "describe", g.config["GCP_PROJECT_ID"], json_output=True)
+    number = str(project.get("projectNumber", ""))
+    if not re.fullmatch(r"[1-9][0-9]*", number):
+        raise ValueError("Cannot validate build log bucket project")
+    name = f'{number}-{g.config["GCP_REGION"]}-cloudbuild-logs'
+    metadata = g("storage", "buckets", "describe", "gs://" + name, "--raw", json_output=True)
+    if (metadata.get("name") != name or str(metadata.get("projectNumber", "")) != number
+        or metadata.get("location", "").lower() != g.config["GCP_REGION"]):
+        raise ValueError("Build log bucket owner/name/region differs; no build submitted")
+    return "gs://" + name
+
+
 def build(g, sha):
     with command_stage("build.repository"):
         if not repository(g):
@@ -405,6 +421,8 @@ def build(g, sha):
         print("Cloud Build client SDK version: " + version)
     with command_stage("build.source_bucket"):
         source_staging = build_source_staging(g)
+    with command_stage("build.log_bucket"):
+        log_destination = build_log_destination(g)
     with tempfile.TemporaryDirectory(prefix="tripse-build-") as directory:
         staging = Path(directory)
         with command_stage("build.source"):
@@ -417,6 +435,7 @@ def build(g, sha):
             submitted = g("builds", "submit", str(staging), f"--tag={g.config.image}:{sha}", f'--region={g.config["GCP_REGION"]}',
               f'--service-account=projects/{g.config["GCP_PROJECT_ID"]}/serviceAccounts/{g.config.build_account}',
               f"--gcs-source-staging-dir={source_staging}",
+              f"--gcs-log-dir={log_destination}",
               "--default-buckets-behavior=regional-user-owned-bucket", "--timeout=600", "--suppress-logs", "--async", json_output=True)
         with command_stage("build.wait"):
             wait_for_build(g, submitted.get("id"))

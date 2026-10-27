@@ -1,5 +1,10 @@
 # GITHUB-CICD-001 — GitHub Actions delivery
 
+2026-10-27: DEV run 40523770207 is accepted. Continue with the
+[operator-ready PROD bootstrap plans and approval/cutover runbook](PROD_BOOTSTRAP_001.md).
+The accepted artifact is from dev, not eligible master release evidence. PROD is
+still the public readonly baseline; no production bootstrap was applied by Codex.
+
 BUILD-005: [source staging diagnosis, code correction and zero-change IAM plan](BUILD_005_INCIDENT.md).
 CI explicitly stages to the existing verified project/region source bucket rather
 than using implicit SDK project-wide bucket discovery. No IAM widening; actual

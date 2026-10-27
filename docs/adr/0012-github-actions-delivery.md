@@ -5,7 +5,7 @@ status: proposed
 date: 2026-10-26
 author: "Codex — implementation proposal"
 area: "CI/CD, IAM, release evidence, rollback"
-related_tasks: [GITHUB-CICD-001, TRIPSE-CICD-DEV-AUTH-004]
+related_tasks: [GITHUB-CICD-001, TRIPSE-CICD-DEV-AUTH-004, TRIPSE-PROD-BOOTSTRAP-001]
 related_prs: []
 supersedes: []
 ---
@@ -71,6 +71,22 @@ make setup reviewable; neither helper provisions GitHub/WIF/resources. Terraform
 application/IAM and GitHub approval protection remain separate manual gates.
 
 ## 4. Rationale and evidence
+
+PROD_BOOTSTRAP-001 evidence (2026-10-27): accepted DEV run 40523770207/artifact
+12741609814 matches the actual receiving digest, but dev-branch proof cannot
+authorize production. Master must accept its own exact SHA first. Existing PROD
+is public readonly; production environment/reviewers and master protection are
+missing. Prepared plans add isolated PROD data and PROD CI to the same existing
+pool/state, with immutable production/master-only subject predicates.
+Owner explicitly selected piotrbarabasz with self-review allowed for the human
+production gate; this is not independent two-person approval or authorization to
+deploy now. Planned builder hardening closes transitive DEV access to future PROD
+objects; source/log/registry grants stay scoped, legacy setup cannot regrant the
+broad project builder role, and production preflight rejects unreviewed known-DEV
+project authority. A controlled DEV build after IAM apply remains mandatory.
+See [plans, state-import record and operator gates](../PROD_BOOTSTRAP_001.md).
+No new ADR: this implements existing isolation/keyless/promotion decisions, not
+another architecture. Formal ADR acceptance remains unrecorded.
 
 **Requirement:** GITHUB-CICD-001. **Code evidence:** workflow dependencies, explicit
 permissions/environments, `scripts/gcp/ci.py`, `smoke_auth.py`, resource checks,
@@ -153,3 +169,4 @@ automated data migration/restore require renewed design and acceptance.
 | 2026-10-26 | Codex | DEV immutable subject correction and temporary safe OIDC diagnostics; PROD unchanged; no apply/deployment | TRIPSE-WIF-AUTH-003 |
 | 2026-10-27 | Codex | Record operator bootstrap/WIF evidence and health 401; correct JWT URL scope and add safe failure metadata; no new ADR or cloud mutation | TRIPSE-CICD-DEV-AUTH-004 |
 | 2026-10-27 | Codex | Explicit verified source staging avoids implicit project bucket discovery; no IAM expansion, plan has zero changes; live build not run | TRIPSE-CICD-BUILD-005 |
+| 2026-10-27 | Codex | Record accepted DEV and prepare isolated PROD state, shared CI extension, immutable PROD trust and builder isolation; single-owner approval choice; no cloud apply | TRIPSE-PROD-BOOTSTRAP-001 |

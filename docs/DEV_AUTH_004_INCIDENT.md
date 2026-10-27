@@ -1,5 +1,10 @@
 # TRIPSE-CICD-DEV-AUTH-004: DEV IAP 401 and deployment handoff
 
+2026-10-27: DEV deployment/acceptance succeeded in run 40523770207, SHA cf94e20a,
+artifact 12741609814. Historical blockers below are retained as incident evidence.
+Current work is [PROD bootstrap preparation](PROD_BOOTSTRAP_001.md): reviewed
+plans only, no production mutation or deployment.
+
 2026-10-27 BUILD-005 continuation: [source staging investigation and permanent
 least-privilege correction](BUILD_005_INCIDENT.md). Run 40509727837 identifies
 build.submit; implicit SDK ownership discovery requires project buckets.list,

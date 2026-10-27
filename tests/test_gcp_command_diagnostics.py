@@ -90,7 +90,7 @@ def test_build_failure_identifies_actual_suboperation_without_fallback(monkeypat
         elif operation == "gcloud projects describe":
             output = json.dumps({"projectNumber": "690165197462"})
         elif operation == "gcloud storage buckets describe":
-            output = json.dumps({"name": "tripse-ai_europe-central2_cloudbuild", "projectNumber": "690165197462", "location": "EUROPE-CENTRAL2"})
+            output = json.dumps({"name": args[4].removeprefix("gs://"), "projectNumber": "690165197462", "location": "EUROPE-CENTRAL2"})
         elif operation == "gcloud builds submit":
             output = json.dumps({"id": "9c54ce2d-d425-44cd-9328-a765affb8bad"})
         elif operation == "gcloud builds describe":

@@ -18,8 +18,8 @@ task opisuje pracę, a [worklog](../tracking/worklog.csv) jej udokumentowany prz
 | [ADR-0008](0008-local-demo-hub.md) | Lokalny Hub jako nawigacja istniejących modułów | proposed | Wdrożone w HUB-01 |
 | [ADR-0009](0009-cloud-run-readonly-preview.md) | Cloud Run DEV/PROD jako bezstanowy podgląd tylko do odczytu | superseded | ADR-0011 extends cloud functionality; readonly_demo retained |
 | [ADR-0010](0010-cloud-run-public-access.md) | Publiczny Cloud Run przez wyłączenie kontroli IAM invokera | proposed | Kod i testy offline; bez zmian GCP |
-| [ADR-0011](0011-authenticated-cloud-demo.md) | Shared authenticated cloud_demo with GCS and Firestore/Tasks | proposed | Offline implementation and parity tests; no GCP deployment |
-| [ADR-0012](0012-github-actions-delivery.md) | GitHub Actions, WIF and immutable DEV acceptance before PROD | proposed | DEV WIF/bootstrap evidence recorded; IAP health 401 and AUTH-004 fix await live acceptance |
+| [ADR-0011](0011-authenticated-cloud-demo.md) | Shared authenticated cloud_demo with GCS and Firestore/Tasks | proposed | Private DEV accepted; isolated empty PROD root/plan prepared; production acceptance pending |
+| [ADR-0012](0012-github-actions-delivery.md) | GitHub Actions, WIF and immutable DEV acceptance before PROD | proposed | DEV accepted; shared CI PROD extension, approval setup and builder isolation plans await operator apply |
 
 ADR-0001–0007 sporządzono retrospektywnie 25.10.2026. Kod potwierdza
 implementację, ale dostępne repozytorium nie zawiera jednoznacznej akceptacji
@@ -118,3 +118,4 @@ Sam ten standard nie wdraża automatycznej walidacji CI ani wieloosobowego workf
 | 2026-10-25 | Codex | Dodanie ADR-0010 dla publikacji bez bindingu allUsers; uzupełnienie ADR-0009 | GCP-ACCESS-001 |
 | 2026-10-26 | Codex | ADR-0011 extends cloud_demo; ADR-0009 superseded with historical content retained | CLOUD-PARITY-001 |
 | 2026-10-27 | Codex | Update ADR-0012 verified DEV bootstrap/auth evidence; incident is corrective work, so ADR-0013 remains available | TRIPSE-CICD-DEV-AUTH-004 |
+| 2026-10-27 | Codex | Record real DEV acceptance and staged PROD plans in existing ADR-0011/0012; no new architecture/ADR number | TRIPSE-PROD-BOOTSTRAP-001 |

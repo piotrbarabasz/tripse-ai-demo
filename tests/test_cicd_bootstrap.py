@@ -206,4 +206,5 @@ def test_push_policy_and_wif_defense_agree():
     assert prod["env"]["CI_RELEASE_SHA"] == "${{ needs.dev.outputs.sha || inputs.release_sha }}"
     assert "pull_request" not in delivery["on"]
     tf = Path("infra/gcp/github-actions/main.tf").read_text()
-    assert "assertion.ref in ['refs/heads/dev', 'refs/heads/master']" in tf
+    assert "assertion.ref in ${jsonencode(local.dev_oidc.push_refs)}" in tf
+    assert json.loads(Path("infra/gcp/github-actions/dev-oidc-policy.json").read_text())["push_refs"] == ["refs/heads/dev", "refs/heads/master"]

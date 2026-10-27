@@ -165,4 +165,5 @@ def test_terraform_dev_contract_uses_all_same_fields_and_keeps_mapping_and_prod_
         assert '"assertion.' + name + '"' in text  # Unchanged raw-claim mappings.
     for name in ("repository", "event_name", "ref", "workflow_ref"):
         assert '"attribute.' + name + '"' in text and '"assertion.' + name + '"' in text
-    assert '"assertion.sub == \'repo:${local.repository}:environment:${local.gh_env[each.key]}\'"' in text
+    assert 'repo:piotrbarabasz@${local.owner_id}/tripse-ai-demo@${local.repo_id}:environment:production' in text
+    assert '"assertion.ref == \'refs/heads/master\'"' in text

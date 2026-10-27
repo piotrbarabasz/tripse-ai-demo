@@ -45,7 +45,8 @@ def test_build_uses_explicit_verified_bucket_without_project_bucket_listing(monk
         calls.append(args)
         if args == ("version",): return {"Google Cloud SDK": "590.0.1"}
         if args[:2] == ("projects", "describe"): return {"projectNumber": "690165197462"}
-        if args[:3] == ("storage", "buckets", "describe"): return METADATA
+        if args[:3] == ("storage", "buckets", "describe"):
+            return METADATA if args[3] == "gs://" + BUCKET else METADATA | {"name": "690165197462-europe-central2-cloudbuild-logs"}
         if args[:4] == ("artifacts", "docker", "images", "list"): return []
         if args[:2] == ("builds", "submit"):
             # In the audited SDK, omission selects default_gcs_source=True,
@@ -57,6 +58,7 @@ def test_build_uses_explicit_verified_bucket_without_project_bucket_listing(monk
             assert "--default-buckets-behavior=regional-user-owned-bucket" in args
             assert "--service-account=projects/tripse-ai/serviceAccounts/tripse-ai-build@tripse-ai.iam.gserviceaccount.com" in args
             assert "--timeout=600" in args and "--suppress-logs" in args
+            assert "--gcs-log-dir=gs://690165197462-europe-central2-cloudbuild-logs" in args
             assert "--async" in args and kwargs["json_output"] is True
             assert "--tag=" + config.image + ":" + SHA in args
             return {"id": "9c54ce2d-d425-44cd-9328-a765affb8bad"}

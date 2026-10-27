@@ -1,5 +1,11 @@
 # TRIPSE-CICD-BUILD-005: restricted CI source staging
 
+Follow-up: DEV run 40523770207 at cf94e20a7f53c2d7674d83319704a54e2a92889e
+successfully completed deployment and api_ui_mock acceptance; artifact 12741609814
+matches the serving digest. This closes the observed DEV submission/acceptance
+blocker, without recovering the lost historical stderr. Next stage is
+[PROD bootstrap preparation](PROD_BOOTSTRAP_001.md); no PROD rollout is implied.
+
 2026-10-27, Europe/Warsaw. DEV only; project tripse-ai (690165197462),
 europe-central2. Starting clean dev HEAD and failed run source:
 `200f7f73351458d9bd182d7b971283e1573114c6`.

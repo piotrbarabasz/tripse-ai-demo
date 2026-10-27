@@ -156,3 +156,15 @@ historical raw error/effective CI simulation remain unavailable. No measured
 hours/costs. Expected paid validation includes Actions, build compute, source/log
 object retention, registry and later synthetic runtime traffic. See
 [BUILD-005](../BUILD_005_INCIDENT.md); existing ADR-0012 applies.
+
+### TRIPSE-PROD-BOOTSTRAP-001 — 2026-10-27
+
+Prepared isolated PROD data root, existing shared-CI extension, immutable PROD WIF,
+scoped shared-builder IAM replacement and explicit log destination, actual nonsecret
+configuration and single-owner approval payloads. Plans: PROD app +17; shared CI
++20/-1 exact legacy builder grant; DEV app no changes. No measured time/costs.
+Remaining operator work: GitHub protection setup, private IAP/Invoker cutover,
+approved applies, real DEV build after IAM hardening, negative IAM/restore drills,
+exact-master DEV acceptance and approved PROD release/canary. Costs include Actions,
+build/registry/source/log retention, Run, GCS versions and Firestore PITR/Tasks.
+No data copying or live provider enablement. See [runbook](../PROD_BOOTSTRAP_001.md).

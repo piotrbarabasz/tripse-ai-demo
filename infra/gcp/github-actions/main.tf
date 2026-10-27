@@ -26,7 +26,7 @@ locals {
   owner_id       = "72949549"
   gh_env         = { dev = "development", prod = "production" }
   # Shared DEV claim contract for CEL and the temporary runner diagnostic.
-  # PROD retains its existing condition and requires separate review.
+  # PROD uses the same immutable repo identity with production/master-only trust.
   dev_oidc       = jsondecode(file("${path.module}/dev-oidc-policy.json"))
   base_condition = "assertion.repository == '${local.repository}' && assertion.repository_id == '${local.repo_id}' && assertion.repository_owner_id == '${local.owner_id}' && assertion.event_name in ['push', 'workflow_dispatch']"
 }
@@ -51,12 +51,12 @@ resource "google_iam_workload_identity_pool_provider" "github" {
     "attribute.repository_id"       = "assertion.repository_id"
     "attribute.repository_owner_id" = "assertion.repository_owner_id"
     "attribute.environment"         = "assertion.environment"
-    }, each.key == "dev" ? {
+    }, {
     "attribute.repository"   = "assertion.repository"
     "attribute.event_name"   = "assertion.event_name"
     "attribute.ref"          = "assertion.ref"
     "attribute.workflow_ref" = "assertion.workflow_ref"
-  } : {})
+  })
   attribute_condition = each.key == "dev" ? join(" && ", [
     "assertion.repository == '${local.dev_oidc.repository}'",
     "assertion.repository_id == '${local.dev_oidc.repository_id}'",
@@ -68,9 +68,9 @@ resource "google_iam_workload_identity_pool_provider" "github" {
     "assertion.workflow_ref == '${local.dev_oidc.workflow_ref_prefix}' + assertion.ref"
     ]) : join(" && ", [
     local.base_condition,
-    "assertion.sub == 'repo:${local.repository}:environment:${local.gh_env[each.key]}'",
+    "assertion.sub == 'repo:piotrbarabasz@${local.owner_id}/tripse-ai-demo@${local.repo_id}:environment:production'",
     "assertion.environment == '${local.gh_env[each.key]}'",
-    each.key == "prod" ? "assertion.ref == 'refs/heads/master'" : "((assertion.event_name == 'push' && assertion.ref in ['refs/heads/dev', 'refs/heads/master']) || (assertion.event_name == 'workflow_dispatch' && assertion.ref.startsWith('refs/heads/')))",
+    "assertion.ref == 'refs/heads/master'",
     "assertion.workflow_ref == '${local.repository}/.github/workflows/delivery.yml@' + assertion.ref"
   ])
   oidc { issuer_uri = "https://token.actions.githubusercontent.com" }

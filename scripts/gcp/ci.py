@@ -126,6 +126,8 @@ def prerequisites(g):
     if not includes(caller_policy, "roles/iam.serviceAccountTokenCreator", task_agent):
         raise ValueError("Missing dedicated Tasks token-minting grant")
     project_policy = g("projects", "get-iam-policy", settings.project, json_output=True)
+    if c["APP_ENV"] == "prod":
+        check_production_builder_isolation(project_policy)
     expression = f"resource.name=='projects/{settings.project}/databases/{settings.database}'"
     grants = [b for b in project_policy.get("bindings", []) if runtime in b.get("members", [])]
     if not any(b.get("role") == "roles/datastore.user" and
@@ -158,6 +160,26 @@ def prerequisites(g):
     # deployment, never by accepting an authentication failure during bootstrap.
     Acceptance(settings.origin, token).call("/health")
     return current
+
+
+def check_production_builder_isolation(policy):
+    project = "tripse-ai"
+    principal = lambda name: "serviceAccount:" + name + "@tripse-ai.iam.gserviceaccount.com"
+    allowed = {
+        principal("tripse-ai-build"): {f"projects/{project}/roles/tripseBuildMetadata"},
+        principal("tripse-ai-dev-ci-deploy"): {f"projects/{project}/roles/tripseCiBuild", f"projects/{project}/roles/tripseCiInspect"},
+        principal("tripse-ai-dev-ci-probe"): set(), principal("tripse-ai-dev-tasks"): set(),
+        principal("tripse-ai-dev"): set(),
+    }
+    for binding in policy.get("bindings", []):
+        for member in set(binding.get("members", [])) & allowed.keys():
+            role = binding.get("role")
+            expression = binding.get("condition", {}).get("expression", "").replace('"', "'").replace(" ", "")
+            if (member == principal("tripse-ai-dev") and role == "roles/datastore.user" and
+                    expression == "resource.name=='projects/tripse-ai/databases/tripse-ai-dev'"):
+                continue
+            if role not in allowed[member] or binding.get("condition"):
+                raise ValueError("PROD isolation blocked: DEV build/runtime principal has unreviewed project authority; apply reviewed builder/isolation plan first")
 
 
 class NoRedirect(HTTPRedirectHandler):
