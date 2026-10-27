@@ -87,14 +87,14 @@ def test_accepted_dev_branch_evidence_cannot_authorize_prod_even_when_digest_mat
 
 def github_metadata():
     return {
-      'environment':{'protection_rules':[{'type':'required_reviewers','prevent_self_review':False,'reviewers':[{'type':'User','reviewer':{'id':72949549}}]}],
+      'environment':{'can_admins_bypass':False,'protection_rules':[{'type':'required_reviewers','prevent_self_review':False,'reviewers':[{'type':'User','reviewer':{'id':72949549}}]}],
                      'deployment_branch_policy':{'custom_branch_policies':True,'protected_branches':False}},
       'policies':{'branch_policies':[{'name':'master','type':'branch'}]},
       'master':{'required_status_checks':{'strict':True,'contexts':[],'checks':[{'context':'Tests and offline contracts','app_id':15368}]},'enforce_admins':{'enabled':True},
                 'required_pull_request_reviews':{'required_approving_review_count':0},'allow_force_pushes':{'enabled':False},'allow_deletions':{'enabled':False}}}
 
 
-@pytest.mark.parametrize('fault',[None,'missing_environment','missing_review','self_review_block','wrong_reviewer','wildcard_branch','unprotected_master','missing_ci','admin_bypass'])
+@pytest.mark.parametrize('fault',[None,'missing_environment','missing_review','self_review_block','wrong_reviewer','wildcard_branch','unprotected_master','missing_ci','admin_bypass','environment_bypass','unknown_environment_bypass'])
 def test_operator_readiness_does_not_assume_github_protections(monkeypatch,fault):
     data=github_metadata()
     if fault=='missing_review':data['environment']['protection_rules']=[]
@@ -103,6 +103,8 @@ def test_operator_readiness_does_not_assume_github_protections(monkeypatch,fault
     if fault=='wildcard_branch':data['policies']['branch_policies'][0]['name']='*'
     if fault=='missing_ci':data['master']['required_status_checks']['checks']=[]
     if fault=='admin_bypass':data['master']['enforce_admins']['enabled']=False
+    if fault=='environment_bypass':data['environment']['can_admins_bypass']=True
+    if fault=='unknown_environment_bypass':data['environment'].pop('can_admins_bypass')
     def command(args):
         assert args[:2]==['gh','api'] and len(args)==3
         if args[-1].endswith('/protection'):

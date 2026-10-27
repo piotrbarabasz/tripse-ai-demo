@@ -14,6 +14,10 @@ def check():
         env = command(["gh", "api", BASE + "/environments/production"])
     except ValueError:
         return ["Production Environment missing or not readable; configure and review it first"]
+    # Live production metadata exposes this field. Missing is not proof of a
+    # disabled bypass: require the reviewed value before allowing preparation.
+    if env.get("can_admins_bypass") is not False:
+        errors.append("Disable production administrator bypass in GitHub Environment settings; missing/unknown is not verified")
     reviewers = [r for r in env.get("protection_rules", []) if r.get("type") == "required_reviewers"]
     if not any(not r.get("prevent_self_review", False) and
                any(v.get("type") == "User" and v.get("reviewer", {}).get("id") == 72949549
@@ -62,7 +66,7 @@ def main():
         print("MISSING/INVALID: " + error)
     if errors:
         raise SystemExit(1)
-    print("GitHub production API checks PASS. Manually verify admin-bypass is disabled in Settings -> Environments -> production; REST does not expose that setting here.")
+    print("GitHub production protections PASS, including administrator bypass disabled (read-only metadata check)")
 
 
 if __name__ == "__main__":
