@@ -25,6 +25,9 @@ locals {
   repo_id        = "1430252241"
   owner_id       = "72949549"
   gh_env         = { dev = "development", prod = "production" }
+  # Shared DEV claim contract for CEL and the temporary runner diagnostic.
+  # PROD uses the same immutable repo identity with production/master-only trust.
+  dev_oidc       = jsondecode(file("${path.module}/dev-oidc-policy.json"))
   base_condition = "assertion.repository == '${local.repository}' && assertion.repository_id == '${local.repo_id}' && assertion.repository_owner_id == '${local.owner_id}' && assertion.event_name in ['push', 'workflow_dispatch']"
 }
 
@@ -43,17 +46,31 @@ resource "google_iam_workload_identity_pool_provider" "github" {
   for_each                           = var.environments
   workload_identity_pool_id          = google_iam_workload_identity_pool.github.workload_identity_pool_id
   workload_identity_pool_provider_id = "github-${each.key}"
-  attribute_mapping = {
+  attribute_mapping = merge({
     "google.subject"                = "assertion.sub"
     "attribute.repository_id"       = "assertion.repository_id"
     "attribute.repository_owner_id" = "assertion.repository_owner_id"
     "attribute.environment"         = "assertion.environment"
-  }
-  attribute_condition = join(" && ", [
+    }, {
+    "attribute.repository"   = "assertion.repository"
+    "attribute.event_name"   = "assertion.event_name"
+    "attribute.ref"          = "assertion.ref"
+    "attribute.workflow_ref" = "assertion.workflow_ref"
+  })
+  attribute_condition = each.key == "dev" ? join(" && ", [
+    "assertion.repository == '${local.dev_oidc.repository}'",
+    "assertion.repository_id == '${local.dev_oidc.repository_id}'",
+    "assertion.repository_owner_id == '${local.dev_oidc.repository_owner_id}'",
+    "assertion.event_name in ${jsonencode(local.dev_oidc.events)}",
+    "assertion.sub == '${local.dev_oidc.sub}'",
+    "assertion.environment == '${local.dev_oidc.environment}'",
+    "((assertion.event_name == 'push' && assertion.ref in ${jsonencode(local.dev_oidc.push_refs)}) || (assertion.event_name == 'workflow_dispatch' && assertion.ref.startsWith('${local.dev_oidc.dispatch_ref_prefix}')))",
+    "assertion.workflow_ref == '${local.dev_oidc.workflow_ref_prefix}' + assertion.ref"
+    ]) : join(" && ", [
     local.base_condition,
-    "assertion.sub == 'repo:${local.repository}:environment:${local.gh_env[each.key]}'",
+    "assertion.sub == 'repo:piotrbarabasz@${local.owner_id}/tripse-ai-demo@${local.repo_id}:environment:production'",
     "assertion.environment == '${local.gh_env[each.key]}'",
-    each.key == "prod" ? "assertion.ref == 'refs/heads/master'" : "assertion.ref.startsWith('refs/heads/')",
+    "assertion.ref == 'refs/heads/master'",
     "assertion.workflow_ref == '${local.repository}/.github/workflows/delivery.yml@' + assertion.ref"
   ])
   oidc { issuer_uri = "https://token.actions.githubusercontent.com" }
@@ -91,7 +108,7 @@ resource "google_project_iam_custom_role" "inspect" {
     "datastore.databases.get", "datastore.databases.getMetadata",
     "cloudtasks.queues.get", "cloudtasks.queues.getIamPolicy",
     "iam.serviceAccounts.get", "iam.serviceAccounts.getIamPolicy",
-    "iap.webServices.getIamPolicy", "iap.web.getSettings"
+    "iap.webServices.getIamPolicy", "iap.webServices.getSettings", "iap.web.getSettings"
   ]
 }
 resource "google_project_iam_member" "inspect" {

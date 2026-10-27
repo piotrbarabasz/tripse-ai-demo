@@ -1,0 +1,11 @@
+{
+  "repository": "piotrbarabasz/tripse-ai-demo",
+  "repository_id": "1430252241",
+  "repository_owner_id": "72949549",
+  "environment": "development",
+  "sub": "repo:piotrbarabasz@72949549/tripse-ai-demo@1430252241:environment:development",
+  "events": ["push", "workflow_dispatch"],
+  "push_refs": ["refs/heads/dev", "refs/heads/master"],
+  "dispatch_ref_prefix": "refs/heads/",
+  "workflow_ref_prefix": "piotrbarabasz/tripse-ai-demo/.github/workflows/delivery.yml@"
+}

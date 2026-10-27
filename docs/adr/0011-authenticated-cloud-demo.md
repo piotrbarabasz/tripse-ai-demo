@@ -5,7 +5,7 @@ status: proposed
 date: 2026-10-26
 author: "Codex — implementation proposal"
 area: "application composition, access, storage, asynchronous jobs, deployment"
-related_tasks: [CLOUD-PARITY-001]
+related_tasks: [CLOUD-PARITY-001, TRIPSE-PROD-BOOTSTRAP-001]
 related_prs: []
 supersedes: [ADR-0009]
 ---
@@ -14,6 +14,15 @@ supersedes: [ADR-0009]
 
 Implementation: prepared and tested offline; no GCP rollout. Owner acceptance of
 this ADR and customer-data production readiness have not been established.
+
+2026-10-27 operational evidence: DEV run 40523770207 accepted private cloud_demo
+at cf94e20a7f53c2d7674d83319704a54e2a92889e, artifact 12741609814. This supersedes
+the original offline-only note for exercised DEV gates; backup/restart/isolation
+drills and production acceptance are not inferred. PROD_BOOTSTRAP-001 prepares a
+separate empty PROD state/root, independent bucket/database/task/runtime IAM, and
+leaves shared project APIs in the original DEV state. See
+[production bootstrap](../PROD_BOOTSTRAP_001.md). No PROD apply or rollout occurred;
+the ADR remains proposed without formal owner acceptance.
 
 ## 1. Context and problem
 

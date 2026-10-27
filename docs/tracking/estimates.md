@@ -111,3 +111,60 @@ or billed amounts are available. Budget Actions/browser minutes/artifact retenti
 Cloud Build/Registry, synthetic DEV GCS/Firestore/Tasks traffic, backups, IAM/OAuth
 maintenance and incident recovery. Do not conflate every-push testing/build cost
 with application traffic or assume that mock planning makes infrastructure free.
+
+### CI-CD-FIX-002 — 2026-10-26
+
+Early dependency-free config validation, operator read-only metadata checks and
+nonsecret bundle preparation reduce wasted runner setup on missing configuration.
+Automatic cloud delivery is limited to dev/master. Remaining operator work:
+GitHub Environment variables/reviewers/branch rules, separate reviewed WIF/IAM and
+private app resource bootstrap, first real DEV/master acceptance and recovery
+drills. See [Windows setup](../CICD_BOOTSTRAP.md) and ADR-0012. No measured hours,
+cost or savings; expected cost categories remain Actions/build/registry, synthetic
+GCS/Firestore/Tasks traffic, runtime, retention/backups and IAM/IAP maintenance.
+
+### TRIPSE-WIF-AUTH-003 — 2026-10-26
+
+DEV legacy-vs-immutable OIDC subject mismatch audited using read-only metadata.
+Prepared declarative DEV subject/mapping correction, temporary safe selected-claim
+diagnostics and operator plan/apply/rerun/disable runbook. PROD remains unchanged.
+Remaining work: reviewed in-place provider update, actual runner/STS verification,
+then disabling temporary diagnostics and normal DEV application acceptance. No
+hours/cost measurements; runner reruns and subsequent build/deployment operations
+may incur the existing delivery/runtime costs. See [WIF incident](../WIF_AUTH_003.md).
+
+### TRIPSE-CICD-DEV-AUTH-004 — 2026-10-27
+
+Prepared verified operator/bootstrap history and a resume ledger; corrected the
+IAP signed-JWT URL scope and added safe HTTP failure classifications. Existing
+ADR-0012 covers the architecture; no redundant ADR-0013. Remaining work: actual
+CI probe/DEV cloud_demo rollout and acceptance, then any evidence-backed next
+blocker; local operator signing is denied and no IAM expansion is proposed.
+Budget runner retries, build/registry, ordinary health/probe traffic and synthetic
+GCS/Firestore/Tasks operations. No hours, costs or savings measured. Production
+rollout, live providers, backup/restart/isolation drills remain separate gates.
+See [incident/handoff](../DEV_AUTH_004_INCIDENT.md).
+
+### TRIPSE-CICD-BUILD-005 — 2026-10-27
+
+Audited source upload/discovery and initiator/builder/service-agent authority;
+prepared explicit existing-bucket staging with direct ownership/region validation,
+safe Google-error categories and regressions. Existing CI identity plan is zero
+changes; no new IAM grant/resource is proposed. Remaining work: approved real CI
+source upload/build/registry/log verification and private DEV full acceptance;
+historical raw error/effective CI simulation remain unavailable. No measured
+hours/costs. Expected paid validation includes Actions, build compute, source/log
+object retention, registry and later synthetic runtime traffic. See
+[BUILD-005](../BUILD_005_INCIDENT.md); existing ADR-0012 applies.
+
+### TRIPSE-PROD-BOOTSTRAP-001 — 2026-10-27
+
+Prepared isolated PROD data root, existing shared-CI extension, immutable PROD WIF,
+scoped shared-builder IAM replacement and explicit log destination, actual nonsecret
+configuration and single-owner approval payloads. Plans: PROD app +17; shared CI
++20/-1 exact legacy builder grant; DEV app no changes. No measured time/costs.
+Remaining operator work: GitHub protection setup, private IAP/Invoker cutover,
+approved applies, real DEV build after IAM hardening, negative IAM/restore drills,
+exact-master DEV acceptance and approved PROD release/canary. Costs include Actions,
+build/registry/source/log retention, Run, GCS versions and Firestore PITR/Tasks.
+No data copying or live provider enablement. See [runbook](../PROD_BOOTSTRAP_001.md).

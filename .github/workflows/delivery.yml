@@ -2,7 +2,7 @@ name: Delivery
 
 on:
   push:
-    branches: ['**']
+    branches: [dev, master]
   workflow_dispatch:
     inputs:
       operation:
@@ -38,14 +38,14 @@ jobs:
     name: DEV deployment
     needs: ci
     if: >-
-      github.event_name == 'push' ||
+      (github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master')) ||
       (github.event_name == 'workflow_dispatch' &&
        (inputs.operation == 'dev' ||
         (inputs.operation == 'rollback' && inputs.target_environment == 'dev')))
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     environment: development
-    # One mutex for every feature/master/manual DEV deployment AND acceptance.
+    # One mutex for dev/master/manual DEV deployment AND acceptance.
     concurrency:
       group: tripse-dev-global
       cancel-in-progress: false
@@ -61,6 +61,8 @@ jobs:
       DEPLOY_CONFIG_JSON: ${{ vars.DEPLOY_CONFIG_JSON }}
       EXPECTED_CLOUD_FEATURE_MODE: ${{ vars.EXPECTED_CLOUD_FEATURE_MODE }}
       DEPLOY_SERVICE_ACCOUNT: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
+      WIF_PROVIDER: ${{ vars.WIF_PROVIDER }}
+      CI_PROBE_ACCOUNT: ${{ vars.CI_PROBE_ACCOUNT }}
       GCP_SMOKE_ACCOUNT: ${{ vars.CI_PROBE_ACCOUNT }}
       GH_TOKEN: ${{ github.token }}
       CI_OPERATION: ${{ inputs.operation || 'dev' }}
@@ -76,17 +78,30 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
+      - name: Check environment variables before installing dependencies
+        run: python -m scripts.gcp.ci configure --basic
       - run: make install-dev
-      - run: .venv/bin/python -m playwright install --with-deps chromium
       - name: Validate target configuration before requesting credentials
         run: .venv/bin/python -m scripts.gcp.ci configure
-      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+      # Temporary: set development variable WIF_DIAGNOSTICS=false after verification.
+      - name: Diagnose selected DEV OIDC claims (temporary)
+        if: vars.WIF_DIAGNOSTICS != 'false'
+        run: .venv/bin/python -m scripts.gcp.oidc_diagnostic
+      - name: Authenticate through reviewed environment WIF
+        id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
         with:
           project_id: tripse-ai
           workload_identity_provider: ${{ vars.WIF_PROVIDER }}
           service_account: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
           create_credentials_file: true
+      - name: Explain WIF authentication failure
+        if: failure() && steps.auth.outcome == 'failure'
+        run: |
+          echo '## IAM/WIF authentication failed' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Configuration validation passed. Check the reviewed WIF provider, account binding, event/ref/environment trust and IAM propagation. See docs/GITHUB_CICD.md. No application deployment was attempted.' >> "$GITHUB_STEP_SUMMARY"
       - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
+      - run: .venv/bin/python -m playwright install --with-deps chromium
       - name: Build, deploy and accept exact DEV image
         id: release
         run: make gcp-ci PYTHON=.venv/bin/python
@@ -123,6 +138,8 @@ jobs:
       DEPLOY_CONFIG_JSON: ${{ vars.DEPLOY_CONFIG_JSON }}
       EXPECTED_CLOUD_FEATURE_MODE: ${{ vars.EXPECTED_CLOUD_FEATURE_MODE }}
       DEPLOY_SERVICE_ACCOUNT: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
+      WIF_PROVIDER: ${{ vars.WIF_PROVIDER }}
+      CI_PROBE_ACCOUNT: ${{ vars.CI_PROBE_ACCOUNT }}
       GCP_SMOKE_ACCOUNT: ${{ vars.CI_PROBE_ACCOUNT }}
       GH_TOKEN: ${{ github.token }}
       CI_OPERATION: ${{ inputs.operation || 'promote' }}
@@ -138,15 +155,24 @@ jobs:
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
+      - name: Check environment variables before installing dependencies
+        run: python -m scripts.gcp.ci configure --basic
       - run: make install-dev
       - name: Validate target configuration before requesting credentials
         run: .venv/bin/python -m scripts.gcp.ci configure
-      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+      - name: Authenticate through reviewed environment WIF
+        id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
         with:
           project_id: tripse-ai
           workload_identity_provider: ${{ vars.WIF_PROVIDER }}
           service_account: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
           create_credentials_file: true
+      - name: Explain WIF authentication failure
+        if: failure() && steps.auth.outcome == 'failure'
+        run: |
+          echo '## IAM/WIF authentication failed' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Configuration validation passed. Check the reviewed WIF provider, account binding, event/ref/environment trust and IAM propagation. See docs/GITHUB_CICD.md. No application deployment was attempted.' >> "$GITHUB_STEP_SUMMARY"
       - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
       - name: Verify accepted evidence and promote without rebuilding
         id: release

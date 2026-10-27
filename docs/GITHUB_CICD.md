@@ -1,10 +1,48 @@
 # GITHUB-CICD-001 — GitHub Actions delivery
 
-Prepared 2026-10-26. No workflow was pushed/activated, no IAM or billable resource
+2026-10-27: DEV run 40523770207 is accepted. Continue with the
+[operator-ready PROD bootstrap plans and approval/cutover runbook](PROD_BOOTSTRAP_001.md).
+The accepted artifact is from dev, not eligible master release evidence. PROD is
+still the public readonly baseline; no production bootstrap was applied by Codex.
+
+BUILD-005: [source staging diagnosis, code correction and zero-change IAM plan](BUILD_005_INCIDENT.md).
+CI explicitly stages to the existing verified project/region source bucket rather
+than using implicit SDK project-wide bucket discovery. No IAM widening; actual
+new DEV build/acceptance remains an operator gate.
+
+2026-10-27: [DEV IAP 401 incident, verified bootstrap history and session handoff](DEV_AUTH_004_INCIDENT.md).
+Operator bootstrap and WIF exchange now pass; authenticated preflight health
+still blocks the first cloud_demo rollout. AUTH-004 corrects JWT URL scope and
+adds safe response classifications; no successful live fix or PROD readiness is
+claimed. This dated update supersedes older pending-bootstrap statements below.
+
+TRIPSE-WIF-AUTH-003: [DEV immutable-subject diagnosis and reviewed recovery](WIF_AUTH_003.md).
+GitHub repo settings use immutable subjects; the former DEV condition expected
+the legacy subject. The DEV-only declarative correction and temporary safe claim
+diagnostic preserve all trust checks; applying/verifying it remains operator work.
+
+## CI-CD-FIX-002: dev/master bootstrap correction
+
+Follow the [Windows operator setup and first-run procedure](CICD_BOOTSTRAP.md).
+That guide is the current entry point; the remaining sections retain the original
+architecture and recovery details. Automatic deployment is now dev/master only.
+
+Starting branch/HEAD: clean `dev`, `2c8e79b7b4c521eaf15ce2cf17e09f8b3b830171`.
+Reported master run `40327554050` reached an empty JSON parser because required
+GitHub variables were absent. Read-only inspection during this fix confirmed
+`development` exists with all five variables missing; `production` does not exist.
+Template/Terraform files do not provision those settings. New early validation
+reports the setting/location before dependencies or credentials, with a safe step
+summary. No cloud mode fallback is permitted. The operator helper prepares local
+nonsecret config and checks GitHub/GCP metadata without changing remote settings.
+Real bootstrap and runner acceptance remain OPEN; no push, merge, deploy or IAM
+mutation was performed by this fix.
+
+Original GITHUB-CICD-001 preparation on 2026-10-26: no workflow was pushed/activated, no IAM or billable resource
 was provisioned, no Cloud Build submitted, and no DEV/PROD deployment performed
 in this implementation. Real Actions/WIF/IAP acceptance is a bootstrap gate.
 
-## Audit baseline and the preview problem
+## Historical GITHUB-CICD-001 audit baseline and the preview problem
 
 Remote `master`, local HEAD and the committed cloud source were
 `3729ee53292ea29f96284358b3d2d3473297c390`; working tree was clean before this task.
@@ -30,8 +68,9 @@ still does not change feature mode. Missing resources/auth block deployment.
 | Event | Tests | Cloud access | Result |
 |---|---|---|---|
 | PR to master, including fork PR | CI + offline/image source + all browser smoke | none | no deployment |
-| Push to any repository branch except master | same CI first | development WIF only | build exact SHA, deploy DEV, deployed acceptance |
+| Push to dev | same CI first | development WIF only | build exact SHA, deploy DEV, deployed acceptance |
 | Push to master / merge commit | same CI first | development, then approved production | exact master SHA accepted on DEV; same digest promoted |
+| Other branch push | none (optional independent CI) | none | no automatic deployment |
 | Dispatch `dev` | CI first | development | selected full SHA or dispatch commit on DEV |
 | Dispatch `promote` from master | CI first + accepted DEV proof | protected production | selected prior master SHA/digest; no build |
 | Dispatch `rollback` | CI first + prior successful target proof | selected environment | accepted prior image; PROD dispatch must be master |
@@ -51,7 +90,7 @@ the Python guard is an additional check, not the sole authorization mechanism.
 
 ## Shared DEV, freshness and immutable proof
 
-All feature/master/manual DEV jobs use **one** concurrency group
+All dev/master/manual DEV jobs use **one** concurrency group
 `tripse-dev-global`, including build, deployment, acceptance and artifact upload.
 No in-progress deploy is canceled. GitHub may replace an older pending job;
 FIFO is not assumed. Before mutation the coordinator checks the current remote
@@ -63,7 +102,7 @@ blocks older pending attempts conservatively. Intentional rollback gets a new
 manual run number; it never resets the freshness watermark.
 
 PROD uses an independent `tripse-prod-global` lock and never reads "whatever is
-on DEV now" as release evidence. DEV may change to another feature branch while
+on DEV now" as release evidence. DEV may change to another dev commit while
 master waits for human approval. The immutable accepted artifact still records
 the exact tested master digest and mode. Promotion checks GitHub API metadata:
 repository, workflow path, event, master ref, policy commit, job success, run ID,
@@ -114,13 +153,16 @@ noninteractive WIF, rather than requiring `gcloud auth login`.
 The manual module `infra/gcp/github-actions` defines the pool/providers, accounts
 and scoped grants. Trust is restricted to repository ID **1430252241**, owner ID
 **72949549**, exact `piotrbarabasz/tripse-ai-demo`, push/dispatch events, exact
-environment subject and Delivery workflow ref. Production additionally requires
+environment subject and Delivery workflow ref. DEV automatic push trust allows
+only dev/master; explicit dispatch can select a repository branch. Production additionally requires
 `refs/heads/master`. The pool is exclusive to this repository; do not add broader
 providers that could mint the same environment attribute. Ownership transfer,
 renaming or workflow path changes deliberately require trust review.
 
 Cloud_demo probes use IAM Credentials `signJwt`: issuer/subject is the dedicated
-probe account, audience is the reviewed HTTPS service origin, lifetime 10 minutes.
+probe account, audience is the reviewed HTTPS service origin plus `/*` for the
+multi-path IAP JWT suite, lifetime 10 minutes. A bare URL scopes only that exact
+URL and cannot authorize `/health` or private paths (AUTH-004 correction).
 IAP supports this service-account flow without a reusable human session or local
 private key. For private preview, `generateIdToken` explicitly targets the Run
 origin and includes email. Tokens remain in process memory; they are not printed,
@@ -198,7 +240,7 @@ Follow in order; do not apply Terraform on every push.
    Add the DEV CI probe to application editors and IAP. Runtime fields are
    literal strings, not shell interpolation. No human token or provider API key
    should be a GitHub Secret. API keys remain pinned Secret Manager references.
-7. Exercise a feature-branch push, then inspect summary/proof and actual DEV
+7. Exercise a dev-branch push, then inspect summary/proof and actual DEV
    revision/mode/digest. Exercise missing-resource/auth negative tests, two branch
    pushes with stale-job rejection, a failure with traffic restore, and full
    authenticated acceptance. No production activation until this passes.

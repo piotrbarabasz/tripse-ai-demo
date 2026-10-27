@@ -16,6 +16,11 @@ variable "environment" {
     error_message = "Use dev or prod and a separate state."
   }
 }
+variable "manage_project_apis" {
+  type        = bool
+  default     = true
+  description = "Only the existing DEV state owns shared project API enablement. PROD reuses enabled APIs."
+}
 variable "demo_members" {
   type        = set(string)
   description = "Explicit user:email principals; mirror DEMO_READERS/DEMO_EDITORS."
@@ -42,7 +47,7 @@ locals {
 }
 
 resource "google_project_service" "apis" {
-  for_each           = toset(["storage.googleapis.com", "firestore.googleapis.com", "cloudtasks.googleapis.com", "iap.googleapis.com", "secretmanager.googleapis.com"])
+  for_each           = var.manage_project_apis ? toset(["storage.googleapis.com", "firestore.googleapis.com", "cloudtasks.googleapis.com", "iap.googleapis.com", "secretmanager.googleapis.com"]) : toset([])
   service            = each.value
   disable_on_destroy = false
 }
