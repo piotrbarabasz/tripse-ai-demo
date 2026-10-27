@@ -1,5 +1,7 @@
 """Manual gcloud orchestration. No credentials, global config changes or automatic triggers."""
 import argparse
+from contextlib import contextmanager
+from contextvars import ContextVar
 import io
 import json
 import os
@@ -21,10 +23,58 @@ except ImportError:  # PowerShell invokes the file directly.
 LABELS = {"app": "tripse-ai", "managed-by": "tripse-scripts"}
 APIS = ("run.googleapis.com", "artifactregistry.googleapis.com", "cloudbuild.googleapis.com", "iam.googleapis.com", "logging.googleapis.com", "cloudresourcemanager.googleapis.com")
 
+# Only fixed command words are eligible for logs. Never derive labels by joining
+# argv: positional resource names, paths and flag values may contain credentials.
+GCLOUD_OPERATIONS = tuple(tuple(value.split()) for value in (
+    "auth print-access-token", "auth print-identity-token", "projects describe",
+    "projects get-iam-policy", "projects add-iam-policy-binding", "services list", "services enable",
+    "run regions list", "run services list", "run services describe", "run revisions describe",
+    "run services get-iam-policy", "run services remove-iam-policy-binding", "run services update",
+    "run services update-traffic", "run deploy", "artifacts repositories list", "artifacts repositories create",
+    "artifacts docker images list", "artifacts docker images describe", "builds submit", "builds list",
+    "iam service-accounts describe", "iam service-accounts create", "iam service-accounts get-iam-policy",
+    "storage buckets describe", "storage buckets get-iam-policy", "storage cat",
+    "firestore databases describe", "tasks queues describe", "tasks queues get-iam-policy",
+    "iap web get-iam-policy", "iap settings get",
+))
+COMMAND_STAGES = frozenset({"unspecified", "credentials", "preflight", "prerequisites",
+    "build", "build.repository", "build.image_lookup", "build.reuse_digest", "build.act_as",
+    "build.source", "build.submit", "build.verify_digest", "release.digest", "release.source_proof",
+    "release.snapshot", "release.deploy", "release.verify", "release.acceptance", "release.restore"})
+_COMMAND_STAGE = ContextVar("gcp_command_stage", default="unspecified")
+
+
+@contextmanager
+def command_stage(name):
+    if name not in COMMAND_STAGES:
+        raise ValueError("Unknown internal command stage")
+    token = _COMMAND_STAGE.set(name)
+    try:
+        yield
+    finally:
+        _COMMAND_STAGE.reset(token)
+
+
+def safe_command_operation(args):
+    executable = str(args[0]).replace("\\", "/").rsplit("/", 1)[-1].lower()
+    if executable in {"gcloud", "gcloud.cmd", "gcloud.exe", "gcloud.bat"}:
+        for prefix in GCLOUD_OPERATIONS:
+            if tuple(args[1:1 + len(prefix)]) == prefix:
+                return "gcloud", "gcloud " + " ".join(prefix)
+        return "gcloud", "gcloud unclassified"
+    if executable in {"git", "git.exe"}:
+        # Fixed Git verbs only; commit IDs, refs and archive/file arguments omitted.
+        verb = args[1] if len(args) > 1 and args[1] in {"archive", "status", "rev-parse", "merge-base", "ls-remote"} else "unclassified"
+        return "git", "git " + verb
+    return "external command", "unclassified"
+
 
 class CommandError(RuntimeError):
-    def __init__(self, name, code, detail=None):
-        super().__init__(f"{name} failed (exit {code}); operation stopped" + (f". {detail}" if detail else ""))
+    def __init__(self, name, code, detail=None, *, operation=None, stage=None):
+        self.operation = operation or "unclassified"
+        self.stage = stage or _COMMAND_STAGE.get()
+        super().__init__(f"{name} failed (exit {code}); operation stopped"
+                         f" [stage={self.stage}; operation={self.operation}]" + (f". {detail}" if detail else ""))
         self.code = code
 
 
@@ -32,7 +82,8 @@ def run(args, *, binary=False):
     # No secret values ever appear in commands or output. Tokens are captured, not printed.
     result = subprocess.run(args, cwd=ROOT, capture_output=True)
     if result.returncode:
-        raise CommandError(Path(args[0]).stem, result.returncode)
+        name, operation = safe_command_operation(args)
+        raise CommandError(name, result.returncode, operation=operation)
     return result.stdout if binary else result.stdout.decode("utf-8").strip()
 
 
@@ -121,8 +172,12 @@ def check_act_as(g, account):
     try:
         with urlopen(request, timeout=30) as response:
             granted = json.load(response).get("permissions", [])
-    except (HTTPError, OSError):
-        raise ValueError("Cannot verify service-account actAs permission") from None
+    except HTTPError as error:
+        raise ValueError(f"Service-account actAs check failed [stage={_COMMAND_STAGE.get()}; "
+                         f"operation=iam.serviceAccounts.testIamPermissions; HTTP {error.code}]") from None
+    except OSError:
+        raise ValueError(f"Service-account actAs check unavailable [stage={_COMMAND_STAGE.get()}; "
+                         "operation=iam.serviceAccounts.testIamPermissions; transport error]") from None
     if "iam.serviceAccounts.actAs" not in granted:
         raise ValueError("Operator needs iam.serviceAccounts.actAs on " + account)
 
@@ -247,27 +302,34 @@ def check_release_source(sha):
 
 
 def build(g, sha):
-    if not repository(g):
-        raise ValueError("Run setup first")
+    with command_stage("build.repository"):
+        if not repository(g):
+            raise ValueError("Run setup first")
     # List tags first to distinguish absence from an API/permission error.
     repo_uri = g.config.image.rsplit("/", 1)[0]
-    images = g("artifacts", "docker", "images", "list", repo_uri, "--include-tags", json_output=True)
+    with command_stage("build.image_lookup"):
+        images = g("artifacts", "docker", "images", "list", repo_uri, "--include-tags", json_output=True)
     if any(f"{g.config.image}:{sha}" in item.get("tags", []) or (item.get("package") == g.config.image and sha in item.get("tags", [])) for item in images):
-        digest(g, sha)
+        with command_stage("build.reuse_digest"):
+            digest(g, sha)
         print("Existing immutable SHA tag reused; no rebuild")
         return
-    check_act_as(g, g.config.build_account)
+    with command_stage("build.act_as"):
+        check_act_as(g, g.config.build_account)
     with tempfile.TemporaryDirectory(prefix="tripse-build-") as directory:
         staging = Path(directory)
-        for name, content in source_files(sha):
-            target = staging / name
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(content)
+        with command_stage("build.source"):
+            for name, content in source_files(sha):
+                target = staging / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(content)
         (staging / "app/_build_version.txt").write_text(sha, encoding="utf-8")
-        g("builds", "submit", str(staging), f"--tag={g.config.image}:{sha}", f'--region={g.config["GCP_REGION"]}',
-          f'--service-account=projects/{g.config["GCP_PROJECT_ID"]}/serviceAccounts/{g.config.build_account}',
-          "--default-buckets-behavior=regional-user-owned-bucket", "--timeout=600", "--suppress-logs")
-    digest(g, sha)
+        with command_stage("build.submit"):
+            g("builds", "submit", str(staging), f"--tag={g.config.image}:{sha}", f'--region={g.config["GCP_REGION"]}',
+              f'--service-account=projects/{g.config["GCP_PROJECT_ID"]}/serviceAccounts/{g.config.build_account}',
+              "--default-buckets-behavior=regional-user-owned-bucket", "--timeout=600", "--suppress-logs")
+    with command_stage("build.verify_digest"):
+        digest(g, sha)
 
 
 def validate_url(value):
@@ -384,7 +446,8 @@ def publish(g, state):
                    " (and legacy constraints/run.requireInvokerIam), operator permissions and gcloud flag support."
                    " No allUsers fallback or organization policy changes were attempted.")
         if isinstance(error, CommandError):
-            raise CommandError("Cloud Run publication", error.code, detail) from None
+            raise CommandError("Cloud Run publication", error.code, detail,
+                               operation=error.operation, stage=error.stage) from None
         raise ValueError(detail) from None
 
 

@@ -5,7 +5,131 @@ Date: 2026-10-27 (Europe/Warsaw). Scope: **DEV only**, project `tripse-ai`
 `https://tripse-ai-dev-64ctpggq3a-lm.a.run.app`. Target: private `cloud_demo`,
 planning `mock`. No paid provider integration or PROD rollout is authorized here.
 
-## Current outcome and evidence levels
+## Latest continuation: generic gcloud failure after prerequisites
+
+**CONFIRMED (2026-10-27):** starting branch `dev` is clean at
+`bd619dbe2d048bb1bcaa280357951f9509bd6f99`. GitHub API/log inspection of run
+`40491880582`, attempt 1, DEV job `122148830164`, confirms push/dev at that SHA:
+CI, configuration, temporary selected-claim check, WIF auth, setup-gcloud and
+Chromium setup pass. The combined build/deploy step fails at
+`2026-10-27T10:57:31Z` with only:
+
+```text
+CI blocked: gcloud failed (exit 1); operation stopped
+```
+
+There is no health 401 in this latest failure. In the source at that SHA, CLI
+errors in credentials/preflight/prerequisites are wrapped with distinct messages;
+the unwrapped gcloud error points to a later CLI operation. This is evidence that
+the previous health gate was crossed, **not** evidence of successful cloud_demo
+deployment/acceptance. Previous 401 findings below are retained as history.
+
+**CONFIRMED (operator observations, not repeated by this continuation):**
+Artifact Registry describe for bd619db reports Image not found; regional builds
+list shows the last build on 26 October, none observed at this failure time;
+severity>=ERROR logs show only older 25–26 October errors. A new SHA normally has
+no image before its first build. Absence of a regional build record is consistent
+with a failed client/upload/submit operation, but cannot by itself identify it.
+No specific missing IAM permission or new GCP service outage is established.
+
+### Exact post-prerequisite path
+
+| Order / branch | Actual operation | New diagnostic stage |
+|---|---|---|
+| 1 | Compare current service run-number freshness; for push, GitHub API reads current branch head (not gcloud) | Existing guards unchanged |
+| 2 | `artifacts repositories list`, check ownership/DOCKER/immutable tags; repeats repository read after prerequisites | `build.repository` |
+| 3 | `artifacts docker images list` with include-tags; no match is expected for a new SHA, while a command error stops | `build.image_lookup` |
+| 4a: matching tag | `artifacts docker images describe` resolves existing immutable digest; no submit | `build.reuse_digest` |
+| 4b: new tag | `auth print-access-token`, then IAM REST `serviceAccounts.testIamPermissions` for builder actAs | `build.act_as` |
+| 5: new tag | `git archive` via committed source allowlist, local temp context and baked SHA; not a GCP operation | `build.source` |
+| 6: new tag | `builds submit`: CLI validation, source upload, build creation/wait, with existing builder/region/default bucket/log flags | `build.submit` |
+| 7: new tag | `artifacts docker images describe` verifies built digest | `build.verify_digest` |
+| 8 | Another digest describe, compare with accepted proof when applicable | `release.digest` |
+| 9 | `builds list` successful regional builds, Git source read, generation-pinned `storage cat`; exact source/recipe proof | `release.source_proof` |
+| 10 | Read receiving revision for recovery snapshot (`run revisions describe`) | `release.snapshot` |
+| 11 | Actual Run deployment/traffic and verification, then authenticated acceptance | `release.deploy`, `release.verify`, `release.acceptance` |
+
+`check_act_as` is not a gcloud IAM test command: only token acquisition uses
+gcloud, then the helper sends a non-mutating IAM REST request. An explicit missing
+actAs result/HTTP denial is distinct from a gcloud process exit. `builds submit`
+can exit before creating any Cloud Build record (for example client validation
+or source upload); an exit there does not prove a build reached Google's queue.
+No new-image build can legitimately continue after a failed images-list command.
+
+### Minimal instrumentation and remaining hypotheses
+
+The defect established by available data is **loss of command context**. `run()`
+captured stderr, then discarded all command identity except the executable name.
+Do not infer a registry role, builder role, CLI flag error or source-bucket problem
+from that generic exit. The actual failed command in the historical run remains
+unknown and cannot be recovered from these logs.
+
+`deployment.py` now emits only an allowlisted command-word prefix, the fixed
+stage label and native exit code. It never joins/prints argv or stderr, stdout,
+resource arguments, executable/credential paths, token values or flag values.
+Windows gcloud.CMD and Linux executable paths map to the same safe operation.
+Unknown commands/executables use `unclassified`; stage labels also have a fixed
+allowlist. Context is preserved on the exception after leaving its stage.
+CI no longer discards those safe diagnostics in preflight wrappers and records
+them in GITHUB_STEP_SUMMARY even when failure occurs before release.json exists.
+Summary I/O failure does not replace the original command error. Existing private
+recovery, SHA/digest checks, proof policy and native exit handling remain intact.
+
+Example of **possible next output, not a diagnosis of the past run**:
+
+```text
+CI blocked: gcloud failed (exit 1); operation stopped [stage=build.image_lookup; operation=gcloud artifacts docker images list]
+```
+
+IAM REST actAs failures expose only that operation, stage and HTTP status (or a
+static transport-error label), never the HTTP body/headers. There is no proposed
+IAM/resource/configuration change: none is justified yet. Possible next findings
+include registry listing/read failure, credential refresh during actAs, explicit
+actAs denial, source preparation failure, or Cloud Build submit validation/upload/
+creation/wait failure. Later digest/proof reads are also labelled, so a completed
+build cannot be confused with a pre-submit error.
+
+### Next operator action and resume point
+
+Read current Git diff, run the local checks below and commit the reviewed
+instrumentation on dev. Publishing that new commit triggers the normal pipeline;
+no push/rerun is performed by Codex. An old-run rerun uses its original workflow
+and Python source, so it **will not contain these diagnostics**.
+
+```powershell
+git branch --show-current
+git diff --stat
+.venv/Scripts/python.exe -m pytest tests/test_gcp_command_diagnostics.py tests/test_gcp_deployment.py tests/test_cloud_deployment_contract.py tests/test_github_cicd.py -q
+# After review/commit, and only when ready for normal DEV build/deployment:
+git push origin dev
+gh run list --workflow delivery.yml --branch dev --limit 5
+gh run view <NEW_RUN_ID> --log-failed | Select-String -SimpleMatch 'CI blocked:'
+```
+
+Replace the run placeholder with the numeric ID; inspect the job summary for
+stage/operation/exit code. Use that evidence to choose a narrowly scoped read-only
+IAM/resource/CLI check; do not grant broad roles or blindly reapply Terraform.
+If the stage is `build.submit`, check the matching regional build record before
+assuming a server-side build failure. A later stage is progress, not full release
+acceptance. Keep the task OPEN until exact-SHA private DEV cloud_demo deployment
+and full API/UI/mock acceptance produce trusted release evidence.
+
+For the next Codex session: the new baseline is bd619dbe2d048bb1bcaa280357951f9509bd6f99
+plus this continuation's uncommitted instrumentation/docs/tests. The earlier
+78b317d resume instructions below describe the previous investigation. Inspect
+actual current HEAD/status and the new run before modifying code. This continuation
+performed read-only GitHub inspection and local tests only; no Cloud Build submit,
+Run mutation, IAM change, Terraform apply, deployment or automatic rerun.
+
+Continuation validation: `make test` **564 passed**, with one existing
+Starlette/AnyIO warning; **25 new diagnostic regressions passed**. Actionlint and
+Git whitespace checks passed. The first full-suite attempt exposed test-only
+environment leakage from a mocked CI invocation; the fixture now restores GCP_CI
+and CONFIG_DIR, and the full suite was rerun successfully. No production behavior
+or IAM change was needed for that test isolation fix. No Terraform/workflow source
+was changed, and no real GCP operation was invoked by these tests.
+
+## Previous health-401 investigation: outcome and evidence levels
 
 **CONFIRMED — code defect:** IAP service-account JWT `aud` was the bare origin,
 but Acceptance requests `/health`, `/hub`, document/API/assets paths. Google's

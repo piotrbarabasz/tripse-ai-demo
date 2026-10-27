@@ -356,18 +356,19 @@ def execute():
     proof = release_proof(environment if operation == "rollback" else "dev", sha,
                           config["CLOUD_FEATURE_MODE"], production=environment == "prod") if operation != "dev" else None
     try:
-        if not g("auth", "print-access-token"):
-            raise ValueError("No usable runner credential")
-    except (ValueError, d.CommandError):
+        with d.command_stage("credentials"):
+            if not g("auth", "print-access-token"):
+                raise ValueError("No usable runner credential")
+    except ValueError:
         raise ValueError("IAM/WIF authentication error: runner cannot obtain a short-lived access token. Review environment trust and impersonation bindings; no deployment attempted.") from None
     try:
-        d.online_preflight(g, "build" if operation == "dev" else "deploy")
-    except (ValueError, d.CommandError):
+        with d.command_stage("preflight"):
+            d.online_preflight(g, "build" if operation == "dev" else "deploy")
+    except ValueError:
         raise ValueError("GCP preflight blocked: check WIF authentication/IAM, enabled APIs and reviewed GCP bootstrap. See docs/GITHUB_CICD.md; no application deployment attempted.") from None
     try:
-        current = prerequisites(g)
-    except d.CommandError:
-        raise ValueError("GCP bootstrap check failed: resource missing or metadata IAM denied. Review private resources and probe access in docs/GITHUB_CICD.md; no application deployment attempted.") from None
+        with d.command_stage("prerequisites"):
+            current = prerequisites(g)
     except ValueError as exc:
         raise ValueError("GCP bootstrap blocked: " + str(exc) + ". See docs/GITHUB_CICD.md; no application deployment attempted.") from None
     fresh(current, int(os.environ["GITHUB_RUN_NUMBER"]))
@@ -378,16 +379,20 @@ def execute():
         if remote.get("object", {}).get("sha") != os.environ["GITHUB_SHA"]:
             raise ValueError("Push was superseded by a newer branch head")
     if operation == "dev":
-        d.build(g, sha)
-    selected_digest = d.digest(g, sha)
+        with d.command_stage("build"):
+            d.build(g, sha)
+    with d.command_stage("release.digest"):
+        selected_digest = d.digest(g, sha)
     if proof and selected_digest != proof["image_digest"]:
         raise ValueError("Registry digest differs from the accepted immutable evidence")
     if environment == "dev":
         from scripts.gcp.build_proof import verify
-        source_build_id = verify(g, sha, selected_digest)
+        with d.command_stage("release.source_proof"):
+            source_build_id = verify(g, sha, selected_digest)
     else:
         source_build_id = proof["source_build_id"]
-    previous = snapshot(current, g)
+    with d.command_stage("release.snapshot"):
+        previous = snapshot(current, g)
     record = {"repository": REPOSITORY, "run_id": int(os.environ["GITHUB_RUN_ID"]),
         "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]), "policy_sha": os.environ["GITHUB_SHA"],
         "source_ref": ref, "image_sha": sha, "image_digest": selected_digest,
@@ -396,24 +401,28 @@ def execute():
         "previous_sha": previous["sha"], "accepted": False,
         "rollback": f"Manual rollback: select {environment}, SHA {previous['sha']} and its last successful acceptance artifact"}
     try:
-        d.deploy(g, sha)
-        state = d.deployed_state(g, sha)
+        with d.command_stage("release.deploy"):
+            d.deploy(g, sha)
+        with d.command_stage("release.verify"):
+            state = d.deployed_state(g, sha)
         if state["image_digest"] != selected_digest:
             raise ValueError("Deployed digest changed during release")
         record.update(state)
         if environment == "dev" and config["CLOUD_FEATURE_MODE"] == "cloud_demo":
             from scripts.gcp.smoke_auth import probe_token
             from scripts.gcp.parity_smoke import Acceptance
-            token = probe_token(g, state["url"], iap=True)
-            acceptance = Acceptance(state["url"], token)
-            acceptance.read_only("dev")
-            fixtures = acceptance.writes()
-            browser_acceptance(state["url"], token, fixtures["trip_id"])
+            with d.command_stage("release.acceptance"):
+                token = probe_token(g, state["url"], iap=True)
+                acceptance = Acceptance(state["url"], token)
+                acceptance.read_only("dev")
+                fixtures = acceptance.writes()
+                browser_acceptance(state["url"], token, fixtures["trip_id"])
             record["acceptance"] = "api_ui_mock"
         else:
             record["acceptance"] = "smoke"
         # Recheck after acceptance while the cross-branch DEV lock is still held.
-        record.update(d.deployed_state(g, sha))
+        with d.command_stage("release.verify"):
+            record.update(d.deployed_state(g, sha))
         record.update(accepted=True, accepted_at=int(time.time()))
         record["config_hash"] = hashlib.sha256(json.dumps(config.values, sort_keys=True).encode()).hexdigest()
         directory.mkdir(parents=True, exist_ok=True)
@@ -423,7 +432,8 @@ def execute():
     except Exception:
         record["failure_stage"] = "Application deployment or deployed acceptance failed; release not accepted"
         try:
-            restore(g, previous)
+            with d.command_stage("release.restore"):
+                restore(g, previous)
             record["recovery"] = "Previous traffic and health verified; access retained private. Deployment FAILED."
         except Exception:
             record["recovery"] = "Restoration NOT verified. Deployment FAILED; operator recovery required."
@@ -472,6 +482,17 @@ def main():
         message = str(exc) if isinstance(exc, (ValueError, d.CommandError)) else type(exc).__name__
         if args.action == "configure":
             failure_summary(message)
+        elif isinstance(exc, d.CommandError):
+            path = os.getenv("GITHUB_STEP_SUMMARY")
+            if path:
+                try:
+                    with open(path, "a", encoding="utf-8") as stream:
+                        stream.write("\n## Deployment command failed\n\n"
+                                     f"Stage: `{exc.stage}`; operation: `{exc.operation}`; exit code: `{exc.code}`.\n\n"
+                                     "Release not accepted. No stderr, command arguments or credential details are included. "
+                                     "See docs/DEV_AUTH_004_INCIDENT.md.\n")
+                except OSError:
+                    pass  # Summary I/O must not replace the original safe error.
         print("CI blocked: " + message, file=sys.stderr)
         raise SystemExit(1) from None
 
