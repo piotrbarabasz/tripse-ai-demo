@@ -108,7 +108,7 @@ resource "google_project_iam_custom_role" "inspect" {
     "datastore.databases.get", "datastore.databases.getMetadata",
     "cloudtasks.queues.get", "cloudtasks.queues.getIamPolicy",
     "iam.serviceAccounts.get", "iam.serviceAccounts.getIamPolicy",
-    "iap.webServices.getIamPolicy", "iap.web.getSettings"
+    "iap.webServices.getIamPolicy", "iap.webServices.getSettings", "iap.web.getSettings"
   ]
 }
 resource "google_project_iam_member" "inspect" {
