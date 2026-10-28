@@ -5,7 +5,7 @@ status: proposed
 date: 2026-10-25
 author: "Codex — autor zapisu retrospektywnego"
 area: "Rendering i eksport dokumentów"
-related_tasks: [DEMO-02, DEMO-03]
+related_tasks: [DEMO-02, DEMO-03, DOC-PDF-003]
 related_prs: []
 supersedes: []
 ---
@@ -30,6 +30,12 @@ historycznego benchmarku tych opcji. Swobodny HTML od LLM jest zabroniony w spec
 Dane strukturalne → kontrolowany HTML/CSS → wspólny podgląd i print CSS.
 JavaScript mierzy i dzieli bloki na strony, a użytkownik zapisuje PDF z przeglądarki.
 Serwer nie uruchamia Playwright i nie archiwizuje wygenerowanego pliku.
+
+DOC-PDF-003, 2026-10-28: lokalnie rozszerzono ten sam kontrakt o semantyczny
+podział tekstu, list i tabel po pomiarze DOM, kontekst kontynuacji, dekodowanie
+obrazów przed składem i kontrolę rzeczywistych PDF/rastrów w QA. Nie zmieniono
+schematów zapisu, usługi eksportu ani statusu proposed tego ADR. Wyniki, ograniczenia
+i artefakty: [raport DOC-PDF-003](../audits/DOC_PDF_003.md). Brak wdrożenia tej iteracji.
 
 ## 4. Uzasadnienie
 

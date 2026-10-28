@@ -47,7 +47,10 @@ i wymaga późniejszych reguł synchronizacji/retencji.
 
 ## 6. Dług techniczny i ograniczenia
 
-Brak archiwum pełnych rewizji i workflow akceptacji. Lista dozwolonych pól nie
+Historyczny brak archiwum rewizji uzupełnia [ADR-0014](0014-document-library-history.md)
+w DOCUMENT-LIBRARY-001: poprzednie pełne stany są zachowywane przed zapisem głowy.
+Formalny workflow akceptacji nadal nie istnieje; `ready` jest statusem biznesowym.
+Lista dozwolonych pól nie
 wykrywa sekretów wpisanych ręcznie w publiczny opis. [DEBT-02, DEBT-03, DEBT-06](../tracking/repository-audit.md).
 
 ## 7. Wpływ na kosztorys
@@ -68,3 +71,9 @@ i wymagana retencja są danymi wejściowymi, nie oszacowanym dziś kosztem.
 
 Wymóg pełnego audytu, aktualizacji dokumentów ze źródła, prawnego archiwum
 lub integracji z planerem. Nie zastępować snapshotów odwołaniem do zmiennych danych bez nowej decyzji.
+
+## Historia zmian
+
+| Data | Autor | Zmiana | Podstawa |
+|---|---|---|---|
+| 2026-10-28 | Codex | Uzupełnienie historycznego ograniczenia o bibliotekę i zachowane rewizje; brak zmiany statusu ADR | DOCUMENT-LIBRARY-001; ADR-0014 |

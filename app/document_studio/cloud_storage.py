@@ -83,14 +83,110 @@ class GCSRepository:
         if hasattr(value, "updated_at"):
             from app.document_studio.models import now
             value.updated_at = now()
+        if kind == "drafts" and previous is not None:
+            self._archive(previous)
         try:
-            self.bucket.blob(name).upload_from_string(value.model_dump_json(),
+            blob = self.bucket.blob(name)
+            if kind == "drafts":
+                from app.document_studio.library import DocumentSummary
+                blob.metadata = {"tripse_document": DocumentSummary.from_draft(value).model_dump_json()}
+            blob.upload_from_string(value.model_dump_json(),
                 content_type="application/json", if_generation_match=generation, timeout=10)
         except PreconditionFailed:
             raise ConflictError("Concurrent cloud edit; reopen before saving") from None
         except (GoogleAPIError, OSError) as exc:
             raise StorageError("Cannot save cloud document") from exc
         return value
+
+    def _revision_name(self, identifier, revision):
+        self._name("drafts", identifier)
+        if isinstance(revision, bool) or not isinstance(revision, int) or revision < 1:
+            raise ValueError("Invalid revision")
+        return f"documents/revisions/{identifier}/{revision:010d}.json"
+
+    def _historical(self, name, identifier, revision):
+        from google.api_core.exceptions import NotFound, GoogleAPIError
+        from app.document_studio.models import DocumentDraft
+        try:
+            draft = DocumentDraft.model_validate_json(self.bucket.blob(name).download_as_bytes(timeout=10))
+            if draft.document_id != identifier or draft.revision != revision:
+                raise StorageError("Historical revision identity mismatch")
+            return draft
+        except NotFound:
+            raise KeyError(revision) from None
+        except (GoogleAPIError, OSError, ValueError) as exc:
+            raise StorageError("Cannot read cloud document revision") from exc
+
+    def _archive(self, draft):
+        from google.api_core.exceptions import PreconditionFailed, GoogleAPIError
+        from app.document_studio.library import DocumentSummary
+        name = self._revision_name(draft.document_id, draft.revision)
+        try:
+            blob = self.bucket.blob(name)
+            blob.metadata = {"tripse_document": DocumentSummary.from_draft(draft).model_dump_json()}
+            blob.upload_from_string(draft.model_dump_json(), content_type="application/json", if_generation_match=0, timeout=10)
+        except PreconditionFailed:
+            existing = self._historical(name, draft.document_id, draft.revision)
+            if existing.model_dump(mode="json") != draft.model_dump(mode="json"):
+                raise StorageError("Immutable history conflicts with the committed document") from None
+        except (GoogleAPIError, OSError) as exc:
+            raise StorageError("Cannot preserve previous cloud revision") from exc
+
+    def _summary(self, blob, identifier, revision=None):
+        from app.document_studio.library import DocumentSummary
+        try:
+            row = DocumentSummary.model_validate_json((blob.metadata or {})["tripse_document"])
+            if row.document_id == identifier and (revision is None or row.revision == revision):
+                return row
+        except (AttributeError, KeyError, TypeError, ValueError):
+            pass
+        # Legacy objects have no metadata. Read them without mutating storage;
+        # their next explicit save will attach the lightweight metadata atomically.
+        draft = self._historical(blob.name, identifier, revision) if revision else self.get("drafts", identifier)
+        return DocumentSummary.from_draft(draft)
+
+    def list_documents(self):
+        from google.api_core.exceptions import GoogleAPIError
+        prefix = "documents/drafts/"
+        try:
+            rows = []
+            for blob in self.bucket.list_blobs(prefix=prefix, timeout=10):
+                if blob.name.endswith(".json"):
+                    identifier = blob.name[len(prefix):-5]
+                    self._name("drafts", identifier)
+                    rows.append(self._summary(blob, identifier))
+            return rows
+        except GoogleAPIError as exc:
+            raise StorageError("Cannot list cloud document metadata") from exc
+
+    def get_revision(self, identifier, revision):
+        name = self._revision_name(identifier, revision)
+        current = self.get("drafts", identifier)
+        if revision == current.revision:
+            return current
+        if revision > current.revision:
+            raise KeyError(revision)
+        return self._historical(name, identifier, revision)
+
+    def list_revisions(self, identifier):
+        from google.api_core.exceptions import GoogleAPIError, NotFound
+        prefix = self._revision_name(identifier, 1).rsplit("/", 1)[0] + "/"
+        try:
+            head = self.bucket.blob(self._name("drafts", identifier))
+            head.reload(timeout=10)
+            current = self._summary(head, identifier)
+            rows = [current]
+            for blob in self.bucket.list_blobs(prefix=prefix, timeout=10):
+                suffix = blob.name[len(prefix):]
+                if suffix.endswith(".json") and suffix[:-5].isdigit():
+                    revision = int(suffix[:-5])
+                    if revision < current.revision:
+                        rows.append(self._summary(blob, identifier, revision))
+            return sorted(rows, key=lambda row: row.revision, reverse=True)
+        except NotFound:
+            raise KeyError(identifier) from None
+        except GoogleAPIError as exc:
+            raise StorageError("Cannot list cloud document revisions") from exc
 
 
 class GCSAssetBytes:

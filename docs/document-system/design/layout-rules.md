@@ -17,6 +17,22 @@ Rozdzielczości innych kanałów (Stories, banner WWW) zatwierdzić osobno; nie 
 
 ## 3. Reguły paginacji
 
+Implementacja DOC-PDF-003: [raport i QA](../../audits/DOC_PDF_003.md).
+Kontrolowany renderer przekazuje semantyczne akapity/listy i pełne wiersze tabel.
+Przeglądarka czeka na fonty i dekodowanie zdjęć, mierzy fragmenty, a następnie
+składa te same strony do podglądu i window.print(). Zwykłe wiersze pozostają
+razem; wiersz większy od obszaru nowej strony może mieć kontynuowane komórki.
+Nagłówki kolumn i oznaczenia „cd.” są prezentacją; godziny, statusy i wartości
+wiersza nie są kopiowane w celu wypełnienia kontynuacji. Nadzwyczajnie długi
+niełamany token może wymagać podziału znakowego po pomiarze jego wysokości.
+Nie zmniejszamy fontu całego dokumentu. Niepodzielny, niemieszczący się element
+lub niezaładowane zdjęcie blokują eksport ze wskazaniem sekcji.
+
+A4 ma fizyczną siatkę 210×297 mm w obu mediach; social ma 1080×1350 CSS px
+(285,75×357,1875 mm przy 96 dpi). Margines bazowy 56 px, social 64 px.
+Brak zdjęcia daje neutralny, opisany placeholder, a nie obraz konkretnego miejsca.
+Galerie wiążą podpis z kadrem. Odczyt x/y/zoom nie zmienia oryginalnego assetu.
+
 - Unikaj samotnych nagłówków na końcu strony.
 - Dzienny nagłówek i pierwsza aktywność muszą zostać razem.
 - Dopuszczaj podział długiego harmonogramu na kolejne strony z powtórzonym nagłówkiem tabeli.

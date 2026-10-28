@@ -49,7 +49,7 @@ def run():
                 page.on('request',lambda request:requests.append(request.url))
                 page.on('dialog',lambda dialog:dialog.accept())
                 def ready(target):
-                    target.wait_for_function('window.documentReady === true')
+                    target.wait_for_function('() => window.documentReady === true')
                     assert target.evaluate('window.layoutErrors')==[],target.evaluate('window.layoutErrors')
                     expect(target.locator('#print-document')).to_be_enabled()
                     assert target.evaluate('[...document.querySelectorAll(".page-body")].every(el=>el.scrollHeight <= el.clientHeight+1)')
@@ -75,11 +75,11 @@ def run():
                     return text
                 for template in ('offer.private','pilot.basic'):
                     page.goto(base+'/documents/demo#trips/demo-iceland')
-                    page.locator('#template').select_option(template)
-                    page.locator('#demo-example').check()
                     page.locator('#create-draft').click()
-                    expect(page.get_by_role('button',name='Edytuj dokument',exact=True)).to_be_visible()
-                    page.get_by_role('button',name='Edytuj dokument',exact=True).click()
+                    page.locator('[data-create-template="'+template+'"]').click()
+                    page.locator('#source-demo-option details').evaluate('el=>el.open=true')
+                    page.locator('#flow-demo').check()
+                    page.locator('#source-create').click()
                     expect(page.locator('#d-save')).to_be_visible()
                     document_id=page.evaluate('location.hash').split('/')[-1]
                     saved_ids.append(document_id)
@@ -92,10 +92,11 @@ def run():
                         page.locator('[data-d-remove="transfers.1"]').click()
                         page.locator('[data-d-field="pilot_data.schedule.0.start_local"]').fill('2027-06-01T11:30')
                     page.locator('#d-save').click()
-                    expect(page.locator('#message')).to_have_text('Draft zapisany. Rewizja 2.')
+                    expect(page.locator('#message')).to_contain_text('Dokument zapisany')
                     expect(page.locator('#d-revision')).to_have_text('2')
                     page.screenshot(path=str(artifacts/(template+'-editor.png')),full_page=True)
-                    with page.expect_popup() as popup:page.locator('#d-export').click()
+                    page.locator('#document-review').click()
+                    with page.expect_popup() as popup:page.locator('#review-export').click()
                     preview=popup.value
                     text=pdf(preview,template+'-iceland-10',template=='pilot.basic',10)
                     assert 'Opis zmieniony wyłącznie w dokumencie' in text

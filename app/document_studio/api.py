@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Path as ApiPath
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from pydantic import Field
 
@@ -14,6 +14,7 @@ from app.document_studio.templates import TEMPLATES
 from app.document_studio.assets import AssetStore, MAX_UPLOAD_BYTES
 from app.document_studio.marketing import build_marketing
 from app.document_studio.rendering import render_marketing
+from app.document_studio.library import DocumentLibrary, LibraryMutation, StatusMutation, LibraryPage, DocumentSummary
 
 WEB = Path(__file__).parent / "frontend"
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
@@ -38,6 +39,8 @@ def local_only(request: Request):
 
 
 class DraftRequest(Model):
+    document_id: Identifier | None = None
+    source_revision: int | None = Field(default=None, ge=1)
     template_id: str
     source_type: Literal["trip", "campaign"]
     source_id: Identifier
@@ -58,6 +61,7 @@ class DraftUpdate(Model):
     offer_details: OfferDetails | None = None
     sections: list[DocumentSection] | None = None
     campaign_snapshot: Campaign | None = None
+    document_status: Literal["draft", "in_review", "ready"] = "draft"
 
 
 class TripPreviewRequest(Model):
@@ -74,6 +78,10 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
     router = APIRouter(dependencies=[Depends(access_policy)])
     assets = asset_store or AssetStore(repository)
     service = DocumentService(repository, assets)
+    library = DocumentLibrary(repository)
+
+    def actor(request):
+        return getattr(request.state, "principal", None) if cloud_mode else None
 
     def marketing_data(campaign, trips=None, label="Podgląd roboczy"):
         trips = trips if trips is not None else [repository.get("trips", i.trip_id) for i in campaign.items]
@@ -105,9 +113,13 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
 
     @router.get("/documents/assets/{filename}", include_in_schema=False)
     def asset(filename: str):
-        if filename not in {"studio.js", "studio.css", "marketing-editor.js", "marketing-editor.css", "brand-tokens.css", "marketing.css", "print-export.js", "trip-documents.css", "trip-editor.js", "trip-editor.css", "section-editor.js"}:
+        if filename not in {"studio.js", "studio.css", "marketing-editor.js", "marketing-editor.css", "brand-tokens.css", "marketing.css", "print-export.js", "trip-documents.css", "trip-editor.js", "trip-editor.css", "section-editor.js", "library.js", "source-picker.js", "document-flow.js"}:
             raise HTTPException(404)
         return FileResponse(WEB / filename)
+
+    @router.get("/api/document-studio/access")
+    def access(request: Request):
+        return {"can_edit": bool(getattr(request.state, "can_edit", False)) if cloud_mode else True}
 
     @router.get("/api/document-studio/templates")
     def templates():
@@ -130,7 +142,10 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
         if identifier != value.trip_id:
             raise HTTPException(422, "ID ścieżki i danych muszą być zgodne")
         def update():
-            repository.get("trips", identifier)
+            previous = repository.get("trips", identifier)
+            for field in ("categories", "data_origin"):
+                if field not in value.model_fields_set:
+                    setattr(value, field, getattr(previous, field))
             return repository.save("trips", value)
         return run(update)
 
@@ -151,7 +166,9 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
         if identifier != value.campaign_id:
             raise HTTPException(422, "ID ścieżki i danych muszą być zgodne")
         def update():
-            repository.get("campaigns", identifier)
+            previous = repository.get("campaigns", identifier)
+            if "data_origin" not in value.model_fields_set:
+                value.data_origin = previous.data_origin
             return service.save_campaign(value)
         return run(update)
 
@@ -164,12 +181,54 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
         return run(lambda: repository.get("drafts", identifier))
 
     @router.post("/api/document-studio/drafts", status_code=201, response_model=DocumentDraft)
-    def create_draft(value: DraftRequest):
-        return run(lambda: service.create_draft(value))
+    def create_draft(value: DraftRequest, request: Request):
+        return run(lambda: service.create_draft(value, actor(request)))
 
     @router.put("/api/document-studio/drafts/{identifier}", response_model=DocumentDraft)
-    def update_draft(identifier: Identifier, value: DraftUpdate):
-        return run(lambda: service.update_draft(identifier, value))
+    def update_draft(identifier: Identifier, value: DraftUpdate, request: Request):
+        return run(lambda: service.update_draft(identifier, value, actor(request)))
+
+    @router.get("/api/document-studio/library", response_model=LibraryPage)
+    def list_library(response: Response, search: str = Query(default="", max_length=200), family: Literal["offer", "pilot", "marketing"] | None = None,
+                     template_id: str | None = None, document_status: Literal["draft", "in_review", "ready", "archived"] | None = None,
+                     archived: Literal["exclude", "include", "only"] = "exclude",
+                     sort: Literal["title", "created_at", "updated_at"] = "updated_at", direction: Literal["asc", "desc"] = "desc",
+                     offset: int = Query(default=0, ge=0), limit: int = Query(default=50, ge=1, le=100)):
+        response.headers["Cache-Control"] = "private, no-store"
+        return run(lambda: library.list(search=search.strip(), family=family, template_id=template_id,
+            document_status=document_status, archived=archived, sort=sort, direction=direction, offset=offset, limit=limit))
+
+    @router.post("/api/document-studio/library/{identifier}/duplicate", status_code=201)
+    def duplicate_document(identifier: Identifier, value: LibraryMutation, request: Request):
+        return run(lambda: library.duplicate(identifier, value, actor(request)))
+
+    @router.post("/api/document-studio/library/{identifier}/archive")
+    def archive_document(identifier: Identifier, value: LibraryMutation, request: Request):
+        return run(lambda: library.transition(identifier, value, "archive", actor(request)))
+
+    @router.post("/api/document-studio/library/{identifier}/restore")
+    def restore_document(identifier: Identifier, value: LibraryMutation, request: Request):
+        return run(lambda: library.transition(identifier, value, "restore", actor(request)))
+
+    @router.post("/api/document-studio/library/{identifier}/status")
+    def document_status(identifier: Identifier, value: StatusMutation, request: Request):
+        return run(lambda: library.transition(identifier, value, "status", actor(request)))
+
+    @router.get("/api/document-studio/library/{identifier}/revisions", response_model=list[DocumentSummary])
+    def document_revisions(identifier: Identifier, response: Response):
+        response.headers["Cache-Control"] = "private, no-store"
+        return run(lambda: repository.list_revisions(identifier))
+
+    @router.get("/api/document-studio/library/{identifier}/revisions/{revision}")
+    def document_revision(identifier: Identifier, response: Response, revision: int = ApiPath(ge=1)):
+        response.headers["Cache-Control"] = "private, no-store"
+        return run(lambda: repository.get_revision(identifier, revision))
+
+    @router.get("/api/document-studio/library/{identifier}/revisions/{revision}/preview")
+    def revision_preview(identifier: Identifier, revision: int = ApiPath(ge=1), output_format: Literal["a4", "social"] = "a4"):
+        from app.document_studio.rendering.sections import render_document
+        return run(lambda: HTMLResponse(render_document(repository.get_revision(identifier, revision), assets, output_format),
+            headers={"Cache-Control":"no-store", "X-Content-Type-Options":"nosniff"}))
 
     @router.post("/api/document-studio/trip-documents/validate")
     def validate_trip_document(value: TripPreviewRequest):

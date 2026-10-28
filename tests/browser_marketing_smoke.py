@@ -71,7 +71,7 @@ def run():
                 results=[]
 
                 def ready(target):
-                    target.wait_for_function('window.documentReady === true')
+                    target.wait_for_function('() => window.documentReady === true')
                     assert target.evaluate('window.layoutErrors')==[],target.evaluate('window.layoutErrors')
                     assert target.locator('#print-document').is_enabled()
                     assert target.evaluate('[...document.querySelectorAll(".page-body")].every(x=>x.scrollHeight <= x.clientHeight+1)')
@@ -119,13 +119,17 @@ def run():
                             page.goto(base+f'/api/document-studio/campaigns/{campaign_id}/preview?output_format=social')
                             ready(page)
                             expect(page.locator('.trip-card')).to_have_count(count)
-                # Oversized blocks must produce a visible error, never clipped PDF content.
-                huge=api.post('/api/document-studio/campaigns',json={"title":"Zbyt obszerna karta", "cta":"Kontakt", "items":[{"trip_id":trip_ids[0],"highlights":["Bardzo długi wyróżnik "*8]*80}]}).json()
+                # Long, divisible cards must paginate without losing or repeating highlights.
+                huge=api.post('/api/document-studio/campaigns',json={"title":"Zbyt obszerna karta", "cta":"Kontakt", "items":[{"trip_id":trip_ids[0],"highlights":[f"EDGEH{i:03d} "+"Bardzo długi wyróżnik "*8 for i in range(80)]}]}).json()
                 page.goto(base+f"/api/document-studio/campaigns/{huge['campaign_id']}/preview")
-                page.wait_for_function('window.documentReady === true')
-                assert page.evaluate('window.layoutErrors.length') > 0
-                expect(page.locator('#print-document')).to_be_disabled()
-                expect(page.locator('#print-failure')).to_be_visible()
+                page.wait_for_function('() => window.documentReady === true')
+                ready(page)
+                assert page.locator('.sheet').count()>1
+                long_pdf=artifacts/'long-highlights-a4.pdf'
+                page.pdf(path=str(long_pdf),prefer_css_page_size=True,print_background=True)
+                long_text='\n'.join(p.extract_text() for p in PdfReader(long_pdf).pages)
+                import re
+                assert sorted(re.findall(r'EDGEH\d{3}',long_text))==[f'EDGEH{i:03d}' for i in range(80)]
                 page.goto(base+'/documents/demo#marketing/demo-northern-journeys')
                 expect(page.locator('[data-m-item]')).to_have_count(3)
                 page.locator('[data-m-field="title"]').fill('Moja zapisana kolekcja — żółć')
@@ -133,6 +137,8 @@ def run():
                 page.locator('[data-m-field="theme"]').fill('Góry i woda')
                 page.locator('[data-m-move="2,-1"]').click()
                 page.locator('[data-m-remove="1"]').click()
+                page.locator('#m-trip-picker .source-advanced').evaluate('(el)=>el.open=true')
+                page.locator('#m-trip-picker [data-source-filter="demo"]').check()
                 page.locator('#m-add-trip').select_option('demo-norway')
                 page.locator('#m-add').click()
                 expect(page.locator('[data-m-item]')).to_have_count(3)
@@ -146,12 +152,20 @@ def run():
                 page.locator('#m-save').click()
                 expect(page.locator('#message')).to_have_text('Kampania zapisana.')
                 page.screenshot(path=str(artifacts/'editor-desktop.png'),full_page=True)
+                page.locator('#m-export').click()
+                page.locator('.catalog-variant').select_option('theme_collection')
+                page.locator('[data-create-template="marketing.collection"]').click()
+                page.locator('#source-create').click()
+                expect(page.locator('#document-review')).to_be_visible()
+                page.locator('#document-review').click()
                 with page.expect_popup() as popup:
-                    page.locator('#m-export').click()
+                    page.locator('#review-export').click()
                 preview=popup.value
                 ready(preview)
-                assert '/drafts/' in preview.url
+                assert '/api/document-studio/library/'+page.url.split('/')[-1]+'/revisions/' in preview.url
                 preview.close()
+                page.goto(base+'/documents/demo#marketing/demo-northern-journeys')
+                expect(page.locator('#campaign-origin')).to_have_count(1)
                 # Missing CTA is a visible blocking validation error, not a crash.
                 page.locator('[data-m-field="cta"]').fill('')
                 expect(page.locator('#m-validation')).to_contain_text('Uzupełnij CTA')

@@ -30,12 +30,14 @@ TASK_ACCOUNT = "tripse-ai-dev-tasks@tripse-test-123.iam.gserviceaccount.com"
 class FakeBucket:
     def __init__(self):
         self.objects, self.lock, self.counter = {}, threading.RLock(), 0
+        self.metadata = {}
         self.fail = False
 
     def blob(self, name):
         bucket = self
         class Blob:
             generation = None
+            metadata = None
             def download_as_bytes(self, **kwargs):
                 if bucket.fail:
                     raise ServiceUnavailable("private storage error")
@@ -43,6 +45,7 @@ class FakeBucket:
                     if name not in bucket.objects:
                         raise NotFound("absent")
                     data, self.generation = bucket.objects[name]
+                    self.metadata = copy.deepcopy(bucket.metadata.get(name, {}))
                     return data
             def upload_from_string(self, data, *, if_generation_match, **kwargs):
                 if bucket.fail:
@@ -54,8 +57,15 @@ class FakeBucket:
                     bucket.counter += 1
                     self.generation = bucket.counter
                     bucket.objects[name] = (data.encode() if isinstance(data, str) else data, self.generation)
+                    bucket.metadata[name] = copy.deepcopy(self.metadata or {})
             def reload(self, **kwargs):
-                self.download_as_bytes()
+                if bucket.fail:
+                    raise ServiceUnavailable("private storage error")
+                with bucket.lock:
+                    if name not in bucket.objects:
+                        raise NotFound("absent")
+                    self.generation = bucket.objects[name][1]
+                    self.metadata = copy.deepcopy(bucket.metadata.get(name, {}))
             def delete(self, *, if_generation_match, **kwargs):
                 with bucket.lock:
                     if bucket.objects[name][1] != if_generation_match:
@@ -66,7 +76,8 @@ class FakeBucket:
     def list_blobs(self, *, prefix, **kwargs):
         if self.fail:
             raise ServiceUnavailable("private storage error")
-        return [SimpleNamespace(name=name) for name in self.objects if name.startswith(prefix)]
+        return [SimpleNamespace(name=name, generation=value[1], metadata=copy.deepcopy(self.metadata.get(name, {})))
+                for name, value in self.objects.items() if name.startswith(prefix)]
 
 
 class MemoryJobStore:

@@ -59,6 +59,9 @@ def run():
                 page.on("request", lambda request: requests.append(request.url))
                 page.on("dialog", lambda dialog: dialog.accept())
                 page.goto(base + "/documents/demo#trips")
+                expect(page.locator(".card")).to_have_count(0)
+                page.locator('#source-library-filters .source-advanced').evaluate('(el)=>el.open=true')
+                page.locator('#source-library-filters [data-source-filter="demo"]').check()
                 expect(page.locator(".card")).to_have_count(3)
                 page.screenshot(path=str(artifacts / "library-desktop.png"), full_page=True)
                 page.locator('[data-go="trips/demo-canada"]').click()
@@ -79,23 +82,45 @@ def run():
                 page.locator('[data-add-stop="1"]').click()
                 page.locator('[data-remove-stop="1.0"]').click()
                 page.locator("#save-trip").click()
-                expect(page.locator("#message")).to_have_text("Wycieczka zapisana.")
+                expect(page.locator("#message")).to_have_text("Program wycieczki zapisany.")
                 trip_hash = page.evaluate("location.hash")
                 page.screenshot(path=str(artifacts / "editor-desktop.png"), full_page=True)
-                page.locator("#editorial-notes").fill("Notatka do zachowania po restarcie")
-                page.locator("#template").select_option("offer.private")
                 page.locator("#create-draft").click()
-                expect(page.locator(".snapshot-day")).to_have_count(2)
-                expect(page.locator("main")).to_contain_text("Notatka do zachowania po restarcie")
+                if "/campaign/" in page.url:
+                    page.locator(".catalog-variant").select_option("theme_collection")
+                    page.locator('[data-create-template="marketing.collection"]').click()
+                else:
+                    page.locator('[data-create-template="offer.private"]').click()
+                page.locator("#source-create").click()
+                expect(page.locator('#d-save')).to_be_visible()
+                notes=page.locator('[data-d-field="editorial_notes"]')
+                notes.evaluate('(el)=>el.closest("details").open=true')
+                notes.fill('Notatka do zachowania po restarcie')
+                page.locator('#d-save').click()
+                expect(page.locator('#message')).to_contain_text('Dokument zapisany')
+                saved=httpx.get(base+'/api/document-studio/drafts/'+page.evaluate('location.hash').split('/')[-1]).json()
+                assert len(saved['trip_snapshot']['days'])==2
+                assert saved['editorial_notes']=='Notatka do zachowania po restarcie'
                 assert page.evaluate("window.injected") is None
                 draft_hash = page.evaluate("location.hash")
                 page.locator('[data-nav="campaigns"]').click()
+                expect(page.locator(".card")).to_have_count(0)
+                page.locator('#source-library-filters .source-advanced').evaluate('(el)=>el.open=true')
+                page.locator('#source-library-filters [data-source-filter="demo"]').check()
                 expect(page.locator(".card")).to_have_count(1)
                 page.locator(".card .open").click()
                 expect(page.locator('button[data-go^="trips/"]')).to_have_count(3)
-                page.locator("#variant").select_option("theme_collection")
                 page.locator("#create-draft").click()
-                expect(page.locator(".snapshot-day")).to_have_count(30)
+                if "/campaign/" in page.url:
+                    page.locator(".catalog-variant").select_option("theme_collection")
+                    page.locator('[data-create-template="marketing.collection"]').click()
+                else:
+                    page.locator('[data-create-template="offer.private"]').click()
+                page.locator("#source-create").click()
+                expect(page.locator('#m-save')).to_be_visible()
+                saved=httpx.get(base+'/api/document-studio/drafts/'+page.evaluate('location.hash').split('/')[-1]).json()
+                assert sum(len(t['days']) for t in saved['campaign_trip_snapshots'])==30
+                assert saved['layout_variant']=='theme_collection'
                 page.set_viewport_size({"width":390,"height":844})
                 page.goto(base + "/documents/demo" + trip_hash)
                 expect(page.locator(".day")).to_have_count(2)
@@ -110,8 +135,9 @@ def run():
                 expect(page.locator('[data-field="title"]')).to_have_value("Własna podróż — żółć, góry i Þingvellir")
                 expect(page.locator(".day")).to_have_count(2)
                 page.goto(base + "/documents/demo" + draft_hash)
-                expect(page.locator(".snapshot-day")).to_have_count(2)
-                expect(page.locator("main")).to_contain_text("Notatka do zachowania po restarcie")
+                expect(page.locator('#d-save')).to_be_visible()
+                expect(page.locator('[data-d-field="editorial_notes"]')).to_have_value('Notatka do zachowania po restarcie')
+                assert len(httpx.get(base+'/api/document-studio/drafts/'+draft_hash.split('/')[-1]).json()['trip_snapshot']['days'])==2
                 assert not errors, errors
                 assert all(url.startswith(base + "/") for url in requests), requests
                 browser.close()
@@ -126,3 +152,15 @@ if __name__ == "__main__":
     run()
     from studio_catalog_qa import run_catalog
     run_catalog()
+    from library_qa import run_library
+    run_library()
+    from reliability_qa import run as run_reliability
+    run_reliability()
+    from source_ux_qa import run_sources
+    run_sources()
+    from creation_flow_qa import run_flow
+    run_flow()
+    from flow_structure_qa import run_structure
+    run_structure()
+    from pdf_quality_qa import run_pdf_quality
+    run_pdf_quality()

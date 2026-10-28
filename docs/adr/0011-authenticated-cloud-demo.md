@@ -132,3 +132,4 @@ or a requirement for transactional writes across multiple Studio documents.
 |---|---|---|---|
 | 2026-10-26 | Codex | New cloud parity proposal; preserve preview and LOCAL contracts | CLOUD-PARITY-001 |
 | 2026-10-28 | Codex | Synchronize accepted private DEV/PROD rollout, editor membership and remaining gates; retain proposed status and historical preparation | PR #3; run 40614584902 |
+| 2026-10-28 | Codex | Library/history implementation extends Repository inside the same private environment bucket; no IAM/schema of planner or cloud deployment changes | DOCUMENT-LIBRARY-001; ADR-0014 |

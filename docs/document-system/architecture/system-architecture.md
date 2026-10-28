@@ -1,5 +1,13 @@
 # Architektura modułu dokumentów
 
+DOCUMENT-LIBRARY-001 (implementacja lokalna 2026-10-28): istniejący Repository
+ma listowanie lekkich metadanych i historię pełnych zapisów. JSON/GCS pozostają
+magazynami; metadane GCS są częścią obiektu, lokalny metadata/ to cache. Historia
+poprzedniej głowy jest zapisywana create-only przed CAS/replace głowy; brak
+transakcji wielu obiektów. [Szczegóły i API](../../DOCUMENT_STUDIO.md),
+[ADR-0014](../../adr/0014-document-library-history.md). DocumentExport i indeks
+Firestore pozostają planem, nie działającą funkcją.
+
 Stan implementacji lokalnej 2026-10-28: Implementacja korzysta z istniejących Trip/Campaign, DocumentDraft, JSON/GCS i przeglądarkowego eksportu. Sekcje Pydantic → definicje templates.py → instancje snapshotów są trzema poziomami. Nie wdrożono równoległych endpointów `/api/document-drafts`, kolejki renderowania ani modelu zatwierdzeń opisanego dalej jako docelowa propozycja.
 
 Szczegóły operacyjne: [Document Studio](../../DOCUMENT_STUDIO.md).

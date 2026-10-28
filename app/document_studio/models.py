@@ -4,13 +4,15 @@ from uuid import uuid4
 from decimal import Decimal
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator, field_validator
 
 Identifier = Annotated[str, StringConstraints(pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$")]
 Title = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
 Text = Annotated[str, StringConstraints(max_length=20000)]
 Verification = Literal["unverified", "proposed", "verified", "rejected"]
 Confidentiality = Literal["public", "client", "internal", "internal_restricted"]
+TripCategory = Literal["private", "self_guide", "school", "incentive", "group", "other"]
+DataOrigin = Literal["business", "demo", "synthetic_test", "unknown"]
 
 
 def new_id():
@@ -52,6 +54,8 @@ class Trip(Model):
     schema_version: Literal[1] = 1
     revision: int = Field(default=1, ge=1)
     title: Title
+    categories: list[TripCategory] = Field(default_factory=list, max_length=6)
+    data_origin: DataOrigin = "unknown"
     destinations: list[Title] = Field(default_factory=list)
     description: Text = ""
     start_date: Date | None = None
@@ -60,6 +64,11 @@ class Trip(Model):
     status: Literal["idea", "draft", "planned", "confirmed", "completed", "cancelled"] = "draft"
     days: list[TripDay] = Field(default_factory=list)
     updated_at: datetime = Field(default_factory=now)
+
+    @field_validator("categories")
+    @classmethod
+    def unique_categories(cls, value):
+        return list(dict.fromkeys(value))
 
     @model_validator(mode="after")
     def consistent_days(self):
@@ -123,6 +132,7 @@ class Campaign(Model):
     schema_version: Literal[1] = 1
     revision: int = Field(default=1, ge=1)
     title: Title
+    data_origin: DataOrigin = "unknown"
     season: str = ""
     layout_variant: Literal["new_trips", "theme_collection"] = "new_trips"
     theme: str = ""
@@ -380,17 +390,33 @@ class DocumentSection(Model):
         return self
 
 
+BusinessStatus = Literal["draft", "in_review", "ready", "archived"]
+
+
+class LibraryOperation(Model):
+    operation_id: str
+    kind: Literal["archive", "restore", "status"]
+    base_revision: int = Field(ge=1)
+
+
 class DocumentDraft(Model):
     document_id: Identifier = Field(default_factory=new_id)
     schema_version: Literal[1] = 1
     revision: int = Field(default=1, ge=1)
     title: Title
+    data_origin: DataOrigin = "unknown"
     template_id: str
     template_version: str
     layout_variant: str = "standard"
     language: Literal["pl"] = "pl"
     confidentiality: Confidentiality
     status: Literal["draft"] = "draft"
+    document_status: BusinessStatus = "draft"
+    archived_at: datetime | None = None
+    created_by: str | None = None
+    updated_by: str | None = None
+    duplicated_from_document_id: Identifier | None = None
+    last_library_operation: LibraryOperation | None = None
     trip_snapshot: Trip | None = None
     campaign_snapshot: Campaign | None = None
     campaign_trip_snapshots: list[Trip] = Field(default_factory=list)
@@ -408,6 +434,8 @@ class DocumentDraft(Model):
 
     @model_validator(mode="after")
     def valid_source(self):
+        if (self.document_status == "archived") != (self.archived_at is not None):
+            raise ValueError("Archiwizacja wymaga zgodnego statusu i daty")
         if (self.trip_snapshot is None) == (self.campaign_snapshot is None):
             raise ValueError("Exactly one trip or campaign snapshot is required")
         from app.document_studio.templates import TEMPLATES

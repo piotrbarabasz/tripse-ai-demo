@@ -37,7 +37,7 @@ def section_issues(draft, assets):
     for section in draft.sections:
         if section.role and section.role not in {s.role for s in defaults}:
             raise ValueError("Nieznana rola sekcji dla tego szablonu")
-        if section.kind == "source" and not section.role:
+        if section.kind == "source" and section.role not in {s.role for s in TEMPLATES[draft.template_id].default_sections}:
             raise ValueError("Sekcja źródłowa wymaga roli z definicji szablonu")
         if not section.visible:
             continue

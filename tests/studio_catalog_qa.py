@@ -48,19 +48,34 @@ def run_catalog():
                 page.locator('[data-create-template="'+template+'"]').click()
                 expect(page.locator('#source-form')).to_be_visible()
                 if template=='offer.private':
-                    page.locator('#source-select').select_option('new')
+                    page.locator('.source-paths .source-new').click()
                     page.locator('#source-title').fill('Żółte góry — dwa dni')
                     page.locator('#source-days').fill('2')
-                elif template!='marketing.collection':page.locator('#source-select').select_option('demo-canada' if template in {'pilot.advanced','pilot.knowledge'} else 'demo-iceland')
+                else:
+                    page.locator('#source-picker .source-advanced').evaluate('(el)=>el.open=true')
+                    page.locator('#source-picker [data-source-filter="demo"]').check()
+                    if template!='marketing.collection':
+                        page.locator('#source-picker [data-source-filter="all"]').check()
+                    page.locator('#source-select').select_option('demo-northern-journeys' if template=='marketing.collection' else 'demo-canada' if template in {'pilot.advanced','pilot.knowledge'} else 'demo-iceland')
                 page.locator('#source-create').click()
+                if template=='offer.private':
+                    expect(page.locator('#save-trip')).to_be_visible()
+                    page.locator('[data-field="days.0.public_description"]').fill('Program przygotowany przed utworzeniem dokumentu.')
+                    page.locator('#save-trip').click()
+                    expect(page.locator('#flow-continue')).to_be_enabled()
+                    page.locator('#flow-continue').click()
                 save='#m-save' if template=='marketing.collection' else '#d-save'
                 expect(page.locator(save)).to_be_visible(timeout=20000)
                 document_id=page.url.split('/')[-1]
+                for selector in ('#source-select','#template','#source-picker','#m-trip-picker','#m-add','#d-export'):
+                    expect(page.locator(selector)).to_have_count(0)
                 if template=='marketing.collection':
-                    expect(page.locator('[data-m-field="layout_variant"]')).to_have_value(variant)
+                    expect(page.locator('[data-m-field="layout_variant"]')).to_have_count(0)
+                    assert client.get('/api/document-studio/drafts/'+document_id).json()['layout_variant']==variant
                 if template=='offer.private':
                     page.locator('[data-d-field="offer_data.concept_only"]').check()
                     page.locator('[data-d-field="offer_data.cta"]').fill('Kontakt do uzupełnienia')
+                page.locator('.flow-options').filter(has=page.locator('.section-editor')).evaluate('(el)=>el.open=true')
                 # Add, edit, reorder, hide and restore sections without changing source data.
                 kinds=('text','list','table','callout','day','image','gallery') if template=='offer.private' else ('text','list','table')
                 for kind in kinds:
@@ -103,13 +118,14 @@ def run_catalog():
                 assert second.value.status==200 and second.value.json()['revision']==3
                 page.reload()
                 expect(page.locator(save)).to_be_visible(timeout=20000)
+                page.locator('.flow-options').filter(has=page.locator('.section-editor')).evaluate('(el)=>el.open=true')
                 expect(page.locator('input[data-s-field$=".title"]').filter(visible=True).last).to_be_visible()
                 saved=client.get('/api/document-studio/drafts/'+document_id).json()
                 assert saved['layout_variant']==variant
                 assert any(s['title']=='Własne informacje — żółć' and 'MARKER_END' in s['body'] and 'SECOND_SAVE' in s['body'] and s['visible'] for s in saved['sections'])
                 preview=context.new_page()
                 preview.goto(ORIGIN+'/api/document-studio/drafts/'+document_id+'/preview')
-                preview.wait_for_function('window.documentReady === true',timeout=20000)
+                preview.wait_for_function('() => window.documentReady === true',timeout=20000)
                 assert preview.evaluate('window.layoutErrors')==[],(template,preview.evaluate('window.layoutErrors'))
                 assert preview.locator('#print-document').is_enabled(),template
                 assert preview.evaluate('[...document.querySelectorAll(".page-body")].every(x=>x.scrollHeight<=x.clientHeight+1)'),template
@@ -122,7 +138,7 @@ def run_catalog():
                 assert abs(float(reader.pages[0].mediabox.width)-595.28)<2
                 if template=='marketing.collection':
                     preview.goto(ORIGIN+'/api/document-studio/drafts/'+document_id+'/preview?output_format=social')
-                    preview.wait_for_function('window.documentReady === true')
+                    preview.wait_for_function('() => window.documentReady === true')
                     assert preview.evaluate('window.layoutErrors')==[]
                 if template=='pilot.advanced':preview.screenshot(path=str(artifacts/'advanced-preview.png'))
                 preview.close()

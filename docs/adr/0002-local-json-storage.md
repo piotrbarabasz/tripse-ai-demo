@@ -47,7 +47,10 @@ Atomowa podmiana pojedynczego pliku nie zastępuje backupu ani pełnych gwarancj
 
 ## 6. Dług techniczny i ograniczenia
 
-Jeden proces API; rewizja nie przechowuje historii. Brak migratora, backup/restore
+Jeden proces API. Historyczna obserwacja z 2026-10-25, że sama rewizja nie
+przechowuje historii, została rozszerzona w [ADR-0014](0014-document-library-history.md):
+od DOCUMENT-LIBRARY-001 zachowywane są poprzednie pełne zapisy i metadane biblioteki.
+Nie odtworzono brakujących wersji sprzed tej funkcji. Brak migratora, backup/restore
 i retencji; API oraz `AssetStore` znają konkretny magazyn. Migracja nie jest
 obietnicą bezkosztowej podmiany. [DEBT-01, DEBT-02, DEBT-05](../tracking/repository-audit.md).
 
@@ -67,3 +70,9 @@ transakcje, testy konfliktów, backup i magazyn obrazów. Bez danych o skali nie
 
 Wielu autorów/procesów, współdzielone środowisko, większy wolumen lub wymagania
 backupów i audytu. Centralna baza wymaga odrębnego wyboru, nie wynika automatycznie z tego ADR.
+
+## Historia zmian
+
+| Data | Autor | Zmiana | Podstawa |
+|---|---|---|---|
+| 2026-10-28 | Codex | Uzupełnienie historycznego ograniczenia o bibliotekę i zachowane rewizje; brak zmiany statusu ADR | DOCUMENT-LIBRARY-001; ADR-0014 |

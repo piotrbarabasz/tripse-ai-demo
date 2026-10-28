@@ -56,6 +56,7 @@ class CloudAccess:
                     raise HTTPException(403, "Same-origin write required")
             if request.headers.get("sec-fetch-site") in {"cross-site", "same-site"}:
                 raise HTTPException(403, "Cross-origin access denied")
+        request.state.can_edit = email in self.editors
         request.state.principal = subject
         return subject
 

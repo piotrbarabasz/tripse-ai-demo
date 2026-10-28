@@ -52,11 +52,11 @@ window.TripDocumentEditor = (() => {
       ${field('Numer rezerwacji (bez PIN-u i kodów dostępu)',path+'.booking_reference',entry.booking_reference,'text','maxlength="200"')}<button type="button" class="danger" data-d-remove="${group}.${index}">Usuń wpis</button></div>`;
   }
   function draw() {
-    ui.main.innerHTML=`<button class="text-button back" data-go="drafts/${e(draft.document_id)}">← Zapisany dokument</button><div class="heading"><div><p class="eyebrow">${e(draft.template_id)} · REWIZJA <span id="d-revision">${draft.revision}</span></p><h1>${e({'offer.private':'Oferta indywidualna','offer.self_guide':'Self-Guide — bez pilota','offer.school':'Wycieczka szkolna','offer.incentive':'Wyjazd firmowy / incentive','pilot.basic':'Rozpiska podstawowa','pilot.advanced':'Rozpiska zaawansowana','pilot.knowledge':'Materiały merytoryczne'}[draft.template_id])}</h1><p class="muted">Snapshot wycieczki ${e(draft.trip_snapshot.title)} · zmiany pozostają w dokumencie.</p></div><div class="actions"><button class="primary" id="d-save">Zapisz draft</button><button class="accent" id="d-export">Podgląd / PDF</button></div></div>
-      <div class="trip-document-layout"><div class="trip-document-controls"><form id="d-form"><section class="panel"><h2>Metryka dokumentu</h2>${draft.demo_example?'<p class="notice">FIKCYJNY PRZYKŁAD DEMO — dane nie są rzeczywistą ofertą ani rezerwacją.</p>':''}
+    ui.main.innerHTML=`<button class="text-button back" data-go="drafts">← Wróć do biblioteki</button><div class="heading"><div><p class="eyebrow">${e(draft.template_id)} · REWIZJA <span id="d-revision">${draft.revision}</span></p><h1>${e({'offer.private':'Oferta indywidualna','offer.self_guide':'Self-Guide — bez pilota','offer.school':'Wycieczka szkolna','offer.incentive':'Wyjazd firmowy / incentive','pilot.basic':'Rozpiska podstawowa','pilot.advanced':'Rozpiska zaawansowana','pilot.knowledge':'Materiały merytoryczne'}[draft.template_id])}</h1><p class="muted">Wybrany program: ${e(draft.trip_snapshot.title)}.</p></div><div class="actions"><button class="primary" id="d-save">Zapisz dokument</button></div></div>
+      <div class="trip-document-layout"><div class="trip-document-controls"><form id="d-form"><section class="panel"><h2>Podstawowe informacje</h2>${draft.demo_example?'<p class="notice">FIKCYJNY PRZYKŁAD DEMO — dane nie są rzeczywistą ofertą ani rezerwacją.</p>':''}
       ${field('Tytuł dokumentu','title',draft.title,'text','required maxlength="200"')}${field('Termin / jawna etykieta dat','date_label',draft.date_label,'text','maxlength="200" placeholder="Termin do ustalenia"')}</section>
-      ${draft.template_id.startsWith('offer.')?offerFields()+extraOfferFields():draft.pilot_data?pilotFields():'<section class="panel"><h2>Materiały merytoryczne</h2><p>Opracuj r?cznie atrakcje, kontekst i narracj? dla dni programu. ?r?d?a i statusy uzupe?niasz w sekcjach.</p></section>'}
-      <section class="panel"><h2>Program — treści tego dokumentu</h2><p class="muted">Puste pole pozostawia treść bazowego snapshotu. Edycja nie zmienia Trip ani innych dokumentów.</p>${draft.trip_snapshot.days.map((day,index)=>`<div class="document-entry"><p class="eyebrow">DZIEŃ ${day.day_number}</p>${field('Własny tytuł',`day_overrides.${index}.title`,draft.day_overrides[index].title,'text',`maxlength="200" placeholder="${e(day.title)}"`)}${area('Własny opis',`day_overrides.${index}.description`,draft.day_overrides[index].description)}</div>`).join('')}</section>${window.SectionEditor.html(draft,assets)}</form>
+      ${draft.template_id.startsWith('offer.')?offerFields()+extraOfferFields():draft.pilot_data?pilotFields():'<section class="panel"><h2>Materiały merytoryczne</h2><p>Opracuj ręcznie atrakcje, kontekst i narrację dla dni programu. Źródła i statusy uzupełniasz w sekcjach poniżej.</p></section>'}
+      <section class="panel"><h2>Program — treści tego dokumentu</h2><p class="muted">Puste pole pozostawia opis z wybranego programu. Własny opis dotyczy tylko tego dokumentu.</p>${draft.trip_snapshot.days.map((day,index)=>`<div class="document-entry"><p class="eyebrow">DZIEŃ ${day.day_number}</p>${field('Własny tytuł',`day_overrides.${index}.title`,draft.day_overrides[index].title,'text',`maxlength="200" placeholder="${e(day.title)}"`)}${area('Własny opis',`day_overrides.${index}.description`,draft.day_overrides[index].description)}</div>`).join('')}</section><details class="flow-options"><summary>Uwagi redakcyjne</summary>${area('Uwagi redakcyjne dokumentu','editorial_notes',draft.editorial_notes)}</details>${window.SectionEditor.html(draft,assets)}</form>
       ${draft.template_id.startsWith('offer.')?'<section class="panel"><h2>Wgraj zdjęcie okładki</h2><input type="file" id="d-file" accept="image/jpeg,image/png,image/webp"><label class="document-check"><input type="checkbox" id="d-rights">Mam prawo użyć zdjęcia w ofercie.</label><button id="d-upload">Wgraj i wybierz</button></section>':''}</div>
       <aside class="trip-document-preview"><div id="d-validation" role="status">Przygotowanie podglądu…</div><iframe id="d-preview" title="Podgląd oferty lub rozpiski pilota"></iframe></aside></div>`;
     window.SectionEditor.bind(ui.main,draft,{assets,dirty:ui.dirty,preview:()=>{clearTimeout(timer);timer=setTimeout(preview,500);},draw});
@@ -64,10 +64,6 @@ window.TripDocumentEditor = (() => {
     $('#d-form').addEventListener('input',change);
     $('#d-form').addEventListener('change',event=>{if(event.target.tagName==='SELECT')change(event);});
     $('#d-save').addEventListener('click',save);
-    $('#d-export').addEventListener('click',async()=>{
-      const tab=window.open('about:blank','_blank');if(!tab){ui.message('Zezwól na otwarcie podglądu PDF.',true);return;}
-      if(await save()){tab.opener=null;tab.location.href=`/api/document-studio/drafts/${draft.document_id}/preview`;}else tab.close();
-    });
     ui.main.querySelectorAll('[data-d-add]').forEach(button=>button.addEventListener('click',()=>{
       const group=button.dataset.dAdd;
       draft.pilot_data[group].push(group==='contacts'?{label:'Kontakt organizacyjny',value:''}:{entry_id:crypto.randomUUID().replaceAll('-',''),day_id:null,title:'Nowy wpis',start_local:null,end_local:null,time_zone:'',end_time_zone:'',status:'unknown',details:'',booking_reference:'',source:''});ui.dirty(true);draw();
@@ -76,6 +72,7 @@ window.TripDocumentEditor = (() => {
     if($('#d-upload'))$('#d-upload').addEventListener('click',upload);
     if($('#add-goal'))$('#add-goal').onclick=()=>{draft.offer_details.goals.push({pillar:'education',description:'',day_id:null,stop_id:null});ui.dirty(true);draw();};
     for(const button of ui.main.querySelectorAll('[data-goal-remove]'))button.onclick=()=>{draft.offer_details.goals.splice(Number(button.dataset.goalRemove),1);ui.dirty(true);draw();};
+    DocumentFlow.decorateEditor(draft,{...ui,review:async()=>{if(await save())ui.review();}});
     preview();
   }
   function change(event) {
@@ -97,17 +94,17 @@ window.TripDocumentEditor = (() => {
       if(!response.ok)throw new Error('Nie udało się przygotować podglądu. Sprawdź dane.');
       const html=await response.text();if(version!==generation||!$('#d-preview'))return;
       $('#d-validation').innerHTML=issues.length?`<details open><summary>Uwagi: ${issues.length}</summary><ul>${issues.map(i=>`<li class="${i.severity}">${e(i.message)}</li>`).join('')}</ul></details>`:'Dane kompletne. Dokument pozostaje wersją roboczą.';
-      $('#d-preview').srcdoc=html;
+      DocumentFlow.embeddedPreview($('#d-preview'),html);
     }catch(error){if(version===generation&&$('#d-validation'))$('#d-validation').textContent=error.message;}
   }
   async function save() {
     if(saving||!$('#d-form').reportValidity())return false;
-    saving=true;ui.busy(true);$('#d-save').disabled=true;
+    saving=true;ui.busy(true);ui.main.inert=true;$('#d-save').disabled=true;
     try{
       const update={revision:draft.revision,title:draft.title,date_label:draft.date_label,editorial_notes:draft.editorial_notes,day_overrides:draft.day_overrides,offer_data:draft.offer_data,pilot_data:draft.pilot_data,offer_details:draft.offer_details,sections:draft.sections};
       Object.assign(draft,await ui.api('drafts/'+draft.document_id,{method:'PUT',body:JSON.stringify(update)}));
-      ui.dirty(false);await ui.refresh();$('#d-revision').textContent=draft.revision;ui.message('Draft zapisany. Rewizja '+draft.revision+'.');preview();return true;
-    }catch(error){ui.message(error.message,true);return false;}finally{saving=false;ui.busy(false);if($('#d-save'))$('#d-save').disabled=false;}
+      ui.dirty(false);let warning='';try{await ui.refresh();}catch{warning=' Biblioteka wymaga odświeżenia.';}$('#d-revision').textContent=draft.revision;ui.message('Dokument zapisany. Możesz kontynuować edycję lub przejść do sprawdzenia.'+warning,!!warning);preview();return true;
+    }catch(error){ui.message(error.message,true);return false;}finally{saving=false;ui.busy(false);ui.main.inert=false;if($('#d-save'))$('#d-save').disabled=false;}
   }
   async function upload() {
     const file=$('#d-file').files[0];if(!file||!$('#d-rights').checked){ui.message('Wybierz zdjęcie i potwierdź prawo użycia.',true);return;}
@@ -119,7 +116,11 @@ window.TripDocumentEditor = (() => {
   }
   return {async open(source,context){
     if(!source.trip_snapshot)throw new Error('Ten edytor obsługuje ofertę indywidualną i rozpiskę podstawową pilota.');
-    generation++;clearTimeout(timer);ui=context;draft=source.sections===null?await ui.api('trip-documents/initialize',{method:'POST',body:JSON.stringify({draft:source})}):JSON.parse(JSON.stringify(source));draft.sections.sort((a,b)=>a.order-b.order);assets=await ui.api('assets');
+    const version=++generation;clearTimeout(timer);
+    const initialized=source.sections===null?await context.api('trip-documents/initialize',{method:'POST',body:JSON.stringify({draft:source})}):JSON.parse(JSON.stringify(source));
+    const loadedAssets=await context.api('assets');
+    if(version!==generation||context.isCurrent&&!context.isCurrent())return;
+    ui=context;draft=initialized;draft.sections.sort((a,b)=>a.order-b.order);assets=loadedAssets;
     draft.day_overrides=draft.trip_snapshot.days.map(day=>draft.day_overrides.find(o=>o.day_id===day.day_id)||{day_id:day.day_id,title:'',description:''});
     draft.offer_data ||= draft.template_id.startsWith('offer.')?{summary:'',highlights:[],accommodation:'',transport:'',included:[],excluded:[],price:{amount:null,currency:'PLN',unit:'person',participant_count:null,status:'unknown',assumptions:'',source:''},concept_only:false,cta:'',cover_asset_id:null,cover_position:{x:50,y:50,zoom:1},photo_asset_ids:[]}:null;
     draft.pilot_data ||= ['pilot.basic','pilot.advanced'].includes(draft.template_id)?{leader:'',participant_count:null,meeting:'',flights:[],transfers:[],accommodations:[],activity_bookings:[],schedule:[],contacts:[],open_items:[],internal_notes:''}:null;
