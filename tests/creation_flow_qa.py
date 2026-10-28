@@ -81,7 +81,7 @@ def run_flow():
             accept_dialog=True
             page.locator('#document-review').click();expect(page.locator('#review-export')).to_be_visible()
             saved=api.get(docurl).json();assert saved['title']=='Moja niezależna oferta' and saved['document_status']=='draft'
-            page.frame_locator('#review-preview').locator('#print-document').wait_for()
+            page.frame_locator('#review-preview').locator('#print-document').wait_for(state='attached')
             page.wait_for_function('document.querySelector("#review-preview").contentWindow.documentReady===true')
             expect(page.locator('#message')).to_be_hidden(timeout=10000)
             page.screenshot(path=str(out/'04-review-desktop.png'),full_page=True)
@@ -98,7 +98,7 @@ def run_flow():
             expect(page.locator('[data-d-field="title"]')).to_have_value('Niezapisana zmiana użytkownika')
             assert 'edit-draft/' in page.url and len(rows('drafts'))==1
             # B: prepare a real itinerary before source save / document creation.
-            catalog('offer.self_guide');page.locator('#source-picker .source-new').click()
+            catalog('offer.self_guide');page.locator('.source-paths .source-new').click()
             page.locator('#source-title').fill('Nowy Self-Guide — program')
             page.locator('#source-destination').fill('Kierunek syntetyczny')
             before=len(rows('trips'));page.locator('#source-create').click()
@@ -129,13 +129,14 @@ def run_flow():
             page.screenshot(path=str(out/'03-document-editor.png'),full_page=True)
             # D: a saved Trip enters the same chooser already selected.
             page.goto(ORIGIN+'/documents/demo#trips/'+source_id)
-            page.locator('#template').select_option('pilot.basic');page.locator('#create-draft').click()
-            expect(page.locator('#source-select')).to_have_value(source_id)
+            page.locator('#create-draft').click();page.locator('[data-create-template="pilot.basic"]').click()
+            expect(page.locator('#source-select')).to_have_count(0)
+            expect(page.locator('#source-summary')).to_contain_text('Nowy Self-Guide')
             fault={'method':'POST','path':'/api/document-studio/drafts','commit':True}
             page.locator('#source-create').click();expect(page.locator('#d-save')).to_be_visible()
             assert len(rows('drafts'))==3  # ambiguous document success recovered, not repeated
             # C: Campaign is edited/saved first; document remains separate.
-            catalog('marketing.collection','theme_collection');page.locator('#source-picker .source-new').click()
+            catalog('marketing.collection','theme_collection');page.locator('.source-paths .source-new').click()
             page.locator('#source-title').fill('Kolekcja syntetyczna')
             page.locator('#source-theme').fill('Wspólny temat')
             page.locator('#source-trip-picker [data-source-filter="category"]').select_option('private')
@@ -175,7 +176,7 @@ def run_flow():
             catalog('offer.school');assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
             page.screenshot(path=str(out/'02-source-mobile.png'),full_page=True)
             # Pause saves only the source.
-            page.locator('#source-picker .source-new').click();page.locator('#source-create').click()
+            page.locator('.source-paths .source-new').click();page.locator('#source-create').click()
             page.locator('#flow-pause').click();expect(page.locator('#source-library-filters')).to_be_visible()
             assert len(rows('drafts'))==count
             assert not errors,errors

@@ -5,16 +5,24 @@ window.DocumentFlow=(()=>{
   const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const uid=()=>crypto.randomUUID().replaceAll('-','');
   const variantLabel=value=>value==='theme_collection'?'Kolekcja tematyczna':value==='new_trips'?'Nowe kierunki':'Standard';
-  const path=(s=state)=>`create-document/${s.template}/${s.variant}`+(s.sourceId?`/${s.kind}/${s.sourceId}`:'')+(s.demo?'?demo=1':'');
+  function path(s=state){
+    const query=new URLSearchParams();
+    if(s.mode==='new'&&!s.sourceId)query.set('mode','new');
+    if(s.demo)query.set('demo','1');
+    return `create-document/${s.template}/${s.variant}`+(s.sourceId?`/${s.kind}/${s.sourceId}`:'')+(query.size?'?'+query:'');
+  }
   function configure(template,variant,kind,sourceId,options={}){
     const key=[template,variant,kind,sourceId||''].join('/');
-    if(!state||state.key!==key)state={key,template,variant,kind,sourceId,attempt:null,demo:false};
+    const previousKey=state?[state.template,state.variant,state.kind,state.sourceId||''].join('/'):null;
+    if(previousKey!==key){state={key,template,variant,kind,sourceId,attempt:null,demo:false};transient=null;}
+    state.key=key;
+    state.mode=options.mode==='new'?'new':'existing';
     if(options.attempt)state.attempt=options.attempt;
     if(options.demo!==undefined)state.demo=options.demo;
     return state;
   }
   function steps(active,s={},documentId){
-    const labels=['Rodzaj','Program','Edycja','Sprawdzenie'];
+    const labels=['Rodzaj',s.kind==='campaign'?'Kampania':'Program','Edycja','Sprawdzenie'];
     const routes=['templates',s.template?path(s):null,documentId?'edit-draft/'+documentId:null,documentId?'review-draft/'+documentId:null];
     return '<nav class="flow-progress" aria-label="Etapy tworzenia dokumentu">'+labels.map((label,i)=>{
       const n=i+1,disabled=n===active||!routes[i]||documentId&&n<3;
@@ -71,7 +79,7 @@ window.DocumentFlow=(()=>{
     const s={template:draft.template_id,variant:draft.layout_variant,kind,sourceId:source.trip_id||source.campaign_id};
     const header=document.createElement('div');header.innerHTML=steps(3,s,draft.document_id);ui.main.prepend(header);
     const info=document.createElement('section');info.className='panel flow-source-info';
-    info.innerHTML=`<strong>Źródło: ${escape(ui.sourceTitle||source.title)}${draft.trip_snapshot?' · '+source.days.length+' dni':''}</strong><p>${kind==='campaign'?'Kampania przechowuje wspólną kolekcję wycieczek. ':''}Ten dokument jest niezależną wersją do dalszej edycji. Zmiany tutaj nie zmieniają ${kind==='campaign'?'kampanii':'programu źródłowego'}.</p><p id="document-save-state" role="status">${ui.isDirty?.()?'Masz niezapisane zmiany.':'Otwarta zapisana wersja dokumentu.'}</p><button type="button" data-go="${kind==='trip'?'trips':'marketing'}/${escape(s.sourceId)}">Otwórz ${kind==='trip'?'program źródłowy':'kampanię źródłową'}</button>`;
+    info.innerHTML=`<strong>${kind==='trip'?'Wycieczka':'Kampania'}: ${escape(ui.sourceTitle||source.title)}${draft.trip_snapshot?' · '+source.days.length+' dni':''}</strong><p>${kind==='campaign'?'Kampania przechowuje wspólną kolekcję wycieczek. ':''}Ten dokument jest niezależną wersją do dalszej edycji. Zmiany tutaj nie zmieniają ${kind==='campaign'?'kampanii':'programu źródłowego'}.</p><p id="document-save-state" role="status">${ui.isDirty?.()?'Masz niezapisane zmiany.':'Otwarta zapisana wersja dokumentu.'}</p><button type="button" data-go="${kind==='trip'?'trips':'marketing'}/${escape(s.sourceId)}">Otwórz ${kind==='trip'?'wycieczkę':'kampanię'}</button>`;
     ui.main.querySelector('.heading').after(info);
     const eyebrow=ui.main.querySelector('.heading .eyebrow');
     if(eyebrow){const metadata=document.createElement('details');metadata.className='flow-metadata';metadata.innerHTML='<summary>Informacje o zapisie</summary>';eyebrow.before(metadata);metadata.append(eyebrow);}
@@ -99,7 +107,11 @@ window.DocumentFlow=(()=>{
       ui.main.dataset.flowValidationBound='true';
     }
   }
+  function embeddedPreview(frame,html){
+    // Export uses the dedicated saved preview. Embedded views have one outer export action.
+    frame.srcdoc=html.replace('</head>','<style>#print-document{display:none!important}</style></head>');
+  }
   function focus(main){const target=main.querySelector('h1')||main;target.tabIndex=-1;target.focus({preventScroll:true});}
-  return {uid,configure,get state(){return state;},path,steps,variantLabel,summary,persistCreate,recovery,decorateEditor,focus,
+  return {uid,configure,get state(){return state;},path,steps,variantLabel,summary,persistCreate,recovery,decorateEditor,embeddedPreview,focus,
     reset(){state=null;transient=null;},prepare(value){transient=value;},get prepared(){return transient;}};
 })();

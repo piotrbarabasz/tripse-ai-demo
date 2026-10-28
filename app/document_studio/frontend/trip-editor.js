@@ -52,7 +52,7 @@ window.TripDocumentEditor = (() => {
       ${field('Numer rezerwacji (bez PIN-u i kodów dostępu)',path+'.booking_reference',entry.booking_reference,'text','maxlength="200"')}<button type="button" class="danger" data-d-remove="${group}.${index}">Usuń wpis</button></div>`;
   }
   function draw() {
-    ui.main.innerHTML=`<button class="text-button back" data-go="drafts">← Wróć do biblioteki</button><div class="heading"><div><p class="eyebrow">${e(draft.template_id)} · REWIZJA <span id="d-revision">${draft.revision}</span></p><h1>${e({'offer.private':'Oferta indywidualna','offer.self_guide':'Self-Guide — bez pilota','offer.school':'Wycieczka szkolna','offer.incentive':'Wyjazd firmowy / incentive','pilot.basic':'Rozpiska podstawowa','pilot.advanced':'Rozpiska zaawansowana','pilot.knowledge':'Materiały merytoryczne'}[draft.template_id])}</h1><p class="muted">Wybrany program: ${e(draft.trip_snapshot.title)}.</p></div><div class="actions"><button class="primary" id="d-save">Zapisz dokument</button><button class="accent" id="d-export">Zapisz i otwórz PDF</button></div></div>
+    ui.main.innerHTML=`<button class="text-button back" data-go="drafts">← Wróć do biblioteki</button><div class="heading"><div><p class="eyebrow">${e(draft.template_id)} · REWIZJA <span id="d-revision">${draft.revision}</span></p><h1>${e({'offer.private':'Oferta indywidualna','offer.self_guide':'Self-Guide — bez pilota','offer.school':'Wycieczka szkolna','offer.incentive':'Wyjazd firmowy / incentive','pilot.basic':'Rozpiska podstawowa','pilot.advanced':'Rozpiska zaawansowana','pilot.knowledge':'Materiały merytoryczne'}[draft.template_id])}</h1><p class="muted">Wybrany program: ${e(draft.trip_snapshot.title)}.</p></div><div class="actions"><button class="primary" id="d-save">Zapisz dokument</button></div></div>
       <div class="trip-document-layout"><div class="trip-document-controls"><form id="d-form"><section class="panel"><h2>Podstawowe informacje</h2>${draft.demo_example?'<p class="notice">FIKCYJNY PRZYKŁAD DEMO — dane nie są rzeczywistą ofertą ani rezerwacją.</p>':''}
       ${field('Tytuł dokumentu','title',draft.title,'text','required maxlength="200"')}${field('Termin / jawna etykieta dat','date_label',draft.date_label,'text','maxlength="200" placeholder="Termin do ustalenia"')}</section>
       ${draft.template_id.startsWith('offer.')?offerFields()+extraOfferFields():draft.pilot_data?pilotFields():'<section class="panel"><h2>Materiały merytoryczne</h2><p>Opracuj ręcznie atrakcje, kontekst i narrację dla dni programu. Źródła i statusy uzupełniasz w sekcjach poniżej.</p></section>'}
@@ -64,10 +64,6 @@ window.TripDocumentEditor = (() => {
     $('#d-form').addEventListener('input',change);
     $('#d-form').addEventListener('change',event=>{if(event.target.tagName==='SELECT')change(event);});
     $('#d-save').addEventListener('click',save);
-    $('#d-export').addEventListener('click',async()=>{
-      const tab=window.open('about:blank','_blank');if(!tab){ui.message('Zezwól na otwarcie podglądu PDF.',true);return;}
-      if(await save()){tab.opener=null;tab.location.href=`/api/document-studio/drafts/${draft.document_id}/preview`;}else tab.close();
-    });
     ui.main.querySelectorAll('[data-d-add]').forEach(button=>button.addEventListener('click',()=>{
       const group=button.dataset.dAdd;
       draft.pilot_data[group].push(group==='contacts'?{label:'Kontakt organizacyjny',value:''}:{entry_id:crypto.randomUUID().replaceAll('-',''),day_id:null,title:'Nowy wpis',start_local:null,end_local:null,time_zone:'',end_time_zone:'',status:'unknown',details:'',booking_reference:'',source:''});ui.dirty(true);draw();
@@ -98,7 +94,7 @@ window.TripDocumentEditor = (() => {
       if(!response.ok)throw new Error('Nie udało się przygotować podglądu. Sprawdź dane.');
       const html=await response.text();if(version!==generation||!$('#d-preview'))return;
       $('#d-validation').innerHTML=issues.length?`<details open><summary>Uwagi: ${issues.length}</summary><ul>${issues.map(i=>`<li class="${i.severity}">${e(i.message)}</li>`).join('')}</ul></details>`:'Dane kompletne. Dokument pozostaje wersją roboczą.';
-      $('#d-preview').srcdoc=html;
+      DocumentFlow.embeddedPreview($('#d-preview'),html);
     }catch(error){if(version===generation&&$('#d-validation'))$('#d-validation').textContent=error.message;}
   }
   async function save() {

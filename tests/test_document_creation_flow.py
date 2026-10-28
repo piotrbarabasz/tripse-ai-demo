@@ -1,4 +1,4 @@
-"""DOC-FLOW-004: bounded create retries without changing storage or saved schemas."""
+"""DOC-FLOW-004/005: role-aware UI and bounded create retries without changing storage or saved schemas."""
 from uuid import uuid4
 
 import pytest
@@ -46,6 +46,7 @@ def test_creation_failure_retry_preserves_one_identity(store,monkeypatch,after_c
     assert len(repo.list_documents())==1
 
 
+
 def test_same_id_with_different_creation_intent_conflicts(store):
     service=DocumentService(store.repo)
     request=DraftRequest(document_id=uuid4().hex,source_revision=1,template_id='offer.private',source_type='trip',source_id='demo-canada')
@@ -71,6 +72,7 @@ def test_create_race_returns_same_committed_result(store,monkeypatch):
 
 def test_api_guards_optional_fields_without_weakening_old_clients(source_client):
     with source_client as client:
+        assert client.get('/api/document-studio/access').json()=={'can_edit':True}
         payload={'document_id':uuid4().hex,'source_revision':1,'template_id':'offer.private','source_type':'trip','source_id':'demo-canada'}
         first=client.post('/api/document-studio/drafts',json=payload)
         assert first.status_code==201
@@ -79,3 +81,16 @@ def test_api_guards_optional_fields_without_weakening_old_clients(source_client)
             assert client.post('/api/document-studio/drafts',json=payload|invalid).status_code==422
         # Existing clients can still omit both additive guards.
         assert client.post('/api/document-studio/drafts',json={k:v for k,v in payload.items() if k not in {'document_id','source_revision'}}).status_code==201
+
+
+@pytest.mark.parametrize("identity,expected", [("editor",True),("reader",False),(None,None)])
+def test_creation_ui_capability_uses_authenticated_role(cloud_demo,identity,expected):
+    with cloud_demo.client(identity) as client:
+        result=client.get('/api/document-studio/access')
+        if expected is None:
+            assert result.status_code==401
+        else:
+            assert result.status_code==200 and result.json()=={'can_edit':expected}
+            # The display hint does not grant write permission.
+            result=client.post('/api/document-studio/trips',json={'title':'Role QA'})
+            assert result.status_code==(201 if expected else 403)

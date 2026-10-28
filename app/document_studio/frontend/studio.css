@@ -35,7 +35,19 @@
 #review-preview{width:100%;height:85vh;min-height:600px;border:1px solid var(--line);margin-top:18px}
 .flow-review-state details{margin-top:14px}.flow-review-state ul{padding-left:20px;line-height:1.6}
 .document-tools button+button{margin-top:12px}
-.trip-document-controls,.marketing-controls{max-height:none;overflow:visible;padding-right:0}
+.trip-document-layout .trip-document-controls,.marketing-layout .marketing-controls{max-height:none;overflow:visible;padding-right:0}
 .marketing-preview{position:sticky;top:16px}
 @media(max-width:1150px){.marketing-preview{position:static}}
 @media(max-width:650px){.flow-progress{grid-template-columns:repeat(2,minmax(0,1fr))}.flow-progress button{font-size:12px;padding:10px}.flow-progress small{display:none}.flow-shortcuts{flex-direction:column;align-items:stretch}.heading .actions{flex-wrap:wrap}.flow-source-summary{padding:18px}}
+
+/* DOC-FLOW-005: only the active source path is rendered. */
+.source-paths{display:flex;gap:12px;margin:0 0 20px;flex-wrap:wrap}
+.source-paths button[aria-current]{background:var(--ink);color:white;opacity:1}
+.source-filters{grid-template-columns:repeat(2,minmax(0,1fr));align-items:end}
+.source-advanced{margin:14px 0;padding:12px 0;border-top:1px solid var(--line)}
+.source-advanced>summary,.source-options>summary{cursor:pointer;font-weight:600}
+.source-advanced[open]>.source-filters{margin-top:14px}
+.source-options{margin:16px 0}.source-options[open]{padding-bottom:12px}
+#source-form>button{margin-top:20px}#source-form select{max-width:100%}
+#source-form .source-current{overflow-wrap:anywhere}
+@media(max-width:650px){.source-paths{display:grid;grid-template-columns:1fr}.source-filters{grid-template-columns:1fr}#source-form select[multiple]{min-height:120px}}

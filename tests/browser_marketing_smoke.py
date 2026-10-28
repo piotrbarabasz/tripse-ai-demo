@@ -137,6 +137,7 @@ def run():
                 page.locator('[data-m-field="theme"]').fill('Góry i woda')
                 page.locator('[data-m-move="2,-1"]').click()
                 page.locator('[data-m-remove="1"]').click()
+                page.locator('#m-trip-picker .source-advanced').evaluate('(el)=>el.open=true')
                 page.locator('#m-trip-picker [data-source-filter="demo"]').check()
                 page.locator('#m-add-trip').select_option('demo-norway')
                 page.locator('#m-add').click()
@@ -152,15 +153,19 @@ def run():
                 expect(page.locator('#message')).to_have_text('Kampania zapisana.')
                 page.screenshot(path=str(artifacts/'editor-desktop.png'),full_page=True)
                 page.locator('#m-export').click()
+                page.locator('.catalog-variant').select_option('theme_collection')
+                page.locator('[data-create-template="marketing.collection"]').click()
+                page.locator('#source-create').click()
                 expect(page.locator('#document-review')).to_be_visible()
+                page.locator('#document-review').click()
                 with page.expect_popup() as popup:
-                    page.locator('#m-export').click()
+                    page.locator('#review-export').click()
                 preview=popup.value
                 ready(preview)
-                assert '/drafts/' in preview.url
+                assert '/api/document-studio/library/'+page.url.split('/')[-1]+'/revisions/' in preview.url
                 preview.close()
                 page.goto(base+'/documents/demo#marketing/demo-northern-journeys')
-                expect(page.locator('#campaign-origin')).to_be_visible()
+                expect(page.locator('#campaign-origin')).to_have_count(1)
                 # Missing CTA is a visible blocking validation error, not a crash.
                 page.locator('[data-m-field="cta"]').fill('')
                 expect(page.locator('#m-validation')).to_contain_text('Uzupełnij CTA')

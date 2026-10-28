@@ -60,6 +60,7 @@ def run():
                 page.on("dialog", lambda dialog: dialog.accept())
                 page.goto(base + "/documents/demo#trips")
                 expect(page.locator(".card")).to_have_count(0)
+                page.locator('#source-library-filters .source-advanced').evaluate('(el)=>el.open=true')
                 page.locator('#source-library-filters [data-source-filter="demo"]').check()
                 expect(page.locator(".card")).to_have_count(3)
                 page.screenshot(path=str(artifacts / "library-desktop.png"), full_page=True)
@@ -84,8 +85,12 @@ def run():
                 expect(page.locator("#message")).to_have_text("Program wycieczki zapisany.")
                 trip_hash = page.evaluate("location.hash")
                 page.screenshot(path=str(artifacts / "editor-desktop.png"), full_page=True)
-                page.locator("#template").select_option("offer.private")
                 page.locator("#create-draft").click()
+                if "/campaign/" in page.url:
+                    page.locator(".catalog-variant").select_option("theme_collection")
+                    page.locator('[data-create-template="marketing.collection"]').click()
+                else:
+                    page.locator('[data-create-template="offer.private"]').click()
                 page.locator("#source-create").click()
                 expect(page.locator('#d-save')).to_be_visible()
                 notes=page.locator('[data-d-field="editorial_notes"]')
@@ -100,12 +105,17 @@ def run():
                 draft_hash = page.evaluate("location.hash")
                 page.locator('[data-nav="campaigns"]').click()
                 expect(page.locator(".card")).to_have_count(0)
+                page.locator('#source-library-filters .source-advanced').evaluate('(el)=>el.open=true')
                 page.locator('#source-library-filters [data-source-filter="demo"]').check()
                 expect(page.locator(".card")).to_have_count(1)
                 page.locator(".card .open").click()
                 expect(page.locator('button[data-go^="trips/"]')).to_have_count(3)
-                page.locator("#variant").select_option("theme_collection")
                 page.locator("#create-draft").click()
+                if "/campaign/" in page.url:
+                    page.locator(".catalog-variant").select_option("theme_collection")
+                    page.locator('[data-create-template="marketing.collection"]').click()
+                else:
+                    page.locator('[data-create-template="offer.private"]').click()
                 page.locator("#source-create").click()
                 expect(page.locator('#m-save')).to_be_visible()
                 saved=httpx.get(base+'/api/document-studio/drafts/'+page.evaluate('location.hash').split('/')[-1]).json()
@@ -150,5 +160,7 @@ if __name__ == "__main__":
     run_sources()
     from creation_flow_qa import run_flow
     run_flow()
+    from flow_structure_qa import run_structure
+    run_structure()
     from pdf_quality_qa import run_pdf_quality
     run_pdf_quality()

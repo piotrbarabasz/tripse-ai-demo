@@ -53,6 +53,7 @@ def run_sources():
                 page.goto(ORIGIN+'/documents/demo#templates')
                 page.locator('[data-create-template="'+template+'"]').click()
                 expect(page.locator('#source-form')).to_be_visible()
+                page.locator('#source-picker .source-advanced').evaluate('(el)=>el.open=true')
             def ids(selector='#source-select'):
                 return page.locator(selector+' option').evaluate_all('(options)=>options.map(o=>o.value)')
             for category in ('private','self_guide','school','incentive'):
@@ -63,7 +64,7 @@ def run_sources():
                 assert trips['demo']['trip_id'] not in ids() and trips['test']['trip_id'] not in ids()
             chooser('offer.private')
             assert trips['named']['trip_id'] in ids()  # no name-based exclusion
-            page.locator('#source-create').click();expect(page.locator('#message')).to_contain_text('Wybierz źródło')
+            expect(page.locator('#source-create')).to_be_disabled()
             page.locator('#source-picker [data-source-filter="all"]').check()
             page.locator('#source-select').select_option(trips['group']['trip_id'])
             page.locator('#source-picker [data-source-filter="search"]').fill('GRUPA')
@@ -79,7 +80,6 @@ def run_sources():
             assert trips['unknown']['trip_id'] in ids()
             page.locator('#source-picker [data-source-filter="demo"]').check()
             assert trips['demo']['trip_id'] in ids() and trips['test']['trip_id'] not in ids()
-            page.locator('#source-picker details').click()
             page.locator('#source-picker [data-source-filter="test"]').check()
             assert trips['test']['trip_id'] in ids()
             page.locator('#source-picker [data-source-filter="all"]').check()
@@ -93,8 +93,9 @@ def run_sources():
                 assert all(trips[key]['trip_id'] in ids() for key in ('group','private','self_guide','school','incentive','unknown'))
                 assert trips['test']['trip_id'] not in ids()
             chooser('offer.self_guide')
-            page.locator('#source-picker .source-new').click()
+            page.locator('.source-paths .source-new').click()
             expect(page.locator('[name="source-categories"][value="self_guide"]')).to_be_checked()
+            page.locator('.source-options').evaluate('(el)=>el.open=true')
             page.locator('[name="source-categories"][value="group"]').check()
             page.locator('#source-title').fill('Nowy Self-Guide — Żółć')
             expect(page.locator('#source-origin')).to_have_value('business')
@@ -110,6 +111,7 @@ def run_sources():
             source=created_sources[0];assert source['categories']==['self_guide','group']
             page.goto(ORIGIN+'/documents/demo#trips/'+source['trip_id'])
             expect(page.locator('[name="categories"][value="self_guide"]')).to_be_checked()
+            page.locator('.source-options').evaluate('(el)=>el.open=true')
             page.locator('[name="categories"][value="school"]').check()
             page.locator('#save-trip').click();expect(page.locator('#message')).to_have_text('Program wycieczki zapisany.')
             page.reload();expect(page.locator('[name="categories"][value="school"]')).to_be_checked()
@@ -119,7 +121,7 @@ def run_sources():
             expect(page.locator('#source-select')).to_have_value('')
             page.locator('#source-picker [data-source-filter="search"]').fill('Biznesowa')
             assert campaign['campaign_id'] in ids()
-            page.locator('#source-picker .source-new').click();page.locator('#source-title').fill('Nowa kampania')
+            page.locator('.source-paths .source-new').click();page.locator('#source-title').fill('Nowa kampania')
             page.locator('#source-trip-picker [data-source-filter="category"]').select_option('private')
             page.locator('#source-trips').select_option(trips['private']['trip_id'])
             page.locator('#source-trip-picker [data-source-filter="category"]').select_option('group')

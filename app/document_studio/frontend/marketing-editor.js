@@ -24,10 +24,10 @@ window.MarketingEditor = (() => {
   }
   function draw() {
     const e = ui.escape;
-    ui.main.innerHTML = `<button class="text-button back" data-go="${documentDraft?'drafts':ui.flow?DocumentFlow.path(ui.flow):'campaigns/'+e(campaign.campaign_id)}">← ${documentDraft?'Wróć do biblioteki':ui.flow?'Wybór programu':'Kampania'}</button>
-    <div class="heading marketing-heading"><div><p class="eyebrow">MATERIAŁY MARKETINGOWE</p><h1>Studio kolekcji</h1><p class="muted">Edytuj treść, ułóż kierunki i sprawdź dokument przed drukiem.</p></div><div class="actions"><button id="m-save" class="primary">${documentDraft?'Zapisz dokument':'Zapisz kampanię'}</button><button id="m-export" class="accent" ${documentDraft?'':'data-source-continue data-source-saved="'+(!campaignCreating)+'"'}>${documentDraft?'Zapisz i otwórz PDF':'Kontynuuj do dokumentu'}</button></div></div>
-    <div class="marketing-layout"><div class="marketing-controls"><form id="m-form"><section class="panel"><h2>Kampania</h2>${documentDraft?'<p>Rodzaj danych dokumentu: '+e(SourcePicker.origins[documentDraft.data_origin||'unknown'])+'</p>':SourcePicker.originField(campaign.data_origin||'unknown','campaign-origin')}<div class="fields"><div class="full">${field('Tytuł kampanii','title',campaign.title,'required maxlength="200"')}</div>
-    <label>Kompozycja<select data-m-field="layout_variant"><option value="new_trips" ${campaign.layout_variant==='new_trips'?'selected':''}>Nowe kierunki</option><option value="theme_collection" ${campaign.layout_variant==='theme_collection'?'selected':''}>Kolekcja tematyczna</option></select></label>
+    ui.main.innerHTML = `<button class="text-button back" data-go="${documentDraft?'drafts':ui.flow?DocumentFlow.path(ui.flow):campaignCreating?'campaigns':'campaigns/'+e(campaign.campaign_id)}">← ${documentDraft?'Wróć do biblioteki':ui.flow?'Wybór kampanii':campaignCreating?'Kampanie':'Kampania'}</button>
+    <div class="heading marketing-heading"><div><p class="eyebrow">MATERIAŁY MARKETINGOWE</p><h1>${documentDraft?'Edycja materiału marketingowego':ui.flow?'Przygotuj kampanię':'Edycja kampanii'}</h1><p class="muted">${documentDraft?'Edytujesz niezależny dokument.':'Przygotowujesz wspólną kolekcję wycieczek.'}</p></div><div class="actions"><button id="m-save" class="primary">${documentDraft?'Zapisz dokument':'Zapisz kampanię'}</button>${documentDraft?'':`<button id="m-export" class="accent" ${documentDraft?'':'data-source-continue data-source-saved="'+(!campaignCreating)+'"'}>${documentDraft?'Zapisz i otwórz PDF':ui.flow?'Kontynuuj do dokumentu':'Utwórz materiał z tej kampanii'}</button>`}</div></div>
+    <div class="marketing-layout"><div class="marketing-controls"><form id="m-form"><section class="panel"><h2>${documentDraft?'Treść dokumentu':'Informacje kampanii'}</h2>${documentDraft?'<p>Rodzaj danych dokumentu: '+e(SourcePicker.origins[documentDraft.data_origin||'unknown'])+'</p>':'<details class="source-options"><summary>Pochodzenie danych</summary>'+SourcePicker.originField(campaign.data_origin||'unknown','campaign-origin')+'</details>'}<div class="fields"><div class="full">${field(documentDraft?'Tytuł dokumentu':'Tytuł kampanii','title',campaign.title,'required maxlength="200"')}</div>
+    ${documentDraft||ui.flow?`<p>Wariant dokumentu: ${DocumentFlow.variantLabel(ui.flow?.variant||campaign.layout_variant)}</p>`:`<label>Kompozycja kampanii<select data-m-field="layout_variant"><option value="new_trips" ${campaign.layout_variant==='new_trips'?'selected':''}>Nowe kierunki</option><option value="theme_collection" ${campaign.layout_variant==='theme_collection'?'selected':''}>Kolekcja tematyczna</option></select></label>`}
     ${field('Sezon / podtytuł','season',campaign.season,'maxlength="200"')}${field('Opcjonalny prowadzący','leader',campaign.leader,'maxlength="200"')}
     <div class="full">${field('Temat przewodni','theme',campaign.theme,'maxlength="200"')}</div><div class="full">${area('Wprowadzenie','description',campaign.description,1000)}</div><div class="full">${area('CTA / kontakt','cta',campaign.cta,600)}</div></div>
     <div id="m-hero" ${campaign.layout_variant==='theme_collection'?'':'hidden'}>${photoFields('',campaign.hero_asset_id,campaign.hero_position,true)}</div></section>
@@ -40,7 +40,7 @@ window.MarketingEditor = (() => {
       ${field('Wyróżniki (oddziel przecinkami)',`items.${index}.highlights`,item.highlights.join(', '),'maxlength="1000"')}
       <label>Oznaczenie<select data-m-field="items.${index}.badge">${[['concept','Propozycja'],['new','Nowość'],['pilot','Pilotaż']].map(([key,label])=>`<option value="${key}" ${(item.badge || 'concept')===key?'selected':''}>${label}</option>`).join('')}</select></label>
       ${photoFields(`items.${index}`,item.image_asset_id,item.image_position)}</article>`;
-    }).join('')}</div><div id="m-trip-picker"></div><button type="button" id="m-add">+ Dodaj kierunek</button></section>${documentDraft?window.SectionEditor.html(documentDraft,assets):''}</form>
+    }).join('')}</div>${documentDraft?'':'<div id="m-trip-picker"></div><button type="button" id="m-add">+ Dodaj kierunek</button>'}</section>${documentDraft?window.SectionEditor.html(documentDraft,assets):''}</form>
     <section class="panel"><h2>Twoje zdjęcia</h2><p class="muted">JPG, PNG lub WebP · do 8 MB i 24 MP. Zdjęcia pozostają w prywatnym magazynie demo.</p><label>Przypisz nowe zdjęcie<select id="m-upload-target"><option value="hero">Zdjęcie główne kolekcji</option>${campaign.items.map((item,i)=>`<option value="${i}">Kierunek ${i+1}</option>`).join('')}</select></label><label>Plik zdjęcia<input type="file" id="m-file" accept="image/jpeg,image/png,image/webp"></label><label class="rights-check"><input type="checkbox" id="m-rights">Mam prawo użyć tego zdjęcia w tym materiale.</label><button type="button" id="m-upload">Wgraj i wybierz zdjęcie</button><p id="m-upload-status" role="status"></p></section></div>
     <div class="marketing-preview"><div class="preview-heading"><div><p class="eyebrow">PODGLĄD NA ŻYWO</p><small>Kolory, typografia i tekstowy znak TRIPSE są propozycją roboczą.</small></div><label>Format<select id="m-format"><option value="a4" ${format==='a4'?'selected':''}>A4 / PDF</option><option value="social" ${format==='social'?'selected':''}>1080 × 1350</option></select></label></div><div id="m-validation" role="status"></div><iframe id="m-preview" title="Podgląd dokumentu marketingowego"></iframe></div></div>`;
     if(documentDraft)window.SectionEditor.bind(ui.main,documentDraft,{assets,dirty:ui.dirty,preview:()=>{clearTimeout(timer);timer=setTimeout(preview,500);},draw});
@@ -50,14 +50,16 @@ window.MarketingEditor = (() => {
     find('#m-form').addEventListener('change',event=> {if(event.target.tagName==='SELECT') changeField(event);});
     find('#m-format').addEventListener('change',event=>{format=event.target.value;preview();});
     find('#m-save').addEventListener('click',()=>save());
-    find('#m-export').addEventListener('click',exportDocument);
+    find('#m-export')?.addEventListener('click',exportDocument);
     find('#m-upload').addEventListener('click',upload);
+    if(!documentDraft){
     const picker=SourcePicker.mount(find('#m-trip-picker'),{entries:catalog,id:'m-add-trip',state:sourceFilters,exclude:()=>campaign.items.map(item=>item.trip_id)});
     find('#m-add').addEventListener('click',()=>{
       const tripId=picker.values[0]; if(!tripId)return;
       campaign.items.push({trip_id:tripId,display_title:'',short_hook:'',date_range_or_label:'Termin do ustalenia',highlights:[],image_asset_id:null,image_position:position(),badge:'concept',publication_status:'draft'});
       ui.dirty(true);draw();
     });
+    }
     ui.main.querySelectorAll('[data-m-remove]').forEach(button=>button.addEventListener('click',()=>{
       campaign.items.splice(Number(button.dataset.mRemove),1);ui.dirty(true);draw();
     }));
@@ -67,7 +69,7 @@ window.MarketingEditor = (() => {
     }));
     if(documentDraft)DocumentFlow.decorateEditor(documentDraft,{...ui,review:async()=>{if(await save())ui.review();}});
     else {
-      const banner=document.createElement('div');banner.innerHTML=DocumentFlow.steps(2,ui.flow||{template:'marketing.collection',variant:campaign.layout_variant,kind:'campaign',sourceId:campaign.campaign_id})+'<section class="panel flow-source-info"><strong>Przygotowanie kampanii</strong><p>Zapisz wspólną kolekcję wycieczek. Dopiero „Kontynuuj do dokumentu” utworzy jej niezależną wersję do dalszej edycji.</p></section>';ui.main.prepend(banner);
+      const banner=document.createElement('div');banner.innerHTML=(ui.flow?DocumentFlow.steps(2,ui.flow):'')+'<section class="panel flow-source-info"><strong>Przygotowanie kampanii</strong><p>Zapisz wspólną kolekcję wycieczek. Dopiero „Kontynuuj do dokumentu” utworzy jej niezależną wersję do dalszej edycji.</p></section>';ui.main.prepend(banner);
       if(ui.pause){const pause=document.createElement('button');pause.type='button';pause.textContent='Zapisz kampanię i wróć później';pause.onclick=async()=>{if(!ui.isDirty()&&!campaignCreating||await save())ui.pause();};ui.main.querySelector('.heading .actions').append(pause);}
       find('#m-export').disabled=campaignCreating||ui.isDirty();
     }
@@ -100,7 +102,7 @@ window.MarketingEditor = (() => {
       const html=await response.text();
       if(version!==generation || !find('#m-preview'))return;
       panel.innerHTML=issues.some(i=>i.severity==='error')?`<ul>${issues.filter(i=>i.severity==='error').map(i=>`<li>${ui.escape(i.message)}</li>`).join('')}</ul>`:`<span>${issues.length?'Uwagi: '+issues.length+' (m.in. placeholdery i nieustalone terminy).':'Pola dokumentu są kompletne.'}</span>`;
-      find('#m-preview').srcdoc=html;
+      DocumentFlow.embeddedPreview(find('#m-preview'),html);
     }catch(error){if(version===generation && find('#m-validation'))find('#m-validation').textContent=error.message;}
   }
   async function save() {
@@ -119,8 +121,6 @@ window.MarketingEditor = (() => {
       if(campaignCreating||ui.isDirty()){ui.message('Najpierw zapisz kampanię.',true);return;}
       await ui.continueSource(campaign);return;
     }
-    const tab=window.open('about:blank','_blank');if(!tab){ui.message('Zezwól na otwarcie podglądu PDF.',true);return;}
-    if(await save()){tab.opener=null;tab.location.href=`/api/document-studio/drafts/${documentDraft.document_id}/preview?output_format=${format}`;}else tab.close();
   }
 
   async function upload() {

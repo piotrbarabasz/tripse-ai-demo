@@ -75,9 +75,10 @@ def run():
                     return text
                 for template in ('offer.private','pilot.basic'):
                     page.goto(base+'/documents/demo#trips/demo-iceland')
-                    page.locator('#template').select_option(template)
-                    page.locator('#demo-example').check()
                     page.locator('#create-draft').click()
+                    page.locator('[data-create-template="'+template+'"]').click()
+                    page.locator('#source-demo-option details').evaluate('el=>el.open=true')
+                    page.locator('#flow-demo').check()
                     page.locator('#source-create').click()
                     expect(page.locator('#d-save')).to_be_visible()
                     document_id=page.evaluate('location.hash').split('/')[-1]
@@ -94,7 +95,8 @@ def run():
                     expect(page.locator('#message')).to_contain_text('Dokument zapisany')
                     expect(page.locator('#d-revision')).to_have_text('2')
                     page.screenshot(path=str(artifacts/(template+'-editor.png')),full_page=True)
-                    with page.expect_popup() as popup:page.locator('#d-export').click()
+                    page.locator('#document-review').click()
+                    with page.expect_popup() as popup:page.locator('#review-export').click()
                     preview=popup.value
                     text=pdf(preview,template+'-iceland-10',template=='pilot.basic',10)
                     assert 'Opis zmieniony wyłącznie w dokumencie' in text

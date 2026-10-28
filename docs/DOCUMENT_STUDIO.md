@@ -1,5 +1,43 @@
 # TRIPSE Document Studio — funkcjonalne DEMO lokalne
 
+## Jak utworzyć pierwszy dokument w TRIPSE
+
+**DOC-FLOW-005 — zmiany lokalne na `dev`, jeszcze bez wdrożenia.**
+[Mapa ekranów, dozwolone kontrolki, audyt i dowody przeglądarkowe](audits/DOC_FLOW_005.md).
+
+**Oferta indywidualna z zapisanej wycieczki.** Otwórz **Utwórz dokument**,
+wybierz **Wyjazd indywidualny**, następnie **Wybierz istniejącą wycieczkę**.
+Wyszukaj program i sprawdź podsumowanie. **Kontynuuj do dokumentu** otwiera
+ofertę, w której uzupełnisz treść, cenę i kontakt. **Zapisz i sprawdź** prowadzi
+do uwag oraz **Podglądu i eksportu PDF**. Jeśli zaczynasz z otwartej wycieczki,
+użyj **Utwórz dokument z tej wycieczki** — program będzie już ustalony.
+
+**Self-Guide z nową wycieczką.** Wybierz **Self-Guide**, następnie **Utwórz nową
+wycieczkę**. W tym widoku nie ma listy istniejących programów. Podaj nazwę,
+kierunek i liczbę dni, wybierz **Przygotuj program**. Uzupełnij dni i atrakcje,
+kliknij **Zapisz program wycieczki**, a potem **Kontynuuj do dokumentu**.
+W ofercie opisz, co organizuje TRIPSE, co uczestnik sam i jakie wsparcie ustalono.
+Sam zapis programu nie tworzy dokumentu. **Zapisz program i wróć później**
+pozwala odłożyć pracę; zapisany program znajdziesz w **Programach wycieczek**.
+
+**Kolekcja marketingowa z kilkoma wycieczkami.** W katalogu wybierz **Nowości /
+kolekcje** i wariant **Kolekcja tematyczna**, następnie **Utwórz nową kampanię**.
+Wybierz kilka wycieczek; wybór pozostaje widoczny po zmianie filtrów. Kliknij
+**Przygotuj kampanię**, ułóż kolejność, uzupełnij temat, kontakt i zdjęcia.
+**Zapisz kampanię** zachowuje kolekcję. Dopiero **Kontynuuj do dokumentu**
+otwiera jej niezależny materiał marketingowy. Po **Zapisz i sprawdź** wybierz
+podgląd A4 lub social. Wycieczki dobierasz w kampanii; w dokumencie edytujesz
+treść już wybranych kierunków. Możesz też użyć zapisanej kampanii.
+
+Kategoria wycieczki porządkuje listę programów; nie jest rodzajem dokumentu.
+**Filtry dodatkowe** zawierają inne kategorie, nieprzypisane i pochodzenie DEMO/TEST.
+Przełączanie na nową wycieczkę lub kampanię pokazuje wyłącznie odpowiedni formularz.
+Zmiana dokumentu nie aktualizuje wspólnego programu ani kampanii. Zapis nie jest
+zatwierdzeniem treści, a drukowanie nie archiwizuje pliku PDF w TRIPSE.
+
+Zapisane dokumenty otwieraj z **Biblioteki dokumentów**. Osoba z dostępem tylko
+do odczytu widzi podgląd i historię, bez akcji zapisu, kopiowania i archiwizacji.
+
 ## Tworzenie dokumentu krok po kroku — DOC-FLOW-004
 
 **Implementacja lokalna na dev; bez wdrożenia.**

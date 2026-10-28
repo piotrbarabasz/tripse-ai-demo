@@ -14,29 +14,36 @@ window.SourcePicker = (() => {
     return fold([item.title,...(item.destinations||[])].join(' ')).includes(fold(f.search));
   }
   const categoryFields=(values=[],name='categories')=>`<fieldset class="source-categories"><legend>Kategorie wycieczki</legend>${Object.entries(categories).map(([key,label])=>`<label><input type="checkbox" name="${escape(name)}" value="${key}" ${values.includes(key)?'checked':''}>${label}</label>`).join('')}</fieldset>`;
-  const originField=(value='business',id='data-origin')=>`<label>Rodzaj danych<select id="${escape(id)}"><option value="business" ${value==='business'?'selected':''}>Dane biznesowe TRIPSE</option><option value="demo" ${value==='demo'?'selected':''}>Przykład DEMO</option><option value="unknown" ${value==='unknown'?'selected':''}>Pochodzenie nieustalone</option>${value==='synthetic_test'?'<option value="synthetic_test" selected>TEST — rekord automatyczny</option>':''}</select></label><small>Oznaczenie organizacyjne nie potwierdza wiarygodności informacji.</small>`;
+  const originField=(value='business',id='data-origin')=>`<label>Pochodzenie danych<select id="${escape(id)}"><option value="business" ${value==='business'?'selected':''}>Dane biznesowe TRIPSE</option><option value="demo" ${value==='demo'?'selected':''}>Przykład DEMO</option><option value="unknown" ${value==='unknown'?'selected':''}>Pochodzenie nieustalone</option>${value==='synthetic_test'?'<option value="synthetic_test" selected>TEST — rekord automatyczny</option>':''}</select></label><small>Oznaczenie organizacyjne nie potwierdza wiarygodności informacji.</small>`;
   function mount(root, config) {
     let entries=config.entries, selected=new Set(config.selected||[]);
     const multiple=!!config.multiple, campaign=config.kind==='campaign';
     const filters=Object.assign({category:config.category||'',search:'',origin:'regular',demo:false,test:false,all:false,unassigned:false},config.state||{});
-    root.innerHTML=`<div class="source-filters">${campaign?'':`<label>Kategoria wycieczki<select data-source-filter="category"><option value="">Wszystkie kategorie</option>${Object.entries(categories).map(([v,l])=>`<option value="${v}" ${filters.category===v?'selected':''}>${l}</option>`).join('')}<option value="unassigned">Nieprzypisane</option></select></label><label><input type="checkbox" data-source-filter="all"> Pokaż wszystkie kategorie</label><label><input type="checkbox" data-source-filter="unassigned"> Uwzględnij nieprzypisane</label>`}<label>Szukaj po nazwie${campaign?'':' lub kierunku'}<input type="search" maxlength="200" data-source-filter="search"></label><label>Pochodzenie danych<select data-source-filter="origin"><option value="regular">Biznesowe i nieustalone</option><option value="business">Tylko biznesowe</option><option value="unknown">Tylko nieustalone</option><option value="demo">Tylko DEMO</option><option value="synthetic_test">Tylko TEST — administracyjne</option></select></label><label><input type="checkbox" data-source-filter="demo"> Pokaż dane DEMO</label><details><summary>Dane testowe / administracyjne</summary><label><input type="checkbox" data-source-filter="test"> Uwzględnij syntetyczne dane TEST</label></details></div><p class="source-result-state" role="status"></p><label>${campaign?'Kampanie':'Wycieczki'} — wybierz ${multiple?'kierunki':'źródło'}<select id="${escape(config.id)}" size="6" ${multiple?'multiple':''} aria-label="${campaign?'Kampanie':'Wycieczki'} — lista źródeł"></select></label>${multiple?'<div class="source-selected" aria-live="polite"></div>':''}${config.allowNew?`<button type="button" class="source-new">+ Utwórz nową ${campaign?'kampanię':'wycieczkę'}</button>`:''}`;
-    const select=root.querySelector('select[size]');
+    const filtersHTML=`<div class="source-filters">${campaign?'':`<label>Filtr kategorii wycieczek<select data-source-filter="category"><option value="">Wszystkie kategorie</option>${Object.entries(categories).map(([v,l])=>`<option value="${v}" ${filters.category===v?'selected':''}>${l}</option>`).join('')}<option value="unassigned">Nieprzypisane</option></select></label>`}<label>Szukaj ${campaign?'kampanii':'wycieczki po nazwie lub kierunku'}<input type="search" maxlength="200" data-source-filter="search"></label></div>
+      <details class="source-advanced"><summary>Filtry dodatkowe</summary><div class="source-filters">${campaign?'':'<label><input type="checkbox" data-source-filter="all"> Pokaż wszystkie kategorie</label><label><input type="checkbox" data-source-filter="unassigned"> Uwzględnij nieprzypisane</label>'}<label>Pochodzenie danych<select data-source-filter="origin"><option value="regular">Biznesowe i nieustalone</option><option value="business">Tylko biznesowe</option><option value="unknown">Tylko nieustalone</option><option value="demo">Tylko DEMO</option><option value="synthetic_test">Tylko TEST — administracyjne</option></select></label><label><input type="checkbox" data-source-filter="demo"> Pokaż dane DEMO</label><label><input type="checkbox" data-source-filter="test"> Uwzględnij syntetyczne dane TEST</label></div></details>`;
+    root.innerHTML=filtersHTML+`<p class="source-filter-summary muted"></p><p class="source-result-state" role="status"></p><label>${campaign?'Kampania':multiple?'Wycieczki kolekcji':'Wycieczka'}${multiple?' — wybierz co najmniej jedną (wymagane)':''}<select id="${escape(config.id)}" ${multiple?'size="4" multiple':''} aria-label="${campaign?'Kampanie':'Wycieczki'} — lista"></select></label>${multiple?'<div class="source-selected" aria-live="polite"></div>':''}`;
+    const select=root.querySelector('#'+config.id);
     let visible=[];
     function draw() {
+      const category=root.querySelector('[data-source-filter="category"]');if(category){category.disabled=filters.all;category.value=filters.all?'':filters.category;}
+      for(const key of ['demo','test'])root.querySelector('[data-source-filter="'+key+'"]').closest('label').hidden=filters.origin!=='regular';
+      const scope=filters.all||!filters.category?'wszystkie kategorie':filters.category==='unassigned'?'nieprzypisane':categories[filters.category];
+      const origin=filters.origin==='regular'?'biznesowe i nieustalone'+(filters.demo?', DEMO':'')+(filters.test?', TEST':''):origins[filters.origin];
+      root.querySelector('.source-filter-summary').textContent=(campaign?'':'Zakres: '+scope+(filters.unassigned&&!filters.all?' oraz nieprzypisane':'')+'. ')+'Dane: '+origin+'.';
       visible=entries.filter(x=>!(config.exclude?.()||[]).includes(x.trip_id||x.campaign_id)&&matches(x,filters));
-      if(!multiple&&![...selected].every(id=>id==='new'||visible.some(x=>(x.trip_id||x.campaign_id)===id)))selected.clear();
-      select.innerHTML=(multiple?'':'<option value="">— Wybierz źródło —</option>')+visible.map(x=>{
+      if(!multiple&&![...selected].every(id=>visible.some(x=>(x.trip_id||x.campaign_id)===id)))selected.clear();
+      select.innerHTML=(multiple?'':'<option value="">— Wybierz '+(campaign?'kampanię':'wycieczkę')+' —</option>')+visible.map(x=>{
         const id=x.trip_id||x.campaign_id;
         const info=campaign?`${x.layout_variant==='theme_collection'?'Kolekcja tematyczna':'Nowe kierunki'} · ${x.items.length} kierunków`:`${(x.destinations||[]).join(', ')||'Kierunek nieustalony'} · ${x.duration_days} dni · ${(x.categories||[]).map(c=>categories[c]).join(', ')||'Nieprzypisane'}`;
         return `<option value="${escape(id)}" title="${escape(x.title+' — '+info+' · '+origins[x.data_origin||'unknown'])}" ${selected.has(id)?'selected':''}>${escape(x.title)} — ${escape(info)} · ${escape(origins[x.data_origin||'unknown'])}</option>`;
-      }).join('')+(config.allowNew?'<option value="new">+ Utwórz nowe źródło</option>':'');
+      }).join('');
       if(!multiple)select.value=[...selected][0]||'';
       let current=root.querySelector('.source-current');
       if(!current){current=document.createElement('p');current.className='source-current';current.setAttribute('aria-live','polite');select.closest('label').after(current);}
       const chosen=entries.find(x=>(x.trip_id||x.campaign_id)===[...selected][0]);
       current.textContent=chosen&&!multiple?[chosen.title,campaign?`${chosen.items.length} kierunków`:`${(chosen.destinations||[]).join(', ')} · ${chosen.duration_days} dni · ${(chosen.categories||[]).map(c=>categories[c]).join(', ')||'Nieprzypisane'}`,origins[chosen.data_origin||'unknown']].join(' — '):'';
       const state=root.querySelector('.source-result-state');
-      state.textContent=visible.length?`Pasujące źródła: ${visible.length}`:'Brak pasujących źródeł. Możesz utworzyć nowe, pokazać inne kategorie, nieprzypisane lub dane DEMO.';
+      state.textContent=visible.length?`Pasujące ${campaign?'kampanie':'wycieczki'}: ${visible.length}`:!entries.length?`Nie masz jeszcze ${campaign?'zapisanych kampanii':'przygotowanych wycieczek'}. Wybierz utworzenie nowej ${campaign?'kampanii':'wycieczki'}.`:`Brak ${campaign?'kampanii':'wycieczek'} pasujących do filtrów. Zmień kategorię lub wyszukiwanie; dodatkowe możliwości znajdziesz w filtrach dodatkowych.`;
       if(multiple){
         const summary=root.querySelector('.source-selected');
         summary.innerHTML='<p>Wybrane kierunki: '+selected.size+'</p>'+[...selected].map(id=>`<button type="button" data-remove-source="${escape(id)}">${escape(entries.find(x=>x.trip_id===id)?.title||id)} ×</button>`).join('');
@@ -60,7 +67,6 @@ window.SourcePicker = (() => {
       const category=root.querySelector('[data-source-filter="category"]');if(category)category.disabled=filters.all;
       draw();
     });
-    const newButton=root.querySelector('.source-new');if(newButton)newButton.onclick=()=>{selected=new Set(['new']);draw();select.focus();};
     if(config.cards)select.closest('label').hidden=true;
     for(const field of root.querySelectorAll('[data-source-filter]')){const value=filters[field.dataset.sourceFilter];if(field.type==='checkbox')field.checked=!!value;else field.value=value;}
     const category=root.querySelector('[data-source-filter="category"]');if(category)category.disabled=filters.all;

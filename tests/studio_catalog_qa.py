@@ -48,10 +48,11 @@ def run_catalog():
                 page.locator('[data-create-template="'+template+'"]').click()
                 expect(page.locator('#source-form')).to_be_visible()
                 if template=='offer.private':
-                    page.locator('#source-select').select_option('new')
+                    page.locator('.source-paths .source-new').click()
                     page.locator('#source-title').fill('Żółte góry — dwa dni')
                     page.locator('#source-days').fill('2')
                 else:
+                    page.locator('#source-picker .source-advanced').evaluate('(el)=>el.open=true')
                     page.locator('#source-picker [data-source-filter="demo"]').check()
                     if template!='marketing.collection':
                         page.locator('#source-picker [data-source-filter="all"]').check()
@@ -66,8 +67,11 @@ def run_catalog():
                 save='#m-save' if template=='marketing.collection' else '#d-save'
                 expect(page.locator(save)).to_be_visible(timeout=20000)
                 document_id=page.url.split('/')[-1]
+                for selector in ('#source-select','#template','#source-picker','#m-trip-picker','#m-add','#d-export'):
+                    expect(page.locator(selector)).to_have_count(0)
                 if template=='marketing.collection':
-                    expect(page.locator('[data-m-field="layout_variant"]')).to_have_value(variant)
+                    expect(page.locator('[data-m-field="layout_variant"]')).to_have_count(0)
+                    assert client.get('/api/document-studio/drafts/'+document_id).json()['layout_variant']==variant
                 if template=='offer.private':
                     page.locator('[data-d-field="offer_data.concept_only"]').check()
                     page.locator('[data-d-field="offer_data.cta"]').fill('Kontakt do uzupełnienia')

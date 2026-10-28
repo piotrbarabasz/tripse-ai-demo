@@ -117,6 +117,10 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
             raise HTTPException(404)
         return FileResponse(WEB / filename)
 
+    @router.get("/api/document-studio/access")
+    def access(request: Request):
+        return {"can_edit": bool(getattr(request.state, "can_edit", False)) if cloud_mode else True}
+
     @router.get("/api/document-studio/templates")
     def templates():
         return list(TEMPLATES.values())
