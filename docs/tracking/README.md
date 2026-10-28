@@ -93,3 +93,7 @@ przygotowanie i lokalną kontrolę, bez rzeczywistego wdrożenia do GCP.
 Worklog nie jest fakturą ani zatwierdzonym kosztorysem klienta. Nie ma pomiaru
 czasu, integracji billingowej ani automatycznego egzekwowania reguł w CI.
 Puste kwoty i godziny w pierwszym wykazie są celowe, nie oznaczają prac bezpłatnych.
+
+`TRIPSE-CICD-PLAN-001` jest lokalną etykietą zadania dokumentacyjnego
+[planu Artifact Registry/CI-CD](../ARTIFACT_REGISTRY_CICD_PLAN.md). Nie oznacza
+implementacji CI-001–CI-005 ani nowego wydania; godziny i koszty nie zostały zmierzone.

@@ -8,6 +8,15 @@ below are historical snapshots, superseded for rollout status. Do not replay
 completed bootstrap/import/cutover steps or use old saved plans. Human login,
 restore/isolation drills and real customer-data readiness remain unverified.
 
+## Proposed registry/cache improvements
+
+[TRIPSE CI-001–CI-005 plan](ARTIFACT_REGISTRY_CICD_PLAN.md) and
+[ADR-0015](adr/0015-registry-build-cache-evolution.md) describe documentation-only
+proposals over this existing pipeline. Artifact Registry and Cloud Build already
+exist in the recorded architecture. Buildx is an optional isolated benchmark,
+not a replacement activated by the plan. Immutable release tags, provenance and
+DEV-to-PROD digest promotion remain unchanged. Do not replay registry bootstrap.
+
 ## Historical bootstrap and incident timeline
 
 2026-10-27 historical result: master was merged; run 40550402214 accepted DEV artifact
