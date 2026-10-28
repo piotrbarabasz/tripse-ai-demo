@@ -12,8 +12,12 @@ module "cloud_demo" {
   project_number      = "690165197462"
   environment         = "prod"
   manage_project_apis = false
-  demo_members        = ["user:kontakt@protolume.pl"]
-  live_secret_ids     = []
+  demo_members = [
+    "user:kontakt@protolume.pl",
+    "user:barabasz.piotrek@gmail.com",
+    "user:tripse.kontakt@gmail.com",
+  ]
+  live_secret_ids = []
 }
 
 output "document_bucket" { value = module.cloud_demo.document_bucket }
