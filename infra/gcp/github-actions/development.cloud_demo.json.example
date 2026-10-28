@@ -15,7 +15,7 @@
   "CLOUD_FEATURE_MODE": "cloud_demo",
   "PUBLIC_BASE_URL": "https://tripse-ai-dev-64ctpggq3a-lm.a.run.app",
   "IAP_OAUTH_CLIENT_ID": "REPLACE.apps.googleusercontent.com",
-  "DEMO_EDITORS": "kontakt@protolume.pl|tripse-ai-dev-ci-probe@tripse-ai.iam.gserviceaccount.com",
+  "DEMO_EDITORS": "kontakt@protolume.pl|tripse-ai-dev-ci-probe@tripse-ai.iam.gserviceaccount.com|barabasz.piotrek@gmail.com|tripse.kontakt@gmail.com",
   "DEMO_READERS": "",
   "GCP_DOCUMENT_BUCKET": "tripse-ai-tripse-ai-dev-documents",
   "GCP_FIRESTORE_DATABASE": "tripse-ai-dev",
