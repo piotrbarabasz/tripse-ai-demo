@@ -1,5 +1,13 @@
 # TRIPSE-PROD-BOOTSTRAP-002: resume the first private production release
 
+Current state - 2026-10-28: private DEV and PROD `cloud_demo` delivery is
+accepted in [master run 40614584902](RELEASE_2026_10_28.md). That evidence record
+includes artifact IDs, isolated infrastructure, operator-verified IAM/Organization
+Policy and state adoption, and remaining acceptance limits. Earlier dated findings
+below are historical snapshots, superseded for rollout status. Do not replay
+completed bootstrap/import/cutover steps or use old saved plans. Human login,
+restore/isolation drills and real customer-data readiness remain unverified.
+
 Audit date: 2026-10-27, Europe/Warsaw. Local branch dev,
 HEAD f6d96c5899419eadcb8e568cbaf0099001f94a4d. Fetched origin/master is
 78919b0f17805529fff7a0cfd289ad460c93403b (PR #1 already merged). At audit start
@@ -10,7 +18,7 @@ This session performed read-only GitHub/GCP audits, fetched Git refs, generated
 local variables and refreshed Terraform plans. No remote settings, IAM, IAP,
 application data, Terraform state/import, build, deployment or workflow run was
 changed. All mutation blocks below are **operator commands requiring explicit
-approval**, not commands executed by Codex. PROD remains **NOT READY**.
+approval**, not commands executed by Codex. PROD was **NOT READY** at this audit; automated rollout is now accepted as recorded above.
 
 ## Confirmed failure and accepted evidence
 

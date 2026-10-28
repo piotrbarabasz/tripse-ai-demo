@@ -36,15 +36,19 @@ make gcp-dry-run ENV=dev
 
 Wymagane oba pliki konfiguracyjne GCP. Preflight online wymaga gcloud;
 wariant bez chmury: `make gcp-preflight ENV=dev OFFLINE=1`.
-PROD: wyłącznie jawne `make deploy-prod TAG=<COMMIT_SHA> CONFIRM=prod`.
+PROD: chroniona promocja master przez GitHub Actions; ręczny target
+`make deploy-prod TAG=<COMMIT_SHA> CONFIRM=prod` pozostaje dostępny.
 
-## Cloud Run DEV/PROD — przygotowany deployment
+## Cloud Run DEV/PROD — wdrożone cloud_demo
 
-Ręczne skrypty PowerShell, dwa przykłady konfiguracji i bezstanowy
-`CLOUD_FEATURE_MODE=readonly_demo`: publiczny Hub, gotowe trasy i kolekcje PDF.
-Bez zapisu, uploadów, pilota i WhatsApp w chmurze; lokalne demo zachowuje funkcje.
-Instrukcja DEV, promocji tego samego obrazu do PROD, smoke i rollback:
-[docs/DEPLOY_GCP.md](docs/DEPLOY_GCP.md). **Nie wykonano rzeczywistego wdrożenia GCP.**
+2026-10-28: prywatne DEV i PROD działają w `cloud_demo/mock` za IAP,
+z osobnymi zasobami GCS, Firestore/Tasks i uprawnieniami. GitHub Actions przyjął
+master na DEV i promował ten sam digest do chronionego PROD.
+[Dowody wydania i granice odbioru](docs/RELEASE_2026_10_28.md),
+[CI/CD](docs/GITHUB_CICD.md), [deployment i rollback](docs/DEPLOY_GCP.md).
+`local` i publiczny `readonly_demo` pozostają obsługiwanymi trybami.
+Logowanie każdego użytkownika w przeglądarce oraz gotowość na rzeczywiste dane
+klienta nie zostały potwierdzone. LIVE i rzeczywisty WhatsApp pozostają wyłączone.
 
 ## TRIPSE AI Hub — start demonstracji
 

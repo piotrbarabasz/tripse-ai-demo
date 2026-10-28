@@ -1,16 +1,18 @@
 # CLOUD-PARITY-001 — audit and delivery matrix
 
-GITHUB-CICD-001 update (2026-10-26): CI/CD now has prepared workflows, explicit
-mode/resource/IAP gates, keyless probes and recorded deployed acceptance before
-PROD. See [GitHub runbook](GITHUB_CICD.md) and [ADR-0012](adr/0012-github-actions-delivery.md).
-This does not close the existing real-GCP parity, IAM, restart/restore or LIVE
-gates. No deployment was performed in the CI/CD implementation task.
+Current state 2026-10-28: private DEV and PROD `cloud_demo/mock` deployments
+are automatically accepted by master Delivery run 40614584902. See
+[release artifacts, infrastructure, access and operator verification](RELEASE_2026_10_28.md).
+DEV `api_ui_mock` acceptance includes synthetic writes, task-backed mock jobs and
+CI-probe browser checks; PROD `smoke` is read-only. Human interactive login,
+restart/multi-instance, effective cross-environment IAM denial and restore drills
+remain separate gates. PROD is a demonstration, not approved for real customer data.
 
-Date: 2026-10-26. Evidence: this checkout, not a live inspection of GCP.
-Existing DEV/PROD configuration selects `readonly_demo`; deployed revisions,
-IAM, billing and data durability have not been independently verified.
-No deployment, promotion, paid API call or cloud resource mutation is authorized
-by this task. PROD is a client demonstration, not approved for real customer data.
+Historical baseline date: 2026-10-26. The initial checkout/configuration selected
+`readonly_demo` and the implementation task performed no deployment or live GCP
+audit. The module baseline table and original verification section below preserve
+that starting point. The acceptance/delivery status and remaining-gates register
+are updated for the release above; no cloud mutations were performed by this review.
 
 ## Target architecture and stage dependencies
 
@@ -48,7 +50,8 @@ rate limits, Secret Manager and cost controls. No automatic migration of local d
 ## Acceptance matrix
 
 `LOCAL` means the existing functional contract. DEV/PROD columns below describe
-the target cloud_demo acceptance; they do not assert deployment success.
+scenario contracts. Release evidence above establishes automated DEV acceptance
+and PROD read-only smoke, not every manual scenario in this matrix.
 
 | Scenario | LOCAL | DEV cloud_demo | PROD cloud_demo |
 |---|---|---|---|
@@ -63,7 +66,7 @@ the target cloud_demo acceptance; they do not assert deployment success.
 | Anonymous editing/private reads | denied for Studio | denied for entire app | denied |
 | DEV/PROD isolation | separate local path | environment database/bucket/queue | distinct resources and IAM |
 | Paid API calls in mock | forbidden | forbidden AI/server Maps; browser Maps opt-in | same |
-| Public readonly preview | independent tests | remains selectable | existing service unchanged |
+| Public readonly preview | independent tests | remains selectable; currently cloud_demo | remains selectable; currently cloud_demo |
 
 ## Infrastructure, access and costs
 
@@ -96,9 +99,9 @@ for an estimate; no invented zero-cost assumptions.
 
 ## Delivery evidence and remaining gates
 
-Implementation and test results are recorded here as stages complete. Real GCP
-IAP/OAuth/IAM, multi-instance persistence/retries, browser acceptance on DEV,
-backup restoration and PROD promotion remain unverified until operator-run tests.
+Implementation and automated release results are recorded below. Accepted
+DEV/PROD artifacts close the automated rollout gate. Human login, real restart /
+multi-instance stress, effective negative IAM and restoration remain unverified.
 
 ### Prepared implementation
 
@@ -106,15 +109,15 @@ backup restoration and PROD promotion remain unverified until operator-run tests
 |---|---|---|
 | 1 audit, architecture, dependency and acceptance matrix | Implemented in this document | Checkout evidence; no claim about deployed GCP state |
 | 2 shared application | Existing Hub, Studio, viewer, planner and demo router factories reused; preview stays separate | LOCAL and preview regressions tested |
-| 3 authorization | IAP ES256 verification, exact audience/issuer/time/subject; explicit reader/editor lists, Host/Origin checks, private assets and dedicated task identity | Real OAuth/IAP and external-user DEV acceptance OPEN |
+| 3 authorization | IAP ES256 verification, exact audience/issuer/time/subject; explicit reader/editor lists, Host/Origin checks, private assets and dedicated task identity | Automated IAP acceptance PASS; each human interactive login remains unverified |
 | 4–5 Studio persistence/UI | GCS generation CAS, read-only fixture overlay, unchanged document models/snapshots/revisions, validated binary uploads/private responses | Fake GCS multi-writer race and app reconstruction PASS; real restart/restore OPEN |
-| 6 planner/queue/viewer | Firestore transaction adapter, named OIDC Tasks, 202/status, fenced leases and bounded processing attempts, owner-scoped hashed viewer tokens | Offline adapter flows PASS; real Tasks through IAP OPEN |
-| 7 simulator | Same router/UI; user-scoped durable job/conversation/outbox, stable message IDs, retry/dedup/new conversation | Offline browser/API PASS; real DEV delivery/restart OPEN |
+| 6 planner/queue/viewer | Firestore transaction adapter, named OIDC Tasks, 202/status, fenced leases and bounded processing attempts, owner-scoped hashed viewer tokens | Offline flows and DEV deployed mock-job acceptance PASS; independent recovery drills remain OPEN |
+| 7 simulator | Same router/UI; user-scoped durable job/conversation/outbox, stable message IDs, retry/dedup/new conversation | Offline and deployed DEV mock delivery PASS; independent restart drill OPEN |
 | 8 LIVE | Deliberately rejected by runtime/deployment validation; no server provider keys in cloud mock modes | OPEN: admission quotas, per-user limits/rate limiting, budget controls, secret injection and paid-operation decision |
-| 9 deployment | Opt-in private mode, IAP flag, explicit OAuth smoke token, optional pinned browser key secret, additive Terraform resources | Provider validation PASS; resource provisioning and live preflight OPEN |
-| 10 tests | Independent preview tests retained; new cloud API/storage/jobs/access and browser suites; controlled DEV smoke prepared | Offline PASS; DEV/PROD acceptance not executed |
+| 9 deployment | Opt-in private mode, IAP flag, explicit OAuth smoke token, optional pinned browser key secret, additive Terraform resources | Provider validation and deployed DEV/PROD preflight PASS; operator reports provisioning complete |
+| 10 tests | Independent preview tests retained; new cloud API/storage/jobs/access and browser suites; controlled DEV smoke prepared | Offline PASS; DEV api_ui_mock and PROD read-only smoke accepted in run 40614584902 |
 | 11 documentation | ADR-0011; ADR-0009 superseded with historical text preserved; deployment/Hub/Studio/tracking updated | No fabricated hours, costs, PR or commit |
-| 12 rollout | DEV-only operator sequence; separate manual tested-digest promotion and mode-aware rollback | BLOCKED by explicit requirement for a separate operator deployment decision; no cloud mutation performed |
+| 12 rollout | Protected master promotion and mode-aware rollback | Automated DEV/PROD rollout accepted 2026-10-28; manual human/data-readiness gates remain |
 
 POST `/api/trips` preserves the existing JSON-only contract and additionally
 supports an optional `Idempotency-Key` UUID in cloud_demo; the shared frontend
@@ -144,18 +147,18 @@ message was sent. The simulator deliberately uses no WAHA credentials/session.
 
 | Item | Status | Concrete reason / next evidence |
 |---|---|---|
-| Actual DEV/PROD functional parity | OPEN | No deployment or live inspection; operator-run staged acceptance must establish it |
-| IAP/OAuth for operator, TRIPSE and external Google accounts | OPEN | Organization/consent/programmatic client settings and actual identities not validated; Console bootstrap needed |
+| Actual DEV/PROD functional parity | PARTIAL | DEV api_ui_mock and PROD read-only smoke accepted; human PROD write canary and full manual parity remain unverified |
+| IAP/OAuth for operator, TRIPSE and external Google accounts | PARTIAL | Automated IAP acceptance PASS; operator verifies three human IAP/editor memberships; interactive login for each human remains unverified |
 | Non-Google identities | OPEN | No Identity Platform/federation adapter configured or tested; external email alone is insufficient |
-| Tasks OIDC → direct IAP → handler | OPEN | Requires OAuth client allowlist, task-agent IAM and real DEV dispatch; fake adapter tests cannot establish that boundary |
+| Tasks OIDC → direct IAP → handler | PARTIAL | Deployed DEV task-backed mock acceptance PASS; independent PROD human job/recovery canary unverified |
 | Cross-environment IAM denial | OPEN | Naming/isolation validation exists, but IAM must be tested with actual runtime credentials against the other environment |
-| Real restart/multi-instance concurrency, backup restore | OPEN | Fake stores exercise reconstruction/CAS; GCS versioning/soft delete and Firestore PITR have not been provisioned or restored |
+| Real restart/multi-instance concurrency, backup restore | OPEN | Provisioned GCS versioning/soft delete and Firestore PITR do not prove restoration; independent restart/concurrency/restore drills remain unverified |
 | Unattended dispatch reconciliation | OPEN | Firestore commit and enqueue are not atomic; failed dispatch uses client idempotent retry or explicit operator recovery; no scheduled reconciler |
 | Large-volume conversations, retention and admission quotas | OPEN | Current owner query is intended for small demo volume; pagination/quotas/retention need measurement and implementation before scaling |
 | LIVE DEV activation | OPEN | Runtime remains mock-only until rate limiting, quotas, budget controls, secrets and approved paid tests are delivered |
 | Real Google Maps API behavior/billing | OPEN | Optional browser path checked with SDK double only; key restrictions and any paid smoke need separate operator decision |
 | Real WhatsApp | OPEN | No Cloud Run WAHA session; hosting/session durability and Business Platform/provider assessment remain a separate substage |
-| Deployment and PROD promotion | BLOCKED | User explicitly requires a separate operator decision and manual promotion of an accepted digest; neither was performed |
+| Deployment and PROD promotion | COMPLETED (automated scope) | Master run 40614584902 accepted DEV artifact 12784708088 and PROD artifact 12784523829 for the same SHA/digest |
 | Real customer-data readiness | BLOCKED | Security/durability/restore acceptance has not been completed; PROD remains only a demonstration |
 
 ### Verification evidence (2026-10-26)
@@ -195,4 +198,5 @@ message was sent. The simulator deliberately uses no WAHA credentials/session.
   backup restoration, PROD promotion or paid API test ran. No commit/PR created.
 
 Test totals and exact final command results are recorded in the tracking worklog;
-the acceptance matrix still requires real DEV evidence before cloud parity is done.
+the historical 2026-10-26 results above are supplemented by the accepted release
+evidence at the top. Remaining manual gates are not closed by CI success.

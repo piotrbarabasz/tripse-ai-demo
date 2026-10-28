@@ -12,7 +12,9 @@ retains its operational-data whitelist. No additional templates were implemented
 
 LOCAL continues to use JSON/files and the unchanged localhost policy without
 GCP configuration. Public `readonly_demo` does not register this private API/UI.
-Cloud deployment, IAP/OAuth acceptance and restore testing are still pending;
+Automated private DEV/PROD deployment is accepted as of 2026-10-28; individual
+human IAP login and restore testing remain unverified. See
+[release evidence](RELEASE_2026_10_28.md);
 see [audit](CLOUD_PARITY_AUDIT.md), [ADR-0011](adr/0011-authenticated-cloud-demo.md)
 and [operator instructions](DEPLOY_GCP.md). Browser PDF remains client-side.
 

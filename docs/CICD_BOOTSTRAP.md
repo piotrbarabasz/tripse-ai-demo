@@ -1,5 +1,13 @@
 # CI-CD-FIX-002: Windows operator setup
 
+Current state - 2026-10-28: private DEV and PROD `cloud_demo` delivery is
+accepted in [master run 40614584902](RELEASE_2026_10_28.md). That evidence record
+includes artifact IDs, isolated infrastructure, operator-verified IAM/Organization
+Policy and state adoption, and remaining acceptance limits. Earlier dated findings
+below are historical snapshots, superseded for rollout status. Do not replay
+completed bootstrap/import/cutover steps or use old saved plans. Human login,
+restore/isolation drills and real customer-data readiness remain unverified.
+
 2026-10-27 status: DEV environment/WIF and application resources have been
 bootstrapped by the operator. WIF works; authenticated health 401 blocks rollout.
 Do not repeat resource creation to fix authentication. Continue from the

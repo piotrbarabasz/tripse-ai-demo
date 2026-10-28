@@ -4,8 +4,9 @@ CLOUD-PARITY-001 (2026-10-26): the same Hub/router/frontend now supports the
 authenticated `cloud_demo` composition. It links to the complete Studio,
 planner and mock simulator; labels reflect cloud persistence. LOCAL retains
 `local_only`; public `readonly_demo` retains its reviewed preview Hub. Cloud
-membership and storage/task configuration are mandatory. No GCP deployment was
-performed. See [parity status](CLOUD_PARITY_AUDIT.md) and
+membership and storage/task configuration are mandatory. DEV and PROD automated
+deployment is now accepted; see [2026-10-28 evidence](RELEASE_2026_10_28.md).
+The original implementation task itself performed no deployment. See [parity status](CLOUD_PARITY_AUDIT.md) and
 [DEV acceptance](DEPLOY_GCP.md). Existing local instructions follow.
 
 ## Uruchomienie i pokaz

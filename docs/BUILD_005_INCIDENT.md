@@ -1,9 +1,17 @@
 # TRIPSE-CICD-BUILD-005: restricted CI source staging
 
+Current state - 2026-10-28: private DEV and PROD `cloud_demo` delivery is
+accepted in [master run 40614584902](RELEASE_2026_10_28.md). That evidence record
+includes artifact IDs, isolated infrastructure, operator-verified IAM/Organization
+Policy and state adoption, and remaining acceptance limits. Earlier dated findings
+below are historical snapshots, superseded for rollout status. Do not replay
+completed bootstrap/import/cutover steps or use old saved plans. Human login,
+restore/isolation drills and real customer-data readiness remain unverified.
+
 Follow-up: DEV run 40523770207 at cf94e20a7f53c2d7674d83319704a54e2a92889e
 successfully completed deployment and api_ui_mock acceptance; artifact 12741609814
 matches the serving digest. This closes the observed DEV submission/acceptance
-blocker, without recovering the lost historical stderr. Next stage is
+blocker, without recovering the lost historical stderr. At that date, the next stage was
 [PROD bootstrap preparation](PROD_BOOTSTRAP_001.md); no PROD rollout is implied.
 
 2026-10-27, Europe/Warsaw. DEV only; project tripse-ai (690165197462),

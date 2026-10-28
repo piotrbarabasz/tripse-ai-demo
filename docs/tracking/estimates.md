@@ -1,5 +1,12 @@
 # Zasady przygotowania kosztorysu TRIPSE
 
+2026-10-28 update: [automated DEV/PROD deployment](../RELEASE_2026_10_28.md)
+is a completed operational milestone. Dated 25-27 October preparation and future
+bootstrap descriptions below preserve historical scope/cost context, rather than
+a current list of missing infrastructure. Maintenance, measurements, human login,
+negative IAM/restart/restore drills, quotas and customer-data acceptance remain.
+No measured hours or invoices are available; monetary fields remain empty.
+
 To mapa przyszłych prac, nie oferta cenowa ani potwierdzony budżet.
 Nie ma dowodów pozwalających wpisać rzeczywiste godziny lub koszty historyczne;
 dlatego odpowiednie pola [worklogu](worklog.csv) pozostają puste.

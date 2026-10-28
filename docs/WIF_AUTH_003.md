@@ -1,7 +1,15 @@
 # TRIPSE-WIF-AUTH-003: DEV STS rejection
 
+Current state - 2026-10-28: private DEV and PROD `cloud_demo` delivery is
+accepted in [master run 40614584902](RELEASE_2026_10_28.md). That evidence record
+includes artifact IDs, isolated infrastructure, operator-verified IAM/Organization
+Policy and state adoption, and remaining acceptance limits. Earlier dated findings
+below are historical snapshots, superseded for rollout status. Do not replay
+completed bootstrap/import/cutover steps or use old saved plans. Human login,
+restore/isolation drills and real customer-data readiness remain unverified.
+
 2026-10-27 follow-up: operator applied the reviewed DEV correction and WIF auth
-now succeeds in examined runs. The next blocker is authenticated IAP health 401;
+now succeeds in examined runs. The next blocker at that date was authenticated IAP health 401;
 see [AUTH-004 incident and handoff](DEV_AUTH_004_INCIDENT.md). Original findings
 and NOT TESTED statements below are retained as the 26 October historical record.
 

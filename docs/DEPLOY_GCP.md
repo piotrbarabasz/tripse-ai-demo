@@ -1,5 +1,15 @@
 # TRIPSE Cloud Run — ręczne DEV i PROD
 
+Current state - 2026-10-28: private DEV and PROD `cloud_demo` delivery is
+accepted in [master run 40614584902](RELEASE_2026_10_28.md). That evidence record
+includes artifact IDs, isolated infrastructure, operator-verified IAM/Organization
+Policy and state adoption, and remaining acceptance limits. Earlier dated findings
+below are historical snapshots, superseded for rollout status. Do not replay
+completed bootstrap/import/cutover steps or use old saved plans. Human login,
+restore/isolation drills and real customer-data readiness remain unverified.
+
+## Historical implementation notes (2026-10-26 to 2026-10-27)
+
 2026-10-27: [DEV bootstrap history and IAP 401 investigation](DEV_AUTH_004_INCIDENT.md).
 DEV infrastructure/WIF are now provisioned by the operator; first cloud_demo
 rollout remains blocked. AUTH-004 prepares a keyless JWT path-audience correction
@@ -14,7 +24,8 @@ during implementation. Real Actions/IAP acceptance remains an operator gate.
 
 ## CLOUD-PARITY-001 — opt-in authenticated demo (2026-10-26)
 
-Prepared offline; **no GCP resources or deployed services were changed**. The
+Original 2026-10-26 preparation: **no GCP resources or deployed services were
+changed in that task**. The
 historical sections below describe `readonly_demo`. Full authenticated demo is
 governed by [ADR-0011](adr/0011-authenticated-cloud-demo.md) and the
 [audit/acceptance matrix](CLOUD_PARITY_AUDIT.md). Keep current PROD configuration
@@ -23,8 +34,8 @@ and data intact. No automatic migration, deployment or promotion is performed.
 ### Configuration and access
 
 Use existing Make/deployment commands and the existing project/region/image
-registry. In an operator-reviewed DEV configuration directory, keep both dotenv
-files and change **only DEV** to `CLOUD_FEATURE_MODE=cloud_demo` and
+registry. In an operator-reviewed configuration directory, keep both dotenv
+files and select the reviewed target environment with `CLOUD_FEATURE_MODE=cloud_demo` and
 `GCP_PUBLIC_ACCESS=false`. Uncomment/fill every required field shown in
 `infra/gcp/.env.dev.example`; values are literal and no interpolation occurs.
 Resources must use exactly the selected environment's names. `PUBLIC_BASE_URL`
@@ -117,7 +128,8 @@ preview rollback explicitly disables IAP before optional preview publication.
 Cloud offline preflight validates configuration only; full fake-adapter/router
 coverage is in pytest/browser smoke, and neither proves deployed IAM behavior.
 
-Controlled DEV acceptance is supplied and **has not been run against GCP**:
+Controlled DEV acceptance below is also exercised by successful CI delivery;
+manual use requires the same reviewed access and synthetic-write authorization:
 
 ```powershell
 .venv\Scripts\python.exe -m scripts.gcp.parity_smoke --config-dir PRIVATE_CONFIG_DIRECTORY
@@ -163,7 +175,7 @@ included. Monitor queued/running age and terminal failures during DEV acceptance
 GCS keeps object versions and seven-day soft delete; noncurrent versions are
 bounded by the configured newer-version count. Firestore PITR is enabled. These
 are the baseline recovery strategy, not proof of restore readiness. Before
-customer data or PROD acceptance, perform a DEV restore drill into isolated
+real customer-data readiness, perform a DEV restore drill into isolated
 resources: restore a prior document generation with generation-match against the
 current generation; check its referenced immutable image blobs; recover a
 Firestore PITR copy; verify jobs/tokens without replaying notifications. Preserve
@@ -171,13 +183,15 @@ current data before restoring. Define retention/RPO/RTO and independently manage
 exports if required; budget storage, access controls and maintenance. No backup
 restore or deletion has been executed in this task.
 
-PROD remains unchanged until a separate manual acceptance and promotion of the
-tested DEV digest (`make deploy-prod TAG=... CONFIRM=prod`). Create/review separate
-PROD resources and configuration first; no copying DEV drafts, photos, jobs or
+PROD now runs the accepted master digest through protected GitHub Actions
+promotion. For future manually operated releases, the existing explicit
+`make deploy-prod TAG=... CONFIRM=prod` remains available. Verify the existing
+separate PROD resources/configuration; never copy DEV drafts, photos, jobs or
 tokens into PROD. Keep the previous SHA and matching mode configuration for
 `make gcp-rollback ENV=... TAG=... CONFIRM=rollback`. Rollback changes code, not
 stored data; retain format compatibility and take a backup before any future
-schema migration. No automatic migration or promotion exists.
+schema migration. No automatic data migration exists; master delivery uses the
+protected promotion workflow described in [GitHub delivery](GITHUB_CICD.md).
 
 See audit for separate cost categories and OPEN/BLOCKED gates. No hours or
 billed amounts are available. DEV is for experiments; PROD is a stable client

@@ -6,20 +6,27 @@ date: 2026-10-26
 author: "Codex — implementation proposal"
 area: "CI/CD, IAM, release evidence, rollback"
 related_tasks: [GITHUB-CICD-001, TRIPSE-CICD-DEV-AUTH-004, TRIPSE-PROD-BOOTSTRAP-001]
-related_prs: []
+related_prs: [3]
 supersedes: []
 ---
 
 # ADR-0012: GitHub Actions delivery
 
-Implementation: workflow/scripts/tests prepared locally; no push, IAM apply or
-cloud deployment. Owner acceptance and real runner acceptance remain unrecorded.
+Implementation as of 2026-10-28: GitHub Actions CI/CD is operational. WIF-based
+DEV delivery and protected master PROD promotion succeeded in
+[run 40614584902](https://github.com/piotrbarabasz/tripse-ai-demo/actions/runs/40614584902),
+at master `3f55a25276a7e92ce74b3e0c70460d4e967a0138` following PR #3. Immutable
+DEV artifact 12784708088 and PROD artifact 12784523829 identify the same tested
+digest. Separate environment deploy/probe identities remain in use. See
+[verified evidence and operational limits](../RELEASE_2026_10_28.md).
+Formal ADR approval is unrecorded; `proposed` remains appropriate. Automated
+acceptance does not establish human login or real customer-data approval.
 
-2026-10-27 evidence update: the preceding statement describes original local
-preparation. Operator reports reviewed DEV WIF/application bootstrap applies;
-examined runs confirm WIF success and no application deployment after health 401.
-AUTH-004 prepares a JWT URL-audience correction and safe failure metadata; its
-live result is unverified. No ADR acceptance or production readiness is inferred.
+Historical sequence: original 2026-10-26 workflow/scripts/tests were prepared
+locally without cloud deployment. On 2026-10-27 WIF passed but IAP health 401
+blocked examined runs; AUTH-004 and BUILD-005 troubleshooting below records those
+then-current observations. Later DEV acceptance and the master release above
+supersede their unverified-rollout statements, without proving lost root causes.
 
 ## 1. Context and problem
 
@@ -72,11 +79,13 @@ application/IAM and GitHub approval protection remain separate manual gates.
 
 ## 4. Rationale and evidence
 
-PROD_BOOTSTRAP-001 evidence (2026-10-27): accepted DEV run 40523770207/artifact
+Historical PROD_BOOTSTRAP-001 evidence (2026-10-27; superseded for current rollout):
+accepted DEV run 40523770207/artifact
 12741609814 matches the actual receiving digest, but dev-branch proof cannot
-authorize production. Master must accept its own exact SHA first. Existing PROD
-is public readonly; production environment/reviewers and master protection are
-missing. Prepared plans add isolated PROD data and PROD CI to the same existing
+authorize production. Master must accept its own exact SHA first. At that audit PROD
+was public readonly; production environment/reviewers and master protection were
+missing (now configured and verified; see the release evidence). Prepared plans
+added isolated PROD data and PROD CI to the same existing
 pool/state, with immutable production/master-only subject predicates.
 Owner explicitly selected piotrbarabasz with self-review allowed for the human
 production gate; this is not independent two-person approval or authorization to
@@ -91,11 +100,13 @@ another architecture. Formal ADR acceptance remains unrecorded.
 **Requirement:** GITHUB-CICD-001. **Code evidence:** workflow dependencies, explicit
 permissions/environments, `scripts/gcp/ci.py`, `smoke_auth.py`, resource checks,
 receiving-revision digest checks and manual WIF Terraform. **Inference:** this
-reduces deployment ambiguity without redesigning the app/storage. **Unconfirmed:**
-real WIF claims/refresh, scoped IAM, runner IAP and reviewer configuration; local
-tests cannot prove those operational boundaries.
+reduces deployment ambiguity without redesigning the app/storage.
+**Current verification:** successful DEV/PROD WIF and IAP runner acceptance,
+separate scoped identity configuration and live GitHub reviewer/branch protections
+are recorded in the release evidence. Local tests alone cannot prove effective
+inherited/group IAM denial or every future credential refresh.
 
-**Verified 2026-10-27:** runs 40343957774 (attempt 5) and 40483100238 authenticate
+**Historical verification 2026-10-27:** runs 40343957774 (attempt 5) and 40483100238 authenticate
 through WIF, then fail closed on GET /health 401 before deploying. Read-only DEV
 metadata confirms IAP enabled, invoker IAM enforced, expected probe/IAP-agent
 roles and the old readonly revision. The signed service-account JWT incorrectly
@@ -103,7 +114,8 @@ scoped the bare origin instead of the requested path; use the documented `/*`
 scope on that one validated origin for multi-path acceptance. Non-IAP ID-token
 audience is unchanged. New errors expose only allowlisted static auth metadata,
 never tokens, header values or response bodies. Local signJwt diagnostic was
-denied (403); the live effect remains unverified. See the
+denied (403); the live effect was then unverified. Later runner acceptance passes.
+See the
 [incident and handoff](../DEV_AUTH_004_INCIDENT.md) for chronology and hypotheses.
 ADR-0013 is not warranted: this corrects the existing keyless/fail-closed decision
 without introducing a new trust boundary. The next free ADR number remains 0013.
@@ -122,11 +134,14 @@ with API-reported owner/name/region validation replaces implicit SDK project
 bucket discovery. Existing narrow IAM, builder, log settings, SHA/digest/source
 proof and separate states remain unchanged. Safe allowlisted Google error
 classification supplies missing next-run evidence. Historical source-list denial
-is probable, not certified by effective CI simulation; live validation remains
-open. See [BUILD-005](../BUILD_005_INCIDENT.md). No new architecture/ADR is needed.
+is probable, not certified by effective CI simulation; later DEV/master build
+and acceptance succeeded, without recovering the lost historical raw error. See [BUILD-005](../BUILD_005_INCIDENT.md). No new architecture/ADR is needed.
 
-Required reviewers and branch protection cannot be guaranteed by YAML and must
-be configured by an operator. Real app infrastructure remains a prerequisite.
+Required reviewers and branch protection are configured and were checked via the
+GitHub API on 2026-10-28; YAML cannot maintain those external settings. Application
+infrastructure is provisioned and remains a deployment prerequisite. Temporary DEV
+OIDC diagnostics remain in YAML; disabling via the existing operator variable is
+still an operational follow-up unless already done (setting not verified here).
 GitHub locks cannot serialize a separate operator terminal. No automatic schema
 changes or data restores. Failed releases attempt prior traffic restoration and
 keep access private; restoration failure is explicit and never recorded as an
@@ -143,8 +158,10 @@ cost without OpenAI/Maps calls. No hours, amounts or measured savings supplied.
 
 [Runbook/bootstrap](../GITHUB_CICD.md), [deployment](../DEPLOY_GCP.md),
 [parity](../CLOUD_PARITY_AUDIT.md), [ADR-0011](0011-authenticated-cloud-demo.md).
-Task GITHUB-CICD-001; no commit/PR created for this change, no owner acceptance
-recorded. This extends ADR-0011 and preserves ADR-0010's public-preview rules;
+Task GITHUB-CICD-001; original preparation created no commit/PR. Operational
+release: [PR #3](https://github.com/piotrbarabasz/tripse-ai-demo/pull/3), master
+`3f55a25276a7e92ce74b3e0c70460d4e967a0138`; no formal ADR owner acceptance recorded.
+This extends ADR-0011 and preserves ADR-0010's public-preview rules;
 it does not supersede the app's storage/auth decisions or remove manual Make.
 
 ## 9. Reconsideration
@@ -170,3 +187,4 @@ automated data migration/restore require renewed design and acceptance.
 | 2026-10-27 | Codex | Record operator bootstrap/WIF evidence and health 401; correct JWT URL scope and add safe failure metadata; no new ADR or cloud mutation | TRIPSE-CICD-DEV-AUTH-004 |
 | 2026-10-27 | Codex | Explicit verified source staging avoids implicit project bucket discovery; no IAM expansion, plan has zero changes; live build not run | TRIPSE-CICD-BUILD-005 |
 | 2026-10-27 | Codex | Record accepted DEV and prepare isolated PROD state, shared CI extension, immutable PROD trust and builder isolation; single-owner approval choice; no cloud apply | TRIPSE-PROD-BOOTSTRAP-001 |
+| 2026-10-28 | Codex | Record successful master CI/WIF DEV/PROD release and immutable artifacts; qualify historical incidents and retain proposed status | PR #3; run 40614584902 |
