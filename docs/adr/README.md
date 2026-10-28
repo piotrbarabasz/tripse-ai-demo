@@ -21,6 +21,7 @@ task opisuje pracę, a [worklog](../tracking/worklog.csv) jej udokumentowany prz
 | [ADR-0011](0011-authenticated-cloud-demo.md) | Shared authenticated cloud_demo with GCS and Firestore/Tasks | proposed | Private DEV/PROD cloud_demo accepted 2026-10-28; human login/restore/customer-data gates remain |
 | [ADR-0012](0012-github-actions-delivery.md) | GitHub Actions, WIF and immutable DEV acceptance before PROD | proposed | Operational WIF CI/CD; protected master run 40614584902 accepted DEV/PROD; ADR approval unrecorded |
 | [ADR-0013](0013-canonical-hub-navigation.md) | Canonical Hub homepage and explicit planner navigation | proposed | Implemented locally; API/access contracts preserved; not deployed |
+| [ADR-0014](0014-document-library-history.md) | Biblioteka dokumentów, metadane i zachowane rewizje | proposed | Implementacja lokalna JSON/GCS; bez wdrożenia chmurowego |
 
 ADR-0001–0007 sporządzono retrospektywnie 25.10.2026. Kod potwierdza
 implementację, ale dostępne repozytorium nie zawiera jednoznacznej akceptacji
@@ -37,7 +38,7 @@ Powiązane aspekty jednej decyzji można połączyć, jak FastAPI i izolację mo
 
 ## Numeracja i metadane
 
-- Następny wolny numer: **ADR-0014**. Sprawdź rejestr i pliki przed nadaniem numeru;
+- Następny wolny numer: **ADR-0015**. Sprawdź rejestr i pliki przed nadaniem numeru;
   po dodaniu wpisu zaktualizuj tę wskazówkę. Nie używaj ponownie opublikowanego numeru.
 - Plik: `0011-short-decision-name.md`; nagłówek i YAML: `ADR-0011`.
 - Skopiuj [szablon](template.md). Wypełnij wszystkie dziewięć sekcji.
@@ -122,3 +123,4 @@ Sam ten standard nie wdraża automatycznej walidacji CI ani wieloosobowego workf
 | 2026-10-27 | Codex | Record real DEV acceptance and staged PROD plans in existing ADR-0011/0012; no new architecture/ADR number | TRIPSE-PROD-BOOTSTRAP-001 |
 | 2026-10-28 | Codex | Synchronize ADR-0011/0012 implementation with accepted master DEV/PROD release; no new decision or status change | PR #3; run 40614584902; [evidence](../RELEASE_2026_10_28.md) |
 | 2026-10-28 | Codex | Add proposed ADR-0013 replacing ADR-0008 root preservation; retain historical rationale and unchanged access/API boundaries | User routing request; no task/PR ID |
+| 2026-10-28 | Codex | Add proposed ADR-0014 for lightweight library metadata and immutable previous revisions in existing JSON/GCS | DOCUMENT-LIBRARY-001 |
