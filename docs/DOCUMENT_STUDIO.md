@@ -1,5 +1,123 @@
 # TRIPSE Document Studio — funkcjonalne DEMO lokalne
 
+## Katalog i edytor sekcyjny — implementacja lokalna 2026-10-28
+
+Z Hubu otwórz **`/documents/demo#templates`**. Katalog pokazuje trzy grupy:
+cztery oferty (`offer.private`, `offer.self_guide`, `offer.school`, `offer.incentive`),
+trzy materiały pilotów (`pilot.basic`, `pilot.advanced`, `pilot.knowledge`) oraz
+`marketing.collection` z wariantami `new_trips` i `theme_collection`.
+Wszystkie osiem ID ma działający edytor, zapis snapshotu i podgląd/PDF roboczy.
+Zmiany są przygotowane lokalnie; nie zostały wdrożone na DEV/PROD.
+
+### Instrukcja pracy dla Adriana
+
+1. Wybierz kafelek i, dla marketingu, wariant. W kolejnym ekranie typ jest już
+   zapamiętany. Wskaż wycieczkę/kampanię albo wybierz utworzenie nowej.
+   Nowa wycieczka otrzymuje wybraną liczbę dni z jawnym „do opracowania”.
+   Nowa kampania wymaga co najmniej jednej wycieczki z biblioteki.
+2. Edytor otworzy niezależny draft z domyślnymi sekcjami oraz danymi snapshotu.
+   Uzupełnij pola rodzaju dokumentu. Nieznane terminy, kwoty i odległości
+   pozostają puste, a podgląd pokazuje „Do ustalenia”.
+3. W „Treść i kolejność sekcji” zmień tytuł/treść, dodaj tekst, listę, zdjęcie,
+   galerię, tabelę, wyróżnienie lub sekcję dzienną. Tabelę wpisuj wierszami,
+   oddzielając komórki tabulatorem; nagłówki wpisuj w osobnych wierszach.
+   Przesuwaj przyciskami „W górę / W dół”. Dodatkowe sekcje można usuwać;
+   domyślne można ukrywać i przywracać. Wymagane braki nadal widnieją w walidacji.
+4. Pola źródłowe sekcji domyślnych edytuj w formularzu powyżej, a jej dodatkowe
+   uwagi bezpośrednio w sekcji. Program bazuje na snapshotach i nadpisaniach
+   dokumentu. Zmiana draftu nie zmienia Trip ani drugiego dokumentu.
+5. Zdjęcia wybieraj z biblioteki lub wgraj własny JPG/PNG/WebP z potwierdzeniem
+   praw. Kadrowanie sekcji: x/y 0–100, zoom 1–3. Brak zdjęcia daje placeholder.
+6. Kliknij „Zapisz draft” (marketing: „Zapisz zmiany”), następnie odśwież stronę
+   i otwórz dokument ponownie przez „Dokumenty robocze” → „Edytuj dokument”.
+   Rewizja rośnie; 409 oznacza konflikt — odczytaj najnowszą wersję, nie nadpisuj jej.
+7. Podgląd aktualizuje się po edycji. „Podgląd / PDF” otwiera zapisany dokument;
+   wybierz A4, skalę 100%, tła, bez nagłówków przeglądarki. Marketing ma też
+   układ 1080×1350. Długie teksty/tabele są dzielone na bloki i strony.
+
+### Pola typów i granice publikacji
+
+- Self-Guide zawsze ma widoczne oznaczenie **bez pilota na miejscu**. Zakres
+  organizacji, samodzielne ustalenia, materiały i wsparcie uzupełniasz ręcznie;
+  briefing online jest miejscem do uzgodnienia, bez gwarancji usługi.
+- Szkoła: wiek/liczebność, odpowiedzialność opiekunów i cele trzech filarów
+  **Edukacja / Przyroda / Integracja**, powiązane z dniem i atrakcją.
+- Incentive: wyróżniony hotel, standard/nazwa, lokalizacja, pokoje, udogodnienia,
+  przestrzenie wspólne i konferencyjne, zdjęcia i status ze źródłem potwierdzenia.
+  Integracja i szkolenia są opcjonalne.
+- Basic/advanced współdzielą `PilotData` i `OperationalEntry` dla lotów, noclegów,
+  kontaktów i harmonogramu. Advanced dodaje sekcję logistyki każdego dnia:
+  datę, trasę, czasy/dystanse/przewyższenie, strefę, referencję istniejącego noclegu,
+  notatki i plan B. Zdarzenia drukują się chronologicznie według czasu ze strefą.
+- Knowledge: trzy części każdego dnia (atrakcje/kontekst/narracja), tylko miejsca
+  programu, ręczne opisy, dokładne źródła i daty sprawdzenia. Status `verified`
+  wymaga źródeł z datami. Niezweryfikowane treści są tak oznaczone w PDF.
+- Marketing używa dotychczasowego edytora i jednego renderera. Edycja draftu
+  zmienia snapshot kampanii, nie kampanię źródłową; można zmieniać kolejność,
+  dodawać/usuwać kierunki, kadrować zdjęcia, wpisać opcjonalnego prowadzącego
+  oraz dodawać sekcje promocyjne.
+
+Każdy nowy PDF ma oznaczenie wersji roboczej. Dla nowych typów możliwy jest PDF
+roboczy pomimo braków biznesowych, z zachowaniem uwag i `data-final-valid`.
+Nie jest to ścieżka zatwierdzenia/publikacji. `offer.private` zachowuje wcześniejszą
+blokadę ceny/CTA: wpisz prawidłową wycenę albo świadomie wybierz `concept_only`.
+Dotychczasowe blokady podstawowej rozpiski i marketingu pozostają. Błąd układu
+nadal blokuje przycisk druku. Nie wprowadzono wielorolego workflow akceptacji.
+
+### Modele, API i kompatybilność
+
+`DocumentDraft.sections` zawiera walidowane `DocumentSection`: ID, rodzaj, rolę
+szablonu, tytuł, treść, kolejność, widoczność i opcjonalny dzień; listy, zdjęcia,
+tabele, logistyka i wiedza mają własne pola strukturalne. `offer_data` służy
+wszystkim ofertom; `offer_details` dodaje pola ich wariantów. `pilot_data` jest
+wspólne dla basic/advanced; knowledge nie przyjmuje danych rezerwacyjnych.
+`Campaign` i `CampaignItem` przyjmują opcjonalne `leader`.
+
+Zachowano istniejące URL-e i repozytoria JSON/GCS. `PUT /api/document-studio/drafts/{id}`
+przyjmuje dodatkowo `sections`, `offer_details`, a dla marketingu edytowalny
+`campaign_snapshot`. ID kampanii, typ, poufność i źródłowy Trip są niezmienne;
+nowo dodane kierunki kampanii są snapshotowane przez serwis z bezpiecznej projekcji.
+Pola pominięte w PUT nie są zerowane przez starszego klienta.
+`POST /trip-documents/preview` i `/validate` obsługują cały katalog; preview przyjmuje
+`output_format`. `POST /api/document-studio/trip-documents/initialize` przygotowuje
+sekcje starego draftu bez zapisu; nadal obowiązuje autoryzacja routera.
+
+Nowe szablony mają wersję **0.4.0**, a wersja schematu pozostaje 1 dzięki polom
+opcjonalnym. Brak `sections` w starym JSON oznacza legacy; odczyt nie przepisuje
+pliku. Stare private/basic/marketing zachowują podgląd; dawniej katalogowe typy
+otrzymują domyślne sekcje w podglądzie. Pierwszy jawny zapis sekcji podnosi wersję
+szablonu. Nie wolno zamienić sekcyjnego dokumentu z powrotem na `sections: null`.
+Wymagania pochodzą z definicji szablonu, nie z edytowalnej flagi użytkownika.
+
+Oferty i marketing snapshotują wyłącznie pola klientowskie; nigdy nie pobierają
+`PilotData`, prywatnych źródeł atrakcji ani notatek wewnętrznych. Basic/advanced
+pozostają `internal_restricted`, knowledge `internal`; istniejąca autoryzacja,
+prywatne assety i kontrola zapisu pozostają bez zmian. Ręcznie wpisany tekst nadal
+wymaga przeglądu człowieka przed przekazaniem klientowi.
+
+### Rozszerzanie i testowanie
+
+Nowy szablon dodaj do `templates.py` wraz z konfiguracją `SectionSpec`; określ
+wymagane role, bezpieczne domyślne dane w `sections.py`, pola Pydantic i ich
+kontrolki. Nowy rodzaj sekcji wymaga typu w `DocumentSection`, walidacji,
+prezentacji w `rendering/sections.py` i kontrolek `section-editor.js`.
+Nie dodawaj arbitralnego HTML ani równoległego magazynu dokumentów.
+
+Testy: `python -m pytest -q`; przeglądarka:
+`python tests/browser_document_studio_smoke.py` (obejmuje też cały katalog),
+`python tests/browser_trip_documents_smoke.py`,
+`python tests/browser_marketing_smoke.py`, `python tests/browser_cloud_demo_smoke.py`.
+PDF-y i zrzuty katalogu: ignorowany `local-data/studio-catalog-qa/`.
+Dane QA są fikcyjne; nie użyto przesłanych materiałów klientów ani zewnętrznych usług.
+
+### Do dalszego uzgodnienia
+
+Z Adrianem: obowiązkowe pola finalnych ofert, dokładny zakres wsparcia Self-Guide,
+zasady cen szkolnych, standard rozpisek i odpowiedzialność za weryfikację źródeł,
+branding/licencje zdjęć, retencja i formalna akceptacja treści. AI research, DOCX,
+rezerwacje, wysyłka, briefing online i nowe role pozostają poza tą iteracją.
+Poniższe instrukcje opisują zachowane wcześniejsze ścieżki i historię modułu.
+
 CLOUD-PARITY-001 (2026-10-26): the existing models, service, editors and renderer
 are shared with opt-in authenticated `cloud_demo`. The cloud repository uses
 private GCS JSON overlays and generation-match optimistic concurrency (409),
@@ -189,3 +307,20 @@ Nie ma modeli uczestników, rezerwacji i sekretów. Programy demo są fikcyjne.
 Kolejne prace: pola i walidacja `pilot.basic` oraz `offer.private`, edytowalne
 pola dokumentów z rewizjami, zatwierdzony branding i pełne metadane licencji.
 Centralną bazę i kontrolę dostępu wdrożyć dopiero przy przejściu do współdzielonego środowiska.
+
+## Weryfikacja iteracji katalogu (2026-10-28)
+
+- Pełne pytest: **664 passed**, jedno zastane ostrzeżenie Starlette/AnyIO.
+- `browser_document_studio_smoke.py`: biblioteka i restart procesu oraz katalog
+  wszystkich ośmiu ID / obu wariantów marketingu; 2/10/15 dni, edycja sekcji,
+  wielokrotny zapis, zdjęcia, mobilny układ i dziewięć rzeczywistych PDF A4.
+  Tekst początku i końca długiej sekcji zachowany w odczycie PDF; brak overflow.
+- `browser_trip_documents_smoke.py`: zachowane private/basic, sześć PDF,
+  cena/concept_only, lokalne godziny i izolacja prywatnych danych.
+- `browser_marketing_smoke.py`: osiem PDF, 1/3/8 kierunków, oba warianty,
+  formaty A4/social, zdjęcia, kadry, brak CTA i restart procesu.
+- `browser_cloud_demo_smoke.py` i `browser_hub_smoke.py`: regresje nawigacji,
+  edytorów i dotychczasowego planera/symulatora. Cloud QA używa prywatnych
+  adapterów z fake stores, nie rzeczywistych zasobów GCP.
+- Sprawdzono składnię JS, offline kontrakty CI oraz Markdown/ADR i whitespace.
+  Nie wykonywano deploymentu, zmiany IAM, migracji danych ani wywołań AI.

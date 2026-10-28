@@ -33,7 +33,7 @@ def test_hub_links_modes_and_existing_entrypoints(tmp_path,monkeypatch):
         assert 'lang="pl"' in response.text
         assert '{{' not in response.text
         links=HubLinks();links.feed(response.text)
-        assert links.links=={'planner-link':'/planner','documents-link':'/documents/demo','assistant-link':'/demo/chat'}
+        assert links.links=={'planner-link':'/planner','documents-link':'/documents/demo#templates','assistant-link':'/demo/chat'}
         assert 'Dokument Studio działa osobno' in response.text
         for path in links.links.values():
             page=client.get(path)

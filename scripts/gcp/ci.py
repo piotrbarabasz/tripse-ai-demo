@@ -328,7 +328,7 @@ def browser_acceptance(origin, token, trip_id):
         errors = []
         page.on("pageerror", lambda error: errors.append(type(error).__name__))
         page.goto(origin + "/hub")
-        expect(page.locator("#documents-link")).to_have_attribute("href", "/documents/demo")
+        expect(page.locator("#documents-link")).to_have_attribute("href", "/documents/demo#templates")
         page.goto(origin + "/documents/demo#trips/" + trip_id)
         expect(page.locator(".day")).to_have_count(15)
         page.goto(origin + "/demo/chat")

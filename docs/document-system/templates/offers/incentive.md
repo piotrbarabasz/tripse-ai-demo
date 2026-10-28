@@ -1,5 +1,10 @@
 # Szablon: oferta firmowa / incentive
 
+Stan implementacji lokalnej 2026-10-28 (szablony 0.4.0): OfferData + OfferDetails.hotel: standard/nazwa, lokalizacja, pokoje, udogodnienia, sale, zdjęcia i status. Potwierdzenie wymaga źródła; hotel ma wyróżniony układ. Integracja/szkolenia są opcjonalne.
+
+Instrukcja edycji i ograniczenia publikacji: [Document Studio](../../../DOCUMENT_STUDIO.md).
+Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej akceptacji treści.
+
 **ID:** `offer.incentive`  
 **Rodzina:** `offer` · **Odbiorca:** firma, HR, zarząd, organizator wydarzenia  
 **Poufność:** oferta dla klienta biznesowego, bez wewnętrznych danych operacyjnych  

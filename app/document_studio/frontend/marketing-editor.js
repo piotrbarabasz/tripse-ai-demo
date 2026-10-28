@@ -1,6 +1,6 @@
 /* Campaign editing is separate from the existing trip editor and the renderer. */
 window.MarketingEditor = (() => {
-  let campaign, catalog, assets, ui, timer, generation = 0, format = 'a4', saving = false;
+  let campaign, catalog, assets, ui, timer, generation = 0, format = 'a4', saving = false, documentDraft=null;
   const find = selector => document.querySelector(selector);
   const clone = value => JSON.parse(JSON.stringify(value));
   const normalize = () => {
@@ -28,21 +28,22 @@ window.MarketingEditor = (() => {
     <div class="heading marketing-heading"><div><p class="eyebrow">MARKETING.COLLECTION</p><h1>Studio kolekcji</h1><p class="muted">Edytuj treść, ułóż kierunki i sprawdź dokument przed drukiem.</p></div><div class="actions"><button id="m-save" class="primary">Zapisz zmiany</button><button id="m-export" class="accent">Zapisz dokument / PDF</button></div></div>
     <div class="marketing-layout"><div class="marketing-controls"><form id="m-form"><section class="panel"><h2>Kampania</h2><div class="fields"><div class="full">${field('Tytuł kampanii','title',campaign.title,'required maxlength="200"')}</div>
     <label>Kompozycja<select data-m-field="layout_variant"><option value="new_trips" ${campaign.layout_variant==='new_trips'?'selected':''}>Nowe kierunki</option><option value="theme_collection" ${campaign.layout_variant==='theme_collection'?'selected':''}>Kolekcja tematyczna</option></select></label>
-    ${field('Sezon / podtytuł','season',campaign.season,'maxlength="200"')}
+    ${field('Sezon / podtytuł','season',campaign.season,'maxlength="200"')}${field('Opcjonalny prowadzący','leader',campaign.leader,'maxlength="200"')}
     <div class="full">${field('Temat przewodni','theme',campaign.theme,'maxlength="200"')}</div><div class="full">${area('Wprowadzenie','description',campaign.description,1000)}</div><div class="full">${area('CTA / kontakt','cta',campaign.cta,600)}</div></div>
     <div id="m-hero" ${campaign.layout_variant==='theme_collection'?'':'hidden'}>${photoFields('',campaign.hero_asset_id,campaign.hero_position,true)}</div></section>
     <section class="panel"><h2>Kierunki kolekcji</h2><p class="muted">Tytuły i opisy w kampanii nie zmieniają wycieczek źródłowych.</p><div id="m-items">${campaign.items.map((item,index)=> {
       const trip = catalog.find(t=>t.trip_id===item.trip_id);
       return `<article class="marketing-item" data-m-item="${index}"><div class="section-heading"><h3>${index+1}. ${e(trip?.destinations.join(' · ') || 'Kierunek')}</h3><div class="actions"><button type="button" data-m-move="${index},-1" aria-label="Przesuń kierunek ${index+1} w górę" ${index===0?'disabled':''}>↑</button><button type="button" data-m-move="${index},1" aria-label="Przesuń kierunek ${index+1} w dół" ${index===campaign.items.length-1?'disabled':''}>↓</button><button type="button" class="danger" data-m-remove="${index}">Usuń</button></div></div>
-      ${field('Tytuł w dokumencie',`items.${index}.display_title`,item.display_title || trip?.title,'maxlength="200"')}
+      ${field('Tytuł w dokumencie',`items.${index}.display_title`,item.display_title || trip?.title,'maxlength="200"')}${field('Pilot / prowadzący (opcjonalnie)',`items.${index}.leader`,item.leader,'maxlength="200"')}
       ${field('Termin lub etykieta',`items.${index}.date_range_or_label`,item.date_range_or_label,'maxlength="200" placeholder="Termin do ustalenia"')}
       ${area('Krótki opis',`items.${index}.short_hook`,item.short_hook)}
       ${field('Wyróżniki (oddziel przecinkami)',`items.${index}.highlights`,item.highlights.join(', '),'maxlength="1000"')}
       <label>Oznaczenie<select data-m-field="items.${index}.badge">${[['concept','Propozycja'],['new','Nowość'],['pilot','Pilotaż']].map(([key,label])=>`<option value="${key}" ${(item.badge || 'concept')===key?'selected':''}>${label}</option>`).join('')}</select></label>
       ${photoFields(`items.${index}`,item.image_asset_id,item.image_position)}</article>`;
-    }).join('')}</div><label>Dodaj wycieczkę<select id="m-add-trip"><option value="">Wybierz z biblioteki…</option>${catalog.filter(trip=>!campaign.items.some(item=>item.trip_id===trip.trip_id)).map(trip=>`<option value="${trip.trip_id}">${e(trip.title)}</option>`).join('')}</select></label><button type="button" id="m-add">+ Dodaj kierunek</button></section></form>
+    }).join('')}</div><label>Dodaj wycieczkę<select id="m-add-trip"><option value="">Wybierz z biblioteki…</option>${catalog.filter(trip=>!campaign.items.some(item=>item.trip_id===trip.trip_id)).map(trip=>`<option value="${trip.trip_id}">${e(trip.title)}</option>`).join('')}</select></label><button type="button" id="m-add">+ Dodaj kierunek</button></section>${documentDraft?window.SectionEditor.html(documentDraft,assets):''}</form>
     <section class="panel"><h2>Twoje zdjęcia</h2><p class="muted">JPG, PNG lub WebP · do 8 MB i 24 MP. Zdjęcia pozostają w prywatnym magazynie demo.</p><label>Przypisz nowe zdjęcie<select id="m-upload-target"><option value="hero">Zdjęcie główne kolekcji</option>${campaign.items.map((item,i)=>`<option value="${i}">Kierunek ${i+1}</option>`).join('')}</select></label><label>Plik zdjęcia<input type="file" id="m-file" accept="image/jpeg,image/png,image/webp"></label><label class="rights-check"><input type="checkbox" id="m-rights">Mam prawo użyć tego zdjęcia w tym materiale.</label><button type="button" id="m-upload">Wgraj i wybierz zdjęcie</button><p id="m-upload-status" role="status"></p></section></div>
     <div class="marketing-preview"><div class="preview-heading"><div><p class="eyebrow">PODGLĄD NA ŻYWO</p><small>Kolory, typografia i tekstowy znak TRIPSE są propozycją roboczą.</small></div><label>Format<select id="m-format"><option value="a4" ${format==='a4'?'selected':''}>A4 / PDF</option><option value="social" ${format==='social'?'selected':''}>1080 × 1350</option></select></label></div><div id="m-validation" role="status"></div><iframe id="m-preview" title="Podgląd dokumentu marketingowego"></iframe></div></div>`;
+    if(documentDraft)window.SectionEditor.bind(ui.main,documentDraft,{assets,dirty:ui.dirty,preview:()=>{clearTimeout(timer);timer=setTimeout(preview,500);},draw});
     find('#m-form').addEventListener('submit',event=>event.preventDefault());
     find('#m-form').addEventListener('input',changeField);
     find('#m-form').addEventListener('change',event=> {if(event.target.tagName==='SELECT') changeField(event);});
@@ -72,7 +73,7 @@ window.MarketingEditor = (() => {
     if(key==='highlights')value=value.split(',').map(x=>x.trim()).filter(Boolean);
     if(event.target.type==='range')value=Number(value);
     if(key==='hero_asset_id'||key==='image_asset_id')value ||= null;
-    target[key]=value;ui.dirty(true);
+    if(key==='leader')value ||= null;target[key]=value;ui.dirty(true);
     find('#m-hero').hidden=campaign.layout_variant!=='theme_collection';
     clearTimeout(timer);timer=setTimeout(preview,450);
   }
@@ -80,11 +81,11 @@ window.MarketingEditor = (() => {
     const version=++generation;
     const panel=find('#m-validation');if(!panel)return;
     if(!campaign.title.trim() || !campaign.items.length){panel.textContent='Podaj tytuł kampanii i dodaj co najmniej jeden kierunek.';find('#m-preview').srcdoc='';return;}
-    const body=JSON.stringify({campaign:normalize(),output_format:format});
+    const body=JSON.stringify(documentDraft?{draft:{...documentDraft,title:campaign.title,layout_variant:campaign.layout_variant,campaign_snapshot:normalize(),campaign_trip_snapshots:campaign.items.map(item=>documentDraft.campaign_trip_snapshots.find(t=>t.trip_id===item.trip_id)||catalog.find(t=>t.trip_id===item.trip_id))},output_format:format}:{campaign:normalize(),output_format:format});
     try {
       const [issues,response]=await Promise.all([
-        ui.api('marketing/validate',{method:'POST',body}),
-        fetch('/api/document-studio/marketing/preview',{method:'POST',headers:{'Content-Type':'application/json'},body})
+        ui.api(documentDraft?'trip-documents/validate':'marketing/validate',{method:'POST',body}),
+        fetch('/api/document-studio/'+(documentDraft?'trip-documents/preview':'marketing/preview'),{method:'POST',headers:{'Content-Type':'application/json'},body})
       ]);
       if(!response.ok)throw new Error('Nie udało się zbudować podglądu. Sprawdź pola kampanii.');
       const html=await response.text();
@@ -98,7 +99,7 @@ window.MarketingEditor = (() => {
     if(!find('#m-form').reportValidity() || !campaign.items.length){ui.message('Podaj tytuł i dodaj co najmniej jeden kierunek.',true);return false;}
     saving=true;ui.busy(true);find('#m-save').disabled=true;
     try{
-      campaign=await ui.api('campaigns/'+campaign.campaign_id,{method:'PUT',body:JSON.stringify(normalize())});
+      if(documentDraft){Object.assign(documentDraft,await ui.api('drafts/'+documentDraft.document_id,{method:'PUT',body:JSON.stringify({revision:documentDraft.revision,title:campaign.title,sections:documentDraft.sections,campaign_snapshot:normalize()})}));campaign=clone(documentDraft.campaign_snapshot);}else campaign=await ui.api('campaigns/'+campaign.campaign_id,{method:'PUT',body:JSON.stringify(normalize())});
       ui.dirty(false);await ui.refresh();ui.message('Kampania zapisana.');return true;
     }catch(error){ui.message(error.message,true);return false;}
     finally{saving=false;ui.busy(false);if(find('#m-save'))find('#m-save').disabled=false;}
@@ -110,7 +111,7 @@ window.MarketingEditor = (() => {
     if(!tab){ui.message('Zezwól na otwarcie okna podglądu PDF.',true);return;}
     try{
       if(!await save()){tab.close();return;}
-      const draft=await ui.api('drafts',{method:'POST',body:JSON.stringify({template_id:'marketing.collection',source_type:'campaign',source_id:campaign.campaign_id,layout_variant:campaign.layout_variant})});
+      const draft=documentDraft||await ui.api('drafts',{method:'POST',body:JSON.stringify({template_id:'marketing.collection',source_type:'campaign',source_id:campaign.campaign_id,layout_variant:campaign.layout_variant})});
       await ui.refresh();
       tab.opener=null;tab.location.href=`/api/document-studio/drafts/${draft.document_id}/preview?output_format=${format}`;
     }catch(error){tab.close();ui.message(error.message,true);}
@@ -130,7 +131,8 @@ window.MarketingEditor = (() => {
     }catch(error){ui.message(error.message,true);if(find('#m-upload'))find('#m-upload').disabled=false;}
   }
   return {async open(source,trips,context){
-    generation++;clearTimeout(timer);campaign=clone(source);catalog=trips;ui=context;format='a4';
+    generation++;clearTimeout(timer);campaign=clone(source);catalog=trips;ui=context;format='a4';documentDraft=context.draft||null;if(documentDraft?.sections===null)documentDraft=await ui.api('trip-documents/initialize',{method:'POST',body:JSON.stringify({draft:documentDraft})});
+    if(documentDraft){campaign.layout_variant=documentDraft.layout_variant;campaign.title=documentDraft.title;}
     assets=await ui.api('assets');draw();
   }};
 })();

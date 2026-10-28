@@ -7,15 +7,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from pydantic import Field
 
-from app.document_studio.models import Campaign, DocumentDraft, Identifier, Model, Title, Trip, Text, OfferData, PilotData, DayOverride
+from app.document_studio.models import Campaign, DocumentDraft, Identifier, Model, Title, Trip, Text, OfferData, PilotData, DayOverride, OfferDetails, DocumentSection
 from app.document_studio.repository import ConflictError, JsonRepository, StorageError
 from app.document_studio.service import DocumentService
 from app.document_studio.templates import TEMPLATES
 from app.document_studio.assets import AssetStore, MAX_UPLOAD_BYTES
 from app.document_studio.marketing import build_marketing
 from app.document_studio.rendering import render_marketing
-from app.document_studio.rendering.trip_documents import render_trip_document
-from app.document_studio.trip_documents import trip_document_issues, SUPPORTED_TRIP_TEMPLATES
 
 WEB = Path(__file__).parent / "frontend"
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
@@ -57,10 +55,14 @@ class DraftUpdate(Model):
     day_overrides: list[DayOverride] = Field(default_factory=list)
     offer_data: OfferData | None = None
     pilot_data: PilotData | None = None
+    offer_details: OfferDetails | None = None
+    sections: list[DocumentSection] | None = None
+    campaign_snapshot: Campaign | None = None
 
 
 class TripPreviewRequest(Model):
     draft: DocumentDraft
+    output_format: Literal["a4", "social"] = "a4"
 
 
 class MarketingPreviewRequest(Model):
@@ -70,8 +72,8 @@ class MarketingPreviewRequest(Model):
 
 def document_router(repository, *, access_policy=local_only, asset_store=None, cloud_mode=False):
     router = APIRouter(dependencies=[Depends(access_policy)])
-    service = DocumentService(repository)
     assets = asset_store or AssetStore(repository)
+    service = DocumentService(repository, assets)
 
     def marketing_data(campaign, trips=None, label="Podgląd roboczy"):
         trips = trips if trips is not None else [repository.get("trips", i.trip_id) for i in campaign.items]
@@ -103,7 +105,7 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
 
     @router.get("/documents/assets/{filename}", include_in_schema=False)
     def asset(filename: str):
-        if filename not in {"studio.js", "studio.css", "marketing-editor.js", "marketing-editor.css", "brand-tokens.css", "marketing.css", "print-export.js", "trip-documents.css", "trip-editor.js", "trip-editor.css"}:
+        if filename not in {"studio.js", "studio.css", "marketing-editor.js", "marketing-editor.css", "brand-tokens.css", "marketing.css", "print-export.js", "trip-documents.css", "trip-editor.js", "trip-editor.css", "section-editor.js"}:
             raise HTTPException(404)
         return FileResponse(WEB / filename)
 
@@ -171,11 +173,25 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
 
     @router.post("/api/document-studio/trip-documents/validate")
     def validate_trip_document(value: TripPreviewRequest):
-        return run(lambda: trip_document_issues(value.draft, assets))
+        from app.document_studio.rendering.sections import document_issues
+        return run(lambda: document_issues(value.draft, assets))
+
+    @router.post("/api/document-studio/trip-documents/initialize")
+    def initialize_sections(value: TripPreviewRequest):
+        from app.document_studio.sections import default_sections
+        def initialize():
+            draft = value.draft
+            if draft.sections is None:
+                draft.sections = default_sections(draft)
+            if draft.template_id.startswith("offer.") and draft.offer_details is None:
+                draft.offer_details = OfferDetails()
+            return draft
+        return run(initialize)
 
     @router.post("/api/document-studio/trip-documents/preview")
     def preview_trip_document(value: TripPreviewRequest):
-        return run(lambda: HTMLResponse(render_trip_document(value.draft, assets), headers={"Cache-Control":"no-store"}))
+        from app.document_studio.rendering.sections import render_document
+        return run(lambda: HTMLResponse(render_document(value.draft, assets, value.output_format), headers={"Cache-Control":"no-store"}))
 
     @router.get("/api/document-studio/assets")
     def asset_list():
@@ -215,17 +231,8 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
     def preview_draft(identifier: Identifier, output_format: Literal["a4", "social"] = "a4"):
         def preview():
             draft = repository.get("drafts", identifier)
-            if draft.template_id in SUPPORTED_TRIP_TEMPLATES:
-                if output_format != "a4":
-                    raise ValueError("Oferta i rozpiska pilota obsługują format A4")
-                return HTMLResponse(render_trip_document(draft, assets), headers={"Cache-Control":"no-store", "X-Content-Type-Options":"nosniff"})
-            if draft.template_id != "marketing.collection" or not draft.campaign_snapshot:
-                raise ValueError("Podgląd graficzny jest dostępny dla marketing.collection.")
-            campaign = draft.campaign_snapshot.model_copy(deep=True)
-            campaign.layout_variant = draft.layout_variant
-            campaign.title = draft.title
-            return html(marketing_data(campaign, draft.campaign_trip_snapshots,
-                        f"Dokument {draft.document_id[:8]} · rewizja {draft.revision} · szablon {draft.template_version}"), output_format)
+            from app.document_studio.rendering.sections import render_document
+            return HTMLResponse(render_document(draft, assets, output_format), headers={"Cache-Control":"no-store", "X-Content-Type-Options":"nosniff"})
         return run(preview)
 
     return router

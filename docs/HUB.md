@@ -44,7 +44,7 @@ Karty prowadzą do istniejących modułów:
 | Karta | Adres | Zakres |
 |---|---|---|
 | AI Trip Planner & Maps | `/planner` | Formularz planowania; wynik otwiera tokenowy viewer mapy |
-| Document Studio | `/documents/demo` | Wycieczki, kampanie i dokumenty; bez zależności od workera |
+| Document Studio | `/documents/demo#templates` | Katalog ośmiu typów; wycieczki, kampanie i dokumenty zachowane; bez zależności od workera |
 | WhatsApp Assistant | `/demo/chat` w mock | Symulator rozmowy bez prawdziwego WhatsApp |
 
 W `PLANNING_MODE=live` symulator pozostaje wyłączony zgodnie z dotychczasowym

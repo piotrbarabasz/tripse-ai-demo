@@ -12,13 +12,17 @@ supersedes: []
 
 # ADR-0006: Wspólny rejestr szablonów i komponenty wizualne
 
-Częściowo wdrożone; retrospektywny zapis bez potwierdzenia właściciela.
+2026-10-28: wszystkie osiem ID ma lokalnie zaimplementowany edytor sekcji i
+podgląd roboczy 0.4.0, współdzielący dotychczasowy shell, zdjęcia i paginację.
+Retrospektywny zapis pozostaje `proposed`, bez formalnej akceptacji właściciela.
+Nowa iteracja nie została wdrożona na DEV/PROD.
 
 ## 1. Kontekst i problem
 
 Wiele dokumentów ma zachować tożsamość typów i wspólne elementy wizualne.
-Fakt: katalog ma osiem ID, lecz kompletne generatory obejmują tylko
-`marketing.collection` (dwa warianty), `offer.private` i `pilot.basic`.
+Historyczny stan 2026-10-25: katalog miał osiem ID, lecz kompletne generatory
+obejmowały tylko `marketing.collection` (dwa warianty), `offer.private` i
+`pilot.basic`. Pozostałe typy uzupełniono wspólnym mechanizmem sekcji dokumentu.
 
 ## 2. Rozważane alternatywy
 
@@ -41,13 +45,14 @@ definiuje wspólne komponenty. DEMO-02 wskazuje podmianę brandingu przez tokeny
 
 ## 5. Konsekwencje pozytywne i negatywne
 
-Plus: jeden styl i mechanizm stron służy trzem generatorom.
+Plus: jeden styl i mechanizm stron służy wszystkim ośmiu typom.
 Minus: zmiana wspólnego komponentu wymaga regresji wszystkich dokumentów;
 rejestr nie uruchamia automatycznie nowego generatora ani walidatora.
 
 ## 6. Dług techniczny i ograniczenia
 
-Pięć ID ma tylko zakres katalogowy. Branding i znak tekstowy są robocze;
+Pięć wcześniej katalogowych ID ma teraz edytor i renderowanie sekcyjne.
+Branding i znak tekstowy są robocze;
 brak wersjonowanego archiwum rendererów. Przełączanie typów i część UI są
 implementowane jawnie w kodzie. [DEBT-04 i DEBT-08](../tracking/repository-audit.md).
 
@@ -71,3 +76,9 @@ ewentualne języki/formaty. Wpis w rejestrze nie oznacza, że te prace już wyko
 
 Zatwierdzony branding, wiele języków, formaty poza obecnym drukiem lub
 konfigurowanie szablonów przez użytkownika. Ewentualny CMS/framework wymaga osobnego uzasadnienia.
+
+## Historia zmian
+
+| Data | Autor | Zmiana | Podstawa |
+|---|---|---|---|
+| 2026-10-28 | Codex | Uzupełnienie ośmiu typów przez walidowane sekcje instancji; zachowanie wspólnego silnika, snapshotów i statusu proposed | Zlecenie użytkownika; [instrukcja](../DOCUMENT_STUDIO.md); brak nowego tasku/PR |

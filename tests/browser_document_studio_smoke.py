@@ -58,7 +58,7 @@ def run():
                 page.on("pageerror", lambda error: errors.append(str(error)))
                 page.on("request", lambda request: requests.append(request.url))
                 page.on("dialog", lambda dialog: dialog.accept())
-                page.goto(base + "/documents/demo")
+                page.goto(base + "/documents/demo#trips")
                 expect(page.locator(".card")).to_have_count(3)
                 page.screenshot(path=str(artifacts / "library-desktop.png"), full_page=True)
                 page.locator('[data-go="trips/demo-canada"]').click()
@@ -124,3 +124,5 @@ def run():
 
 if __name__ == "__main__":
     run()
+    from studio_catalog_qa import run_catalog
+    run_catalog()

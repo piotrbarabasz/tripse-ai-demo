@@ -2,9 +2,7 @@
 from app.document_studio.rendering.components import photo, text, trip_card
 
 
-def render_marketing(document, output_format="a4"):
-    if output_format not in {"a4", "social"}:
-        raise ValueError("Unknown output format")
+def marketing_blocks(document):
     title = text(document.title)
     intro = (f'<section class="block campaign-intro"><p class="eyebrow">{text(document.season or "Kolekcja podróży")}</p>'
              f'<h1>{title}</h1><p class="intro-description">{text(document.description)}</p></section>')
@@ -13,11 +11,19 @@ def render_marketing(document, output_format="a4"):
                  f'<div class="theme-copy"><p class="eyebrow">{text(document.season or "Kolekcja podróży")}</p>'
                  f'<h1>{text(document.theme)}</h1><h2>{title}</h2><p>{text(document.description)}</p></div></section>')
     blocks = intro + ''.join(trip_card(card, i, document.variant) for i, card in enumerate(document.cards, 1))
+    if document.leader:
+        blocks += f'<section class="block"><p>Prowadzący kolekcję: {text(document.leader)}</p></section>'
     blocks += f'<section class="block cta"><span class="eyebrow">TWOJA KOLEJNA PODRÓŻ</span><p>{text(document.cta or "CTA / kontakt do uzupełnienia")}</p></section>'
-    return render_shell(document.title, blocks, document.issues, output_format, document.variant, document.revision_label)
+    return blocks
 
 
-def render_shell(document_title, blocks, issues, output_format="a4", variant="standard", revision_label="Podgląd roboczy", classification="KOLEKCJA PODRÓŻY"):
+def render_marketing(document, output_format="a4"):
+    if output_format not in {"a4", "social"}:
+        raise ValueError("Unknown output format")
+    return render_shell(document.title, marketing_blocks(document), document.issues, output_format, document.variant, document.revision_label)
+
+
+def render_shell(document_title, blocks, issues, output_format="a4", variant="standard", revision_label="Podgląd roboczy", classification="KOLEKCJA PODRÓŻY", draft_export=False):
     """Shared page header/footer, CSP, branding and print entry point for all templates."""
     title = text(document_title)
     report = ''.join(f'<li class="{i.severity}">{text(i.message)}</li>' for i in issues)
@@ -32,7 +38,7 @@ def render_shell(document_title, blocks, issues, output_format="a4", variant="st
 <link rel="stylesheet" href="/documents/assets/trip-documents.css">
 <style>@page{{size:{page_size};margin:0}}</style>
 <script src="/documents/assets/print-export.js" defer></script></head>
-<body class="format-{output_format} variant-{variant}" data-valid="{str(not errors).lower()}">
+<body class="format-{output_format} variant-{variant}" data-valid="{str(not errors or draft_export).lower()}" data-final-valid="{str(not errors).lower()}">
 <div class="preview-toolbar"><div><strong>TRIPSE / podgląd</strong><small>Branding roboczy · {"A4" if output_format == "a4" else "1080 × 1350"} · {text(revision_label)}</small></div>
 <button id="print-document" disabled>Zapisz jako PDF</button>
 <details><summary>Uwagi do dokumentu ({len(issues)})</summary><ul>{report or '<li>Brak brakujących pól.</li>'}</ul></details>

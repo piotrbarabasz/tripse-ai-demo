@@ -29,7 +29,7 @@ def test_one_trip_two_documents_privacy_and_restart(tmp_path):
         offer = create_draft(client,"offer.private",demo=True)
         pilot = create_draft(client,"pilot.basic",demo=True)
         assert offer["trip_snapshot"]["trip_id"] == pilot["trip_snapshot"]["trip_id"]
-        assert offer["template_version"] == pilot["template_version"] == "0.3.0"
+        assert offer["template_version"] == pilot["template_version"] == "0.4.0"
         assert offer["pilot_data"] is None
         assert offer["trip_snapshot"]["days"][0]["internal_notes"] == ""
         assert offer["trip_snapshot"]["days"][0]["stops"][0]["source"] is None

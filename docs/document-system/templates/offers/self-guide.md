@@ -1,5 +1,10 @@
 # Szablon: oferta Self-Guide (bez pilota)
 
+Stan implementacji lokalnej 2026-10-28 (szablony 0.4.0): OfferData + OfferDetails: organizacja, samodzielne ustalenia, materiały, wsparcie, miejsce na niegwarantowany briefing. Oznaczenie bez pilota jest zawsze na początku roboczego PDF.
+
+Instrukcja edycji i ograniczenia publikacji: [Document Studio](../../../DOCUMENT_STUDIO.md).
+Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej akceptacji treści.
+
 **ID:** `offer.self_guide`  
 **Rodzina:** `offer` · **Odbiorca:** klient podróżujący samodzielnie  
 **Poufność:** dokument klientowski  

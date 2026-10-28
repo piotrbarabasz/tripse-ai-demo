@@ -1,5 +1,10 @@
 # Szablon: podstawowa rozpiska pilota
 
+Stan implementacji lokalnej 2026-10-28 (szablony 0.4.0): Wspólne PilotData/OperationalEntry oraz domyślne i własne sekcje. Rozpiska pozostaje internal_restricted, bez pola PIN; nie duplikuje modelu rezerwacji.
+
+Instrukcja edycji i ograniczenia publikacji: [Document Studio](../../../DOCUMENT_STUDIO.md).
+Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej akceptacji treści.
+
 **ID:** `pilot.basic`  
 **Rodzina:** `pilot` · **Odbiorca:** pilot TRIPSE dobrze znający kierunek  
 **Poufność:** `internal_restricted` — zawiera operacyjne dane osobowe i rezerwacyjne.  

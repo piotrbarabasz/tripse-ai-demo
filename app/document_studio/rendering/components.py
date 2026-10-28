@@ -20,5 +20,6 @@ def trip_card(card, index, variant):
             f'<div class="card-copy"><div class="card-meta"><span class="trip-index">{index:02d}</span>'
             f'<span class="badge">{text(card.badge)}</span><span>{text(card.destination)}</span></div>'
             f'<h2>{text(card.title)}</h2><p class="date-label">{text(card.date_label)}</p>'
+            f'{"<p>Prowadzący: " + text(card.leader) + "</p>" if card.leader else ""}'
             f'<p class="card-description">{text(card.description)}</p>'
             f'<ul class="highlights">{"".join(f"<li>{text(h)}</li>" for h in card.highlights)}</ul></div></article>')

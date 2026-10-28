@@ -1,5 +1,9 @@
 # Architektura modułu dokumentów
 
+Stan implementacji lokalnej 2026-10-28: Implementacja korzysta z istniejących Trip/Campaign, DocumentDraft, JSON/GCS i przeglądarkowego eksportu. Sekcje Pydantic → definicje templates.py → instancje snapshotów są trzema poziomami. Nie wdrożono równoległych endpointów `/api/document-drafts`, kolejki renderowania ani modelu zatwierdzeń opisanego dalej jako docelowa propozycja.
+
+Szczegóły operacyjne: [Document Studio](../../DOCUMENT_STUDIO.md).
+
 **Status:** propozycja nowego modułu; nie jest to opis kodu, który już istnieje w repozytorium.  
 **Zasada:** rozwijać `tripse-ai-demo` **modułowo**, nie przepisywać działającego planera.
 

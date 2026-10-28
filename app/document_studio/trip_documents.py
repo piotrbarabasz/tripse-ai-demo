@@ -2,7 +2,7 @@
 from app.document_studio.marketing import Issue
 from app.document_studio.models import OfferData, PilotData, Trip
 
-SUPPORTED_TRIP_TEMPLATES = {"offer.private", "pilot.basic"}
+SUPPORTED_TRIP_TEMPLATES = {"offer.private", "offer.self_guide", "offer.school", "offer.incentive", "pilot.basic", "pilot.advanced", "pilot.knowledge"}
 OFFER_TRIP_FIELDS = {
     "trip_id", "schema_version", "revision", "title", "destinations", "description",
     "start_date", "end_date", "duration_days", "status", "updated_at",
@@ -26,6 +26,8 @@ def trip_document_issues(draft, assets):
     if draft.template_id not in SUPPORTED_TRIP_TEMPLATES or not draft.trip_snapshot:
         raise ValueError("Wybierz offer.private lub pilot.basic z wycieczką źródłową")
     issues = []
+    from app.document_studio.sections import section_issues
+    issues.extend(section_issues(draft, assets))
     def issue(path, message, severity="warning"):
         issues.append(Issue(field_path=path, message=message, severity=severity))
     trip = draft.trip_snapshot
@@ -35,7 +37,7 @@ def trip_document_issues(draft, assets):
         issue("date_label", "Termin do ustalenia — uzupełnij daty lub jawny opis terminu.")
     if draft.demo_example:
         issue("demo_example", "FIKCYJNY PRZYKŁAD DEMO. Terminy, usługi, ceny i statusy nie są rzeczywistą ofertą ani rezerwacją.")
-    if draft.template_id == "offer.private":
+    if draft.template_id.startswith("offer."):
         offer = draft.offer_data or OfferData()
         for field, label in (("summary","podsumowanie"),("accommodation","zakwaterowanie"),("transport","transport"), ("included","świadczenia w cenie"),("excluded","świadczenia poza ceną"),("highlights","główne zalety")):
             if not getattr(offer, field):
@@ -61,7 +63,7 @@ def trip_document_issues(draft, assets):
                     assets.get(identifier)
                 except KeyError:
                     issue("offer_data.cover_asset_id", "Wybrane zdjęcie nie istnieje.", "error")
-    else:
+    elif draft.template_id != "pilot.knowledge":
         pilot = draft.pilot_data or PilotData()
         for field, label in (("leader","pilot"),("meeting","zbiórka"),("contacts","kontakty organizacyjne")):
             if not getattr(pilot, field):

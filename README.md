@@ -80,7 +80,10 @@ brak potwierdzenia decyzji przez właściciela, nie brak implementacji.
 
 ## TRIPSE Document Studio — lokalne demo
 
-Panel dokumentów: [http://localhost:8000/documents/demo](http://localhost:8000/documents/demo).
+Panel dokumentów: [http://localhost:8000/documents/demo#templates](http://localhost:8000/documents/demo#templates).
+Katalog zawiera osiem typów: cztery oferty, trzy materiały pilota i marketing
+z dwoma wariantami. Wybierz typ i źródło, edytuj sekcje, zapisz draft i otwórz
+roboczy PDF. [Instrukcja pracy i ograniczenia](docs/DOCUMENT_STUDIO.md).
 Oddzielne modele wielodniowych wycieczek, kampanie wielu kierunków i zapisywane
 snapshoty dokumentów; dane w lokalnych plikach JSON, bez zmian SQLite planera.
 Start: `docker compose up --build -d api` lub lokalny Uvicorn.

@@ -2,15 +2,18 @@ import json
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from app.document_studio.models import DocumentDraft, OfferData, PilotData
+from app.document_studio.models import DocumentDraft, OfferData, PilotData, OfferDetails
+from app.document_studio.sections import default_sections, section_issues
 from app.document_studio.repository import Repository
 from app.document_studio.templates import TEMPLATES
-from app.document_studio.trip_documents import offer_trip_snapshot, SUPPORTED_TRIP_TEMPLATES
+from app.document_studio.trip_documents import offer_trip_snapshot
 
 
 class DocumentService:
-    def __init__(self, repository: Repository):
+    def __init__(self, repository: Repository, assets=None):
         self.repository = repository
+        from app.document_studio.assets import AssetStore
+        self.assets = assets or AssetStore(repository)
 
     def save_campaign(self, campaign, *, create=False):
         for item in campaign.items:
@@ -30,27 +33,24 @@ class DocumentService:
         source = self.repository.get("campaigns" if template.source_type == "campaign" else "trips", request.source_id)
 
         def snapshot(trip):
-            if template.template_id == "offer.private":
-                return offer_trip_snapshot(trip)
-            copy = trip.model_copy(deep=True)
             if template.confidentiality in ("public", "client"):
-                for day in copy.days:
-                    day.internal_notes = ""
-            return copy
+                return offer_trip_snapshot(trip)
+            return trip.model_copy(deep=True)
 
         draft = DocumentDraft(
             title=request.title or source.title, template_id=template.template_id,
             template_version=template.template_version, layout_variant=request.layout_variant,
             confidentiality=template.confidentiality,
             trip_snapshot=snapshot(source) if template.source_type == "trip" else None,
-            campaign_snapshot=source if template.source_type == "campaign" else None,
+            campaign_snapshot=source.model_copy(deep=True, update={"layout_variant": request.layout_variant}) if template.source_type == "campaign" else None,
             campaign_trip_snapshots=[snapshot(self.repository.get("trips", item.trip_id)) for item in source.items] if template.source_type == "campaign" else [],
             editorial_notes=request.editorial_notes,
-            offer_data=OfferData() if template.template_id == "offer.private" else None,
-            pilot_data=PilotData() if template.template_id == "pilot.basic" else None,
+            offer_data=OfferData(summary=source.description) if template.family == "offer" else None,
+            offer_details=OfferDetails() if template.family == "offer" else None,
+            pilot_data=PilotData() if template.template_id in {"pilot.basic", "pilot.advanced"} else None,
         )
         if getattr(request, "demo_example", False):
-            if template.template_id not in SUPPORTED_TRIP_TEMPLATES or source.trip_id != "demo-iceland":
+            if template.template_id not in {"offer.private", "pilot.basic"} or source.trip_id != "demo-iceland":
                 raise ValueError("Fikcyjny przykład dostępny dla wycieczki demo-iceland i dwóch nowych szablonów")
             data = json.loads((Path(__file__).resolve().parents[2] / "demo-fixtures/document-presets/iceland.json").read_text(encoding="utf-8"))
             draft.demo_example = True
@@ -67,19 +67,39 @@ class DocumentService:
                 if source.days:
                     pilot["activity_bookings"] = [{"day_id":source.days[0].day_id,"title":"Wejście demonstracyjne — DEMO", "status":"unknown", "details":"Brak rezerwacji, godzina do ustalenia."}]
                 draft.pilot_data = PilotData.model_validate(pilot)
+        draft.sections = default_sections(draft)
         return self.repository.save("drafts", draft, create=True)
 
     def update_draft(self, identifier, value):
         draft = self.repository.get("drafts", identifier)
-        if draft.template_id not in SUPPORTED_TRIP_TEMPLATES:
-            raise ValueError("Edytor draftu obsługuje offer.private i pilot.basic")
         data = draft.model_dump(mode="json")
-        data.update(value.model_dump(mode="json"))
+        data.update(value.model_dump(mode="json", exclude_unset=True))
+        if draft.sections is not None and data.get("sections") is None:
+            raise ValueError("Nie można usunąć mechanizmu sekcji z istniejącego dokumentu")
+        if draft.sections is None and data.get("sections") is not None:
+            data["template_version"] = TEMPLATES[draft.template_id].template_version
+        if draft.template_id != "marketing.collection" and data.get("campaign_snapshot"):
+            raise ValueError("Kampania należy do dokumentu marketingowego")
+        if draft.campaign_snapshot:
+            campaign = data["campaign_snapshot"]
+            if not campaign or campaign["campaign_id"] != draft.campaign_snapshot.campaign_id:
+                raise ValueError("Nie można zmienić tożsamości kampanii snapshotu")
+            data["layout_variant"] = campaign["layout_variant"]
+            old = {t.trip_id: t for t in draft.campaign_trip_snapshots}
+            data["campaign_trip_snapshots"] = [offer_trip_snapshot(old.get(item["trip_id"]) or self.repository.get("trips", item["trip_id"])).model_dump(mode="json") for item in campaign["items"]]
         result = DocumentDraft.model_validate(data)
-        if result.template_id == "offer.private":
+        if result.template_id.startswith("offer."):
             result.trip_snapshot = offer_trip_snapshot(result.trip_snapshot)
             if result.offer_data:
                 for identifier in [result.offer_data.cover_asset_id, *result.offer_data.photo_asset_ids]:
                     if identifier:
                         self.repository.get("assets", identifier)
+            if result.offer_details:
+                for identifier in result.offer_details.hotel.photo_asset_ids:
+                    self.repository.get("assets", identifier)
+        section_issues(result, self.assets)
+        if result.campaign_snapshot:
+            for identifier in [result.campaign_snapshot.hero_asset_id, *(i.image_asset_id for i in result.campaign_snapshot.items)]:
+                if identifier:
+                    self.repository.get("assets", identifier)
         return self.repository.save("drafts", result)

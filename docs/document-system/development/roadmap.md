@@ -1,5 +1,9 @@
 # Roadmapa wdrożenia Document System
 
+Stan implementacji lokalnej 2026-10-28: Etapy katalogu, ośmiu edytorów, wspólnych sekcji i roboczego PDF są zaimplementowane lokalnie. Nie wykonano wdrożenia chmurowego tej iteracji. AI, workflow akceptacji, serwerowe eksporty i wysyłka nadal pozostają poza zakresem. Poniższa pierwotna roadmapa zachowuje kontekst planowania.
+
+Szczegóły operacyjne: [Document Studio](../../DOCUMENT_STUDIO.md).
+
 **Status:** plan roboczy; poszczególne zadania wymagają estymacji po wyborze backendu danych i rendererów. Nie deklaruje, że którakolwiek faza jest zaimplementowana.
 
 ## Etap 0 — dokumentacja, akceptacja i przykłady

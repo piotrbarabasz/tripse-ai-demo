@@ -58,7 +58,7 @@ def run():
                 expect(page.locator('.module-card')).to_have_count(3)
                 expect(page.locator('#hub-title')).to_contain_text('Jedno miejsce startu')
                 assert page.locator('#planner-link').get_attribute('href')=='/planner'
-                assert page.locator('#documents-link').get_attribute('href')=='/documents/demo'
+                assert page.locator('#documents-link').get_attribute('href')=='/documents/demo#templates'
                 assert page.locator('#assistant-link').get_attribute('href')=='/demo/chat'
                 page.keyboard.press('Tab')
                 expect(page.locator('.skip-link')).to_be_focused()
@@ -91,7 +91,7 @@ def run():
                 expect(page.locator('#modules')).to_be_visible()
                 # Protected studio keeps its existing routes/data and has a return.
                 page.locator('#documents-link').click()
-                expect(page.locator('.card')).to_have_count(3)
+                expect(page.locator('.template-card')).to_have_count(8)
                 page.locator('.module-hub-link').click()
                 expect(page.locator('.module-card')).to_have_count(3)
                 # Existing chat workflow still creates a plan via the demo worker.

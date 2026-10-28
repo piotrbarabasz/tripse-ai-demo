@@ -13,7 +13,7 @@ task opisuje pracę, a [worklog](../tracking/worklog.csv) jej udokumentowany prz
 | [ADR-0003](0003-document-snapshots.md) | Wspólne dane podróży, osobne snapshoty i pola dokumentu | proposed | Wdrożone |
 | [ADR-0004](0004-controlled-html-browser-pdf.md) | Kontrolowane HTML/CSS i druk do PDF w przeglądarce | proposed | Wdrożone |
 | [ADR-0005](0005-local-only-studio.md) | Lokalny dostęp do studia bez logowania w demo | proposed | Wdrożone |
-| [ADR-0006](0006-template-registry-shared-components.md) | Wspólny rejestr szablonów, komponenty i tokeny | proposed | Wdrożone częściowo: 3 generatory, 8 ID |
+| [ADR-0006](0006-template-registry-shared-components.md) | Wspólny rejestr szablonów, komponenty i tokeny | proposed | 8 ID z edytorem sekcji i podglądem 0.4.0; implementacja lokalna |
 | [ADR-0007](0007-sqlite-single-worker.md) | Kolejka planera w SQLite i jeden osobny worker | proposed | Wdrożone |
 | [ADR-0008](0008-local-demo-hub.md) | Lokalny Hub jako nawigacja istniejących modułów | superseded | Historyczne HUB-01; kanoniczną nawigację zastępuje ADR-0013 |
 | [ADR-0009](0009-cloud-run-readonly-preview.md) | Cloud Run DEV/PROD jako bezstanowy podgląd tylko do odczytu | superseded | ADR-0011 extends cloud functionality; readonly_demo retained |

@@ -1,5 +1,10 @@
 # Szablon: marketing — nowości i kolekcje wyjazdów
 
+Stan implementacji lokalnej 2026-10-28 (szablony 0.4.0): Istniejący edytor i renderer zachowują oba warianty, A4/1080×1350, zdjęcia i kadry. Draft ma niezależny campaign_snapshot oraz wspólne sekcje promocyjne; zmiana draftu nie zmienia kampanii. Opcjonalny prowadzący jest wpisywany ręcznie.
+
+Instrukcja edycji i ograniczenia publikacji: [Document Studio](../../../DOCUMENT_STUDIO.md).
+Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej akceptacji treści.
+
 **ID:** `marketing.collection`  
 **Warianty:** `new_trips`, `theme_collection`  
 **Rodzina:** `marketing` · **Odbiorca:** publiczny, social media, mailing, strona WWW  

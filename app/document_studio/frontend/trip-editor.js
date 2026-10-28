@@ -25,6 +25,15 @@ window.TripDocumentEditor = (() => {
       ${area('Założenia i warunki ceny','offer_data.price.assumptions',offer.price.assumptions)}${field('Źródło potwierdzenia ceny (nie drukuje się)','offer_data.price.source',offer.price.source,'text','maxlength="1000"')}
       ${area('Publiczny kontakt / CTA dla klienta','offer_data.cta',offer.cta)}</section>`;
   }
+  function extraOfferFields() {
+    const d=draft.offer_details;
+    if(!d)return '';
+    const path='offer_details.';
+    if(draft.template_id==='offer.self_guide')return `<section class="panel"><h2>Self-Guide — bez pilota na miejscu</h2>${area('Organizacja po stronie TRIPSE',path+'organization_scope',d.organization_scope)}${area('Klient organizuje samodzielnie',path+'self_arrangements',d.self_arrangements)}${area('Materiały i mapy',path+'materials',d.materials)}${area('Zakres wsparcia',path+'support',d.support)}${area('Briefing online — do uzgodnienia, nie gwarantowana usługa',path+'online_briefing',d.online_briefing)}</section>`;
+    if(draft.template_id==='offer.school')return `<section class="panel"><h2>Edukacja / Przyroda / Integracja</h2>${field('Sugerowany wiek',path+'age_group',d.age_group)}${field('Liczebność grupy',path+'group_size',d.group_size,'number','min="1"')}${area('Organizacja i odpowiedzialność opiekunów',path+'supervision',d.supervision)}${area('Aktywności i warsztaty',path+'workshops',d.workshops)}${d.goals.map((g,i)=>`<div class="document-entry">${select('Filar',`${path}goals.${i}.pillar`,g.pillar,[['education','Edukacja'],['nature','Przyroda'],['integration','Integracja']])}${area('Cel powiązany z programem',`${path}goals.${i}.description`,g.description)}${select('Dzień',`${path}goals.${i}.day_id`,g.day_id,[['','Do ustalenia'],...draft.trip_snapshot.days.map(day=>[day.day_id,day.title])])}${select('Atrakcja z tego dnia',`${path}goals.${i}.stop_id`,g.stop_id,[['','Cały dzień'],...draft.trip_snapshot.days.flatMap(day=>day.stops.filter(()=>day.day_id===g.day_id).map(stop=>[stop.stop_id,stop.name]))])}<button type="button" data-goal-remove="${i}">Usuń cel</button></div>`).join('')}<button type="button" id="add-goal">+ Dodaj cel</button></section>`;
+    if(draft.template_id==='offer.incentive')return `<section class="panel hotel-feature"><h2>Hotel / nocleg / infrastruktura obiektu</h2>${Object.entries({name_or_standard:'Nazwa lub proponowany standard',location:'Lokalizacja',room_types:'Rodzaje pokoi',common_spaces:'Przestrzenie wspólne',conference_rooms:'Sale konferencyjne'}).map(([key,label])=>area(label,path+'hotel.'+key,d.hotel[key])).join('')}${area('Udogodnienia — w osobnych wierszach',path+'hotel.amenities',d.hotel.amenities)}${select('Status hotelu',path+'hotel.status',d.hotel.status,[['unknown','Do ustalenia'],['proposed','Proponowany'],['confirmed','Potwierdzony — wymaga źródła']])}${area('Źródło potwierdzenia',path+'hotel.source',d.hotel.source)}<label>Zdjęcia hotelu<select multiple data-d-field="offer_details.hotel.photo_asset_ids">${assets.map(a=>`<option value="${a.asset_id}" ${d.hotel.photo_asset_ids.includes(a.asset_id)?'selected':''}>${e(a.original_name)}</option>`).join('')}</select></label>${area('Integracja i team building (opcjonalne)',path+'team_building',d.team_building)}${area('Szkolenia i warsztaty (opcjonalne)',path+'workshops',d.workshops)}${area('Posiłki i wydarzenia wieczorne',path+'meals_events',d.meals_events)}${area('Warianty programu / wyceny',path+'variants',d.variants)}</section>`;
+    return '';
+  }
   function pilotFields() {
     const pilot=draft.pilot_data;
     return `<section class="panel"><h2>Organizacja wyjazdu</h2><div class="notice">WEWNĘTRZNE. Tylko dla uprawnionych użytkowników. Nie wpisuj PIN-ów ani kodów dostępu.</div>
@@ -43,13 +52,14 @@ window.TripDocumentEditor = (() => {
       ${field('Numer rezerwacji (bez PIN-u i kodów dostępu)',path+'.booking_reference',entry.booking_reference,'text','maxlength="200"')}<button type="button" class="danger" data-d-remove="${group}.${index}">Usuń wpis</button></div>`;
   }
   function draw() {
-    ui.main.innerHTML=`<button class="text-button back" data-go="drafts/${e(draft.document_id)}">← Zapisany dokument</button><div class="heading"><div><p class="eyebrow">${e(draft.template_id)} · REWIZJA <span id="d-revision">${draft.revision}</span></p><h1>${draft.template_id==='offer.private'?'Oferta indywidualna':'Rozpiska pilota'}</h1><p class="muted">Snapshot wycieczki ${e(draft.trip_snapshot.title)} · zmiany pozostają w dokumencie.</p></div><div class="actions"><button class="primary" id="d-save">Zapisz draft</button><button class="accent" id="d-export">Podgląd / PDF</button></div></div>
+    ui.main.innerHTML=`<button class="text-button back" data-go="drafts/${e(draft.document_id)}">← Zapisany dokument</button><div class="heading"><div><p class="eyebrow">${e(draft.template_id)} · REWIZJA <span id="d-revision">${draft.revision}</span></p><h1>${e({'offer.private':'Oferta indywidualna','offer.self_guide':'Self-Guide — bez pilota','offer.school':'Wycieczka szkolna','offer.incentive':'Wyjazd firmowy / incentive','pilot.basic':'Rozpiska podstawowa','pilot.advanced':'Rozpiska zaawansowana','pilot.knowledge':'Materiały merytoryczne'}[draft.template_id])}</h1><p class="muted">Snapshot wycieczki ${e(draft.trip_snapshot.title)} · zmiany pozostają w dokumencie.</p></div><div class="actions"><button class="primary" id="d-save">Zapisz draft</button><button class="accent" id="d-export">Podgląd / PDF</button></div></div>
       <div class="trip-document-layout"><div class="trip-document-controls"><form id="d-form"><section class="panel"><h2>Metryka dokumentu</h2>${draft.demo_example?'<p class="notice">FIKCYJNY PRZYKŁAD DEMO — dane nie są rzeczywistą ofertą ani rezerwacją.</p>':''}
       ${field('Tytuł dokumentu','title',draft.title,'text','required maxlength="200"')}${field('Termin / jawna etykieta dat','date_label',draft.date_label,'text','maxlength="200" placeholder="Termin do ustalenia"')}</section>
-      ${draft.template_id==='offer.private'?offerFields():pilotFields()}
-      <section class="panel"><h2>Program — treści tego dokumentu</h2><p class="muted">Puste pole pozostawia treść bazowego snapshotu. Edycja nie zmienia Trip ani innych dokumentów.</p>${draft.trip_snapshot.days.map((day,index)=>`<div class="document-entry"><p class="eyebrow">DZIEŃ ${day.day_number}</p>${field('Własny tytuł',`day_overrides.${index}.title`,draft.day_overrides[index].title,'text',`maxlength="200" placeholder="${e(day.title)}"`)}${area('Własny opis',`day_overrides.${index}.description`,draft.day_overrides[index].description)}</div>`).join('')}</section></form>
-      ${draft.template_id==='offer.private'?'<section class="panel"><h2>Wgraj zdjęcie okładki</h2><input type="file" id="d-file" accept="image/jpeg,image/png,image/webp"><label class="document-check"><input type="checkbox" id="d-rights">Mam prawo użyć zdjęcia w ofercie.</label><button id="d-upload">Wgraj i wybierz</button></section>':''}</div>
+      ${draft.template_id.startsWith('offer.')?offerFields()+extraOfferFields():draft.pilot_data?pilotFields():'<section class="panel"><h2>Materiały merytoryczne</h2><p>Opracuj r?cznie atrakcje, kontekst i narracj? dla dni programu. ?r?d?a i statusy uzupe?niasz w sekcjach.</p></section>'}
+      <section class="panel"><h2>Program — treści tego dokumentu</h2><p class="muted">Puste pole pozostawia treść bazowego snapshotu. Edycja nie zmienia Trip ani innych dokumentów.</p>${draft.trip_snapshot.days.map((day,index)=>`<div class="document-entry"><p class="eyebrow">DZIEŃ ${day.day_number}</p>${field('Własny tytuł',`day_overrides.${index}.title`,draft.day_overrides[index].title,'text',`maxlength="200" placeholder="${e(day.title)}"`)}${area('Własny opis',`day_overrides.${index}.description`,draft.day_overrides[index].description)}</div>`).join('')}</section>${window.SectionEditor.html(draft,assets)}</form>
+      ${draft.template_id.startsWith('offer.')?'<section class="panel"><h2>Wgraj zdjęcie okładki</h2><input type="file" id="d-file" accept="image/jpeg,image/png,image/webp"><label class="document-check"><input type="checkbox" id="d-rights">Mam prawo użyć zdjęcia w ofercie.</label><button id="d-upload">Wgraj i wybierz</button></section>':''}</div>
       <aside class="trip-document-preview"><div id="d-validation" role="status">Przygotowanie podglądu…</div><iframe id="d-preview" title="Podgląd oferty lub rozpiski pilota"></iframe></aside></div>`;
+    window.SectionEditor.bind(ui.main,draft,{assets,dirty:ui.dirty,preview:()=>{clearTimeout(timer);timer=setTimeout(preview,500);},draw});
     $('#d-form').addEventListener('submit',event=>event.preventDefault());
     $('#d-form').addEventListener('input',change);
     $('#d-form').addEventListener('change',event=>{if(event.target.tagName==='SELECT')change(event);});
@@ -60,10 +70,12 @@ window.TripDocumentEditor = (() => {
     });
     ui.main.querySelectorAll('[data-d-add]').forEach(button=>button.addEventListener('click',()=>{
       const group=button.dataset.dAdd;
-      draft.pilot_data[group].push(group==='contacts'?{label:'Kontakt organizacyjny',value:''}:{entry_id:crypto.randomUUID().replaceAll('-',''),day_id:null,title:'Nowy wpis',start_local:null,end_local:null,time_zone:'Atlantic/Reykjavik',end_time_zone:'',status:'unknown',details:'',booking_reference:'',source:''});ui.dirty(true);draw();
+      draft.pilot_data[group].push(group==='contacts'?{label:'Kontakt organizacyjny',value:''}:{entry_id:crypto.randomUUID().replaceAll('-',''),day_id:null,title:'Nowy wpis',start_local:null,end_local:null,time_zone:'',end_time_zone:'',status:'unknown',details:'',booking_reference:'',source:''});ui.dirty(true);draw();
     }));
     ui.main.querySelectorAll('[data-d-remove]').forEach(button=>button.addEventListener('click',()=>{const[group,index]=button.dataset.dRemove.split('.');draft.pilot_data[group].splice(Number(index),1);ui.dirty(true);draw();}));
     if($('#d-upload'))$('#d-upload').addEventListener('click',upload);
+    if($('#add-goal'))$('#add-goal').onclick=()=>{draft.offer_details.goals.push({pillar:'education',description:'',day_id:null,stop_id:null});ui.dirty(true);draw();};
+    for(const button of ui.main.querySelectorAll('[data-goal-remove]'))button.onclick=()=>{draft.offer_details.goals.splice(Number(button.dataset.goalRemove),1);ui.dirty(true);draw();};
     preview();
   }
   function change(event) {
@@ -72,10 +84,10 @@ window.TripDocumentEditor = (() => {
     const key=keys.at(-1);let value=event.target.value;
     if(event.target.type==='checkbox')value=event.target.checked;
     if(event.target.multiple)value=[...event.target.selectedOptions].map(o=>o.value);
-    if(['highlights','included','excluded'].includes(key))value=value.split('\n').filter(x=>x.trim());
-    if(['participant_count'].includes(key))value=value?Number(value):null;
-    if(['amount','start_local','end_local','cover_asset_id','day_id'].includes(key))value ||= null;
-    target[key]=value;ui.dirty(true);clearTimeout(timer);timer=setTimeout(preview,500);
+    if(['highlights','included','excluded','amenities'].includes(key))value=value.split('\n').filter(x=>x.trim());
+    if(['participant_count','group_size'].includes(key))value=value?Number(value):null;
+    if(['amount','start_local','end_local','cover_asset_id','day_id','stop_id'].includes(key))value ||= null;
+    target[key]=value;if(path.startsWith('offer_details.goals.')&&key==='day_id'){target.stop_id=null;draw();}ui.dirty(true);clearTimeout(timer);timer=setTimeout(preview,500);
   }
   async function preview() {
     const version=++generation;if(!$('#d-preview'))return;
@@ -92,8 +104,8 @@ window.TripDocumentEditor = (() => {
     if(saving||!$('#d-form').reportValidity())return false;
     saving=true;ui.busy(true);$('#d-save').disabled=true;
     try{
-      const update={revision:draft.revision,title:draft.title,date_label:draft.date_label,editorial_notes:draft.editorial_notes,day_overrides:draft.day_overrides,offer_data:draft.offer_data,pilot_data:draft.pilot_data};
-      draft=await ui.api('drafts/'+draft.document_id,{method:'PUT',body:JSON.stringify(update)});
+      const update={revision:draft.revision,title:draft.title,date_label:draft.date_label,editorial_notes:draft.editorial_notes,day_overrides:draft.day_overrides,offer_data:draft.offer_data,pilot_data:draft.pilot_data,offer_details:draft.offer_details,sections:draft.sections};
+      Object.assign(draft,await ui.api('drafts/'+draft.document_id,{method:'PUT',body:JSON.stringify(update)}));
       ui.dirty(false);await ui.refresh();$('#d-revision').textContent=draft.revision;ui.message('Draft zapisany. Rewizja '+draft.revision+'.');preview();return true;
     }catch(error){ui.message(error.message,true);return false;}finally{saving=false;ui.busy(false);if($('#d-save'))$('#d-save').disabled=false;}
   }
@@ -106,11 +118,11 @@ window.TripDocumentEditor = (() => {
     }catch(error){ui.message(error.message,true);}
   }
   return {async open(source,context){
-    if(!['offer.private','pilot.basic'].includes(source.template_id)||!source.trip_snapshot)throw new Error('Ten edytor obsługuje ofertę indywidualną i rozpiskę podstawową pilota.');
-    generation++;clearTimeout(timer);draft=JSON.parse(JSON.stringify(source));ui=context;assets=await ui.api('assets');
+    if(!source.trip_snapshot)throw new Error('Ten edytor obsługuje ofertę indywidualną i rozpiskę podstawową pilota.');
+    generation++;clearTimeout(timer);ui=context;draft=source.sections===null?await ui.api('trip-documents/initialize',{method:'POST',body:JSON.stringify({draft:source})}):JSON.parse(JSON.stringify(source));draft.sections.sort((a,b)=>a.order-b.order);assets=await ui.api('assets');
     draft.day_overrides=draft.trip_snapshot.days.map(day=>draft.day_overrides.find(o=>o.day_id===day.day_id)||{day_id:day.day_id,title:'',description:''});
-    draft.offer_data ||= draft.template_id==='offer.private'?{summary:'',highlights:[],accommodation:'',transport:'',included:[],excluded:[],price:{amount:null,currency:'PLN',unit:'person',participant_count:null,status:'unknown',assumptions:'',source:''},concept_only:false,cta:'',cover_asset_id:null,cover_position:{x:50,y:50,zoom:1},photo_asset_ids:[]}:null;
-    draft.pilot_data ||= draft.template_id==='pilot.basic'?{leader:'',participant_count:null,meeting:'',flights:[],transfers:[],accommodations:[],activity_bookings:[],schedule:[],contacts:[],open_items:[],internal_notes:''}:null;
+    draft.offer_data ||= draft.template_id.startsWith('offer.')?{summary:'',highlights:[],accommodation:'',transport:'',included:[],excluded:[],price:{amount:null,currency:'PLN',unit:'person',participant_count:null,status:'unknown',assumptions:'',source:''},concept_only:false,cta:'',cover_asset_id:null,cover_position:{x:50,y:50,zoom:1},photo_asset_ids:[]}:null;
+    draft.pilot_data ||= ['pilot.basic','pilot.advanced'].includes(draft.template_id)?{leader:'',participant_count:null,meeting:'',flights:[],transfers:[],accommodations:[],activity_bookings:[],schedule:[],contacts:[],open_items:[],internal_notes:''}:null;
     draw();
   }};
 })();

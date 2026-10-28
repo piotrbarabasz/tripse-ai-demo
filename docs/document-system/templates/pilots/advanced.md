@@ -1,5 +1,10 @@
 # Szablon: zaawansowana rozpiska pilota
 
+Stan implementacji lokalnej 2026-10-28 (szablony 0.4.0): Wspólne PilotData/OperationalEntry plus DayLogistics per dzień: data, odcinki, metryki null przy braku danych, IANA, referencja noclegu, notatki i plan B. Podgląd ma tabelę trasy i harmonogramy; działa dla 10–15 dni. internal_restricted.
+
+Instrukcja edycji i ograniczenia publikacji: [Document Studio](../../../DOCUMENT_STUDIO.md).
+Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej akceptacji treści.
+
 **ID:** `pilot.advanced`  
 **Rodzina:** `pilot` · **Odbiorca:** nowy pilot lub dobrze znany pilot na nowym kierunku  
 **Poufność:** `internal_restricted`  
