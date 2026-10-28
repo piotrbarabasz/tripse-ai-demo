@@ -6,6 +6,12 @@ Nazwy miejsc służą pokazaniu struktury programu; atrakcje, przejazdy, terminy
 dostępność i usługi nie zostały zweryfikowane. Nie są to gotowe oferty.
 Brak danych uczestników, rezerwacji, kodów dostępu, cen i cudzych zdjęć.
 
+Wszystkie Trip i Campaign w tych katalogach mają jawne `data_origin: "demo"`.
+Kategorie Trip pozostają nieprzypisane; nie zgadujemy ich na podstawie kraju ani
+programu. Aby użyć fixture'a w nowym kreatorze/listach źródeł, włącz **Pokaż dane
+DEMO**, a przy konkretnej kategorii również **Pokaż wszystkie kategorie** lub
+**Uwzględnij nieprzypisane**. Dokument utworzony z fixture'a przejmuje pochodzenie demo.
+
 `document-presets/iceland.json` dodaje jawnie fikcyjne dane oferty i rozpiski:
 przykładową kwotę oznaczoną DEMO, role organizacyjne, fikcyjne godziny oraz
 kontakty `example.invalid`. Nie są ładowane do Trip; użytkownik wybiera je

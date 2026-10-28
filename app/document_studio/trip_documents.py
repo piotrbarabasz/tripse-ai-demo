@@ -5,7 +5,7 @@ from app.document_studio.models import OfferData, PilotData, Trip
 SUPPORTED_TRIP_TEMPLATES = {"offer.private", "offer.self_guide", "offer.school", "offer.incentive", "pilot.basic", "pilot.advanced", "pilot.knowledge"}
 OFFER_TRIP_FIELDS = {
     "trip_id", "schema_version", "revision", "title", "destinations", "description",
-    "start_date", "end_date", "duration_days", "status", "updated_at",
+    "start_date", "end_date", "duration_days", "status", "updated_at", "categories", "data_origin",
 }
 OFFER_DAY_FIELDS = {"day_id", "day_number", "date", "title", "public_description"}
 OFFER_STOP_FIELDS = {"stop_id", "name", "location", "description", "verification_status", "estimated_visit_duration_min"}

@@ -39,6 +39,7 @@ class DocumentService:
 
         draft = DocumentDraft(
             title=request.title or source.title, template_id=template.template_id,
+            data_origin=source.data_origin,
             template_version=template.template_version, layout_variant=request.layout_variant,
             confidentiality=template.confidentiality,
             created_by=actor, updated_by=actor,

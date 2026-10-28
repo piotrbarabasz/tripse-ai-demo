@@ -133,6 +133,7 @@ def run():
                 page.locator('[data-m-field="theme"]').fill('Góry i woda')
                 page.locator('[data-m-move="2,-1"]').click()
                 page.locator('[data-m-remove="1"]').click()
+                page.locator('#m-trip-picker [data-source-filter="demo"]').check()
                 page.locator('#m-add-trip').select_option('demo-norway')
                 page.locator('#m-add').click()
                 expect(page.locator('[data-m-item]')).to_have_count(3)

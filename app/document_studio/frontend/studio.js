@@ -38,16 +38,19 @@ function heading(kicker, title, subtitle, action = '') {
 }
 const statusLabels = {idea:'Pomysł', draft:'Wersja robocza', planned:'Zaplanowana', confirmed:'Potwierdzona', completed:'Zakończona', cancelled:'Anulowana'};
 function cards(view) {
-  const entries = view === 'trips' ? trips : campaigns;
-  const names = {trips:['BIBLIOTEKA PODRÓŻY','Twoje wycieczki','Jeden program. Wiele możliwości dokumentu.'],campaigns:['KOLEKCJE KIERUNKÓW','Kampanie','Kilka podróży połączonych jednym pomysłem.']};
-  main.innerHTML = heading(...names[view], view === 'trips' ? '<button class="primary" data-go="trips/new">+ Nowa wycieczka</button>' : '') +
-    `<div class="cards">${entries.map(x => {
-      const resourceId = x.trip_id || x.campaign_id || x.document_id;
-      const label = view === 'trips' ? x.destinations.join(' · ') || 'Nowy kierunek' : x.season || 'Kolekcja';
-      const description = view === 'trips' ? x.description : x.items.map(i=>trips.find(t=>t.trip_id===i.trip_id)?.title || i.trip_id).join(' · ');
-      return `<article class="card"><div class="card-top">${e(label)}</div><span class="tag">${view === 'trips' ? `${x.duration_days} dni · ${e(statusLabels[x.status])}` : `${x.items.length} kierunki`}</span><h2>${e(x.title)}</h2><p class="muted">${e(description)}</p><button class="open" data-go="${view}/${e(resourceId)}">Otwórz →</button></article>`;
-    }).join('')}</div>${entries.length ? '' : '<div class="panel empty">Nie ma jeszcze zapisanych dokumentów. Otwórz wycieczkę lub kampanię i wybierz typ dokumentu.</div>'}`;
+  const entries=view==='trips'?trips:campaigns;
+  const names={trips:['BIBLIOTEKA PODRÓŻY','Twoje wycieczki','Jeden program. Wiele możliwości dokumentu.'],campaigns:['KOLEKCJE KIERUNKÓW','Kampanie','Kilka podróży połączonych jednym pomysłem.']};
+  main.innerHTML=heading(...names[view],view==='trips'?'<button class="primary" data-go="trips/new">+ Nowa wycieczka</button>':'<button class="primary" data-go="create-document/marketing.collection/new_trips">+ Nowa kampania / dokument</button>')+'<section id="source-library-filters" class="panel"></section><div id="source-library-results"></div>';
+  SourcePicker.mount($('#source-library-filters'),{entries,kind:view==='trips'?'trip':'campaign',id:'library-source-select',cards:true,onResults:visible=>{
+    $('#source-library-results').innerHTML=`<div class="cards">${visible.map(x=>{
+      const resourceId=x.trip_id||x.campaign_id;
+      const label=view==='trips'?x.destinations.join(' · ')||'Kierunek nieustalony':x.season||'Kolekcja';
+      const description=view==='trips'?x.description:x.items.map(i=>trips.find(t=>t.trip_id===i.trip_id)?.title||i.trip_id).join(' · ');
+      return `<article class="card" data-source-id="${e(resourceId)}"><div class="card-top">${e(label)}</div><span class="tag">${view==='trips'?`${x.duration_days} dni · ${e(statusLabels[x.status])}`:`${x.items.length} kierunków`}</span><span class="tag">${e(SourcePicker.origins[x.data_origin||'unknown'])}</span>${view==='trips'?`<p>${e((x.categories||[]).map(c=>SourcePicker.categories[c]).join(' · ')||'Nieprzypisane')}</p>`:''}<h2>${e(x.title)}</h2><p class="muted">${e(description)}</p><button class="open" data-go="${view}/${e(resourceId)}">Otwórz →</button></article>`;
+    }).join('')}</div>${visible.length?'':'<div class="panel empty">Brak pasujących źródeł. Zmień filtry, pokaż DEMO lub utwórz nowe.</div>'}`;
+  }});
 }
+
 function input(label, field, value, type = 'text', extra = '') {
   return `<label>${label}<input data-field="${field}" type="${type}" value="${e(value)}" ${extra}></label>`;
 }
@@ -66,37 +69,47 @@ function templateCatalog() {
 function sourceChooser(templateId,variant) {
   const template=templates.find(t=>t.template_id===templateId);
   if(!template||!template.layout_variants.includes(variant))throw new Error('Nieprawidłowy typ lub wariant dokumentu.');
-  const marketing=template.source_type==='campaign', entries=marketing?campaigns:trips;
-  main.innerHTML=heading('NOWY DOKUMENT',template.name,'Typ dokumentu jest już wybrany. Wybierz źródło danych.','<button data-go="templates">← Katalog</button>')+`<form id="source-form" class="panel"><p>${e(template.description)}</p><label>${marketing?'Kampania':'Wycieczka'}<select id="source-select">${entries.map(x=>`<option value="${e(x.campaign_id||x.trip_id)}">${e(x.title)}</option>`).join('')}<option value="new">+ Utwórz nową ${marketing?'kampanię':'wycieczkę'}</option></select></label><div id="new-source" hidden><label>Nazwa<input id="source-title" maxlength="200" value="${marketing?'Nowa kolekcja':'Nowa wycieczka'}"></label>${marketing?`<label>Wycieczki do kolekcji<select id="source-trips" multiple>${trips.map(t=>`<option value="${t.trip_id}">${e(t.title)}</option>`).join('')}</select></label><label>Wspólny temat<input id="source-theme" maxlength="200"></label>`:'<label>Kierunek<input id="source-destination" maxlength="200"></label><label>Liczba dni<input id="source-days" type="number" min="1" max="60" value="2"></label>'}</div><button class="primary" id="source-create">Utwórz i otwórz edytor</button><p class="muted">Nieznane daty, ceny i rezerwacje pozostaną nieustalone.</p></form>`;
-  const select=$('#source-select');select.onchange=()=>{$('#new-source').hidden=select.value!=='new';};select.onchange();
+  const marketing=template.source_type==='campaign', suggested=SourcePicker.suggested[templateId];
+  main.innerHTML=heading('NOWY DOKUMENT','Utwórz dokument — '+template.name,'Wybierz źródło. Kategorie są preferencją, możesz użyć wycieczki z innej kategorii.','<button data-go="templates">← Katalog</button>')+`<form id="source-form" class="panel"><p>${e(template.description)}</p><div id="source-picker"></div><div id="new-source" hidden><label>Nazwa<input id="source-title" maxlength="200" value="${marketing?'Nowa kolekcja':'Nowa wycieczka'}"></label>${SourcePicker.originField('business','source-origin')}${marketing?'<div id="source-trip-picker"></div><label>Wspólny temat<input id="source-theme" maxlength="200"></label>':`<label>Kierunek<input id="source-destination" maxlength="200"></label><label>Liczba dni<input id="source-days" type="number" min="1" max="60" value="2"></label>${SourcePicker.categoryFields(suggested?[suggested]:[],'source-categories')}`}</div><button class="primary" id="source-create">Utwórz i otwórz edytor</button><p class="muted">Nieznane daty, ceny i rezerwacje pozostaną nieustalone.</p></form>`;
+  const picker=SourcePicker.mount($('#source-picker'),{entries:marketing?campaigns:trips,kind:marketing?'campaign':'trip',id:'source-select',category:suggested,allowNew:true,onChange:values=>{$('#new-source').hidden=values[0]!=='new';}});
+  const tripPicker=marketing?SourcePicker.mount($('#source-trip-picker'),{entries:trips,id:'source-trips',multiple:true}):null;
   $('#source-form').onsubmit=async event=>{
-    event.preventDefault();if(busy)return;busy=true;$('#source-create').disabled=true;
+    event.preventDefault();if(busy)return;
+    let sourceId=picker.values[0];if(!sourceId){message('Wybierz źródło lub utwórz nowe.',true);return;}
+    busy=true;main.inert=true;$('#source-create').disabled=true;
     try {
-      let sourceId=select.value;
       if(sourceId==='new') {
         const title=$('#source-title').value.trim();if(!title)throw new Error('Uzupełnij nazwę.');
+        let source;
+        const data_origin=$('#source-origin').value;
         if(marketing) {
-          const selected=[...$('#source-trips').selectedOptions].map(o=>o.value);if(!selected.length)throw new Error('Wybierz co najmniej jedną wycieczkę.');
-          const source=await api('campaigns',{method:'POST',body:JSON.stringify({title,theme:$('#source-theme').value,layout_variant:variant,cta:'Kontakt do uzupełnienia — wersja robocza',items:selected.map(trip_id=>({trip_id}))})});sourceId=source.campaign_id;
+          const selected=tripPicker.values;if(!selected.length)throw new Error('Wybierz co najmniej jedną wycieczkę.');
+          source=await api('campaigns',{method:'POST',body:JSON.stringify({title,data_origin,theme:$('#source-theme').value,layout_variant:variant,cta:'Kontakt do uzupełnienia — wersja robocza',items:selected.map(trip_id=>({trip_id}))})});
+          campaigns.push(source);
         } else {
           const count=Number($('#source-days').value);if(!Number.isInteger(count)||count<1||count>60)throw new Error('Podaj od 1 do 60 dni.');
           const destination=$('#source-destination').value.trim();
-          const source=await api('trips',{method:'POST',body:JSON.stringify({title,destinations:destination?[destination]:[],duration_days:count,days:Array.from({length:count},(_,i)=>({day_number:i+1,title:'Dzień '+(i+1)+' — do opracowania'}))})});sourceId=source.trip_id;
+          const categories=[...main.querySelectorAll('[name="source-categories"]:checked')].map(x=>x.value);
+          source=await api('trips',{method:'POST',body:JSON.stringify({title,categories,data_origin,destinations:destination?[destination]:[],duration_days:count,days:Array.from({length:count},(_,i)=>({day_number:i+1,title:'Dzień '+(i+1)+' — do opracowania'}))})});
+          trips.push(source);
         }
-        // Keep the created source selected if draft creation fails, avoiding duplicates.
-        await refresh();select.add(new Option(title,sourceId));select.value=sourceId;select.onchange();
+        // Retain the committed source before any later request can fail.
+        sourceId=source.trip_id||source.campaign_id;picker.reveal(source);
       }
       const draft=await api('drafts',{method:'POST',body:JSON.stringify({template_id:templateId,source_type:template.source_type,source_id:sourceId,layout_variant:variant})});
-      await refresh();busy=false;navigate('edit-draft/'+draft.document_id);
-    }catch(error){message(error.message,true);}finally{busy=false;if($('#source-create'))$('#source-create').disabled=false;}
+      let warning='';try{await refresh();}catch{warning=' Lista źródeł wymaga odświeżenia.';}
+      busy=false;navigate('edit-draft/'+draft.document_id);if(warning)message('Dokument utworzony.'+warning,true);
+    }catch(error){message(error.message,true);}finally{busy=false;main.inert=false;if($('#source-create'))$('#source-create').disabled=false;}
   };
 }
 
 function renderTrip() {
   main.innerHTML = `<button class="text-button back" data-go="trips">← Wszystkie wycieczki</button>` + heading('EDYTOR WYCIECZKI', current.title, `${current.days.length} dni · ${creating ? 'Nowa wycieczka' : 'Rewizja ' + current.revision}`, '<button type="submit" form="trip-form" class="primary" id="save-trip">Zapisz wycieczkę</button>') +
-    `<div class="editor-grid"><form id="trip-form"><section class="panel"><h2>Podstawowe informacje</h2><div class="fields"><div class="full">${input('Nazwa wycieczki','title',current.title,'text','required maxlength="200"')}</div><div class="full">${input('Kierunki (oddziel przecinkami)','destinations',current.destinations.join(', '),'text','maxlength="1000"')}</div><label>Status<select data-field="status">${Object.entries(statusLabels).map(([k,v])=>`<option value="${k}" ${current.status===k?'selected':''}>${v}</option>`).join('')}</select></label>${input('Data rozpoczęcia (opcjonalna)','start_date',current.start_date,'date')}<div class="full">${textarea('Opis wycieczki','description',current.description)}</div></div><p class="muted" id="date-summary">${dateSummary()}</p></section><section class="panel"><div class="section-heading"><div><p class="eyebrow">DZIEŃ PO DNIU</p><h2>Program podróży</h2></div><button type="button" id="add-day">+ Dodaj dzień</button></div><div id="days">${current.days.map(dayHTML).join('')}</div>${current.days.length ? '' : '<p class="muted">Dodaj pierwszy dzień programu.</p>'}</section></form>${documentTools('trip')}</div>`;
+    `<div class="editor-grid"><form id="trip-form"><section class="panel"><h2>Podstawowe informacje</h2>${SourcePicker.categoryFields(current.categories)}${SourcePicker.originField(current.data_origin||'unknown','trip-origin')}<div class="fields"><div class="full">${input('Nazwa wycieczki','title',current.title,'text','required maxlength="200"')}</div><div class="full">${input('Kierunki (oddziel przecinkami)','destinations',current.destinations.join(', '),'text','maxlength="1000"')}</div><label>Status<select data-field="status">${Object.entries(statusLabels).map(([k,v])=>`<option value="${k}" ${current.status===k?'selected':''}>${v}</option>`).join('')}</select></label>${input('Data rozpoczęcia (opcjonalna)','start_date',current.start_date,'date')}<div class="full">${textarea('Opis wycieczki','description',current.description)}</div></div><p class="muted" id="date-summary">${dateSummary()}</p></section><section class="panel"><div class="section-heading"><div><p class="eyebrow">DZIEŃ PO DNIU</p><h2>Program podróży</h2></div><button type="button" id="add-day">+ Dodaj dzień</button></div><div id="days">${current.days.map(dayHTML).join('')}</div>${current.days.length ? '' : '<p class="muted">Dodaj pierwszy dzień programu.</p>'}</section></form>${documentTools('trip')}</div>`;
   $('#trip-form').addEventListener('submit', async event => {event.preventDefault(); await saveTrip();});
   $('#trip-form').addEventListener('input', updateTripField);
+  main.querySelectorAll('[name="categories"]').forEach(field=>field.onchange=()=>{current.categories=[...main.querySelectorAll('[name="categories"]:checked')].map(x=>x.value);dirty=true;});
+  $('#trip-origin').onchange=()=>{current.data_origin=$('#trip-origin').value;dirty=true;};
   setupDocumentTools('trip');
 }
 function dateSummary() {
@@ -205,7 +218,7 @@ async function route() {
     else if (!resourceId) cards(view);
     else if (view==='trips') {
       creating = resourceId==='new';
-      current = creating ? {trip_id:id(),title:'Nowa wycieczka',destinations:[],description:'',start_date:null,end_date:null,duration_days:1,status:'draft',days:[{day_id:id(),day_number:1,title:'Rozpoczęcie podróży',stops:[],public_description:'',internal_notes:''}]} : await load('trips/' + encodeURIComponent(resourceId));
+      current = creating ? {trip_id:id(),title:'Nowa wycieczka',categories:[],data_origin:'business',destinations:[],description:'',start_date:null,end_date:null,duration_days:1,status:'draft',days:[{day_id:id(),day_number:1,title:'Rozpoczęcie podróży',stops:[],public_description:'',internal_notes:''}]} : await load('trips/' + encodeURIComponent(resourceId));
       renderTrip();
     } else if(view==='marketing') await window.MarketingEditor.open(await load('campaigns/' + encodeURIComponent(resourceId)), trips, {
       main, escape:e, api, message, refresh, dirty:value=>dirty=value, busy:value=>busy=value, isCurrent:()=>version===routeGeneration,

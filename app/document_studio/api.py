@@ -111,7 +111,7 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
 
     @router.get("/documents/assets/{filename}", include_in_schema=False)
     def asset(filename: str):
-        if filename not in {"studio.js", "studio.css", "marketing-editor.js", "marketing-editor.css", "brand-tokens.css", "marketing.css", "print-export.js", "trip-documents.css", "trip-editor.js", "trip-editor.css", "section-editor.js", "library.js"}:
+        if filename not in {"studio.js", "studio.css", "marketing-editor.js", "marketing-editor.css", "brand-tokens.css", "marketing.css", "print-export.js", "trip-documents.css", "trip-editor.js", "trip-editor.css", "section-editor.js", "library.js", "source-picker.js"}:
             raise HTTPException(404)
         return FileResponse(WEB / filename)
 
@@ -136,7 +136,10 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
         if identifier != value.trip_id:
             raise HTTPException(422, "ID ścieżki i danych muszą być zgodne")
         def update():
-            repository.get("trips", identifier)
+            previous = repository.get("trips", identifier)
+            for field in ("categories", "data_origin"):
+                if field not in value.model_fields_set:
+                    setattr(value, field, getattr(previous, field))
             return repository.save("trips", value)
         return run(update)
 
@@ -157,7 +160,9 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
         if identifier != value.campaign_id:
             raise HTTPException(422, "ID ścieżki i danych muszą być zgodne")
         def update():
-            repository.get("campaigns", identifier)
+            previous = repository.get("campaigns", identifier)
+            if "data_origin" not in value.model_fields_set:
+                value.data_origin = previous.data_origin
             return service.save_campaign(value)
         return run(update)
 

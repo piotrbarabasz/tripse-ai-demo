@@ -7,3 +7,15 @@
 .template-group{margin:32px 0}.template-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.template-card{min-width:0}.template-card h3{font-size:19px}.template-card p{flex:1}.template-icon{font-size:32px;color:#b06912}.template-card button{margin-top:auto}@media(max-width:1250px){.template-row{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.template-row{grid-template-columns:1fr}}
 
 .library-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;align-items:end}.library-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:18px}.library-document{margin:0;min-width:0}.library-document h2{margin:18px 0 10px}.library-metadata{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px;font-size:13px}.library-metadata dd{margin:0}.library-status{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin-top:16px}.library-status label{flex:1;min-width:160px}.library-pages{margin-top:24px}.history-layout{display:grid;grid-template-columns:minmax(240px,1fr) minmax(0,2fr);gap:20px}.history-layout iframe{width:100%;height:85vh;min-width:0;border:1px solid var(--line)}@media(max-width:850px){.history-layout{grid-template-columns:1fr}.library-metadata{grid-template-columns:100px minmax(0,1fr)}}
+/* Shared source selection on the catalogue, source libraries and marketing editor. */
+.source-filters { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; align-items:start; margin-bottom:16px; }
+.source-filters label:has(input[type="checkbox"]), .source-categories label { display:flex; align-items:center; gap:8px; }
+.source-filters input[type="checkbox"], .source-categories input { width:auto; flex:none; }
+.source-categories { display:flex; flex-wrap:wrap; gap:12px 20px; padding:16px; margin:16px 0; border:1px solid var(--line,#ddd); border-radius:8px; }
+.source-categories legend { padding:0 6px; font-weight:600; }
+.source-categories label { max-width:100%; }
+.source-selected { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0; }
+.source-selected p { flex-basis:100%; }
+#source-picker select[size], #source-trip-picker select[size], #m-trip-picker select[size] { width:100%; min-height:180px; }
+#new-source { border-top:1px solid var(--line,#ddd); padding-top:16px; margin-top:16px; }
+@media(max-width:600px) { .source-filters { grid-template-columns:1fr; } .source-categories { flex-direction:column; } select[size] { min-width:0; max-width:100%; } }

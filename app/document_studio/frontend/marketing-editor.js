@@ -1,6 +1,6 @@
 /* Campaign editing is separate from the existing trip editor and the renderer. */
 window.MarketingEditor = (() => {
-  let campaign, catalog, assets, ui, timer, generation = 0, format = 'a4', saving = false, documentDraft=null;
+  let campaign, catalog, assets, ui, timer, generation = 0, format = 'a4', saving = false, documentDraft=null, sourceFilters={};
   const find = selector => document.querySelector(selector);
   const clone = value => JSON.parse(JSON.stringify(value));
   const normalize = () => {
@@ -26,7 +26,7 @@ window.MarketingEditor = (() => {
     const e = ui.escape;
     ui.main.innerHTML = `<button class="text-button back" data-go="${documentDraft?'drafts':'campaigns/'+e(campaign.campaign_id)}">← ${documentDraft?'Wróć do biblioteki':'Kampania'}</button>
     <div class="heading marketing-heading"><div><p class="eyebrow">MARKETING.COLLECTION</p><h1>Studio kolekcji</h1><p class="muted">Edytuj treść, ułóż kierunki i sprawdź dokument przed drukiem.</p></div><div class="actions"><button id="m-save" class="primary">Zapisz zmiany</button><button id="m-export" class="accent">Zapisz dokument / PDF</button></div></div>
-    <div class="marketing-layout"><div class="marketing-controls"><form id="m-form"><section class="panel"><h2>Kampania</h2><div class="fields"><div class="full">${field('Tytuł kampanii','title',campaign.title,'required maxlength="200"')}</div>
+    <div class="marketing-layout"><div class="marketing-controls"><form id="m-form"><section class="panel"><h2>Kampania</h2>${documentDraft?'<p>Rodzaj danych dokumentu: '+e(SourcePicker.origins[documentDraft.data_origin||'unknown'])+'</p>':SourcePicker.originField(campaign.data_origin||'unknown','campaign-origin')}<div class="fields"><div class="full">${field('Tytuł kampanii','title',campaign.title,'required maxlength="200"')}</div>
     <label>Kompozycja<select data-m-field="layout_variant"><option value="new_trips" ${campaign.layout_variant==='new_trips'?'selected':''}>Nowe kierunki</option><option value="theme_collection" ${campaign.layout_variant==='theme_collection'?'selected':''}>Kolekcja tematyczna</option></select></label>
     ${field('Sezon / podtytuł','season',campaign.season,'maxlength="200"')}${field('Opcjonalny prowadzący','leader',campaign.leader,'maxlength="200"')}
     <div class="full">${field('Temat przewodni','theme',campaign.theme,'maxlength="200"')}</div><div class="full">${area('Wprowadzenie','description',campaign.description,1000)}</div><div class="full">${area('CTA / kontakt','cta',campaign.cta,600)}</div></div>
@@ -40,10 +40,11 @@ window.MarketingEditor = (() => {
       ${field('Wyróżniki (oddziel przecinkami)',`items.${index}.highlights`,item.highlights.join(', '),'maxlength="1000"')}
       <label>Oznaczenie<select data-m-field="items.${index}.badge">${[['concept','Propozycja'],['new','Nowość'],['pilot','Pilotaż']].map(([key,label])=>`<option value="${key}" ${(item.badge || 'concept')===key?'selected':''}>${label}</option>`).join('')}</select></label>
       ${photoFields(`items.${index}`,item.image_asset_id,item.image_position)}</article>`;
-    }).join('')}</div><label>Dodaj wycieczkę<select id="m-add-trip"><option value="">Wybierz z biblioteki…</option>${catalog.filter(trip=>!campaign.items.some(item=>item.trip_id===trip.trip_id)).map(trip=>`<option value="${trip.trip_id}">${e(trip.title)}</option>`).join('')}</select></label><button type="button" id="m-add">+ Dodaj kierunek</button></section>${documentDraft?window.SectionEditor.html(documentDraft,assets):''}</form>
+    }).join('')}</div><div id="m-trip-picker"></div><button type="button" id="m-add">+ Dodaj kierunek</button></section>${documentDraft?window.SectionEditor.html(documentDraft,assets):''}</form>
     <section class="panel"><h2>Twoje zdjęcia</h2><p class="muted">JPG, PNG lub WebP · do 8 MB i 24 MP. Zdjęcia pozostają w prywatnym magazynie demo.</p><label>Przypisz nowe zdjęcie<select id="m-upload-target"><option value="hero">Zdjęcie główne kolekcji</option>${campaign.items.map((item,i)=>`<option value="${i}">Kierunek ${i+1}</option>`).join('')}</select></label><label>Plik zdjęcia<input type="file" id="m-file" accept="image/jpeg,image/png,image/webp"></label><label class="rights-check"><input type="checkbox" id="m-rights">Mam prawo użyć tego zdjęcia w tym materiale.</label><button type="button" id="m-upload">Wgraj i wybierz zdjęcie</button><p id="m-upload-status" role="status"></p></section></div>
     <div class="marketing-preview"><div class="preview-heading"><div><p class="eyebrow">PODGLĄD NA ŻYWO</p><small>Kolory, typografia i tekstowy znak TRIPSE są propozycją roboczą.</small></div><label>Format<select id="m-format"><option value="a4" ${format==='a4'?'selected':''}>A4 / PDF</option><option value="social" ${format==='social'?'selected':''}>1080 × 1350</option></select></label></div><div id="m-validation" role="status"></div><iframe id="m-preview" title="Podgląd dokumentu marketingowego"></iframe></div></div>`;
     if(documentDraft)window.SectionEditor.bind(ui.main,documentDraft,{assets,dirty:ui.dirty,preview:()=>{clearTimeout(timer);timer=setTimeout(preview,500);},draw});
+    if(find('#campaign-origin'))find('#campaign-origin').onchange=()=>{campaign.data_origin=find('#campaign-origin').value;ui.dirty(true);};
     find('#m-form').addEventListener('submit',event=>event.preventDefault());
     find('#m-form').addEventListener('input',changeField);
     find('#m-form').addEventListener('change',event=> {if(event.target.tagName==='SELECT') changeField(event);});
@@ -51,8 +52,9 @@ window.MarketingEditor = (() => {
     find('#m-save').addEventListener('click',()=>save());
     find('#m-export').addEventListener('click',exportDocument);
     find('#m-upload').addEventListener('click',upload);
+    const picker=SourcePicker.mount(find('#m-trip-picker'),{entries:catalog,id:'m-add-trip',state:sourceFilters,exclude:()=>campaign.items.map(item=>item.trip_id)});
     find('#m-add').addEventListener('click',()=>{
-      const tripId=find('#m-add-trip').value; if(!tripId)return;
+      const tripId=picker.values[0]; if(!tripId)return;
       campaign.items.push({trip_id:tripId,display_title:'',short_hook:'',date_range_or_label:'Termin do ustalenia',highlights:[],image_asset_id:null,image_position:position(),badge:'concept',publication_status:'draft'});
       ui.dirty(true);draw();
     });
@@ -136,7 +138,7 @@ window.MarketingEditor = (() => {
     if(initialized?.sections===null)initialized=await context.api('trip-documents/initialize',{method:'POST',body:JSON.stringify({draft:initialized})});
     const loadedAssets=await context.api('assets');
     if(version!==generation||context.isCurrent&&!context.isCurrent())return;
-    campaign=clone(source);catalog=trips;ui=context;format='a4';documentDraft=initialized;
+    campaign=clone(source);catalog=trips;ui=context;format='a4';documentDraft=initialized;sourceFilters={};
     if(documentDraft){campaign.layout_variant=documentDraft.layout_variant;campaign.title=documentDraft.title;}
     assets=loadedAssets;draw();
   }};

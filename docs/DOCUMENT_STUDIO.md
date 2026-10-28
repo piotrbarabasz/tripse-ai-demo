@@ -1,5 +1,83 @@
 # TRIPSE Document Studio — funkcjonalne DEMO lokalne
 
+## Źródła, kategorie produktów i pochodzenie — DOC-UX-002
+
+**Implementacja w repozytorium na dev; bez wdrożenia w tej iteracji.**
+[Raport implementacji i ręczna kontrola DEV](DOC_UX_002.md).
+
+Kategoria Trip opisuje produkt turystyczny, a szablon opisuje dokument. Jedna
+wycieczka może należeć do kilku kategorii i być źródłem dowolnej oferty, rozpiski
+pilota lub kampanii. Dostępne kategorie: `private`, `self_guide`, `school`,
+`incentive`, `group`, `other`. Nie ma kategorii pilot ani marketing.
+W edytorze **Wycieczki → Otwórz / Nowa wycieczka** zaznacz checkboxy kategorii
+i zapisz. Pusta lista oznacza **Nieprzypisane**; duplikaty są usuwane podczas
+walidacji, nieznane wartości odrzucane. Nie wnioskujemy kategorii z nazwy lub kraju.
+
+`data_origin` jest niezależne od kategorii, statusu i wiarygodności:
+
+| Wartość | Znaczenie |
+| --- | --- |
+| `business` | Dane robocze TRIPSE; jawna sugestia dla nowego źródła tworzonego ręcznie. |
+| `demo` | Fikcyjny przykład demonstracyjny; wszystkie źródłowe fixture'y mają ten znacznik. |
+| `synthetic_test` | Dane automatycznych testów; parity smoke oznacza nimi Trip i Campaign. |
+| `unknown` | Pochodzenie nieustalone, domyślne dla starych rekordów i API pomijającego pole. |
+
+Starsze Trip/Campaign otwierają się z `unknown`, a Trip dodatkowo z `categories: []`.
+Nie chowamy ich w zwykłym widoku, nie wykonujemy automatycznej migracji. Odczyt
+nie zapisuje nowych pól do istniejących obiektów. PUT starego klienta pomijający
+nowe pola zachowuje zapisane oznaczenia; jawne `categories: []` usuwa przypisania.
+Rewizje i konflikty działają jak wcześniej.
+
+W katalogu wybierz szablon. Oferty preferują odpowiednio private, self_guide,
+school lub incentive; wszystkie trzy szablony pilotów pokazują wszystkie kategorie.
+Kampania pozostaje źródłem marketing.collection. Kategorie są filtrem, nie zakazem:
+**Pokaż wszystkie kategorie** pozwala np. stworzyć prywatną ofertę z wyjazdu
+grupowego; **Uwzględnij nieprzypisane** dodaje stare wycieczki do konkretnej kategorii.
+Wyszukiwarka uwzględnia nazwę i kierunek, wielkość liter i polskie znaki.
+
+Domyślne pochodzenie to biznesowe i nieustalone. DEMO włączasz checkboxem lub
+filtrem „Tylko DEMO”; TEST jest dostępny jawnie w filtrze pochodzenia / sekcji
+testowej. To organizacja list, nie kontrola dostępu. API nadal zwraca pełne źródła
+uprawnionym użytkownikom. Widok Wycieczki, kreator i marketing używają tej samej
+funkcji filtrowania. Pełne listy Trip/Campaign nadal pobiera istniejące refresh();
+nie dodano indeksu ani nowej bazy. Szczegóły wybranego źródła są również wypisane
+pod listą, aby długie nazwy i kategorie dało się odczytać na małym ekranie.
+
+Źródło nie jest wybierane automatycznie. Zmiana filtra zachowuje wybór, jeśli
+źródło nadal pasuje; w przeciwnym razie czyści go bez wybierania innego. Przycisk
+tworzenia nowej wycieczki sugeruje kategorię oferty, którą można zmienić/rozszerzyć.
+Po zapisaniu źródła kreator pamięta jego ID, także gdy późniejsze tworzenie draftu
+zawiedzie. Retry nie tworzy wtedy kolejnej wycieczki. Niepewny timeout samego POST
+źródła nadal wymaga sprawdzenia listy; nie dodano globalnej idempotencji tworzenia.
+
+Nowa kampania może wybrać wiele wycieczek poprzez filtrowaną listę. Wybrane kierunki
+pozostają w podsumowaniu także po zmianie filtra; przycisk × usuwa je świadomie.
+W Studio kolekcji wybieraj kolejne kierunki wyszukiwarką/kategorią, następnie
+**Dodaj kierunek**. Już dodane Trip są wyłączone z wyboru, filtry pozostają podczas
+przestawiania/dodawania pozycji. Kolejność CampaignItem, zdjęcia, kadry i daty
+pozostają w dotychczasowym modelu. Kampanie również mają wyszukiwanie, wariant,
+liczbę kierunków i pochodzenie.
+
+Nowy DocumentDraft przejmuje `data_origin` bezpośrednio ze źródłowego Trip lub
+Campaign w chwili tworzenia. Kopia zachowuje pochodzenie dokumentu. Zmiana kategorii
+lub pochodzenia źródła nie synchronizuje istniejących snapshotów ani historii.
+Pochodzenie kampanii jest jawne, nie jest zgadywane z jej mieszanych kierunków.
+Stary DocumentDraft bez tego pola pozostaje `unknown`; nie odtwarzamy jego genezy.
+
+Dla starszych parity records dostępny jest wyłącznie raport kandydatów:
+
+```powershell
+.venv/Scripts/python.exe -m scripts.classify_source_origins --root D:\path\to\isolated-json-export
+```
+
+Narzędzie czyta lokalny magazyn lub odizolowany eksport. Nie łączy się z GCS,
+nie inicjalizuje katalogów, nie zapisuje rekordów i nie ma trybu apply. Sprawdza
+nazwę **oraz** dokładny 15-dniowy program/znaczniki starego parity smoke; nazwa sama
+nie wystarcza. Kampanie są kandydatami tylko przy zgodności powiązań. Operator musi
+sprawdzić dowody pochodzenia, zatwierdzić konkretne ID i osobno wykonać dopuszczone
+PUT z aktualną rewizją. Nie proponujemy przepisywania zapisanych dokumentów ani ich
+snapshotów. Żadnej klasyfikacji DEV/PROD nie wykonano w tej iteracji.
+
 ## Jak korzystać z biblioteki dokumentów TRIPSE — DOCUMENT-LIBRARY-001
 
 **Implementacja lokalna na dev, 2026-10-28; bez wdrożenia na DEV/PROD.**

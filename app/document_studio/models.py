@@ -4,13 +4,15 @@ from uuid import uuid4
 from decimal import Decimal
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator, field_validator
 
 Identifier = Annotated[str, StringConstraints(pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$")]
 Title = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
 Text = Annotated[str, StringConstraints(max_length=20000)]
 Verification = Literal["unverified", "proposed", "verified", "rejected"]
 Confidentiality = Literal["public", "client", "internal", "internal_restricted"]
+TripCategory = Literal["private", "self_guide", "school", "incentive", "group", "other"]
+DataOrigin = Literal["business", "demo", "synthetic_test", "unknown"]
 
 
 def new_id():
@@ -52,6 +54,8 @@ class Trip(Model):
     schema_version: Literal[1] = 1
     revision: int = Field(default=1, ge=1)
     title: Title
+    categories: list[TripCategory] = Field(default_factory=list, max_length=6)
+    data_origin: DataOrigin = "unknown"
     destinations: list[Title] = Field(default_factory=list)
     description: Text = ""
     start_date: Date | None = None
@@ -60,6 +64,11 @@ class Trip(Model):
     status: Literal["idea", "draft", "planned", "confirmed", "completed", "cancelled"] = "draft"
     days: list[TripDay] = Field(default_factory=list)
     updated_at: datetime = Field(default_factory=now)
+
+    @field_validator("categories")
+    @classmethod
+    def unique_categories(cls, value):
+        return list(dict.fromkeys(value))
 
     @model_validator(mode="after")
     def consistent_days(self):
@@ -123,6 +132,7 @@ class Campaign(Model):
     schema_version: Literal[1] = 1
     revision: int = Field(default=1, ge=1)
     title: Title
+    data_origin: DataOrigin = "unknown"
     season: str = ""
     layout_variant: Literal["new_trips", "theme_collection"] = "new_trips"
     theme: str = ""
@@ -394,6 +404,7 @@ class DocumentDraft(Model):
     schema_version: Literal[1] = 1
     revision: int = Field(default=1, ge=1)
     title: Title
+    data_origin: DataOrigin = "unknown"
     template_id: str
     template_version: str
     layout_variant: str = "standard"

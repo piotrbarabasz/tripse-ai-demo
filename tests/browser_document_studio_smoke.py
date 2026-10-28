@@ -59,6 +59,8 @@ def run():
                 page.on("request", lambda request: requests.append(request.url))
                 page.on("dialog", lambda dialog: dialog.accept())
                 page.goto(base + "/documents/demo#trips")
+                expect(page.locator(".card")).to_have_count(0)
+                page.locator('#source-library-filters [data-source-filter="demo"]').check()
                 expect(page.locator(".card")).to_have_count(3)
                 page.screenshot(path=str(artifacts / "library-desktop.png"), full_page=True)
                 page.locator('[data-go="trips/demo-canada"]').click()
@@ -90,6 +92,8 @@ def run():
                 assert page.evaluate("window.injected") is None
                 draft_hash = page.evaluate("location.hash")
                 page.locator('[data-nav="campaigns"]').click()
+                expect(page.locator(".card")).to_have_count(0)
+                page.locator('#source-library-filters [data-source-filter="demo"]').check()
                 expect(page.locator(".card")).to_have_count(1)
                 page.locator(".card .open").click()
                 expect(page.locator('button[data-go^="trips/"]')).to_have_count(3)
@@ -130,3 +134,5 @@ if __name__ == "__main__":
     run_library()
     from reliability_qa import run as run_reliability
     run_reliability()
+    from source_ux_qa import run_sources
+    run_sources()

@@ -61,7 +61,7 @@ class Acceptance:
     def writes(self):
         from PIL import Image
         from app.document_studio.models import Trip, TripDay
-        trip = Trip(title=f"CLOUD-PARITY synthetic DEV {uuid4().hex[:8]}", duration_days=15,
+        trip = Trip(title=f"CLOUD-PARITY synthetic DEV {uuid4().hex[:8]}", data_origin="synthetic_test", duration_days=15,
                     days=[TripDay(day_number=i, title=f"Synthetic day {i}", internal_notes="PARITY_PRIVATE_OPS") for i in range(1, 16)])
         base = "/api/document-studio"
         saved = self.call(base + "/trips", method="POST", payload=trip.model_dump(mode="json"), expected=201)
@@ -78,7 +78,7 @@ class Acceptance:
         Image.new("RGB", (32, 20), "blue").save(image, "PNG")
         asset = self.call(base + "/assets?filename=synthetic.png&rights_confirmed=true", method="POST", raw=image.getvalue(), headers={"Content-Type": "image/png"}, expected=201)
         self.call(base + f"/assets/{asset['asset_id']}/content")
-        campaign = self.call(base + "/campaigns", method="POST", payload={"title": trip.title, "items": [{"trip_id": trip.trip_id, "image_asset_id": asset["asset_id"]}]}, expected=201)
+        campaign = self.call(base + "/campaigns", method="POST", payload={"title": trip.title, "data_origin": "synthetic_test", "items": [{"trip_id": trip.trip_id, "image_asset_id": asset["asset_id"]}]}, expected=201)
         for output in ("a4", "social"):
             self.call(base + f"/campaigns/{campaign['campaign_id']}/preview?output_format={output}")
         scenarios = self.call("/api/demo/scenarios")["scenarios"]

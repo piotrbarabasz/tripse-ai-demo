@@ -51,7 +51,11 @@ def run_catalog():
                     page.locator('#source-select').select_option('new')
                     page.locator('#source-title').fill('Żółte góry — dwa dni')
                     page.locator('#source-days').fill('2')
-                elif template!='marketing.collection':page.locator('#source-select').select_option('demo-canada' if template in {'pilot.advanced','pilot.knowledge'} else 'demo-iceland')
+                else:
+                    page.locator('#source-picker [data-source-filter="demo"]').check()
+                    if template!='marketing.collection':
+                        page.locator('#source-picker [data-source-filter="all"]').check()
+                    page.locator('#source-select').select_option('demo-northern-journeys' if template=='marketing.collection' else 'demo-canada' if template in {'pilot.advanced','pilot.knowledge'} else 'demo-iceland')
                 page.locator('#source-create').click()
                 save='#m-save' if template=='marketing.collection' else '#d-save'
                 expect(page.locator(save)).to_be_visible(timeout=20000)
