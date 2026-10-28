@@ -102,12 +102,12 @@ window.TripDocumentEditor = (() => {
   }
   async function save() {
     if(saving||!$('#d-form').reportValidity())return false;
-    saving=true;ui.busy(true);$('#d-save').disabled=true;
+    saving=true;ui.busy(true);ui.main.inert=true;$('#d-save').disabled=true;
     try{
       const update={revision:draft.revision,title:draft.title,date_label:draft.date_label,editorial_notes:draft.editorial_notes,day_overrides:draft.day_overrides,offer_data:draft.offer_data,pilot_data:draft.pilot_data,offer_details:draft.offer_details,sections:draft.sections};
       Object.assign(draft,await ui.api('drafts/'+draft.document_id,{method:'PUT',body:JSON.stringify(update)}));
       ui.dirty(false);let warning='';try{await ui.refresh();}catch{warning=' Biblioteka wymaga odświeżenia.';}$('#d-revision').textContent=draft.revision;ui.message('Draft zapisany. Rewizja '+draft.revision+'.'+warning,!!warning);preview();return true;
-    }catch(error){ui.message(error.message,true);return false;}finally{saving=false;ui.busy(false);if($('#d-save'))$('#d-save').disabled=false;}
+    }catch(error){ui.message(error.message,true);return false;}finally{saving=false;ui.busy(false);ui.main.inert=false;if($('#d-save'))$('#d-save').disabled=false;}
   }
   async function upload() {
     const file=$('#d-file').files[0];if(!file||!$('#d-rights').checked){ui.message('Wybierz zdjęcie i potwierdź prawo użycia.',true);return;}
@@ -119,7 +119,11 @@ window.TripDocumentEditor = (() => {
   }
   return {async open(source,context){
     if(!source.trip_snapshot)throw new Error('Ten edytor obsługuje ofertę indywidualną i rozpiskę podstawową pilota.');
-    generation++;clearTimeout(timer);ui=context;draft=source.sections===null?await ui.api('trip-documents/initialize',{method:'POST',body:JSON.stringify({draft:source})}):JSON.parse(JSON.stringify(source));draft.sections.sort((a,b)=>a.order-b.order);assets=await ui.api('assets');
+    const version=++generation;clearTimeout(timer);
+    const initialized=source.sections===null?await context.api('trip-documents/initialize',{method:'POST',body:JSON.stringify({draft:source})}):JSON.parse(JSON.stringify(source));
+    const loadedAssets=await context.api('assets');
+    if(version!==generation||context.isCurrent&&!context.isCurrent())return;
+    ui=context;draft=initialized;draft.sections.sort((a,b)=>a.order-b.order);assets=loadedAssets;
     draft.day_overrides=draft.trip_snapshot.days.map(day=>draft.day_overrides.find(o=>o.day_id===day.day_id)||{day_id:day.day_id,title:'',description:''});
     draft.offer_data ||= draft.template_id.startsWith('offer.')?{summary:'',highlights:[],accommodation:'',transport:'',included:[],excluded:[],price:{amount:null,currency:'PLN',unit:'person',participant_count:null,status:'unknown',assumptions:'',source:''},concept_only:false,cta:'',cover_asset_id:null,cover_position:{x:50,y:50,zoom:1},photo_asset_ids:[]}:null;
     draft.pilot_data ||= ['pilot.basic','pilot.advanced'].includes(draft.template_id)?{leader:'',participant_count:null,meeting:'',flights:[],transfers:[],accommodations:[],activity_bookings:[],schedule:[],contacts:[],open_items:[],internal_notes:''}:null;

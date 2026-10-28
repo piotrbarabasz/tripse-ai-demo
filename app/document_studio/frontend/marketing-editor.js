@@ -97,12 +97,12 @@ window.MarketingEditor = (() => {
   async function save() {
     if(saving)return false;
     if(!find('#m-form').reportValidity() || !campaign.items.length){ui.message('Podaj tytuł i dodaj co najmniej jeden kierunek.',true);return false;}
-    saving=true;ui.busy(true);find('#m-save').disabled=true;
+    saving=true;ui.busy(true);ui.main.inert=true;find('#m-save').disabled=true;
     try{
       if(documentDraft){Object.assign(documentDraft,await ui.api('drafts/'+documentDraft.document_id,{method:'PUT',body:JSON.stringify({revision:documentDraft.revision,title:campaign.title,sections:documentDraft.sections,campaign_snapshot:normalize()})}));campaign=clone(documentDraft.campaign_snapshot);}else campaign=await ui.api('campaigns/'+campaign.campaign_id,{method:'PUT',body:JSON.stringify(normalize())});
       ui.dirty(false);let warning='';try{await ui.refresh();}catch{warning=' Biblioteka wymaga odświeżenia.';}ui.message((documentDraft?'Dokument zapisany. Rewizja '+documentDraft.revision+'.':'Kampania zapisana.')+warning,!!warning);return true;
     }catch(error){ui.message(error.message,true);return false;}
-    finally{saving=false;ui.busy(false);if(find('#m-save'))find('#m-save').disabled=false;}
+    finally{saving=false;ui.busy(false);ui.main.inert=false;if(find('#m-save'))find('#m-save').disabled=false;}
   }
   async function exportDocument() {
     if(saving)return;
@@ -131,8 +131,13 @@ window.MarketingEditor = (() => {
     }catch(error){ui.message(error.message,true);if(find('#m-upload'))find('#m-upload').disabled=false;}
   }
   return {async open(source,trips,context){
-    generation++;clearTimeout(timer);campaign=clone(source);catalog=trips;ui=context;format='a4';documentDraft=context.draft||null;if(documentDraft?.sections===null)documentDraft=await ui.api('trip-documents/initialize',{method:'POST',body:JSON.stringify({draft:documentDraft})});
+    const version=++generation;clearTimeout(timer);
+    let initialized=context.draft||null;
+    if(initialized?.sections===null)initialized=await context.api('trip-documents/initialize',{method:'POST',body:JSON.stringify({draft:initialized})});
+    const loadedAssets=await context.api('assets');
+    if(version!==generation||context.isCurrent&&!context.isCurrent())return;
+    campaign=clone(source);catalog=trips;ui=context;format='a4';documentDraft=initialized;
     if(documentDraft){campaign.layout_variant=documentDraft.layout_variant;campaign.title=documentDraft.title;}
-    assets=await ui.api('assets');draw();
+    assets=loadedAssets;draw();
   }};
 })();

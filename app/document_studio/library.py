@@ -86,7 +86,9 @@ class DocumentLibrary:
     @staticmethod
     def _matches(draft, mutation, kind):
         op = draft.last_library_operation
-        return op and op.operation_id == str(mutation.operation_id) and op.kind == kind and op.base_revision == mutation.revision
+        return (op and op.operation_id == str(mutation.operation_id) and op.kind == kind
+            and op.base_revision == mutation.revision
+            and (kind != "status" or draft.document_status == mutation.document_status))
 
     def transition(self, identifier, mutation, kind, actor=None):
         draft = self.repository.get("drafts", identifier)

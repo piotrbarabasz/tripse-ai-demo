@@ -13,12 +13,19 @@ def chunks(value, size=650):
     if not value:
         return [""]
     result = []
-    while len(value) > size:
-        end = value.rfind(" ", size//2, size)
-        end = end + 1 if end >= 0 else size
+    while value:
+        end = min(len(value), size)
+        # Short lines can overflow a page well below the character limit.
+        # Preserve their separators while bounding the height of each block.
+        lines = [i for i, char in enumerate(value[:end]) if char == "\n"]
+        if len(lines) >= 16:
+            end = lines[15] + 1
+        elif end < len(value):
+            space = value.rfind(" ", size//2, end)
+            end = space + 1 if space >= 0 else end
         result.append(value[:end])
         value = value[end:]
-    return [*result, value]
+    return result
 
 
 def section(title, body, css=""):

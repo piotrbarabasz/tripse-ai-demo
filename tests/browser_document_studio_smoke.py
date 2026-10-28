@@ -128,3 +128,5 @@ if __name__ == "__main__":
     run_catalog()
     from library_qa import run_library
     run_library()
+    from reliability_qa import run as run_reliability
+    run_reliability()

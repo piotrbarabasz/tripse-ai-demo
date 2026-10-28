@@ -5,7 +5,7 @@ const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'
 const e = escapeHTML;
 const id = () => crypto.randomUUID().replaceAll('-', '');
 let trips = [], campaigns = [], templates = [], current = null, dirty = false, creating = false, busy = false;
-let messageTimer, activeHash = '';
+let messageTimer, activeHash = '', routeGeneration = 0;
 function message(text, error = false) {
   clearTimeout(messageTimer); const box = $('#message'); box.textContent = text;
   box.className = error ? 'error' : ''; box.hidden = false;
@@ -121,7 +121,7 @@ function updateTripField(event) {
 }
 async function saveTrip() {
   if (busy || !$('#trip-form').reportValidity()) return false;
-  busy = true; $('#save-trip').disabled = true;
+  busy = true; main.inert = true; $('#save-trip').disabled = true;
   try {
     current.duration_days = current.days.length; current.end_date = endDate();
     current.days.forEach((d,i)=> {d.day_number = i+1; d.date = current.start_date ? dateOffset(current.start_date,i) : null;});
@@ -129,7 +129,7 @@ async function saveTrip() {
     creating = false; dirty = false; await refresh();
     history.replaceState(null,'','#trips/' + current.trip_id); renderTrip(); message('Wycieczka zapisana.'); return true;
   } catch(error) {message(error.message,true); return false;}
-  finally {busy = false; if ($('#save-trip')) $('#save-trip').disabled = false;}
+  finally {busy = false; main.inert = false; if ($('#save-trip')) $('#save-trip').disabled = false;}
 }
 function renderCampaign(campaign) {
   main.innerHTML = '<button class="text-button back" data-go="campaigns">← Wszystkie kampanie</button>' + heading('KAMPANIA',campaign.title,`${campaign.season} · ${campaign.items.length} kierunki`) + `<div class="editor-grid"><div><section class="panel"><p class="eyebrow">WSPÓLNY POMYSŁ</p><h2>${e(campaign.theme || 'Nowe kierunki')}</h2><p>${e(campaign.cta)}</p><div class="notice">Kampania demonstracyjna. Terminy, opisy i programy są fikcyjne; zdjęcia nie zostały dodane.</div></section>${campaign.items.map(item=>{const trip=trips.find(t=>t.trip_id===item.trip_id);return `<article class="panel"><span class="tag">${e(item.date_range_or_label)}</span><h2>${e(trip?.title || item.trip_id)}</h2><p>${e(item.short_hook)}</p><p class="muted">${e(item.highlights.join(' · '))}</p><button data-go="trips/${e(item.trip_id)}">Otwórz wycieczkę →</button></article>`;}).join('')}</div>${documentTools('campaign')}</div>`;
@@ -187,6 +187,12 @@ async function route() {
     history.replaceState(null,'',location.pathname + activeHash); return;
   }
   activeHash = location.hash;
+  const version = ++routeGeneration;
+  const load = async path => {
+    const value = await api(path);
+    if(version !== routeGeneration) throw new Error('Stale navigation');
+    return value;
+  };
   const parts = location.hash.slice(1).split('/');
   const view = parts[0] || 'templates', resourceId = parts[1]; dirty=false; current=null;
   document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===(view==='marketing'?'campaigns':['edit-draft','revisions'].includes(view)?'drafts':view)));
@@ -195,25 +201,25 @@ async function route() {
     if(view==='templates')templateCatalog();
     else if(view==='create-document')sourceChooser(resourceId,parts[2]||'standard');
     else if(view==='drafts'&&!resourceId)await window.DocumentLibraryUI.open({main,escape:e,api,templates,message,refresh,busy:value=>busy=value});
-    else if(view==='revisions'&&resourceId)await window.DocumentLibraryUI.history(resourceId,{main,escape:e,api});
+    else if(view==='revisions'&&resourceId)await window.DocumentLibraryUI.history(resourceId,{main,escape:e,api:load});
     else if (!resourceId) cards(view);
     else if (view==='trips') {
       creating = resourceId==='new';
-      current = creating ? {trip_id:id(),title:'Nowa wycieczka',destinations:[],description:'',start_date:null,end_date:null,duration_days:1,status:'draft',days:[{day_id:id(),day_number:1,title:'Rozpoczęcie podróży',stops:[],public_description:'',internal_notes:''}]} : await api('trips/' + encodeURIComponent(resourceId));
+      current = creating ? {trip_id:id(),title:'Nowa wycieczka',destinations:[],description:'',start_date:null,end_date:null,duration_days:1,status:'draft',days:[{day_id:id(),day_number:1,title:'Rozpoczęcie podróży',stops:[],public_description:'',internal_notes:''}]} : await load('trips/' + encodeURIComponent(resourceId));
       renderTrip();
-    } else if(view==='marketing') await window.MarketingEditor.open(await api('campaigns/' + encodeURIComponent(resourceId)), trips, {
-      main, escape:e, api, message, refresh, dirty:value=>dirty=value, busy:value=>busy=value,
+    } else if(view==='marketing') await window.MarketingEditor.open(await load('campaigns/' + encodeURIComponent(resourceId)), trips, {
+      main, escape:e, api, message, refresh, dirty:value=>dirty=value, busy:value=>busy=value, isCurrent:()=>version===routeGeneration,
     });
     else if(view==='edit-draft') {
-      const draft=await api('drafts/'+encodeURIComponent(resourceId));
+      const draft=await load('drafts/'+encodeURIComponent(resourceId));
       if(draft.document_status==='archived')throw new Error('Przywróć dokument z archiwum przed edycją. Podgląd znajdziesz w bibliotece.');
-      const context={main,escape:e,api,message,refresh,dirty:value=>dirty=value,busy:value=>busy=value};
+      const context={main,escape:e,api,message,refresh,dirty:value=>dirty=value,busy:value=>busy=value,isCurrent:()=>version===routeGeneration};
       if(draft.template_id==='marketing.collection')await window.MarketingEditor.open(draft.campaign_snapshot,trips,{...context,draft});
       else await window.TripDocumentEditor.open(draft,context);
     }
-    else if(view==='campaigns') renderCampaign(await api('campaigns/' + encodeURIComponent(resourceId)));
-    else renderDraft(await api('drafts/' + encodeURIComponent(resourceId)));
-  }catch(error){main.innerHTML='<section class="panel"><h1>Nie udało się otworzyć danych</h1><p>'+e(error.message)+'</p><button data-go="drafts">Wróć do biblioteki</button></section>';}
+    else if(view==='campaigns') renderCampaign(await load('campaigns/' + encodeURIComponent(resourceId)));
+    else renderDraft(await load('drafts/' + encodeURIComponent(resourceId)));
+  }catch(error){if(version!==routeGeneration)return;main.innerHTML='<section class="panel"><h1>Nie udało się otworzyć danych</h1><p>'+e(error.message)+'</p><button data-go="drafts">Wróć do biblioteki</button></section>';}
 }
 document.addEventListener('click',event=>{
   const button=event.target.closest('button');if(!button)return;

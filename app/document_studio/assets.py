@@ -76,6 +76,10 @@ class AssetStore:
             self.binary_store.write(asset, encoded.getvalue())
             try:
                 return self.repository.save("assets", asset, create=True)
+            except StorageError:
+                # A timeout may follow a committed metadata write. Keep immutable
+                # bytes: deleting them could break an already published asset.
+                raise
             except Exception:
                 self.binary_store.delete(asset)
                 raise
@@ -91,6 +95,9 @@ class AssetStore:
             os.replace(temporary, path)
             try:
                 self.repository.save("assets", asset, create=True)
+            except StorageError:
+                # Preserve bytes when the metadata commit outcome is unknown.
+                raise
             except Exception:
                 path.unlink(missing_ok=True)
                 raise
