@@ -1,5 +1,9 @@
 # HUB-01 — TRIPSE AI Hub
 
+Canonical navigation update (2026-10-28): `/` returns a relative 302 to `/hub`;
+`/hub` renders directly; planner UI is `/planner`. Studio and mock simulator keep
+their URLs. See [endpoint inventory, proxy limits and validation](ROUTING.md).
+
 CLOUD-PARITY-001 (2026-10-26): the same Hub/router/frontend now supports the
 authenticated `cloud_demo` composition. It links to the complete Studio,
 planner and mock simulator; labels reflect cloud persistence. LOCAL retains
@@ -39,7 +43,7 @@ Karty prowadzą do istniejących modułów:
 
 | Karta | Adres | Zakres |
 |---|---|---|
-| AI Trip Planner & Maps | `/` | Formularz planowania; wynik otwiera tokenowy viewer mapy |
+| AI Trip Planner & Maps | `/planner` | Formularz planowania; wynik otwiera tokenowy viewer mapy |
 | Document Studio | `/documents/demo` | Wycieczki, kampanie i dokumenty; bez zależności od workera |
 | WhatsApp Assistant | `/demo/chat` w mock | Symulator rozmowy bez prawdziwego WhatsApp |
 
@@ -72,13 +76,16 @@ co studio. Sprawdzane są adres klienta, Host, Origin i nagłówki proxy.
 HTML Hubu jest poza publicznym StaticFiles; publiczne CSS/JS zawierają tylko
 style i logikę wygodnego pokazywania linku, bez danych modułów.
 
-Formularz `/` i symulator mają ukryty początkowo powrót, pokazywany przez
-`module-nav.js` dla nazwy lokalnego hosta. To wyłącznie wygoda UI; decyzję
+Formularz `/planner` i symulator mają ukryty początkowo powrót, pokazywany przez
+`module-nav.js` według stałego znacznika renderowanego przez backend: dla żądania
+spełniającego lokalny guard albo uwierzytelnionego `cloud_demo`. Nazwa hosta nie
+jest samodzielnym kryterium widoczności. To wyłącznie wygoda UI; decyzję
 o dostępie do `/hub` i studia zawsze podejmuje backend. Chroniony panel studia
 ma powrót w nagłówku, także w edytorach pod tym samym adresem.
 
-Nie zmieniono `/trip/{token}`, jego szablonów, map, tokenów ani `Caddyfile`.
-Hub jest przeznaczony do bezpośredniego lokalnego wejścia, jak studio;
+Nie zmieniono `/trip/{token}`, jego szablonów, map ani tokenów. `Caddyfile`
+pozwala na `/planner`, zachowując wcześniejszy publiczny formularz.
+Hub jest przeznaczony do bezpośredniego lokalnego lub uwierzytelnionego wejścia, jak studio;
 dostarczone publiczne proxy go nie wystawia. Oznaczenie trybu na Hubie wynika
 z konfiguracji, nie jest healthcheckiem workera, kluczy API lub sesji WAHA.
 

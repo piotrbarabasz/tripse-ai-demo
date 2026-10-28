@@ -61,8 +61,11 @@ $env:PLANNING_MODE = "mock"
 docker compose up --build -d api worker
 ```
 
-Hub jest dostępny lokalnie; stare adresy `/`, `/documents/demo` i `/demo/chat`
-pozostają zachowane. W trybie live karta symulatora pokazuje instrukcję jego
+Strona `/` przekierowuje kodem 302 do `/hub`; planer jest pod `/planner`.
+Studio `/documents/demo` i symulator `/demo/chat` zachowują adresy. Ten sam układ
+działa w uwierzytelnionym `cloud_demo`; readonly używa `/preview/*`.
+[Inwentarz tras i granica publicznego proxy](docs/ROUTING.md).
+W trybie live karta symulatora pokazuje instrukcję jego
 włączenia. Moduły mają powroty do Hubu; mapa publiczna nadal ma dotychczasową nawigację.
 Szczegóły, zakres i testy: [docs/HUB.md](docs/HUB.md).
 
@@ -100,7 +103,7 @@ Tryb `PLANNING_MODE=mock` zawiera teraz trzy przykładowe wycieczki, lokalną ma
 interaktywną i symulator WhatsApp bez konta telefonu oraz kluczy API.
 Uruchom `docker compose up --build -d` i otwórz
 [symulator rozmowy](http://localhost:8000/demo/chat) lub
-[formularz](http://localhost:8000/). Instrukcja i scenariusze:
+[formularz](http://localhost:8000/planner). Instrukcja i scenariusze:
 [docs/MOCK_DEMO.md](docs/MOCK_DEMO.md).
 
 Wszystkie miejsca, czasy i odległości mocka są demonstracyjne. Linie na mapie
@@ -158,7 +161,7 @@ map-unavailable message. See [viewer setup and testing](docs/VIEWER.md).
 ## Task 05 — final integration and DEV stack
 
 The four-service `api` / `worker` / `waha` / `caddy` stack and the standalone browser
-form at `/` are implemented. [DEV_DEPLOY.md](DEV_DEPLOY.md) contains the exact local
+form at `/planner` are implemented. [DEV_DEPLOY.md](DEV_DEPLOY.md) contains the exact local
 HTTPS and public-host commands, pairing steps, repeatable smoke and status matrix.
 
 **Verified locally:** HTTPS at `https://localhost:8443` with the exported local CA,

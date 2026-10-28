@@ -16,7 +16,8 @@ Dockerfile, oba Compose, `infra/gcp/`, `scripts/gcp/`, `tests/`, main i worker.
 - API: `python -m uvicorn app.main:app`; worker: `python -m app.worker`.
   Document Studio nie wymaga workera; planer i symulator używają jednej kolejki
   SQLite i jednego osobnego workera.
-- Strony: `/hub`, `/documents/demo`, `/`, `/demo/chat`. Ostatnia wymaga mock.
+- Strony: `/hub`, `/documents/demo`, `/planner`, `/demo/chat`. Ostatnia wymaga mock.
+  `/` przekierowuje do Hubu; `make demo-planner` otwiera `/planner`.
 - Bazowy Compose ma API/worker, opcjonalne profile `whatsapp` (WAHA) i `dev`
   (lokalny Caddy). API domyślnie wiąże `127.0.0.1:8000`.
   `compose.dev.yaml` to osobna publiczna konfiguracja z DNS/WAHA/Caddy;

@@ -3,7 +3,7 @@ import os
 import re
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 
 STATIC_DIR = Path(__file__).parent / "static"
@@ -32,7 +32,26 @@ def browser_config():
     return {"browser_key": key, "map_id": os.getenv("GOOGLE_MAPS_MAP_ID", "DEMO_MAP_ID")}
 
 
-def viewer_router(database):
+def module_page(filename, request, *, cloud_mode=False):
+    """Navigation hint only: reuse the server's local guard or authenticated runtime."""
+    from app.document_studio.api import local_only
+    if not cloud_mode:
+        try:
+            local_only(request)
+        except HTTPException:
+            allowed = False
+        else:
+            allowed = True
+    else:
+        # The cloud boundary verifies signed identity and membership before routing.
+        allowed = True
+    html = (STATIC_DIR / filename).read_text(encoding="utf-8")
+    if allowed:
+        html = html.replace('data-hub-navigation="disabled"', 'data-hub-navigation="enabled"')
+    return HTMLResponse(html, headers={**PRIVATE_HEADERS, "Content-Security-Policy": CSP})
+
+
+def viewer_router(database, *, cloud_mode=False):
     router = APIRouter()
 
     def lookup(token):
@@ -40,10 +59,9 @@ def viewer_router(database):
             return None
         return database.get_viewer(token)
 
-    @router.get("/", response_class=HTMLResponse)
-    def create_page():
-        return HTMLResponse((STATIC_DIR / "create.html").read_text(encoding="utf-8"),
-                            headers={**PRIVATE_HEADERS, "Content-Security-Policy": CSP})
+    @router.get("/planner", response_class=HTMLResponse)
+    def create_page(request: Request):
+        return module_page("create.html", request, cloud_mode=cloud_mode)
 
     @router.get("/trip/{token}", response_class=HTMLResponse)
     def page(token: str):

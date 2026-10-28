@@ -33,6 +33,18 @@ def test_no_storage_or_provider_construction(cloud, monkeypatch, tmp_path):
     assert not list(tmp_path.iterdir())
 
 
+def test_readonly_homepage_has_single_temporary_redirect(cloud):
+    with TestClient(cloud()) as client:
+        root = client.get("/", follow_redirects=False)
+        assert root.status_code == 302 and root.headers["location"] == "/hub"
+        assert root.headers["cache-control"] == "no-store"
+        assert client.get("/hub", follow_redirects=False).status_code == 200
+        response = client.get("/")
+        assert response.url.path == "/hub" and len(response.history) == 1
+        for path in ("/preview/planner", "/preview/documents"):
+            assert client.get(path, follow_redirects=False).status_code == 200
+
+
 @pytest.mark.parametrize("path", ["/api/trips", "/api/demo/messages", "/api/document-studio/trips", "/api/document-studio/drafts", "/api/document-studio/assets", "/webhooks/waha", "/hub"])
 @pytest.mark.parametrize("method", ["POST", "PUT", "PATCH", "DELETE"])
 def test_write_blocked(cloud, path, method):
@@ -40,7 +52,7 @@ def test_write_blocked(cloud, path, method):
         assert client.request(method, path, content=b"invalid untrusted payload").status_code == 403
 
 
-@pytest.mark.parametrize("path", ["/documents/demo", "/demo/chat", "/api/document-studio/trips", "/api/document-studio/drafts", "/api/document-studio/assets/private/content", "/preview/documents/pilot.basic", "/static/create.html", "/static/demo.html", "/docs", "/openapi.json", "/documents/assets/studio.js", "/documents/assets/../models.py"])
+@pytest.mark.parametrize("path", ["/planner", "/documents/demo", "/demo/chat", "/api/document-studio/trips", "/api/document-studio/drafts", "/api/document-studio/assets/private/content", "/preview/documents/pilot.basic", "/static/create.html", "/static/demo.html", "/docs", "/openapi.json", "/documents/assets/studio.js", "/documents/assets/../models.py"])
 def test_private_routes_absent(cloud, path):
     with TestClient(cloud()) as client:
         assert client.get(path).status_code == 404

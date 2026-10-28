@@ -53,10 +53,11 @@ def run():
                 errors=[];requests=[]
                 page.on('pageerror',lambda error:errors.append(str(error)))
                 page.on('request',lambda request:requests.append(request.url))
-                page.goto(base+'/hub')
+                page.goto(base+'/')
+                assert page.url == base+'/hub'
                 expect(page.locator('.module-card')).to_have_count(3)
                 expect(page.locator('#hub-title')).to_contain_text('Jedno miejsce startu')
-                assert page.locator('#planner-link').get_attribute('href')=='/'
+                assert page.locator('#planner-link').get_attribute('href')=='/planner'
                 assert page.locator('#documents-link').get_attribute('href')=='/documents/demo'
                 assert page.locator('#assistant-link').get_attribute('href')=='/demo/chat'
                 page.keyboard.press('Tab')
@@ -74,6 +75,9 @@ def run():
                 # Existing planner -> actual mock worker -> token-protected map.
                 page.locator('#planner-link').click()
                 expect(page.locator('#trip-form')).to_be_visible()
+                assert page.url == base+'/planner'
+                page.reload()
+                expect(page.locator('#trip-form')).to_be_visible()
                 expect(page.locator('#hub-return')).to_be_visible()
                 page.get_by_role('button',name='Karkonosze',exact=False).click()
                 page.locator('#submit-trip').click()
@@ -82,7 +86,7 @@ def run():
                 expect(page.locator('.day-card')).to_have_count(2)
                 expect(page.locator('#map svg')).to_be_visible()
                 assert page.locator('a[href="/hub"]').count()==0
-                page.goto(base+'/')
+                page.goto(base+'/planner')
                 page.locator('#hub-return').click()
                 expect(page.locator('#modules')).to_be_visible()
                 # Protected studio keeps its existing routes/data and has a return.

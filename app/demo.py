@@ -2,11 +2,11 @@
 import os
 from uuid import UUID
 from typing import Literal
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 from app.demo_data import SCENARIOS, CASES
-from app.viewer import STATIC_DIR, PRIVATE_HEADERS, CSP
+from app.viewer import module_page
 from app.waha import route_intent
 
 def enabled():
@@ -41,15 +41,15 @@ class Message(BaseModel):
     text: str = Field(min_length=1,max_length=10000)
     case: Literal['success','limit','missing','routing','failure','delivery','expired'] = 'success'
 
-def demo_router(database):
+def demo_router(database, *, cloud_mode=False):
     router = APIRouter()
     def guard():
         if not enabled(): raise HTTPException(404, 'Demo niedostępne')
 
     @router.get('/demo/chat', response_class=HTMLResponse)
-    def page():
+    def page(request: Request):
         guard()
-        return HTMLResponse((STATIC_DIR/'demo.html').read_text(encoding='utf-8'),headers={**PRIVATE_HEADERS,'Content-Security-Policy':CSP})
+        return module_page("demo.html", request, cloud_mode=cloud_mode)
 
     @router.get('/api/demo/scenarios')
     def scenarios():

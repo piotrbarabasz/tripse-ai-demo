@@ -108,7 +108,7 @@ def test_browser_fallback_served():
     from tempfile import TemporaryDirectory
     from pathlib import Path
     with TemporaryDirectory() as directory, TestClient(create_app(Path(directory) / "db.sqlite3")) as client:
-        response = client.get("/")
+        response = client.get("/planner")
         assert response.status_code == 200
         assert 'id="trip-form"' in response.text
         assert "Zaplanuj 2 dni" in response.text

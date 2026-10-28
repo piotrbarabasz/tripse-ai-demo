@@ -125,7 +125,7 @@ def cloud_demo(monkeypatch):
     return SimpleNamespace(client=client, bucket=bucket, store=store, dispatcher=dispatcher, components=components)
 
 
-@pytest.mark.parametrize("path", ["/hub", "/documents/demo", "/api/document-studio/trips", "/documents/assets/studio.js",
+@pytest.mark.parametrize("path", ["/", "/planner", "/hub", "/documents/demo", "/api/document-studio/trips", "/documents/assets/studio.js",
     "/static/viewer.js", "/api/trips/00000000-0000-0000-0000-000000000000", "/api/demo/scenarios", "/trip/invalid"])
 def test_anonymous_and_forged_headers_denied(cloud_demo, path):
     with cloud_demo.client(None) as c:
@@ -152,11 +152,36 @@ def test_access_roles_origin_host_and_task_boundary(cloud_demo):
         assert c.post(f"/internal/jobs/{uuid4()}").status_code == 200
 
 
+@pytest.mark.parametrize("identity", ["editor", "reader"])
+def test_authenticated_home_and_module_navigation(cloud_demo, identity):
+    with cloud_demo.client(identity) as client:
+        root = client.get("/", follow_redirects=False)
+        assert root.status_code == 302 and root.headers["location"] == "/hub"
+        assert root.headers["cache-control"] == "private, no-store"
+        response = client.get("/")
+        assert response.status_code == 200 and len(response.history) == 1
+        assert 'id="planner-link" href="/planner"' in response.text
+        for path in ("/hub", "/planner", "/demo/chat", "/documents/demo"):
+            for _ in range(2):
+                page = client.get(path, follow_redirects=False)
+                assert page.status_code == 200 and "location" not in page.headers
+                assert page.headers["cache-control"] == "private, no-store"
+        for path in ("/planner", "/demo/chat"):
+            page = client.get(path)
+            assert 'data-hub-navigation="enabled"' in page.text
+            assert 'href="/hub"' in page.text
+            assert "script-src 'self'" in page.headers["content-security-policy"]
+        assert client.post("/api/trips", json={"text": "test"}).status_code == (403 if identity == "reader" else 202)
+    with cloud_demo.client("stranger") as client:
+        for path in ("/", "/hub", "/planner"):
+            assert client.get(path, follow_redirects=False).status_code == 403
+
+
 def test_shared_studio_restart_upload_snapshots_conflict(cloud_demo):
     trip = Trip(title="15 day editor trip", duration_days=15,
                 days=[TripDay(day_number=i, title=f"Day {i}", internal_notes="PRIVATE_OPS") for i in range(1, 16)])
     with cloud_demo.client() as c:
-        for path in ("/hub", "/documents/demo", "/documents/assets/trip-editor.js", "/demo/chat", "/"):
+        for path in ("/hub", "/documents/demo", "/documents/assets/trip-editor.js", "/demo/chat", "/planner"):
             assert c.get(path).status_code == 200
         assert c.post("/api/document-studio/trips", json=trip.model_dump(mode="json")).status_code == 201
         edited = trip.model_dump(mode="json") | {"title": "Saved cloud trip"}

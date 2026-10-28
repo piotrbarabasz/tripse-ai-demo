@@ -1,5 +1,12 @@
 # TRIPSE Cloud Run — ręczne DEV i PROD
 
+Routing change prepared locally on 2026-10-28: `/` returns 302 to `/hub` in all
+runtime modes. Authenticated cloud_demo uses `/planner`, `/documents/demo` and
+mock `/demo/chat`; readonly preview keeps `/preview/planner` and
+`/preview/documents` without writable routes. IAP, signed Tasks and `/health`
+contracts are unchanged. This change is not deployed. See [routing inventory and
+proxy boundary](ROUTING.md).
+
 Current state - 2026-10-28: private DEV and PROD `cloud_demo` delivery is
 accepted in [master run 40614584902](RELEASE_2026_10_28.md). That evidence record
 includes artifact IDs, isolated infrastructure, operator-verified IAM/Organization

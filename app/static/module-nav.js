@@ -1,5 +1,5 @@
-/* Convenience only; /hub and Document Studio always enforce access on the server. */
+/* Server-rendered hint only; /hub and Document Studio enforce access independently. */
 (() => {
   const link = document.getElementById('hub-return');
-  if (link && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)) link.hidden = false;
+  if (link && document.body.dataset.hubNavigation === 'enabled') link.hidden = false;
 })();

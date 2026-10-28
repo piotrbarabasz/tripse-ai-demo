@@ -1,5 +1,9 @@
 # Uruchomienie pełnego demo mock
 
+Navigation: `/` returns 302 to `/hub`; planner UI is `/planner`, Document Studio
+is `/documents/demo` and mock chat is `/demo/chat`. Planning APIs are unchanged.
+See [routing and access boundaries](ROUTING.md).
+
 Ustaw w istniejącym `.env`:
 
 ```dotenv
@@ -41,7 +45,7 @@ tekście. „Nowa rozmowa” otwiera pustą rozmowę; nie usuwa historii z bazy.
 Rozmowa jest przechowywana w bieżącej sesji karty przeglądarki. Jej losowy
 identyfikator jest lokalnym kluczem dostępu, nie systemem kont użytkowników.
 
-Formularz http://localhost:8000/ używa tej samej kolejki i generatora, ale nie
+Formularz http://localhost:8000/planner używa tej samej kolejki i generatora, ale nie
 tworzy wiadomości czatu. W mock obsługujemy przygotowane wycieczki, a nie dowolne
 prośby. Nieznany region lub niepasująca liczba dni daje czytelny błąd.
 

@@ -14,8 +14,10 @@ def run(client, *, expect_mode, trip_id=None, timeout=240):
     health = client.get("/health")
     health.raise_for_status()
     assert health.json()["generation_mode"] == expect_mode, "Selected mode differs from --expect-mode"
-    root = client.get("/")
-    assert root.status_code == 200 and 'id="trip-form"' in root.text, "Browser fallback unavailable"
+    root = client.get("/", follow_redirects=False)
+    assert root.status_code == 302 and root.headers.get("location") == "/hub", "Homepage redirect unavailable"
+    planner = client.get("/planner")
+    assert planner.status_code == 200 and 'id="trip-form"' in planner.text, "Browser planner unavailable"
     for path in ("/trip/invalid", "/api/viewer/invalid"):
         assert client.get(path).status_code == 404, "Invalid viewer token was not rejected"
     auth = client.post("/api/webhooks/waha", json={})

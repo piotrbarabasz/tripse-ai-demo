@@ -1,7 +1,7 @@
 ---
 id: ADR-0008
 title: "Lokalny Hub jako nawigacja istniejących modułów demo"
-status: proposed
+status: superseded
 date: 2026-10-25
 author: "Codex — autor propozycji i implementacji"
 area: "Nawigacja i granice dostępu"
@@ -11,6 +11,11 @@ supersedes: []
 ---
 
 # ADR-0008: Lokalny Hub jako nawigacja istniejących modułów demo
+
+2026-10-28: zastąpiony przez [ADR-0013](0013-canonical-hub-navigation.md).
+Nowe zlecenie świadomie zastępuje zachowanie formularza pod `/`: `/` → 302 `/hub`,
+formularz `/planner`, nawigacja także w uwierzytelnionym cloud_demo. Poniżej
+zachowano historyczne uzasadnienie i zakres HUB-01. Nie stanowi to akceptacji ADR.
 
 Wdrożone w ramach HUB-01; ADR pozostaje propozycją bez osobnej akceptacji.
 Nie zastępuje decyzji o modułowym FastAPI ani lokalnym studiu.
@@ -72,3 +77,9 @@ COST-02/05/06, bez przypisywania im tutaj godzin ani kwot.
 
 Zlecenie publicznego portalu, zastąpienia `/`, automatyzacji między modułami
 lub monitorowania rzeczywistej dostępności. Nie wynika to z dodania kart nawigacyjnych.
+
+## Historia zmian
+
+| Data | Autor | Zmiana i uzasadnienie | Powiązanie |
+|---|---|---|---|
+| 2026-10-28 | Codex | Zachowanie pierwotnej decyzji jako historii; zastąpienie kanonicznej nawigacji na wyraźne zlecenie użytkownika | ADR-0013 |

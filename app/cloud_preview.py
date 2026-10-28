@@ -81,7 +81,7 @@ def create_preview_app(settings):
 
     @app.get("/")
     def home():
-        return RedirectResponse("/hub")
+        return RedirectResponse("/hub", status_code=302)
 
     @app.get("/hub")
     def hub():

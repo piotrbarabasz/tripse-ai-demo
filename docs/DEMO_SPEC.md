@@ -1,5 +1,11 @@
 # Demo v0.1 — zakres i architektura
 
+UI navigation contract (2026-10-28): `/` -> HTTP 302 `/hub` -> modules.
+The planner form is `/planner`; `POST /api/trips`, job polling and token viewer
+APIs remain unchanged. The authenticated cloud app shares these UI routes;
+readonly preview retains `/preview/*` only. See [inventory](ROUTING.md).
+The original minimal planner scope below is historical context.
+
 ## 1. Co pokazujemy
 
 **Jedno wejście:** wiadomość tekstowa „Zaplanuj wycieczkę…”.

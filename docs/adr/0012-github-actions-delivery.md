@@ -118,7 +118,7 @@ denied (403); the live effect was then unverified. Later runner acceptance passe
 See the
 [incident and handoff](../DEV_AUTH_004_INCIDENT.md) for chronology and hypotheses.
 ADR-0013 is not warranted: this corrects the existing keyless/fail-closed decision
-without introducing a new trust boundary. The next free ADR number remains 0013.
+without introducing a new trust boundary. The next free ADR number at that incident date remained 0013; see the current index.
 
 ## 5. Consequences
 
