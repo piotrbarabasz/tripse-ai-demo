@@ -30,6 +30,13 @@ TRIPSE łączy podróżniczą energię z czytelnością. Logo, kierunek, data, n
 
 ## 3. Robocza typografia
 
+Stan implementacji DOC-PDF-003: nadal używany jest istniejący zestaw systemowy
+Segoe UI/Arial; nie dodano fontów zdalnych ani nie ogłoszono zatwierdzenia logo
+i krojów. Rozmiary, interlinia, tabele i kadry są współdzielonymi tokenami w
+brand-tokens.css. Własne fonty i oficjalne pliki marki poniżej pozostają celem
+do osobnego zatwierdzenia. Wynik zależny od platformy trzeba ocenić przed użyciem
+produkcyjnym; [raport PDF](../../audits/DOC_PDF_003.md) pokazuje zweryfikowane próbki.
+
 - **Tekst główny:** Inter, proponowany zamiennik systemowy sans-serif; sprawdzić licencję i polskie znaki w silniku PDF.
 - **Nagłówki:** Montserrat albo Barlow Condensed; ostatecznie wybierz jedną rodzinę dla ofert i dokumentów wewnętrznych.
 - **Akcent marketingowy:** Kalam Bold lub inna zatwierdzona ekspresyjna rodzina — wyłącznie krótkie hasła, nie daty, adresy i warunki sprzedaży.

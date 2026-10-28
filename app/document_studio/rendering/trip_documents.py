@@ -29,13 +29,13 @@ def chunks(value, size=650):
 
 
 def section(title, body, css=""):
-    return ''.join(f'<section class="block document-section {css}"><h2>{text(title)}{" · cd." if i else ""}</h2><p>{text(part)}</p></section>' for i, part in enumerate(chunks(body)))
+    return f'<section class="block document-section {css}"><h2>{text(title)}</h2><p>{text(body)}</p></section>'
 
 
 def listing(title, values):
     if not values:
         return section(title, "Do uzupełnienia")
-    return section(title, "\n".join("• " + item for item in values))
+    return f'<section class="block document-section"><h2>{text(title)}</h2><ul>' + ''.join(f'<li>{text(item)}</li>' for item in values) + '</ul></section>'
 
 
 def program(draft, operational=False):
@@ -76,7 +76,7 @@ def operational_entry(label, entry):
     time = local(entry.start_local, entry.time_zone)
     if entry.end_local:
         time += "\n→ " + local(entry.end_local, entry.end_time_zone or entry.time_zone)
-    return ''.join(f'<section class="block operation-entry"><p class="eyebrow">{text(label)}</p><table><thead><tr><th>Godzina lokalna</th><th>Zdarzenie / ustalenia</th><th>Status</th></tr></thead><tbody><tr><td>{text(time)}</td><td><strong>{text(entry.title)}</strong><p>{text(part)}</p></td><td><span class="operation-status {entry.status}">{STATUS[entry.status]}</span></td></tr></tbody></table></section>' for part in chunks(body, 500))
+    return f'<section class="block operation-entry operational-table"><h2>{text(label)}</h2><table><thead><tr><th>Godzina lokalna</th><th>Zdarzenie / ustalenia</th><th>Status</th></tr></thead><tbody><tr><td>{text(time)}</td><td><strong>{text(entry.title)}</strong><p>{text(body)}</p></td><td><span class="operation-status {entry.status}">{STATUS[entry.status]}</span></td></tr></tbody></table></section>'
 
 
 def render_trip_document(draft, assets):
@@ -119,8 +119,8 @@ def render_trip_document(draft, assets):
             blocks += section("Notatki wewnętrzne pilota", pilot.internal_notes, "keep-with-previous")
         if draft.editorial_notes:
             blocks += section("Notatka redakcyjna wewnętrzna", draft.editorial_notes, "keep-with-previous")
-        classification = "WEWNĘTRZNE · TYLKO LOKALNIE"
+        classification = "WEWNĘTRZNE · ROBOCZY"
     if draft.demo_example:
         classification += " · FIKCYJNE DEMO"
     label = f"{draft.document_id[:8]} · rew. {draft.revision} · {draft.template_id} {draft.template_version} · dane r{trip.revision}"
-    return render_shell(draft.title, blocks, issues, variant=draft.template_id.replace('.', '-'), revision_label=label, classification=classification)
+    return render_shell(draft.title, blocks, issues, variant=draft.template_id.replace('.', '-'), revision_label=label, classification=classification, data_origin=draft.data_origin)

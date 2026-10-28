@@ -136,3 +136,5 @@ if __name__ == "__main__":
     run_reliability()
     from source_ux_qa import run_sources
     run_sources()
+    from pdf_quality_qa import run_pdf_quality
+    run_pdf_quality()

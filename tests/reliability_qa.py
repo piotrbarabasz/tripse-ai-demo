@@ -160,7 +160,7 @@ def run():
                     'revision':1, 'title':doc['title'], 'sections':doc['sections']})
                 saved.raise_for_status()
                 page.goto(base+'/api/document-studio/drafts/'+doc['document_id']+'/preview')
-                page.wait_for_function('window.documentReady === true')
+                page.wait_for_function('() => window.documentReady === true')
                 layout = page.evaluate('window.layoutErrors')
                 assert not layout, layout
                 expect(page.locator('#print-document')).to_be_enabled()

@@ -1,5 +1,11 @@
 # DEMO-03 — offer.private i pilot.basic
 
+Aktualizacja DOC-PDF-003 (lokalna, bez wdrożenia): pełne akapity, listy i tabele
+dzieli teraz przeglądarka według rzeczywistego układu. Nagłówki tabel są powtarzane,
+a bardzo wysokie komórki kontynuowane bez kopiowania godzin/statusów. Kontekst
+dnia i klasyfikacja pozostają na kolejnych stronach. Szczegóły, macierz PDF i
+artefakty do oceny: [DOC-PDF-003](audits/DOC_PDF_003.md).
+
 Aktualizacja implementacji lokalnej 2026-10-28: pełny katalog ośmiu ID ma wspólny
 edytor sekcji i podgląd; nowe dokumenty mają wersję szablonu 0.4.0. Instrukcja
 aktualnej pracy, API, kompatybilności i rozszerzania: [Document Studio](DOCUMENT_STUDIO.md).

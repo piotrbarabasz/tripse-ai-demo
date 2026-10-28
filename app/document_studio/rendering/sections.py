@@ -1,5 +1,4 @@
 """Section presentation on the existing paginated HTML/print shell; no data fetching."""
-from itertools import zip_longest
 from datetime import timezone
 from zoneinfo import ZoneInfo
 from app.document_studio.models import OfferData, OfferDetails, PilotData, ImagePosition
@@ -33,18 +32,7 @@ def document_issues(draft, assets):
 def table(title, columns, rows):
     if not rows:
         return section(title, "Do uzupełnienia")
-    result, group, height = "", [], 0
-    def block(values):
-        return f'<section class="block operation-entry"><h2>{text(title)}</h2><table><thead><tr>' + ''.join(f'<th>{text(c)}</th>' for c in columns) + '</tr></thead><tbody>' + ''.join('<tr>' + ''.join(f'<td>{text(c)}</td>' for c in cells) + '</tr>' for cells in values) + '</tbody></table></section>'
-    for row in rows:
-        for cells in zip_longest(*(chunks(v, 180) for v in row), fillvalue=""):
-            estimate = 28 + max((len(c)//max(10, 90//len(columns))+1)*18 for c in cells)
-            if group and (height + estimate > 360 or len(group) >= 6):
-                result += block(group)
-                group, height = [], 0
-            group.append(cells)
-            height += estimate
-    return result + (block(group) if group else "")
+    return f'<section class="block operation-entry"><h2>{text(title)}</h2><table><thead><tr>' + ''.join(f'<th>{text(c)}</th>' for c in columns) + '</tr></thead><tbody>' + ''.join('<tr>' + ''.join(f'<td>{text(c)}</td>' for c in row) + '</tr>' for row in rows) + '</tbody></table></section>'
 
 
 def schedule_order(entry):
@@ -61,7 +49,7 @@ def pricing(offer):
     return f"{label} — {amount} {offer.price.currency} / {'osobę' if offer.price.unit == 'person' else 'grupę'}.\nZałożona liczba uczestników: {offer.price.participant_count or 'do ustalenia'}.\n{offer.price.assumptions}"
 
 
-def bound_content(draft, item, assets):
+def bound_content(draft, item, assets, output_format="a4"):
     spec = next(s for s in TEMPLATES[draft.template_id].default_sections if s.role == item.role)
     key, title = spec.binding, item.title
     trip = draft.trip_snapshot
@@ -69,7 +57,7 @@ def bound_content(draft, item, assets):
     if key == "collection":
         campaign = draft.campaign_snapshot.model_copy(deep=True)
         campaign.title, campaign.layout_variant = draft.title, draft.layout_variant
-        return marketing_blocks(build_marketing(campaign, draft.campaign_trip_snapshots, assets))
+        return marketing_blocks(build_marketing(campaign, draft.campaign_trip_snapshots, assets), output_format)
     if key == "cover":
         lead = "BEZ PILOTA NA MIEJSCU · SELF-GUIDE" if draft.template_id == "offer.self_guide" else TEMPLATES[draft.template_id].name
         if draft.template_id == "offer.school":
@@ -98,7 +86,8 @@ def bound_content(draft, item, assets):
         return listing(title, [g.description + (" · " + next(d.title for d in trip.days if d.day_id == g.day_id) if g.day_id else " · Powiązanie z programem do uzupełnienia") + (" · " + next(s.name for d in trip.days for s in d.stops if s.stop_id == g.stop_id) if g.stop_id else "") for g in details.goals if g.pillar == key])
     if key == "hotel":
         hotel = details.hotel
-        result = section(title, '\n'.join([hotel.name_or_standard or 'Standard noclegów do potwierdzenia', f"Status: {hotel.status} — dostępność do uzgodnienia", hotel.location, hotel.room_types, ', '.join(hotel.amenities), hotel.common_spaces, hotel.conference_rooms]), "hotel-feature")
+        lines = [hotel.name_or_standard or 'Standard noclegów do potwierdzenia', f"Status: {hotel.status} — dostępność do uzgodnienia", hotel.location, hotel.room_types, ', '.join(hotel.amenities), hotel.common_spaces, hotel.conference_rooms]
+        result = section(title, '\n'.join(value for value in lines if value), "hotel-feature")
         return result + ''.join(f'<section class="block offer-photo">{photo(a, ImagePosition(), title)}</section>' for a in hotel.photo_asset_ids)
     value = getattr(offer, key, None) if key in {"summary", "highlights", "accommodation", "transport", "included", "excluded", "cta"} else getattr(details, key, "")
     if key == "summary":
@@ -111,20 +100,21 @@ def bound_content(draft, item, assets):
     return result
 
 
-def render_section(draft, item, assets):
+def render_section(draft, item, assets, output_format="a4"):
     title = item.title
     if item.kind == "source":
-        return bound_content(draft, item, assets) + (section(title + " — uwagi", item.body) if item.body else "")
+        return bound_content(draft, item, assets, output_format) + (section(title + " — uwagi", item.body) if item.body else "")
     result = section(title, item.body or "Do uzupełnienia", "day-section" if item.kind == "day" else "info-callout" if item.kind == "callout" else "")
     if item.kind == "list":
         return listing(title, item.items) + (section("Uwagi", item.body) if item.body else "")
     if item.kind == "table":
         return table(title, item.columns, item.rows) + (section("Uwagi", item.body) if item.body else "")
     if item.kind in {"image", "gallery"}:
-        for image in item.images or [None]:
-            result += f'<section class="block offer-photo">{photo(image.asset_id if image else None, image.position if image else ImagePosition(), title)}</section>'
-            if image and image.caption:
-                result += section("Opis zdjęcia", image.caption)
+        result = section(title, item.body) if item.body else ""
+        for index, image in enumerate(item.images or [None]):
+            heading = f'<h2>{text(title)}</h2>' if not item.body and index == 0 else ""
+            caption = f'<p class="photo-caption">{text(image.caption)}</p>' if image and image.caption else ""
+            result += f'<section class="block offer-photo">{heading}{photo(image.asset_id if image else None, image.position if image else ImagePosition(), title)}{caption}</section>'
     if item.kind == "logistics":
         day = next(d for d in draft.trip_snapshot.days if d.day_id == item.day_id)
         log, pilot = item.logistics, draft.pilot_data or PilotData()
@@ -145,6 +135,9 @@ def render_section(draft, item, assets):
             if getattr(knowledge, key):
                 result += section(label, getattr(knowledge, key))
         result += listing("Źródła i daty sprawdzenia", [s.reference + " · " + str(s.checked_on or 'Data sprawdzenia do uzupełnienia') for s in knowledge.sources])
+    if item.day_id and item.kind in {"logistics", "knowledge"}:
+        day = next(d for d in draft.trip_snapshot.days if d.day_id == item.day_id)
+        result = result.replace('<section class="block', f'<section data-context="Dzień {day.day_number}" class="block')
     return result
 
 
@@ -161,7 +154,7 @@ def render_document(draft, assets, output_format="a4"):
             return render_trip_document(draft, assets)
         campaign = draft.campaign_snapshot.model_copy(deep=True)
         campaign.title, campaign.layout_variant = draft.title, draft.layout_variant
-        return render_marketing(build_marketing(campaign, draft.campaign_trip_snapshots, assets), output_format)
+        return render_marketing(build_marketing(campaign, draft.campaign_trip_snapshots, assets), output_format, data_origin=draft.data_origin)
     blocks = section("DOKUMENT ROBOCZY", "Do przeglądu i uzupełnienia. Podgląd ani PDF roboczy nie oznacza zatwierdzenia dokumentu.", "demo-banner")
     if draft.template_id == "offer.self_guide":
         blocks += section("SELF-GUIDE — BEZ PILOTA NA MIEJSCU", "Zakres organizacji, wsparcia i ewentualnego briefingu wymaga osobnego uzgodnienia.", "demo-banner")
@@ -171,8 +164,8 @@ def render_document(draft, assets, output_format="a4"):
         blocks += section("FIKCYJNY PRZYKŁAD DEMO", "Terminy, usługi, ceny i statusy są demonstracyjne.", "demo-banner")
     for item in sorted(draft.sections, key=lambda s: s.order):
         if item.visible:
-            blocks += render_section(draft, item, assets)
+            blocks += render_section(draft, item, assets, output_format)
     classification = "WEWNĘTRZNE · ROBOCZY" if draft.template_id.startswith("pilot.") else "MARKETING · WERSJA ROBOCZA" if draft.template_id == "marketing.collection" else "DLA KLIENTA · WERSJA ROBOCZA"
     return render_shell(draft.title, blocks, issues, output_format, draft.template_id.replace('.', '-'),
         f"{draft.document_id[:8]} · rew. {draft.revision} · {draft.template_id} {draft.template_version} · dane r{(draft.trip_snapshot or draft.campaign_snapshot).revision}", classification,
-        draft_export=draft.template_id not in {"offer.private", "pilot.basic", "marketing.collection"})
+        draft_export=draft.template_id not in {"offer.private", "pilot.basic", "marketing.collection"}, data_origin=draft.data_origin)

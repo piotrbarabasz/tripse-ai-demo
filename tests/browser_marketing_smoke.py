@@ -71,7 +71,7 @@ def run():
                 results=[]
 
                 def ready(target):
-                    target.wait_for_function('window.documentReady === true')
+                    target.wait_for_function('() => window.documentReady === true')
                     assert target.evaluate('window.layoutErrors')==[],target.evaluate('window.layoutErrors')
                     assert target.locator('#print-document').is_enabled()
                     assert target.evaluate('[...document.querySelectorAll(".page-body")].every(x=>x.scrollHeight <= x.clientHeight+1)')
@@ -119,13 +119,17 @@ def run():
                             page.goto(base+f'/api/document-studio/campaigns/{campaign_id}/preview?output_format=social')
                             ready(page)
                             expect(page.locator('.trip-card')).to_have_count(count)
-                # Oversized blocks must produce a visible error, never clipped PDF content.
-                huge=api.post('/api/document-studio/campaigns',json={"title":"Zbyt obszerna karta", "cta":"Kontakt", "items":[{"trip_id":trip_ids[0],"highlights":["Bardzo długi wyróżnik "*8]*80}]}).json()
+                # Long, divisible cards must paginate without losing or repeating highlights.
+                huge=api.post('/api/document-studio/campaigns',json={"title":"Zbyt obszerna karta", "cta":"Kontakt", "items":[{"trip_id":trip_ids[0],"highlights":[f"EDGEH{i:03d} "+"Bardzo długi wyróżnik "*8 for i in range(80)]}]}).json()
                 page.goto(base+f"/api/document-studio/campaigns/{huge['campaign_id']}/preview")
-                page.wait_for_function('window.documentReady === true')
-                assert page.evaluate('window.layoutErrors.length') > 0
-                expect(page.locator('#print-document')).to_be_disabled()
-                expect(page.locator('#print-failure')).to_be_visible()
+                page.wait_for_function('() => window.documentReady === true')
+                ready(page)
+                assert page.locator('.sheet').count()>1
+                long_pdf=artifacts/'long-highlights-a4.pdf'
+                page.pdf(path=str(long_pdf),prefer_css_page_size=True,print_background=True)
+                long_text='\n'.join(p.extract_text() for p in PdfReader(long_pdf).pages)
+                import re
+                assert sorted(re.findall(r'EDGEH\d{3}',long_text))==[f'EDGEH{i:03d}' for i in range(80)]
                 page.goto(base+'/documents/demo#marketing/demo-northern-journeys')
                 expect(page.locator('[data-m-item]')).to_have_count(3)
                 page.locator('[data-m-field="title"]').fill('Moja zapisana kolekcja — żółć')

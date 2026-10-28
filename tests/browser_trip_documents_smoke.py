@@ -49,7 +49,7 @@ def run():
                 page.on('request',lambda request:requests.append(request.url))
                 page.on('dialog',lambda dialog:dialog.accept())
                 def ready(target):
-                    target.wait_for_function('window.documentReady === true')
+                    target.wait_for_function('() => window.documentReady === true')
                     assert target.evaluate('window.layoutErrors')==[],target.evaluate('window.layoutErrors')
                     expect(target.locator('#print-document')).to_be_enabled()
                     assert target.evaluate('[...document.querySelectorAll(".page-body")].every(el=>el.scrollHeight <= el.clientHeight+1)')

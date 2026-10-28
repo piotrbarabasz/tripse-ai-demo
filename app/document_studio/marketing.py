@@ -3,7 +3,7 @@ from typing import Literal
 
 from pydantic import Field
 
-from app.document_studio.models import Campaign, ImagePosition, Model
+from app.document_studio.models import Campaign, ImagePosition, Model, DataOrigin
 
 
 class Issue(Model):
@@ -37,6 +37,7 @@ class MarketingDocument(Model):
     issues: list[Issue] = Field(default_factory=list)
     revision_label: str = "Podgląd roboczy"
     leader: str = ""
+    data_origin: DataOrigin = "unknown"
 
 
 def build_marketing(campaign: Campaign, trips, assets, revision_label="Podgląd roboczy"):
@@ -88,4 +89,5 @@ def build_marketing(campaign: Campaign, trips, assets, revision_label="Podgląd 
         hero_asset_id=campaign.hero_asset_id, hero_position=campaign.hero_position,
         cards=cards, issues=issues, revision_label=revision_label,
         leader=campaign.leader or "",
+        data_origin=campaign.data_origin,
     )

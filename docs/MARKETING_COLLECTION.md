@@ -1,5 +1,12 @@
 # DEMO-02 — generator marketing.collection
 
+DOC-PDF-003 rozszerza ten sam renderer o mierzoną paginację list i tekstu,
+powtarzanie kontekstu oraz kontrolę zasobów przed drukiem. Social ma własną
+kompozycję: okładkę nowości z istniejącym obrazem głównym lub neutralnym
+placeholderem oraz większe kadry kart. Pochodzenie demo/test pozostaje jawne;
+walidacja CTA/tematu nie została zmieniona. [Raport i kontrola PDF](audits/DOC_PDF_003.md).
+Zmiany tej iteracji zweryfikowano lokalnie; bez wdrożenia.
+
 ## Start i eksport
 
 ```powershell

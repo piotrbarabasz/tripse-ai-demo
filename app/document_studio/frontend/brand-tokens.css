@@ -9,4 +9,8 @@
   --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
   --space-6:24px; --space-8:32px; --space-12:48px;
   --page-margin:56px; --section-gap:20px;
+  --document-font-size:14px; --document-leading:1.6;
+  --document-heading-size:22px; --table-font-size:13px;
+  --photo-height:260px; --photo-min-height:160px;
+  --table-cell-padding:10px; --document-rule:1px solid var(--brand-line);
 }

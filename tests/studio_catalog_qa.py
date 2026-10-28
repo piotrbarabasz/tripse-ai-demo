@@ -113,7 +113,7 @@ def run_catalog():
                 assert any(s['title']=='Własne informacje — żółć' and 'MARKER_END' in s['body'] and 'SECOND_SAVE' in s['body'] and s['visible'] for s in saved['sections'])
                 preview=context.new_page()
                 preview.goto(ORIGIN+'/api/document-studio/drafts/'+document_id+'/preview')
-                preview.wait_for_function('window.documentReady === true',timeout=20000)
+                preview.wait_for_function('() => window.documentReady === true',timeout=20000)
                 assert preview.evaluate('window.layoutErrors')==[],(template,preview.evaluate('window.layoutErrors'))
                 assert preview.locator('#print-document').is_enabled(),template
                 assert preview.evaluate('[...document.querySelectorAll(".page-body")].every(x=>x.scrollHeight<=x.clientHeight+1)'),template
@@ -126,7 +126,7 @@ def run_catalog():
                 assert abs(float(reader.pages[0].mediabox.width)-595.28)<2
                 if template=='marketing.collection':
                     preview.goto(ORIGIN+'/api/document-studio/drafts/'+document_id+'/preview?output_format=social')
-                    preview.wait_for_function('window.documentReady === true')
+                    preview.wait_for_function('() => window.documentReady === true')
                     assert preview.evaluate('window.layoutErrors')==[]
                 if template=='pilot.advanced':preview.screenshot(path=str(artifacts/'advanced-preview.png'))
                 preview.close()
