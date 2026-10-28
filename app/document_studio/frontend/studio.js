@@ -55,8 +55,42 @@ function textarea(label, field, value) {
 }
 function documentTools(sourceType) {
   const options = templates.filter(t => t.source_type === sourceType);
-  return `<aside class="panel document-tools"><p class="eyebrow">NASTĘPNY KROK</p><h2>Utwórz dokument</h2><label>Typ dokumentu<select id="template">${options.map(t=>`<option value="${e(t.template_id)}">${e(t.name)}</option>`).join('')}</select></label><p id="template-description" class="muted"></p><label id="variant-label" ${sourceType === 'trip' ? 'hidden' : ''}>Wariant<select id="variant">${(options[0]?.layout_variants || []).map(v=>`<option value="${e(v)}">${v==='new_trips'?'Nowe kierunki':v==='theme_collection'?'Kolekcja tematyczna':'Standard'}</option>`).join('')}</select></label><label>Notatka do dokumentu<textarea id="editorial-notes" maxlength="20000" placeholder="Opcjonalna uwaga redakcyjna"></textarea></label><div class="notice">Zapiszemy wersję roboczą ze snapshotem danych. Oferta indywidualna, rozpiska podstawowa i marketing mają edytor oraz podgląd PDF.</div><button class="accent" id="create-draft">Zapisz dokument roboczy</button><small>Wycieczka zostanie najpierw zapisana, jeśli zawiera zmiany.</small></aside>`;
+  return `<aside class="panel document-tools"><p class="eyebrow">NASTĘPNY KROK</p><h2>Utwórz dokument</h2><label>Typ dokumentu<select id="template">${options.map(t=>`<option value="${e(t.template_id)}">${e(t.name)}</option>`).join('')}</select></label><p id="template-description" class="muted"></p><label id="variant-label" ${sourceType === 'trip' ? 'hidden' : ''}>Wariant<select id="variant">${(options[0]?.layout_variants || []).map(v=>`<option value="${e(v)}">${v==='new_trips'?'Nowe kierunki':v==='theme_collection'?'Kolekcja tematyczna':'Standard'}</option>`).join('')}</select></label><label>Notatka do dokumentu<textarea id="editorial-notes" maxlength="20000" placeholder="Opcjonalna uwaga redakcyjna"></textarea></label><div class="notice">Zapiszemy wersję roboczą ze snapshotem danych. Wszystkie osiem typów ma edytor sekcji i podgląd roboczy. Oferta indywidualna zachowuje kontrolę ceny i eksportu.</div><button class="accent" id="create-draft">Zapisz dokument roboczy</button><small>Wycieczka zostanie najpierw zapisana, jeśli zawiera zmiany.</small></aside>`;
 }
+function templateCatalog() {
+  const groups=[['offer','Typy ofert','↗'],['pilot','Rozpiski dla pilotów','▤'],['marketing','Oferty marketingowe','◈']];
+  main.innerHTML=heading('DOCUMENT STUDIO','Co chcesz przygotować?','Wybierz rodzaj dokumentu, a następnie wycieczkę lub kampanię.')+groups.map(([family,label,icon])=>`<section class="template-group"><h2>${label}</h2><div class="template-row">${templates.filter(t=>t.family===family).map(t=>`<article class="card template-card"><span class="template-icon" aria-hidden="true">${icon}</span><h3>${e(t.name)}</h3><p>${e(t.description)}</p>${family==='marketing'?'<label>Wariant<select class="catalog-variant"><option value="new_trips">Nowości / nowe kierunki</option><option value="theme_collection">Kolekcja tematyczna</option></select></label>':''}<button class="primary" data-create-template="${e(t.template_id)}">Utwórz dokument</button></article>`).join('')}</div></section>`).join('');
+  for(const button of main.querySelectorAll('[data-create-template]'))button.onclick=()=>navigate('create-document/'+button.dataset.createTemplate+'/'+(button.closest('article').querySelector('select')?.value||'standard'));
+}
+function sourceChooser(templateId,variant) {
+  const template=templates.find(t=>t.template_id===templateId);
+  if(!template||!template.layout_variants.includes(variant))throw new Error('Nieprawidłowy typ lub wariant dokumentu.');
+  const marketing=template.source_type==='campaign', entries=marketing?campaigns:trips;
+  main.innerHTML=heading('NOWY DOKUMENT',template.name,'Typ dokumentu jest już wybrany. Wybierz źródło danych.','<button data-go="templates">← Katalog</button>')+`<form id="source-form" class="panel"><p>${e(template.description)}</p><label>${marketing?'Kampania':'Wycieczka'}<select id="source-select">${entries.map(x=>`<option value="${e(x.campaign_id||x.trip_id)}">${e(x.title)}</option>`).join('')}<option value="new">+ Utwórz nową ${marketing?'kampanię':'wycieczkę'}</option></select></label><div id="new-source" hidden><label>Nazwa<input id="source-title" maxlength="200" value="${marketing?'Nowa kolekcja':'Nowa wycieczka'}"></label>${marketing?`<label>Wycieczki do kolekcji<select id="source-trips" multiple>${trips.map(t=>`<option value="${t.trip_id}">${e(t.title)}</option>`).join('')}</select></label><label>Wspólny temat<input id="source-theme" maxlength="200"></label>`:'<label>Kierunek<input id="source-destination" maxlength="200"></label><label>Liczba dni<input id="source-days" type="number" min="1" max="60" value="2"></label>'}</div><button class="primary" id="source-create">Utwórz i otwórz edytor</button><p class="muted">Nieznane daty, ceny i rezerwacje pozostaną nieustalone.</p></form>`;
+  const select=$('#source-select');select.onchange=()=>{$('#new-source').hidden=select.value!=='new';};select.onchange();
+  $('#source-form').onsubmit=async event=>{
+    event.preventDefault();if(busy)return;busy=true;$('#source-create').disabled=true;
+    try {
+      let sourceId=select.value;
+      if(sourceId==='new') {
+        const title=$('#source-title').value.trim();if(!title)throw new Error('Uzupełnij nazwę.');
+        if(marketing) {
+          const selected=[...$('#source-trips').selectedOptions].map(o=>o.value);if(!selected.length)throw new Error('Wybierz co najmniej jedną wycieczkę.');
+          const source=await api('campaigns',{method:'POST',body:JSON.stringify({title,theme:$('#source-theme').value,layout_variant:variant,cta:'Kontakt do uzupełnienia — wersja robocza',items:selected.map(trip_id=>({trip_id}))})});sourceId=source.campaign_id;
+        } else {
+          const count=Number($('#source-days').value);if(!Number.isInteger(count)||count<1||count>60)throw new Error('Podaj od 1 do 60 dni.');
+          const destination=$('#source-destination').value.trim();
+          const source=await api('trips',{method:'POST',body:JSON.stringify({title,destinations:destination?[destination]:[],duration_days:count,days:Array.from({length:count},(_,i)=>({day_number:i+1,title:'Dzień '+(i+1)+' — do opracowania'}))})});sourceId=source.trip_id;
+        }
+        // Keep the created source selected if draft creation fails, avoiding duplicates.
+        await refresh();select.add(new Option(title,sourceId));select.value=sourceId;select.onchange();
+      }
+      const draft=await api('drafts',{method:'POST',body:JSON.stringify({template_id:templateId,source_type:template.source_type,source_id:sourceId,layout_variant:variant})});
+      await refresh();busy=false;navigate('edit-draft/'+draft.document_id);
+    }catch(error){message(error.message,true);}finally{busy=false;if($('#source-create'))$('#source-create').disabled=false;}
+  };
+}
+
 function renderTrip() {
   main.innerHTML = `<button class="text-button back" data-go="trips">← Wszystkie wycieczki</button>` + heading('EDYTOR WYCIECZKI', current.title, `${current.days.length} dni · ${creating ? 'Nowa wycieczka' : 'Rewizja ' + current.revision}`, '<button type="submit" form="trip-form" class="primary" id="save-trip">Zapisz wycieczkę</button>') +
     `<div class="editor-grid"><form id="trip-form"><section class="panel"><h2>Podstawowe informacje</h2><div class="fields"><div class="full">${input('Nazwa wycieczki','title',current.title,'text','required maxlength="200"')}</div><div class="full">${input('Kierunki (oddziel przecinkami)','destinations',current.destinations.join(', '),'text','maxlength="1000"')}</div><label>Status<select data-field="status">${Object.entries(statusLabels).map(([k,v])=>`<option value="${k}" ${current.status===k?'selected':''}>${v}</option>`).join('')}</select></label>${input('Data rozpoczęcia (opcjonalna)','start_date',current.start_date,'date')}<div class="full">${textarea('Opis wycieczki','description',current.description)}</div></div><p class="muted" id="date-summary">${dateSummary()}</p></section><section class="panel"><div class="section-heading"><div><p class="eyebrow">DZIEŃ PO DNIU</p><h2>Program podróży</h2></div><button type="button" id="add-day">+ Dodaj dzień</button></div><div id="days">${current.days.map(dayHTML).join('')}</div>${current.days.length ? '' : '<p class="muted">Dodaj pierwszy dzień programu.</p>'}</section></form>${documentTools('trip')}</div>`;
@@ -139,7 +173,7 @@ function renderDraft(draft) {
     }
     main.querySelector('.heading').after(actions);
   }
-  if (['offer.private','pilot.basic'].includes(draft.template_id)) {
+  if (templates.some(t=>t.template_id===draft.template_id)) {
     const actions = document.createElement('div'); actions.className = 'actions marketing-document-actions';
     const button=document.createElement('button');button.className='primary';button.dataset.go='edit-draft/'+draft.document_id;button.textContent='Edytuj dokument';
     const link=document.createElement('a');link.href=`/api/document-studio/drafts/${draft.document_id}/preview`;link.target='_blank';link.rel='noopener';link.textContent='Podgląd A4 / PDF';
@@ -152,11 +186,13 @@ async function route() {
   }
   activeHash = location.hash;
   const parts = location.hash.slice(1).split('/');
-  const view = parts[0] || 'trips', resourceId = parts[1]; dirty=false; current=null;
+  const view = parts[0] || 'templates', resourceId = parts[1]; dirty=false; current=null;
   document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===(view==='marketing'?'campaigns':view==='edit-draft'?'drafts':view)));
   try {
-    if (!['trips','campaigns','drafts','marketing','edit-draft'].includes(view)) throw new Error('Nie znaleziono widoku.');
-    if (!resourceId) cards(view);
+    if (!['templates','create-document','trips','campaigns','drafts','marketing','edit-draft'].includes(view)) throw new Error('Nie znaleziono widoku.');
+    if(view==='templates')templateCatalog();
+    else if(view==='create-document')sourceChooser(resourceId,parts[2]||'standard');
+    else if (!resourceId) cards(view);
     else if (view==='trips') {
       creating = resourceId==='new';
       current = creating ? {trip_id:id(),title:'Nowa wycieczka',destinations:[],description:'',start_date:null,end_date:null,duration_days:1,status:'draft',days:[{day_id:id(),day_number:1,title:'Rozpoczęcie podróży',stops:[],public_description:'',internal_notes:''}]} : await api('trips/' + encodeURIComponent(resourceId));
@@ -164,7 +200,12 @@ async function route() {
     } else if(view==='marketing') await window.MarketingEditor.open(await api('campaigns/' + encodeURIComponent(resourceId)), trips, {
       main, escape:e, api, message, refresh, dirty:value=>dirty=value, busy:value=>busy=value,
     });
-    else if(view==='edit-draft') await window.TripDocumentEditor.open(await api('drafts/' + encodeURIComponent(resourceId)), {main,escape:e,api,message,refresh,dirty:value=>dirty=value,busy:value=>busy=value});
+    else if(view==='edit-draft') {
+      const draft=await api('drafts/'+encodeURIComponent(resourceId));
+      const context={main,escape:e,api,message,refresh,dirty:value=>dirty=value,busy:value=>busy=value};
+      if(draft.template_id==='marketing.collection')await window.MarketingEditor.open(draft.campaign_snapshot,trips,{...context,draft});
+      else await window.TripDocumentEditor.open(draft,context);
+    }
     else if(view==='campaigns') renderCampaign(await api('campaigns/' + encodeURIComponent(resourceId)));
     else renderDraft(await api('drafts/' + encodeURIComponent(resourceId)));
   }catch(error){main.innerHTML='<section class="panel"><h1>Nie udało się otworzyć danych</h1><p>'+e(error.message)+'</p><button data-go="trips">Wróć do wycieczek</button></section>';}

@@ -151,7 +151,7 @@ def test_api_persistence_campaign_draft_and_planner_isolation(tmp_path):
             draft_ids.append(data["document_id"])
             snapshots = [data["trip_snapshot"]] if data["trip_snapshot"] else data["campaign_trip_snapshots"]
             assert snapshots[0]["days"][0]["internal_notes"] == ("Notatka wyłącznie dla pilota" if template == "pilot.basic" else "")
-            assert data["template_version"] == ("0.2.0" if template == "marketing.collection" else "0.3.0")
+            assert data["template_version"] == "0.4.0"
         changed = updated.json()
         changed["title"] = "Późniejsza edycja"
         assert client.put(f"/api/document-studio/trips/{trip_id}",json=changed).status_code == 200

@@ -18,6 +18,8 @@ def test_smoke_never_claims_real_routes_for_mock_or_partial_results(mode):
         if path == "/health":
             return httpx.Response(200, json={"status": "ok", "generation_mode": mode})
         if path == "/":
+            return httpx.Response(302, headers={"location": "/hub"})
+        if path == "/planner":
             return httpx.Response(200, text='<form id="trip-form"></form>')
         if path == "/api/webhooks/waha":
             return httpx.Response(401)

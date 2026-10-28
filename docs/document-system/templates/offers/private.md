@@ -1,5 +1,10 @@
 # Szablon: oferta wyjazdu indywidualnego
 
+Stan implementacji lokalnej 2026-10-28 (szablony 0.4.0): Wspólne OfferData, dziesięć domyślnych ról sekcji, własne sekcje i dotychczasowa cena/concept_only/CTA. Nadal blokowany eksport przy błędach biznesowych.
+
+Instrukcja edycji i ograniczenia publikacji: [Document Studio](../../../DOCUMENT_STUDIO.md).
+Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej akceptacji treści.
+
 **ID:** `offer.private`  
 **Rodzina:** `offer` · **Odbiorca:** klient prywatny / rodzina / zamknięta grupa  
 **Poufność:** dokument klientowski; może być wysłany odbiorcy, ale nie zawiera danych operacyjnych.  

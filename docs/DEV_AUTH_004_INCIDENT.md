@@ -1,8 +1,16 @@
 # TRIPSE-CICD-DEV-AUTH-004: DEV IAP 401 and deployment handoff
 
+Current state - 2026-10-28: private DEV and PROD `cloud_demo` delivery is
+accepted in [master run 40614584902](RELEASE_2026_10_28.md). That evidence record
+includes artifact IDs, isolated infrastructure, operator-verified IAM/Organization
+Policy and state adoption, and remaining acceptance limits. Earlier dated findings
+below are historical snapshots, superseded for rollout status. Do not replay
+completed bootstrap/import/cutover steps or use old saved plans. Human login,
+restore/isolation drills and real customer-data readiness remain unverified.
+
 2026-10-27: DEV deployment/acceptance succeeded in run 40523770207, SHA cf94e20a,
 artifact 12741609814. Historical blockers below are retained as incident evidence.
-Current work is [PROD bootstrap preparation](PROD_BOOTSTRAP_001.md): reviewed
+At that date, the next work was [PROD bootstrap preparation](PROD_BOOTSTRAP_001.md): reviewed
 plans only, no production mutation or deployment.
 
 2026-10-27 BUILD-005 continuation: [source staging investigation and permanent

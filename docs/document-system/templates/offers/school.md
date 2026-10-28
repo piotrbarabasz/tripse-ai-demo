@@ -1,5 +1,10 @@
 # Szablon: oferta wycieczki szkolnej
 
+Stan implementacji lokalnej 2026-10-28 (szablony 0.4.0): OfferData + OfferDetails: wiek, liczebność, opieka i cele trzech filarów z day_id/stop_id. Nie ma automatycznych efektów edukacyjnych ani gwarancji bezpieczeństwa.
+
+Instrukcja edycji i ograniczenia publikacji: [Document Studio](../../../DOCUMENT_STUDIO.md).
+Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej akceptacji treści.
+
 **ID:** `offer.school`  
 **Rodzina:** `offer` · **Odbiorca:** szkoła, nauczyciel, osoba organizująca wyjazd  
 **Poufność:** dokument klientowski (bez list imiennych uczniów)  

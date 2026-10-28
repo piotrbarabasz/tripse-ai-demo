@@ -36,6 +36,11 @@ def main():
             errors=[];urls=[]
             page.on("pageerror",lambda error:errors.append(str(error)))
             page.on("request",lambda request:urls.append(request.url))
+            page.goto(base + "/")
+            assert page.url == base + "/hub"
+            page.reload()
+            assert page.url == base + "/hub"
+            assert page.request.get(base + "/planner").status == 404
             for width in (1440,768,390,320):
                 page.set_viewport_size({"width":width,"height":900})
                 for path in ("/hub","/preview/planner","/preview/planner?scenario=ojcow","/preview/documents"):

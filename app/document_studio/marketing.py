@@ -21,6 +21,7 @@ class MarketingCard(Model):
     badge: str
     image_asset_id: str | None
     image_position: ImagePosition
+    leader: str = ""
 
 
 class MarketingDocument(Model):
@@ -35,6 +36,7 @@ class MarketingDocument(Model):
     cards: list[MarketingCard]
     issues: list[Issue] = Field(default_factory=list)
     revision_label: str = "Podgląd roboczy"
+    leader: str = ""
 
 
 def build_marketing(campaign: Campaign, trips, assets, revision_label="Podgląd roboczy"):
@@ -78,10 +80,12 @@ def build_marketing(campaign: Campaign, trips, assets, revision_label="Podgląd 
             date_label=item.date_range_or_label, description=item.short_hook,
             highlights=item.highlights, badge={"concept":"Propozycja", "new":"Nowość", "pilot":"Pilotaż"}[item.badge],
             image_asset_id=item.image_asset_id, image_position=item.image_position,
+            leader=item.leader or "",
         ))
     return MarketingDocument(
         title=campaign.title, season=campaign.season, theme=campaign.theme,
         description=campaign.description, cta=campaign.cta, variant=campaign.layout_variant,
         hero_asset_id=campaign.hero_asset_id, hero_position=campaign.hero_position,
         cards=cards, issues=issues, revision_label=revision_label,
+        leader=campaign.leader or "",
     )

@@ -1,5 +1,11 @@
 # DEMO-03 — offer.private i pilot.basic
 
+Aktualizacja implementacji lokalnej 2026-10-28: pełny katalog ośmiu ID ma wspólny
+edytor sekcji i podgląd; nowe dokumenty mają wersję szablonu 0.4.0. Instrukcja
+aktualnej pracy, API, kompatybilności i rozszerzania: [Document Studio](DOCUMENT_STUDIO.md).
+Poniższy scenariusz DEMO-03 i wyniki opisują pierwotne private/basic. Zachowano je
+jako działającą ścieżkę oraz historię; blokada ceny private nie została osłabiona.
+
 ## Uruchomienie
 
 ```powershell
@@ -57,9 +63,9 @@ zachowuje `trip_snapshot`, `template_id`, `template_version`, `revision`,
 
 - `date_label` — redakcyjny opis terminu; puste pole pokazuje daty Trip albo brak.
 - `day_overrides[]` — `day_id`, własny tytuł i opis; puste wartości dziedziczą snapshot.
-- `offer_data` — tylko w `offer.private`: podsumowanie, zalety, publiczny opis
+- `offer_data` — we wszystkich ofertach: podsumowanie, zalety, publiczny opis
   noclegów/transportu, listy świadczeń, cena i założenia, publiczne CTA, zdjęcia.
-- `pilot_data` — tylko w `pilot.basic`: pilot, liczebność, zbiórka, loty, transfery,
+- `pilot_data` — w `pilot.basic` i `pilot.advanced`: pilot, liczebność, zbiórka, loty, transfery,
   noclegi, rezerwacje atrakcji, harmonogram, kontakty, sprawy otwarte i notatki.
 
 Zdarzenia operacyjne mają opcjonalne powiązanie z dniem, lokalny początek/koniec,
@@ -80,18 +86,20 @@ Istniejące endpointy zostały zachowane; prefiks `/api/document-studio`:
 | GET | `/drafts/{id}/preview` | Wspólny podgląd A4 zapisanych dokumentów |
 
 PUT przyjmuje wyłącznie `revision`, `title`, `date_label`, `editorial_notes`,
-`day_overrides`, `offer_data`, `pilot_data`. Nie pozwala podmienić źródła,
+`day_overrides`, `offer_data`, `pilot_data`, `offer_details`, `sections` i dla marketingu
+`campaign_snapshot`. Nie pozwala podmienić tożsamości źródła,
 szablonu, poufności ani snapshotu. Konflikt rewizji daje 409. Pola niepasujące
 do typu dokumentu i błędne referencje dni są odrzucane. Zapis wersji roboczej
 jest możliwy mimo braków biznesowych; blokady dotyczą eksportu.
 
-Wersje szablonów: oferta i rozpiska **0.3.0**, marketing **0.2.0**.
+Historyczne wersje DEMO-03: oferta i rozpiska **0.3.0**, marketing **0.2.0**;
+nowe instancje sekcyjne: **0.4.0**.
 Stare drafty są odczytywane z domyślnymi nowymi polami. Nie ma migracji Trip
 ani zmian w modelach/API planera i jego SQLite.
 
 ## Renderowanie i poufność
 
-Wszystkie trzy typy korzystają z `render_shell`, wspólnych tokenów, zdjęć,
+Wszystkie osiem typów korzysta z `render_shell`, wspólnych tokenów, zdjęć,
 escapowania tekstu, paginacji i przeglądarkowego eksportu z DEMO-02.
 `rendering/trip_documents.py` dodaje okładkę, sekcje programu i tabele operacyjne.
 Długie teksty są dzielone bez utraty znaków na kolejne bloki, z powtórzonym

@@ -1,5 +1,9 @@
 # Katalog szablonów
 
+Stan implementacji lokalnej 2026-10-28: Wszystkie osiem ID poniżej ma zaimplementowany edytor i podgląd sekcyjny 0.4.0. Marketing używa jednego silnika z dwoma wariantami. Katalog UI: `/documents/demo#templates`.
+
+Szczegóły operacyjne: [Document Studio](../../DOCUMENT_STUDIO.md).
+
 ## Konwencja
 
 `template_id` jest stabilnym identyfikatorem używanym w API i danych; nazwa dla użytkownika może się zmieniać. Każdy szablon ma `family`, `audience`, `confidentiality`, `template_version`, wariant układu i zestaw walidowanych pól. Szablon nie jest tożsamy z pojedynczym PDF-em.

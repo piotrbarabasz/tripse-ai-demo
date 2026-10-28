@@ -36,15 +36,19 @@ make gcp-dry-run ENV=dev
 
 Wymagane oba pliki konfiguracyjne GCP. Preflight online wymaga gcloud;
 wariant bez chmury: `make gcp-preflight ENV=dev OFFLINE=1`.
-PROD: wyłącznie jawne `make deploy-prod TAG=<COMMIT_SHA> CONFIRM=prod`.
+PROD: chroniona promocja master przez GitHub Actions; ręczny target
+`make deploy-prod TAG=<COMMIT_SHA> CONFIRM=prod` pozostaje dostępny.
 
-## Cloud Run DEV/PROD — przygotowany deployment
+## Cloud Run DEV/PROD — wdrożone cloud_demo
 
-Ręczne skrypty PowerShell, dwa przykłady konfiguracji i bezstanowy
-`CLOUD_FEATURE_MODE=readonly_demo`: publiczny Hub, gotowe trasy i kolekcje PDF.
-Bez zapisu, uploadów, pilota i WhatsApp w chmurze; lokalne demo zachowuje funkcje.
-Instrukcja DEV, promocji tego samego obrazu do PROD, smoke i rollback:
-[docs/DEPLOY_GCP.md](docs/DEPLOY_GCP.md). **Nie wykonano rzeczywistego wdrożenia GCP.**
+2026-10-28: prywatne DEV i PROD działają w `cloud_demo/mock` za IAP,
+z osobnymi zasobami GCS, Firestore/Tasks i uprawnieniami. GitHub Actions przyjął
+master na DEV i promował ten sam digest do chronionego PROD.
+[Dowody wydania i granice odbioru](docs/RELEASE_2026_10_28.md),
+[CI/CD](docs/GITHUB_CICD.md), [deployment i rollback](docs/DEPLOY_GCP.md).
+`local` i publiczny `readonly_demo` pozostają obsługiwanymi trybami.
+Logowanie każdego użytkownika w przeglądarce oraz gotowość na rzeczywiste dane
+klienta nie zostały potwierdzone. LIVE i rzeczywisty WhatsApp pozostają wyłączone.
 
 ## TRIPSE AI Hub — start demonstracji
 
@@ -57,8 +61,11 @@ $env:PLANNING_MODE = "mock"
 docker compose up --build -d api worker
 ```
 
-Hub jest dostępny lokalnie; stare adresy `/`, `/documents/demo` i `/demo/chat`
-pozostają zachowane. W trybie live karta symulatora pokazuje instrukcję jego
+Strona `/` przekierowuje kodem 302 do `/hub`; planer jest pod `/planner`.
+Studio `/documents/demo` i symulator `/demo/chat` zachowują adresy. Ten sam układ
+działa w uwierzytelnionym `cloud_demo`; readonly używa `/preview/*`.
+[Inwentarz tras i granica publicznego proxy](docs/ROUTING.md).
+W trybie live karta symulatora pokazuje instrukcję jego
 włączenia. Moduły mają powroty do Hubu; mapa publiczna nadal ma dotychczasową nawigację.
 Szczegóły, zakres i testy: [docs/HUB.md](docs/HUB.md).
 
@@ -73,7 +80,10 @@ brak potwierdzenia decyzji przez właściciela, nie brak implementacji.
 
 ## TRIPSE Document Studio — lokalne demo
 
-Panel dokumentów: [http://localhost:8000/documents/demo](http://localhost:8000/documents/demo).
+Panel dokumentów: [http://localhost:8000/documents/demo#templates](http://localhost:8000/documents/demo#templates).
+Katalog zawiera osiem typów: cztery oferty, trzy materiały pilota i marketing
+z dwoma wariantami. Wybierz typ i źródło, edytuj sekcje, zapisz draft i otwórz
+roboczy PDF. [Instrukcja pracy i ograniczenia](docs/DOCUMENT_STUDIO.md).
 Oddzielne modele wielodniowych wycieczek, kampanie wielu kierunków i zapisywane
 snapshoty dokumentów; dane w lokalnych plikach JSON, bez zmian SQLite planera.
 Start: `docker compose up --build -d api` lub lokalny Uvicorn.
@@ -96,7 +106,7 @@ Tryb `PLANNING_MODE=mock` zawiera teraz trzy przykładowe wycieczki, lokalną ma
 interaktywną i symulator WhatsApp bez konta telefonu oraz kluczy API.
 Uruchom `docker compose up --build -d` i otwórz
 [symulator rozmowy](http://localhost:8000/demo/chat) lub
-[formularz](http://localhost:8000/). Instrukcja i scenariusze:
+[formularz](http://localhost:8000/planner). Instrukcja i scenariusze:
 [docs/MOCK_DEMO.md](docs/MOCK_DEMO.md).
 
 Wszystkie miejsca, czasy i odległości mocka są demonstracyjne. Linie na mapie
@@ -154,7 +164,7 @@ map-unavailable message. See [viewer setup and testing](docs/VIEWER.md).
 ## Task 05 — final integration and DEV stack
 
 The four-service `api` / `worker` / `waha` / `caddy` stack and the standalone browser
-form at `/` are implemented. [DEV_DEPLOY.md](DEV_DEPLOY.md) contains the exact local
+form at `/planner` are implemented. [DEV_DEPLOY.md](DEV_DEPLOY.md) contains the exact local
 HTTPS and public-host commands, pairing steps, repeatable smoke and status matrix.
 
 **Verified locally:** HTTPS at `https://localhost:8443` with the exported local CA,

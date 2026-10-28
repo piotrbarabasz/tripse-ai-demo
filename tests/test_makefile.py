@@ -129,7 +129,7 @@ def test_demo_opens_existing_api_or_prints_url(commands,monkeypatch,capsys):
     urls=[]
     monkeypatch.setattr(dev.webbrowser,"open",lambda url:urls.append(url) or False)
     for target in ("demo-hub","demo-docs","demo-planner","demo-whatsapp"):dev.demo(target)
-    assert urls==["http://localhost:8000/hub","http://localhost:8000/documents/demo","http://localhost:8000/","http://localhost:8000/demo/chat"]
+    assert urls==["http://localhost:8000/hub","http://localhost:8000/documents/demo","http://localhost:8000/planner","http://localhost:8000/demo/chat"]
     assert not commands  # Never starts another API or worker.
     assert "open the URL above manually" in capsys.readouterr().out
     monkeypatch.setenv("BASE_URL","https://example.com")

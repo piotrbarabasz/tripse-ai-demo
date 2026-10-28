@@ -6,23 +6,27 @@ date: 2026-10-26
 author: "Codex — implementation proposal"
 area: "application composition, access, storage, asynchronous jobs, deployment"
 related_tasks: [CLOUD-PARITY-001, TRIPSE-PROD-BOOTSTRAP-001]
-related_prs: []
+related_prs: [3]
 supersedes: [ADR-0009]
 ---
 
 # ADR-0011: Authenticated cloud_demo
 
-Implementation: prepared and tested offline; no GCP rollout. Owner acceptance of
-this ADR and customer-data production readiness have not been established.
+Implementation as of 2026-10-28: private DEV and PROD `cloud_demo` deployments
+are automatically accepted at master SHA `3f55a25276a7e92ce74b3e0c70460d4e967a0138`.
+[Delivery run 40614584902](https://github.com/piotrbarabasz/tripse-ai-demo/actions/runs/40614584902)
+passed CI, DEV and PROD; artifacts 12784708088 / 12784523829 preserve the same
+digest. Separate DEV/PROD persistent resources and IAP-based access are in use.
+See [release evidence, access and state adoption](../RELEASE_2026_10_28.md).
+Owner approval of this ADR and real customer-data readiness remain unrecorded;
+`status: proposed` is intentional. Human-account interactive login is not inferred.
 
-2026-10-27 operational evidence: DEV run 40523770207 accepted private cloud_demo
-at cf94e20a7f53c2d7674d83319704a54e2a92889e, artifact 12741609814. This supersedes
-the original offline-only note for exercised DEV gates; backup/restart/isolation
-drills and production acceptance are not inferred. PROD_BOOTSTRAP-001 prepares a
-separate empty PROD state/root, independent bucket/database/task/runtime IAM, and
-leaves shared project APIs in the original DEV state. See
-[production bootstrap](../PROD_BOOTSTRAP_001.md). No PROD apply or rollout occurred;
-the ADR remains proposed without formal owner acceptance.
+Historical sequence: 2026-10-26 offline preparation performed no rollout.
+2026-10-27 DEV run 40523770207 accepted cf94e20a7f53c2d7674d83319704a54e2a92889e,
+artifact 12741609814. [PROD bootstrap](../PROD_BOOTSTRAP_001.md) then prepared an
+empty separate root/state with shared APIs retained in DEV. Its no-PROD-apply
+observation describes that preparation, superseded by the accepted release above.
+Restart, restore and effective isolation drills remain separate acceptance work.
 
 ## 1. Context and problem
 
@@ -73,8 +77,12 @@ enabled; LIVE remains fail-closed pending the controls listed in the audit.
 `cloud_jobs`, `cloud_access` and `document_studio/cloud_storage`.
 **Inference:** this is a smaller operational addition than Cloud SQL for a small
 authenticated mock demo. No performance or price advantage has been measured.
-**Unconfirmed:** deployed IAM/OAuth, backup restore, real multi-instance behavior,
-customer acceptance and suitability for real personal data.
+**Verified scope:** deployed private IAP acceptance and the operator-reported
+approved human/editor memberships are recorded in the release evidence. Approved
+editors are kontakt@protolume.pl, barabasz.piotrek@gmail.com and
+tripse.kontakt@gmail.com in both environments; existing probes/readers remain.
+**Unconfirmed:** interactive login for each human, backup restore, real
+multi-instance behavior, customer acceptance and suitability for real personal data.
 
 ## 5. Positive and negative consequences
 
@@ -104,7 +112,9 @@ disabled. No measured hours, API prices or billed amounts are available.
 
 ## 8. Links, tasks, PR and acceptance
 
-Task: CLOUD-PARITY-001. PR/commit: none created for this change. Acceptance:
+Task: CLOUD-PARITY-001. Original proposal created no PR/commit; rollout evidence
+is [PR #3](https://github.com/piotrbarabasz/tripse-ai-demo/pull/3) and master
+`3f55a25276a7e92ce74b3e0c70460d4e967a0138`. ADR acceptance:
 not recorded; `proposed` is deliberate. Sources and run instructions:
 [audit](../CLOUD_PARITY_AUDIT.md), [deployment](../DEPLOY_GCP.md),
 [Studio](../DOCUMENT_STUDIO.md), [Hub](../HUB.md).
@@ -121,3 +131,4 @@ or a requirement for transactional writes across multiple Studio documents.
 | Date | Author | Change and reason | Task |
 |---|---|---|---|
 | 2026-10-26 | Codex | New cloud parity proposal; preserve preview and LOCAL contracts | CLOUD-PARITY-001 |
+| 2026-10-28 | Codex | Synchronize accepted private DEV/PROD rollout, editor membership and remaining gates; retain proposed status and historical preparation | PR #3; run 40614584902 |

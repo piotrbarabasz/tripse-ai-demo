@@ -1,5 +1,9 @@
 # Matryca pól szablonów
 
+Stan implementacji lokalnej 2026-10-28: Aktualne nazwy pól i kontrakty PUT/preview/initialize opisuje instrukcja Document Studio. Wymagane role sekcji wyznacza konfiguracja SectionSpec, więc usunięcie/ukrycie nie usuwa obowiązku. Nazwy operations/pricing i workflow approved poniżej są specyfikacją przyszłą, a nie bieżącym API.
+
+Szczegóły operacyjne: [Document Studio](../../DOCUMENT_STUDIO.md).
+
 **Cel:** wskazać minimum wymagane dla **finalnego** dokumentu. Zapis draftu może następować pomimo braków — o tym, co blokuje eksport, decydują zasady poniżej. Pełna semantyka obiektów: [trip-data-model.md](trip-data-model.md).
 
 ## 1. Pola wspólne

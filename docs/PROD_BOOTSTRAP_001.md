@@ -1,7 +1,15 @@
 # TRIPSE-PROD-BOOTSTRAP-001: operator-ready production preparation
 
-**2026-10-27 continuation: [PROD-BOOTSTRAP-002](PROD_BOOTSTRAP_002.md) is the
-current execution/resume procedure.** The merge already happened: master is
+Current state - 2026-10-28: private DEV and PROD `cloud_demo` delivery is
+accepted in [master run 40614584902](RELEASE_2026_10_28.md). That evidence record
+includes artifact IDs, isolated infrastructure, operator-verified IAM/Organization
+Policy and state adoption, and remaining acceptance limits. Earlier dated findings
+below are historical snapshots, superseded for rollout status. Do not replay
+completed bootstrap/import/cutover steps or use old saved plans. Human login,
+restore/isolation drills and real customer-data readiness remain unverified.
+
+**Historical 2026-10-27 continuation: [PROD-BOOTSTRAP-002](PROD_BOOTSTRAP_002.md) is the
+execution/resume procedure at that date.** The merge already happened: master is
 78919b0f17805529fff7a0cfd289ad460c93403b. Run 40550402214 accepted DEV artifact
 12753973550, then failed PROD before authentication because all five production
 variables were absent. GitHub auto-created production without protections.

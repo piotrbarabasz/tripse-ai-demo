@@ -1,5 +1,9 @@
 # Przepływ tworzenia dokumentu
 
+Stan implementacji lokalnej 2026-10-28: Aktualnie: katalog → typ/wariant → źródło → draft → edytor sekcji → zapis rewizji → roboczy PDF. Najpierw wybiera się dokument, nie źródło. Obsługiwany status to `draft`; opisane dalej wieloetapowe zatwierdzanie i automatyczne udostępnianie są specyfikacją przyszłą.
+
+Szczegóły operacyjne: [Document Studio](../../DOCUMENT_STUDIO.md).
+
 ## 1. Główna ścieżka
 
 1. **Wybierz wycieczkę** z bazy lub utwórz ją z formularza. [ETAP PÓŹNIEJSZY] Zaimportuj dłuższy plan z istniejącego planera (przez adapter).

@@ -8,7 +8,9 @@ http://{$CADDY_SITE:localhost} {
     # Explicit public application routes. WAHA and Caddy administration never proxy.
     @read {
         method GET HEAD
-        path / /health /static/* /trip/* /api/viewer/* /api/trips/*
+        # / redirects to the private Hub, which is intentionally not proxied.
+        # The previously public planner form is now explicitly /planner.
+        path / /planner /health /static/* /trip/* /api/viewer/* /api/trips/*
     }
     @create {
         method POST

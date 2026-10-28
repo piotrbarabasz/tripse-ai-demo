@@ -219,7 +219,7 @@ def tests(target):
 
 
 def demo(target):
-    paths={"demo-hub":"/hub","demo-docs":"/documents/demo","demo-planner":"/","demo-whatsapp":"/demo/chat"}
+    paths={"demo-hub":"/hub","demo-docs":"/documents/demo","demo-planner":"/planner","demo-whatsapp":"/demo/chat"}
     env=local_environment()
     base=os.getenv("BASE_URL") or "http://localhost:"+(os.getenv("PORT") or env.get("API_PORT") or "8000")
     parsed=urlsplit(base)

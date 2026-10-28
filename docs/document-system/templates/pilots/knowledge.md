@@ -1,5 +1,10 @@
 # Szablon: materiały merytoryczne dla pilota
 
+Stan implementacji lokalnej 2026-10-28 (szablony 0.4.0): Trzy sekcje każdego dnia: atrakcje, kontekst, narracja. KnowledgeContent ma ręczne pola i KnowledgeSource z dokładnym odniesieniem oraz datą. Tylko stop_id programu; verified wymaga źródeł z datami. internal, bez PilotData. Około 3 stron to inspiracja, a nie wymuszona liczba pustych stron.
+
+Instrukcja edycji i ograniczenia publikacji: [Document Studio](../../../DOCUMENT_STUDIO.md).
+Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej akceptacji treści.
+
 **ID:** `pilot.knowledge`  
 **Rodzina:** `pilot` · **Odbiorca:** pilot przygotowujący prowadzenie grupy  
 **Poufność:** `internal`; domyślnie bez danych uczestników i rezerwacji  

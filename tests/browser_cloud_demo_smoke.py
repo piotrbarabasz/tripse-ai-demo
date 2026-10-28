@@ -48,7 +48,7 @@ def run():
                     return
                 path = urlsplit(request.url).path
                 response = client.request(request.method, request.url,
-                    headers=request.all_headers(), content=request.post_data_buffer)
+                    headers=request.all_headers(), content=request.post_data_buffer, follow_redirects=False)
                 if response.status_code == 202 and path in {"/api/trips", "/api/demo/messages"}:
                     job_id = response.json()["trip_id"]
                     assert task.post(f"/internal/jobs/{job_id}").status_code == 200
@@ -59,8 +59,18 @@ def run():
                 route.fulfill(status=response.status_code, headers=headers, body=response.content)
 
             context.route("**/*", route_request)
-            page.goto(ORIGIN + "/hub")
+            # Playwright routes only the first URL of a redirected request. Check
+            # the redirect at the ASGI boundary, then load its destination offline.
+            root = client.get("/", follow_redirects=False)
+            assert root.status_code == 302 and root.headers["location"] == "/hub"
+            page.goto(ORIGIN + root.headers["location"])
+            assert page.url == ORIGIN + "/hub"
+            assert page.locator("#planner-link").get_attribute("href") == "/planner"
             expect(page.locator(".environment")).to_contain_text("Demo w chmurze")
+            page.goto(ORIGIN + "/documents/demo#trips/demo-canada")
+            expect(page.locator(".day")).to_have_count(15)
+            page.locator(".module-hub-link").click()
+            page.locator("#documents-link").click()
             page.goto(ORIGIN + "/documents/demo#trips/demo-canada")
             expect(page.locator(".day")).to_have_count(15)
             page.locator('[data-field="title"]').fill("Cloud persisted 15 day trip")
@@ -87,7 +97,14 @@ def run():
                 preview.close()
                 expect(frame.locator(".sheet").first).to_be_visible()
                 page.screenshot(path=str(artifacts / f"{template}.png"), full_page=True)
-            page.goto(ORIGIN + "/")
+            page.goto(ORIGIN + "/planner")
+            page.reload()
+            expect(page.locator("#trip-form")).to_be_visible()
+            expect(page.locator("#hub-return")).to_be_visible()
+            page.locator("#hub-return").click()
+            expect(page.locator("#planner-link")).to_be_visible()
+            page.locator("#planner-link").click()
+            assert page.url == ORIGIN + "/planner"
             page.locator("#examples button").first.click()
             page.locator("#submit-trip").click()
             expect(page.locator("#open-trip")).to_be_visible(timeout=15000)
@@ -103,6 +120,10 @@ def run():
             assert page.evaluate("() => window.mapTest.markers.length === 5 && window.mapTest.lines.length === 2")
             patch.delenv("GOOGLE_MAPS_BROWSER_KEY")
             page.goto(ORIGIN + "/demo/chat")
+            expect(page.locator("#hub-return")).to_be_visible()
+            page.locator("#hub-return").click()
+            page.locator("#assistant-link").click()
+            assert page.url == ORIGIN + "/demo/chat"
             expect(page.locator("#chat-text")).not_to_be_empty()
             page.locator("#send").click()
             expect(page.locator(".bubble a")).to_be_visible(timeout=15000)

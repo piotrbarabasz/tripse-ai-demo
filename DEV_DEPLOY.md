@@ -1,5 +1,14 @@
 # Tripse AI Demo v0.1 — DEV deployment and end-to-end runbook
 
+Routing update (2026-10-28, local review only): the homepage redirects to private
+`/hub`; use direct trusted `http://localhost:8000` for Hub/Studio. Existing Caddy
+HTTPS explicitly permits `/planner` and public API/token-viewer paths, but blocks
+Hub/Studio/demo/internal routes. Its `/` redirect ends at a proxy 404; bookmark
+`https://localhost:8443/planner` for the public planner. Backend proxy-header
+checks remain unchanged. [Inventory and validation limits](docs/ROUTING.md).
+The dated HTTPS results below predate this routing change; live Caddy validation
+could not be repeated because the Docker engine is unavailable.
+
 ## Verified status (2026-10-22)
 
 The **local** four-service stack runs at **https://localhost:8443**. It is explicitly
@@ -65,10 +74,10 @@ warning, install this stack's local CA in your current Windows user trust store:
 
 ```powershell
 certutil -user -addstore Root .venv/caddy-root.crt
-Start-Process https://localhost:8443
+Start-Process https://localhost:8443/planner
 ```
 
-The API/browser fallback is the root page. Submit the prefilled target request,
+The API/browser fallback is `/planner`. Submit the prefilled target request,
 wait for `completed`, then open the plan. In mock mode both days are placeholders;
 all map values stay unverified and no routes, pins or Maps directions are invented.
 `http://localhost:8080` redirects to the correct HTTPS port. No system trust-store

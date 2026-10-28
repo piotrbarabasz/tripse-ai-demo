@@ -13,13 +13,14 @@ task opisuje pracę, a [worklog](../tracking/worklog.csv) jej udokumentowany prz
 | [ADR-0003](0003-document-snapshots.md) | Wspólne dane podróży, osobne snapshoty i pola dokumentu | proposed | Wdrożone |
 | [ADR-0004](0004-controlled-html-browser-pdf.md) | Kontrolowane HTML/CSS i druk do PDF w przeglądarce | proposed | Wdrożone |
 | [ADR-0005](0005-local-only-studio.md) | Lokalny dostęp do studia bez logowania w demo | proposed | Wdrożone |
-| [ADR-0006](0006-template-registry-shared-components.md) | Wspólny rejestr szablonów, komponenty i tokeny | proposed | Wdrożone częściowo: 3 generatory, 8 ID |
+| [ADR-0006](0006-template-registry-shared-components.md) | Wspólny rejestr szablonów, komponenty i tokeny | proposed | 8 ID z edytorem sekcji i podglądem 0.4.0; implementacja lokalna |
 | [ADR-0007](0007-sqlite-single-worker.md) | Kolejka planera w SQLite i jeden osobny worker | proposed | Wdrożone |
-| [ADR-0008](0008-local-demo-hub.md) | Lokalny Hub jako nawigacja istniejących modułów | proposed | Wdrożone w HUB-01 |
+| [ADR-0008](0008-local-demo-hub.md) | Lokalny Hub jako nawigacja istniejących modułów | superseded | Historyczne HUB-01; kanoniczną nawigację zastępuje ADR-0013 |
 | [ADR-0009](0009-cloud-run-readonly-preview.md) | Cloud Run DEV/PROD jako bezstanowy podgląd tylko do odczytu | superseded | ADR-0011 extends cloud functionality; readonly_demo retained |
 | [ADR-0010](0010-cloud-run-public-access.md) | Publiczny Cloud Run przez wyłączenie kontroli IAM invokera | proposed | Kod i testy offline; bez zmian GCP |
-| [ADR-0011](0011-authenticated-cloud-demo.md) | Shared authenticated cloud_demo with GCS and Firestore/Tasks | proposed | Private DEV accepted; isolated empty PROD root/plan prepared; production acceptance pending |
-| [ADR-0012](0012-github-actions-delivery.md) | GitHub Actions, WIF and immutable DEV acceptance before PROD | proposed | DEV accepted; shared CI PROD extension, approval setup and builder isolation plans await operator apply |
+| [ADR-0011](0011-authenticated-cloud-demo.md) | Shared authenticated cloud_demo with GCS and Firestore/Tasks | proposed | Private DEV/PROD cloud_demo accepted 2026-10-28; human login/restore/customer-data gates remain |
+| [ADR-0012](0012-github-actions-delivery.md) | GitHub Actions, WIF and immutable DEV acceptance before PROD | proposed | Operational WIF CI/CD; protected master run 40614584902 accepted DEV/PROD; ADR approval unrecorded |
+| [ADR-0013](0013-canonical-hub-navigation.md) | Canonical Hub homepage and explicit planner navigation | proposed | Implemented locally; API/access contracts preserved; not deployed |
 
 ADR-0001–0007 sporządzono retrospektywnie 25.10.2026. Kod potwierdza
 implementację, ale dostępne repozytorium nie zawiera jednoznacznej akceptacji
@@ -36,7 +37,7 @@ Powiązane aspekty jednej decyzji można połączyć, jak FastAPI i izolację mo
 
 ## Numeracja i metadane
 
-- Następny wolny numer: **ADR-0013**. Sprawdź rejestr i pliki przed nadaniem numeru;
+- Następny wolny numer: **ADR-0014**. Sprawdź rejestr i pliki przed nadaniem numeru;
   po dodaniu wpisu zaktualizuj tę wskazówkę. Nie używaj ponownie opublikowanego numeru.
 - Plik: `0011-short-decision-name.md`; nagłówek i YAML: `ADR-0011`.
 - Skopiuj [szablon](template.md). Wypełnij wszystkie dziewięć sekcji.
@@ -119,3 +120,5 @@ Sam ten standard nie wdraża automatycznej walidacji CI ani wieloosobowego workf
 | 2026-10-26 | Codex | ADR-0011 extends cloud_demo; ADR-0009 superseded with historical content retained | CLOUD-PARITY-001 |
 | 2026-10-27 | Codex | Update ADR-0012 verified DEV bootstrap/auth evidence; incident is corrective work, so ADR-0013 remains available | TRIPSE-CICD-DEV-AUTH-004 |
 | 2026-10-27 | Codex | Record real DEV acceptance and staged PROD plans in existing ADR-0011/0012; no new architecture/ADR number | TRIPSE-PROD-BOOTSTRAP-001 |
+| 2026-10-28 | Codex | Synchronize ADR-0011/0012 implementation with accepted master DEV/PROD release; no new decision or status change | PR #3; run 40614584902; [evidence](../RELEASE_2026_10_28.md) |
+| 2026-10-28 | Codex | Add proposed ADR-0013 replacing ADR-0008 root preservation; retain historical rationale and unchanged access/API boundaries | User routing request; no task/PR ID |

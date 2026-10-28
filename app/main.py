@@ -6,6 +6,7 @@ from uuid import UUID
 
 from fastapi import FastAPI, HTTPException, Response, Request
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, ConfigDict, StringConstraints
 from typing_extensions import Annotated
 
@@ -98,9 +99,14 @@ def create_app(database_path=None, *, waha_settings=None, document_data_path=Non
             return {"status": "processed"}
     else:
         app.include_router(webhook_router(database, waha_settings or WahaSettings.from_env()))
-    app.include_router(viewer_router(database))
+
+    @app.get("/", include_in_schema=False)
+    def home():
+        return RedirectResponse("/hub", status_code=302, headers={"Cache-Control": "no-store"})
+
+    app.include_router(viewer_router(database, cloud_mode=bool(cloud)))
     from app.demo import demo_router
-    app.include_router(demo_router(database))
+    app.include_router(demo_router(database, cloud_mode=bool(cloud)))
     app.include_router(document_router(document_repository, access_policy=access_policy, asset_store=asset_store, cloud_mode=bool(cloud)))
     from app.hub import hub_router
     app.include_router(hub_router(access_policy=access_policy, cloud_mode=bool(cloud)))

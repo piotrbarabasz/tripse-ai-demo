@@ -1,5 +1,9 @@
 # Wspólny model danych wycieczki
 
+Stan implementacji lokalnej 2026-10-28: Bieżące klasy: Trip/TripDay/Stop, OfferData/OfferDetails, PilotData/OperationalEntry i DocumentDraft.sections. DayLogistics, KnowledgeContent/KnowledgeSource oraz zdjęcia i tabele sekcji są walidowanymi strukturami; metryki nieznane są null. Pozostałe encje opisane dalej pozostają modelem docelowym.
+
+Szczegóły operacyjne: [Document Studio](../../DOCUMENT_STUDIO.md).
+
 **Status:** proponowany kontrakt logiczny v1. Nie jest aktualnym schematem bazy ani automatycznie zgodny z istniejącym `app/planning_models.py`. Konkretne tabele/API powstaną w etapie implementacji.
 
 ## 1. Główna zasada

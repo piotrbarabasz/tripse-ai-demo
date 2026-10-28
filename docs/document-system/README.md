@@ -2,7 +2,10 @@
 
 **Wersja dokumentacji:** 1.0-draft  
 **Data bazowa:** 2026-10-24  
-**Status:** propozycja projektowa do uzgodnienia z TRIPSE; **nie jest opisem zaimplementowanych funkcji**.  
+**Status:** dokumentacja łączy specyfikację docelową z implementacją. Stan lokalny
+2026-10-28: wszystkie osiem typów, wspólne sekcje, snapshoty i roboczy PDF działają;
+[aktualna instrukcja i granice](../DOCUMENT_STUDIO.md). Workflow zatwierdzania, AI
+i eksport serwerowy opisane dalej pozostają propozycjami.
 **Lokalizacja:** `docs/document-system/` w repozytorium `tripse-ai-demo`.
 
 ## Po co istnieje ten moduł
@@ -30,7 +33,7 @@ Jeden uporządkowany opis wycieczki ma zasilać wiele dokumentów: oferty dla kl
 
 **Źródło prawdy**: opis wspólny znajduje się w `design/` i `data/`, a konkretny wygląd/zawartość dokumentu — w `templates/`. Nie kopiuj globalnych zasad kolorów i modeli danych do każdego szablonu.
 
-## Punkt startowy do implementacji
+## Historyczna kolejność przygotowania (2026-10-24)
 
 1. Zdefiniuj katalog i identyfikatory w [template-catalog.md](general/template-catalog.md).
 2. Zatwierdź słownik pól w [trip-data-model.md](system-data/trip-data-model.md) i [template-fields.md](system-data/template-fields.md).

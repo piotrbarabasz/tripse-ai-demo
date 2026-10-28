@@ -210,7 +210,7 @@ def run():
                     page.route("**/api/trips", lambda route: route.fulfill(status=202, json={"trip_id": "browser-job", "status": "queued"}))
                     browser_result = {**plan, "viewer_url": base + "/trip/" + token}
                     page.route("**/api/trips/browser-job", lambda route: route.fulfill(json={"status": "completed", "result": browser_result}))
-                    page.goto(base + "/")
+                    page.goto(base + "/planner")
                     expect(page.locator("#request-text")).to_contain_text("Zaplanuj 2 dni")
                     page.get_by_role("button", name="Przygotuj plan").click()
                     expect(page.locator("#open-trip")).to_be_visible()

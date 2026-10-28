@@ -1,5 +1,11 @@
 # Rejestr prac i podstawy kosztorysu
 
+2026-10-28 operational milestone: [DEV/PROD release](../RELEASE_2026_10_28.md)
+is automatically accepted. Earlier worklog rows retain their dated observations.
+The new row uses existing GITHUB-CICD-001 for the completed deployment milestone,
+without adding an identifier, hours or costs. ADR approval, human login, restore
+and real customer-data acceptance remain separate criteria.
+
 [Worklog CSV](worklog.csv) zapisuje fakty o pracach, [ADR](../adr/README.md)
 uzasadnienia decyzji, a [estimates.md](estimates.md) zakres i zasady przyszłej wyceny.
 Punkt odniesienia: [audyt master z 25.10.2026](repository-audit.md).

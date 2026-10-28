@@ -1,8 +1,18 @@
 # GITHUB-CICD-001 — GitHub Actions delivery
 
-2026-10-27 latest: master was merged; run 40550402214 accepted DEV artifact
+Current state - 2026-10-28: private DEV and PROD `cloud_demo` delivery is
+accepted in [master run 40614584902](RELEASE_2026_10_28.md). That evidence record
+includes artifact IDs, isolated infrastructure, operator-verified IAM/Organization
+Policy and state adoption, and remaining acceptance limits. Earlier dated findings
+below are historical snapshots, superseded for rollout status. Do not replay
+completed bootstrap/import/cutover steps or use old saved plans. Human login,
+restore/isolation drills and real customer-data readiness remain unverified.
+
+## Historical bootstrap and incident timeline
+
+2026-10-27 historical result: master was merged; run 40550402214 accepted DEV artifact
 12753973550 then failed PROD before auth because all five Environment variables
-were missing. Follow [PROD-BOOTSTRAP-002](PROD_BOOTSTRAP_002.md) for current audit,
+were missing. Follow [PROD-BOOTSTRAP-002](PROD_BOOTSTRAP_002.md) for the audit at that date,
 protections, staged plans and separate manual promotion. Do not repeat the merge
 or rerun only failed PROD: strict source run-attempt provenance would reject its
 older artifact. Older dated notes below retain the incident/preparation history.
@@ -31,7 +41,7 @@ diagnostic preserve all trust checks; applying/verifying it remains operator wor
 ## CI-CD-FIX-002: dev/master bootstrap correction
 
 Follow the [Windows operator setup and first-run procedure](CICD_BOOTSTRAP.md).
-That guide is the current entry point; the remaining sections retain the original
+That guide documents operator setup; the remaining sections retain the original
 architecture and recovery details. Automatic deployment is now dev/master only.
 
 Starting branch/HEAD: clean `dev`, `2c8e79b7b4c521eaf15ce2cf17e09f8b3b830171`.
