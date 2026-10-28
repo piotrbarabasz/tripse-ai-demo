@@ -126,3 +126,5 @@ if __name__ == "__main__":
     run()
     from studio_catalog_qa import run_catalog
     run_catalog()
+    from library_qa import run_library
+    run_library()

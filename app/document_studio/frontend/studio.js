@@ -4,7 +4,7 @@ const main = $('#main');
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const e = escapeHTML;
 const id = () => crypto.randomUUID().replaceAll('-', '');
-let trips = [], campaigns = [], drafts = [], templates = [], current = null, dirty = false, creating = false, busy = false;
+let trips = [], campaigns = [], templates = [], current = null, dirty = false, creating = false, busy = false;
 let messageTimer, activeHash = '';
 function message(text, error = false) {
   clearTimeout(messageTimer); const box = $('#message'); box.textContent = text;
@@ -23,8 +23,9 @@ async function api(path, options = {}) {
   return data;
 }
 async function refresh() {
-  [trips, campaigns, drafts, templates] = await Promise.all(['trips','campaigns','drafts','templates'].map(x => api(x)));
-  $('#trip-count').textContent = trips.length; $('#campaign-count').textContent = campaigns.length; $('#draft-count').textContent = drafts.length;
+  const data = await Promise.all(['trips','campaigns','library?limit=1&archived=include','templates'].map(x => api(x)));
+  [trips,campaigns,,templates]=data;
+  $('#trip-count').textContent = trips.length; $('#campaign-count').textContent = campaigns.length; $('#draft-count').textContent = data[2].total;
 }
 function navigate(path) {
   if (busy) return;
@@ -37,14 +38,14 @@ function heading(kicker, title, subtitle, action = '') {
 }
 const statusLabels = {idea:'Pomysł', draft:'Wersja robocza', planned:'Zaplanowana', confirmed:'Potwierdzona', completed:'Zakończona', cancelled:'Anulowana'};
 function cards(view) {
-  const entries = view === 'trips' ? trips : view === 'campaigns' ? campaigns : drafts;
-  const names = {trips:['BIBLIOTEKA PODRÓŻY','Twoje wycieczki','Jeden program. Wiele możliwości dokumentu.'],campaigns:['KOLEKCJE KIERUNKÓW','Kampanie','Kilka podróży połączonych jednym pomysłem.'],drafts:['ZAPISANE SNAPSHOTY','Dokumenty robocze','Zachowane dane źródłowe i wybrany typ dokumentu.']};
+  const entries = view === 'trips' ? trips : campaigns;
+  const names = {trips:['BIBLIOTEKA PODRÓŻY','Twoje wycieczki','Jeden program. Wiele możliwości dokumentu.'],campaigns:['KOLEKCJE KIERUNKÓW','Kampanie','Kilka podróży połączonych jednym pomysłem.']};
   main.innerHTML = heading(...names[view], view === 'trips' ? '<button class="primary" data-go="trips/new">+ Nowa wycieczka</button>' : '') +
     `<div class="cards">${entries.map(x => {
       const resourceId = x.trip_id || x.campaign_id || x.document_id;
-      const label = view === 'trips' ? x.destinations.join(' · ') || 'Nowy kierunek' : view === 'campaigns' ? x.season || 'Kolekcja' : templates.find(t=>t.template_id===x.template_id)?.name || x.template_id;
-      const description = view === 'trips' ? x.description : view === 'campaigns' ? x.items.map(i=>trips.find(t=>t.trip_id===i.trip_id)?.title || i.trip_id).join(' · ') : 'Niezależny snapshot danych. Źródłowa wycieczka może być dalej edytowana.';
-      return `<article class="card"><div class="card-top">${e(label)}</div><span class="tag">${view === 'trips' ? `${x.duration_days} dni · ${e(statusLabels[x.status])}` : view === 'campaigns' ? `${x.items.length} kierunki` : 'Wersja robocza'}</span><h2>${e(x.title)}</h2><p class="muted">${e(description)}</p><button class="open" data-go="${view}/${e(resourceId)}">Otwórz →</button></article>`;
+      const label = view === 'trips' ? x.destinations.join(' · ') || 'Nowy kierunek' : x.season || 'Kolekcja';
+      const description = view === 'trips' ? x.description : x.items.map(i=>trips.find(t=>t.trip_id===i.trip_id)?.title || i.trip_id).join(' · ');
+      return `<article class="card"><div class="card-top">${e(label)}</div><span class="tag">${view === 'trips' ? `${x.duration_days} dni · ${e(statusLabels[x.status])}` : `${x.items.length} kierunki`}</span><h2>${e(x.title)}</h2><p class="muted">${e(description)}</p><button class="open" data-go="${view}/${e(resourceId)}">Otwórz →</button></article>`;
     }).join('')}</div>${entries.length ? '' : '<div class="panel empty">Nie ma jeszcze zapisanych dokumentów. Otwórz wycieczkę lub kampanię i wybierz typ dokumentu.</div>'}`;
 }
 function input(label, field, value, type = 'text', extra = '') {
@@ -175,23 +176,26 @@ function renderDraft(draft) {
   }
   if (templates.some(t=>t.template_id===draft.template_id)) {
     const actions = document.createElement('div'); actions.className = 'actions marketing-document-actions';
-    const button=document.createElement('button');button.className='primary';button.dataset.go='edit-draft/'+draft.document_id;button.textContent='Edytuj dokument';
+    const button=document.createElement('button');button.className='primary';button.dataset.go='edit-draft/'+draft.document_id;button.textContent='Edytuj dokument';button.disabled=draft.document_status==='archived';
     const link=document.createElement('a');link.href=`/api/document-studio/drafts/${draft.document_id}/preview`;link.target='_blank';link.rel='noopener';link.textContent='Podgląd A4 / PDF';
     actions.append(button,link);main.querySelector('.heading').after(actions);
   }
 }
 async function route() {
+  if(busy){history.replaceState(null,'',location.pathname+activeHash);return;}
   if (dirty && !confirm('Masz niezapisane zmiany. Opuścić wycieczkę?')) {
     history.replaceState(null,'',location.pathname + activeHash); return;
   }
   activeHash = location.hash;
   const parts = location.hash.slice(1).split('/');
   const view = parts[0] || 'templates', resourceId = parts[1]; dirty=false; current=null;
-  document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===(view==='marketing'?'campaigns':view==='edit-draft'?'drafts':view)));
+  document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===(view==='marketing'?'campaigns':['edit-draft','revisions'].includes(view)?'drafts':view)));
   try {
-    if (!['templates','create-document','trips','campaigns','drafts','marketing','edit-draft'].includes(view)) throw new Error('Nie znaleziono widoku.');
+    if (!['templates','create-document','trips','campaigns','drafts','marketing','edit-draft','revisions'].includes(view)) throw new Error('Nie znaleziono widoku.');
     if(view==='templates')templateCatalog();
     else if(view==='create-document')sourceChooser(resourceId,parts[2]||'standard');
+    else if(view==='drafts'&&!resourceId)await window.DocumentLibraryUI.open({main,escape:e,api,templates,message,refresh,busy:value=>busy=value});
+    else if(view==='revisions'&&resourceId)await window.DocumentLibraryUI.history(resourceId,{main,escape:e,api});
     else if (!resourceId) cards(view);
     else if (view==='trips') {
       creating = resourceId==='new';
@@ -202,13 +206,14 @@ async function route() {
     });
     else if(view==='edit-draft') {
       const draft=await api('drafts/'+encodeURIComponent(resourceId));
+      if(draft.document_status==='archived')throw new Error('Przywróć dokument z archiwum przed edycją. Podgląd znajdziesz w bibliotece.');
       const context={main,escape:e,api,message,refresh,dirty:value=>dirty=value,busy:value=>busy=value};
       if(draft.template_id==='marketing.collection')await window.MarketingEditor.open(draft.campaign_snapshot,trips,{...context,draft});
       else await window.TripDocumentEditor.open(draft,context);
     }
     else if(view==='campaigns') renderCampaign(await api('campaigns/' + encodeURIComponent(resourceId)));
     else renderDraft(await api('drafts/' + encodeURIComponent(resourceId)));
-  }catch(error){main.innerHTML='<section class="panel"><h1>Nie udało się otworzyć danych</h1><p>'+e(error.message)+'</p><button data-go="trips">Wróć do wycieczek</button></section>';}
+  }catch(error){main.innerHTML='<section class="panel"><h1>Nie udało się otworzyć danych</h1><p>'+e(error.message)+'</p><button data-go="drafts">Wróć do biblioteki</button></section>';}
 }
 document.addEventListener('click',event=>{
   const button=event.target.closest('button');if(!button)return;

@@ -153,7 +153,7 @@ def test_legacy_draft_read_preview_and_additive_edit(tmp_path):
         DocumentDraft.model_validate(draft)
         path=tmp_path/'documents'/'drafts'/(draft['document_id']+'.json')
         # client_for's repository lives under tmp_path / studio (inspect actual folder).
-        matches=list(tmp_path.rglob(draft['document_id']+'.json'));assert len(matches)==1
+        matches=[path];assert path.exists()
         matches[0].write_text(json.dumps(draft),encoding='utf-8')
         url='/api/document-studio/drafts/'+draft['document_id']
         assert client.get(url).json()['sections'] is None

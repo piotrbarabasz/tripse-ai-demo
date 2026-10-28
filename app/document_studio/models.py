@@ -380,6 +380,15 @@ class DocumentSection(Model):
         return self
 
 
+BusinessStatus = Literal["draft", "in_review", "ready", "archived"]
+
+
+class LibraryOperation(Model):
+    operation_id: str
+    kind: Literal["archive", "restore", "status"]
+    base_revision: int = Field(ge=1)
+
+
 class DocumentDraft(Model):
     document_id: Identifier = Field(default_factory=new_id)
     schema_version: Literal[1] = 1
@@ -391,6 +400,12 @@ class DocumentDraft(Model):
     language: Literal["pl"] = "pl"
     confidentiality: Confidentiality
     status: Literal["draft"] = "draft"
+    document_status: BusinessStatus = "draft"
+    archived_at: datetime | None = None
+    created_by: str | None = None
+    updated_by: str | None = None
+    duplicated_from_document_id: Identifier | None = None
+    last_library_operation: LibraryOperation | None = None
     trip_snapshot: Trip | None = None
     campaign_snapshot: Campaign | None = None
     campaign_trip_snapshots: list[Trip] = Field(default_factory=list)
@@ -408,6 +423,8 @@ class DocumentDraft(Model):
 
     @model_validator(mode="after")
     def valid_source(self):
+        if (self.document_status == "archived") != (self.archived_at is not None):
+            raise ValueError("Archiwizacja wymaga zgodnego statusu i daty")
         if (self.trip_snapshot is None) == (self.campaign_snapshot is None):
             raise ValueError("Exactly one trip or campaign snapshot is required")
         from app.document_studio.templates import TEMPLATES

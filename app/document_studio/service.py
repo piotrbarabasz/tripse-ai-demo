@@ -24,7 +24,7 @@ class DocumentService:
             self.repository.get("assets", campaign.hero_asset_id)
         return self.repository.save("campaigns", campaign, create=create)
 
-    def create_draft(self, request):
+    def create_draft(self, request, actor=None):
         template = TEMPLATES.get(request.template_id)
         if template is None:
             raise ValueError("Nieznany typ dokumentu")
@@ -41,6 +41,7 @@ class DocumentService:
             title=request.title or source.title, template_id=template.template_id,
             template_version=template.template_version, layout_variant=request.layout_variant,
             confidentiality=template.confidentiality,
+            created_by=actor, updated_by=actor,
             trip_snapshot=snapshot(source) if template.source_type == "trip" else None,
             campaign_snapshot=source.model_copy(deep=True, update={"layout_variant": request.layout_variant}) if template.source_type == "campaign" else None,
             campaign_trip_snapshots=[snapshot(self.repository.get("trips", item.trip_id)) for item in source.items] if template.source_type == "campaign" else [],
@@ -70,8 +71,11 @@ class DocumentService:
         draft.sections = default_sections(draft)
         return self.repository.save("drafts", draft, create=True)
 
-    def update_draft(self, identifier, value):
+    def update_draft(self, identifier, value, actor=None):
         draft = self.repository.get("drafts", identifier)
+        if draft.document_status == "archived":
+            from app.document_studio.repository import ConflictError
+            raise ConflictError("Dokument jest w archiwum. Przywróć go przed edycją.")
         data = draft.model_dump(mode="json")
         data.update(value.model_dump(mode="json", exclude_unset=True))
         if draft.sections is not None and data.get("sections") is None:
@@ -88,6 +92,8 @@ class DocumentService:
             old = {t.trip_id: t for t in draft.campaign_trip_snapshots}
             data["campaign_trip_snapshots"] = [offer_trip_snapshot(old.get(item["trip_id"]) or self.repository.get("trips", item["trip_id"])).model_dump(mode="json") for item in campaign["items"]]
         result = DocumentDraft.model_validate(data)
+        result.updated_by = actor
+        result.last_library_operation = None
         if result.template_id.startswith("offer."):
             result.trip_snapshot = offer_trip_snapshot(result.trip_snapshot)
             if result.offer_data:

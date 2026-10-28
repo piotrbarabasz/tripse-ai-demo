@@ -24,7 +24,7 @@ window.MarketingEditor = (() => {
   }
   function draw() {
     const e = ui.escape;
-    ui.main.innerHTML = `<button class="text-button back" data-go="campaigns/${e(campaign.campaign_id)}">← Kampania</button>
+    ui.main.innerHTML = `<button class="text-button back" data-go="${documentDraft?'drafts':'campaigns/'+e(campaign.campaign_id)}">← ${documentDraft?'Wróć do biblioteki':'Kampania'}</button>
     <div class="heading marketing-heading"><div><p class="eyebrow">MARKETING.COLLECTION</p><h1>Studio kolekcji</h1><p class="muted">Edytuj treść, ułóż kierunki i sprawdź dokument przed drukiem.</p></div><div class="actions"><button id="m-save" class="primary">Zapisz zmiany</button><button id="m-export" class="accent">Zapisz dokument / PDF</button></div></div>
     <div class="marketing-layout"><div class="marketing-controls"><form id="m-form"><section class="panel"><h2>Kampania</h2><div class="fields"><div class="full">${field('Tytuł kampanii','title',campaign.title,'required maxlength="200"')}</div>
     <label>Kompozycja<select data-m-field="layout_variant"><option value="new_trips" ${campaign.layout_variant==='new_trips'?'selected':''}>Nowe kierunki</option><option value="theme_collection" ${campaign.layout_variant==='theme_collection'?'selected':''}>Kolekcja tematyczna</option></select></label>
@@ -100,7 +100,7 @@ window.MarketingEditor = (() => {
     saving=true;ui.busy(true);find('#m-save').disabled=true;
     try{
       if(documentDraft){Object.assign(documentDraft,await ui.api('drafts/'+documentDraft.document_id,{method:'PUT',body:JSON.stringify({revision:documentDraft.revision,title:campaign.title,sections:documentDraft.sections,campaign_snapshot:normalize()})}));campaign=clone(documentDraft.campaign_snapshot);}else campaign=await ui.api('campaigns/'+campaign.campaign_id,{method:'PUT',body:JSON.stringify(normalize())});
-      ui.dirty(false);await ui.refresh();ui.message('Kampania zapisana.');return true;
+      ui.dirty(false);let warning='';try{await ui.refresh();}catch{warning=' Biblioteka wymaga odświeżenia.';}ui.message((documentDraft?'Dokument zapisany. Rewizja '+documentDraft.revision+'.':'Kampania zapisana.')+warning,!!warning);return true;
     }catch(error){ui.message(error.message,true);return false;}
     finally{saving=false;ui.busy(false);if(find('#m-save'))find('#m-save').disabled=false;}
   }
