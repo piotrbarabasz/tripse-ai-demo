@@ -1,5 +1,26 @@
 # TRIPSE Document Studio — funkcjonalne DEMO lokalne
 
+## Tworzenie dokumentu krok po kroku — DOC-FLOW-004
+
+**Implementacja lokalna na dev; bez wdrożenia.**
+[Instrukcja dla Adriana, diagram, trasy, testy, zrzuty i ograniczenia](DOC_FLOW_004.md).
+
+Otwórz **Utwórz dokument**, wybierz rodzaj, następnie zapisany program/kampanię
+lub przygotowanie nowego źródła. Nowy program uzupełnij w istniejącym edytorze:
+dni, atrakcje, opisy, kierunek i terminy. **Zapisz program wycieczki** zapisuje
+wyłącznie program; **Kontynuuj do dokumentu** tworzy niezależny dokument.
+Analogicznie **Zapisz kampanię** nie tworzy materiału marketingowego.
+**Zapisz program/kampanię i wróć później** pozwala odłożyć tworzenie dokumentu.
+
+W edytorze dokumentu użyj **Zapisz dokument** lub **Zapisz i sprawdź**. Sprawdzenie
+pokazuje faktyczny ostatni zapis, uwagi i dotychczasowy podgląd PDF. Marketing
+obsługuje A4 i social. Zapis, kompletność i status biznesowy są oddzielne;
+status „Gotowy” nie jest nadawany automatycznie. Dokument i źródło pozostają
+niezależne. Biblioteka otwiera ten sam zapisany dokument, bez tworzenia nowego.
+
+Menu obejmuje: **Utwórz dokument**, **Programy wycieczek**, **Kampanie marketingowe**
+i **Biblioteka dokumentów**. Dotychczasowe adresy pozostają dostępne.
+
 ## Źródła, kategorie produktów i pochodzenie — DOC-UX-002
 
 **Implementacja w repozytorium na dev; bez wdrożenia w tej iteracji.**
@@ -9,7 +30,7 @@ Kategoria Trip opisuje produkt turystyczny, a szablon opisuje dokument. Jedna
 wycieczka może należeć do kilku kategorii i być źródłem dowolnej oferty, rozpiski
 pilota lub kampanii. Dostępne kategorie: `private`, `self_guide`, `school`,
 `incentive`, `group`, `other`. Nie ma kategorii pilot ani marketing.
-W edytorze **Wycieczki → Otwórz / Nowa wycieczka** zaznacz checkboxy kategorii
+W edytorze **Programy wycieczek → Otwórz / Nowa wycieczka** zaznacz checkboxy kategorii
 i zapisz. Pusta lista oznacza **Nieprzypisane**; duplikaty są usuwane podczas
 walidacji, nieznane wartości odrzucane. Nie wnioskujemy kategorii z nazwy lub kraju.
 
@@ -46,9 +67,13 @@ pod listą, aby długie nazwy i kategorie dało się odczytać na małym ekranie
 Źródło nie jest wybierane automatycznie. Zmiana filtra zachowuje wybór, jeśli
 źródło nadal pasuje; w przeciwnym razie czyści go bez wybierania innego. Przycisk
 tworzenia nowej wycieczki sugeruje kategorię oferty, którą można zmienić/rozszerzyć.
-Po zapisaniu źródła kreator pamięta jego ID, także gdy późniejsze tworzenie draftu
-zawiedzie. Retry nie tworzy wtedy kolejnej wycieczki. Niepewny timeout samego POST
-źródła nadal wymaga sprawdzenia listy; nie dodano globalnej idempotencji tworzenia.
+Po zapisaniu źródła kreator pamięta jego ID, także gdy późniejsze tworzenie dokumentu
+zawiedzie. W DOC-FLOW-004 źródło najpierw trafia do edytora, a dokument powstaje
+dopiero po jawnej kontynuacji. Nowe źródła i dokumenty zachowują stałe ID próby;
+po niejednoznacznym błędzie wykonywany jest odczyt i porównanie danych. Jeśli
+wyniku nie da się potwierdzić, wybierz **Sprawdź zapis**. Nie rozpoczynaj drugiego
+formularza w celu obejścia niepewnego wyniku. Nie ma globalnej deduplikacji
+niezależnych formularzy; szczegóły i ograniczenia opisuje raport DOC-FLOW-004.
 
 Nowa kampania może wybrać wiele wycieczek poprzez filtrowaną listę. Wybrane kierunki
 pozostają w podsumowaniu także po zmianie filtra; przycisk × usuwa je świadomie.

@@ -98,17 +98,20 @@ def run_sources():
             page.locator('[name="source-categories"][value="group"]').check()
             page.locator('#source-title').fill('Nowy Self-Guide — Żółć')
             expect(page.locator('#source-origin')).to_have_value('business')
-            fail_draft=True;page.locator('#source-create').click()
+            page.locator('#source-create').click();expect(page.locator('#save-trip')).to_be_visible()
+            assert len(created_sources)==0
+            page.locator('#save-trip').click();expect(page.locator('#flow-continue')).to_be_enabled()
+            fail_draft=True;page.locator('#flow-continue').click()
             expect(page.locator('#message')).to_contain_text('injected draft failure')
             assert len(created_sources)==1
-            expect(page.locator('#source-select')).to_have_value(created_sources[0]['trip_id'])
-            page.locator('#source-create').click();expect(page.locator('#d-save')).to_be_visible()
+            assert created_sources[0]['trip_id'] in page.url
+            page.locator('#flow-continue').click();expect(page.locator('#d-save')).to_be_visible()
             assert len(created_sources)==1
             source=created_sources[0];assert source['categories']==['self_guide','group']
             page.goto(ORIGIN+'/documents/demo#trips/'+source['trip_id'])
             expect(page.locator('[name="categories"][value="self_guide"]')).to_be_checked()
             page.locator('[name="categories"][value="school"]').check()
-            page.locator('#save-trip').click();expect(page.locator('#message')).to_have_text('Wycieczka zapisana.')
+            page.locator('#save-trip').click();expect(page.locator('#message')).to_have_text('Program wycieczki zapisany.')
             page.reload();expect(page.locator('[name="categories"][value="school"]')).to_be_checked()
             assert api.get('/api/document-studio/trips/'+source['trip_id']).json()['categories']==['self_guide','school','group']
             chooser('marketing.collection')
@@ -131,7 +134,10 @@ def run_sources():
             expect(page.locator('[data-m-item]')).to_have_count(3)
             expect(page.locator('#m-trip-picker [data-source-filter="category"]')).to_have_value('school')
             assert trips['school']['trip_id'] not in ids('#m-add-trip')
-            page.locator('#m-save').click();expect(page.locator('#message')).to_contain_text('Rewizja 2')
+            page.locator('#m-save').click();expect(page.locator('#message')).to_have_text('Kampania zapisana.')
+            campaign_id=page.url.split('/')[-1]
+            saved=api.get('/api/document-studio/campaigns/'+campaign_id).json()
+            assert saved['revision']==1 and len(saved['items'])==3
             page.reload();expect(page.locator('[data-m-item]')).to_have_count(3)
             page.goto(ORIGIN+'/documents/demo#trips')
             assert page.locator('[data-source-id="'+trips['test']['trip_id']+'"]').count()==0

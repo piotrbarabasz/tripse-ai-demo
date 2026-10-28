@@ -78,8 +78,7 @@ def run():
                     page.locator('#template').select_option(template)
                     page.locator('#demo-example').check()
                     page.locator('#create-draft').click()
-                    expect(page.get_by_role('button',name='Edytuj dokument',exact=True)).to_be_visible()
-                    page.get_by_role('button',name='Edytuj dokument',exact=True).click()
+                    page.locator('#source-create').click()
                     expect(page.locator('#d-save')).to_be_visible()
                     document_id=page.evaluate('location.hash').split('/')[-1]
                     saved_ids.append(document_id)
@@ -92,7 +91,7 @@ def run():
                         page.locator('[data-d-remove="transfers.1"]').click()
                         page.locator('[data-d-field="pilot_data.schedule.0.start_local"]').fill('2027-06-01T11:30')
                     page.locator('#d-save').click()
-                    expect(page.locator('#message')).to_have_text('Draft zapisany. Rewizja 2.')
+                    expect(page.locator('#message')).to_contain_text('Dokument zapisany')
                     expect(page.locator('#d-revision')).to_have_text('2')
                     page.screenshot(path=str(artifacts/(template+'-editor.png')),full_page=True)
                     with page.expect_popup() as popup:page.locator('#d-export').click()

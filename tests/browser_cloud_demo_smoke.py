@@ -75,7 +75,7 @@ def run():
             expect(page.locator(".day")).to_have_count(15)
             page.locator('[data-field="title"]').fill("Cloud persisted 15 day trip")
             page.locator("#save-trip").click()
-            expect(page.locator("#message")).to_have_text("Wycieczka zapisana.")
+            expect(page.locator("#message")).to_have_text("Program wycieczki zapisany.")
             page.reload()
             expect(page.locator('[data-field="title"]')).to_have_value("Cloud persisted 15 day trip")
             for template in ("offer.private", "pilot.basic"):
@@ -83,7 +83,7 @@ def run():
                 page.locator("#template").select_option(template)
                 page.locator("#demo-example").check()
                 page.locator("#create-draft").click()
-                page.get_by_role("button", name="Edytuj dokument", exact=True).click()
+                page.locator("#source-create").click()
                 expect(page.locator("#d-save")).to_be_visible()
                 page.locator("#d-save").click()
                 expect(page.locator("#d-revision")).to_have_text("2")

@@ -25,12 +25,33 @@ class DocumentService:
         return self.repository.save("campaigns", campaign, create=create)
 
     def create_draft(self, request, actor=None):
+        from app.document_studio.repository import ConflictError
+        identifier = getattr(request, "document_id", None)
+        source_revision = getattr(request, "source_revision", None)
+        def existing_creation():
+            existing = self.repository.get("drafts", identifier)
+            source = existing.trip_snapshot or existing.campaign_snapshot
+            source_id = source.trip_id if existing.trip_snapshot else source.campaign_id
+            if (existing.template_id != request.template_id or existing.layout_variant != request.layout_variant
+                or ("trip" if existing.trip_snapshot else "campaign") != request.source_type
+                or source_id != request.source_id or source_revision is not None and source.revision != source_revision
+                or existing.editorial_notes != request.editorial_notes or existing.demo_example != getattr(request, "demo_example", False)
+                or request.title is not None and existing.title != request.title):
+                raise ConflictError("Ten zapis dotyczy innego dokumentu. Sprawdź bibliotekę przed ponowną próbą.")
+            return existing
+        if identifier:
+            try:
+                return existing_creation()
+            except KeyError:
+                pass
         template = TEMPLATES.get(request.template_id)
         if template is None:
             raise ValueError("Nieznany typ dokumentu")
         if request.source_type != template.source_type or request.layout_variant not in template.layout_variants:
             raise ValueError("Typ źródła lub wariant nie pasuje do szablonu")
         source = self.repository.get("campaigns" if template.source_type == "campaign" else "trips", request.source_id)
+        if source_revision is not None and source.revision != source_revision:
+            raise ConflictError("Program zmienił się. Otwórz aktualne źródło i sprawdź je przed utworzeniem dokumentu.")
 
         def snapshot(trip):
             if template.confidentiality in ("public", "client"):
@@ -38,6 +59,7 @@ class DocumentService:
             return trip.model_copy(deep=True)
 
         draft = DocumentDraft(
+            **({"document_id": identifier} if identifier else {}),
             title=request.title or source.title, template_id=template.template_id,
             data_origin=source.data_origin,
             template_version=template.template_version, layout_variant=request.layout_variant,
@@ -70,7 +92,12 @@ class DocumentService:
                     pilot["activity_bookings"] = [{"day_id":source.days[0].day_id,"title":"Wejście demonstracyjne — DEMO", "status":"unknown", "details":"Brak rezerwacji, godzina do ustalenia."}]
                 draft.pilot_data = PilotData.model_validate(pilot)
         draft.sections = default_sections(draft)
-        return self.repository.save("drafts", draft, create=True)
+        try:
+            return self.repository.save("drafts", draft, create=True)
+        except ConflictError:
+            if identifier:
+                return existing_creation()
+            raise
 
     def update_draft(self, identifier, value, actor=None):
         draft = self.repository.get("drafts", identifier)

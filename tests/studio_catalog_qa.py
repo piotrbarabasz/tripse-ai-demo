@@ -57,6 +57,12 @@ def run_catalog():
                         page.locator('#source-picker [data-source-filter="all"]').check()
                     page.locator('#source-select').select_option('demo-northern-journeys' if template=='marketing.collection' else 'demo-canada' if template in {'pilot.advanced','pilot.knowledge'} else 'demo-iceland')
                 page.locator('#source-create').click()
+                if template=='offer.private':
+                    expect(page.locator('#save-trip')).to_be_visible()
+                    page.locator('[data-field="days.0.public_description"]').fill('Program przygotowany przed utworzeniem dokumentu.')
+                    page.locator('#save-trip').click()
+                    expect(page.locator('#flow-continue')).to_be_enabled()
+                    page.locator('#flow-continue').click()
                 save='#m-save' if template=='marketing.collection' else '#d-save'
                 expect(page.locator(save)).to_be_visible(timeout=20000)
                 document_id=page.url.split('/')[-1]
@@ -65,6 +71,7 @@ def run_catalog():
                 if template=='offer.private':
                     page.locator('[data-d-field="offer_data.concept_only"]').check()
                     page.locator('[data-d-field="offer_data.cta"]').fill('Kontakt do uzupełnienia')
+                page.locator('.flow-options').filter(has=page.locator('.section-editor')).evaluate('(el)=>el.open=true')
                 # Add, edit, reorder, hide and restore sections without changing source data.
                 kinds=('text','list','table','callout','day','image','gallery') if template=='offer.private' else ('text','list','table')
                 for kind in kinds:
@@ -107,6 +114,7 @@ def run_catalog():
                 assert second.value.status==200 and second.value.json()['revision']==3
                 page.reload()
                 expect(page.locator(save)).to_be_visible(timeout=20000)
+                page.locator('.flow-options').filter(has=page.locator('.section-editor')).evaluate('(el)=>el.open=true')
                 expect(page.locator('input[data-s-field$=".title"]').filter(visible=True).last).to_be_visible()
                 saved=client.get('/api/document-studio/drafts/'+document_id).json()
                 assert saved['layout_variant']==variant

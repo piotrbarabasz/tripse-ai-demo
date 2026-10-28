@@ -87,7 +87,8 @@ def run():
                     expect(field).to_have_value('RETRY VALUE')
                     page.unroute(url, fail)
                     page.locator(f'#{prefix}-save').click()
-                    expect(page.locator('#message')).to_contain_text('Rewizja 3')
+                    expect(page.locator('#message')).to_contain_text('Dokument zapisany')
+                    assert api.get(url).json()['revision']==3
                     assert api.get(url).json()['title'] == 'RETRY VALUE'
                     page.reload()
                     expect(field).to_have_value('RETRY VALUE')

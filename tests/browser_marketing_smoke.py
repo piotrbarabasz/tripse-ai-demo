@@ -151,12 +151,16 @@ def run():
                 page.locator('#m-save').click()
                 expect(page.locator('#message')).to_have_text('Kampania zapisana.')
                 page.screenshot(path=str(artifacts/'editor-desktop.png'),full_page=True)
+                page.locator('#m-export').click()
+                expect(page.locator('#document-review')).to_be_visible()
                 with page.expect_popup() as popup:
                     page.locator('#m-export').click()
                 preview=popup.value
                 ready(preview)
                 assert '/drafts/' in preview.url
                 preview.close()
+                page.goto(base+'/documents/demo#marketing/demo-northern-journeys')
+                expect(page.locator('#campaign-origin')).to_be_visible()
                 # Missing CTA is a visible blocking validation error, not a crash.
                 page.locator('[data-m-field="cta"]').fill('')
                 expect(page.locator('#m-validation')).to_contain_text('Uzupełnij CTA')

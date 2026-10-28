@@ -39,6 +39,8 @@ def local_only(request: Request):
 
 
 class DraftRequest(Model):
+    document_id: Identifier | None = None
+    source_revision: int | None = Field(default=None, ge=1)
     template_id: str
     source_type: Literal["trip", "campaign"]
     source_id: Identifier
@@ -111,7 +113,7 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
 
     @router.get("/documents/assets/{filename}", include_in_schema=False)
     def asset(filename: str):
-        if filename not in {"studio.js", "studio.css", "marketing-editor.js", "marketing-editor.css", "brand-tokens.css", "marketing.css", "print-export.js", "trip-documents.css", "trip-editor.js", "trip-editor.css", "section-editor.js", "library.js", "source-picker.js"}:
+        if filename not in {"studio.js", "studio.css", "marketing-editor.js", "marketing-editor.css", "brand-tokens.css", "marketing.css", "print-export.js", "trip-documents.css", "trip-editor.js", "trip-editor.css", "section-editor.js", "library.js", "source-picker.js", "document-flow.js"}:
             raise HTTPException(404)
         return FileResponse(WEB / filename)
 

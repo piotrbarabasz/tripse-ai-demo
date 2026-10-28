@@ -1,6 +1,6 @@
 /* Campaign editing is separate from the existing trip editor and the renderer. */
 window.MarketingEditor = (() => {
-  let campaign, catalog, assets, ui, timer, generation = 0, format = 'a4', saving = false, documentDraft=null, sourceFilters={};
+  let campaign, catalog, assets, ui, timer, generation = 0, format = 'a4', saving = false, documentDraft=null, sourceFilters={}, campaignCreating=false;
   const find = selector => document.querySelector(selector);
   const clone = value => JSON.parse(JSON.stringify(value));
   const normalize = () => {
@@ -24,8 +24,8 @@ window.MarketingEditor = (() => {
   }
   function draw() {
     const e = ui.escape;
-    ui.main.innerHTML = `<button class="text-button back" data-go="${documentDraft?'drafts':'campaigns/'+e(campaign.campaign_id)}">← ${documentDraft?'Wróć do biblioteki':'Kampania'}</button>
-    <div class="heading marketing-heading"><div><p class="eyebrow">MARKETING.COLLECTION</p><h1>Studio kolekcji</h1><p class="muted">Edytuj treść, ułóż kierunki i sprawdź dokument przed drukiem.</p></div><div class="actions"><button id="m-save" class="primary">Zapisz zmiany</button><button id="m-export" class="accent">Zapisz dokument / PDF</button></div></div>
+    ui.main.innerHTML = `<button class="text-button back" data-go="${documentDraft?'drafts':ui.flow?DocumentFlow.path(ui.flow):'campaigns/'+e(campaign.campaign_id)}">← ${documentDraft?'Wróć do biblioteki':ui.flow?'Wybór programu':'Kampania'}</button>
+    <div class="heading marketing-heading"><div><p class="eyebrow">MATERIAŁY MARKETINGOWE</p><h1>Studio kolekcji</h1><p class="muted">Edytuj treść, ułóż kierunki i sprawdź dokument przed drukiem.</p></div><div class="actions"><button id="m-save" class="primary">${documentDraft?'Zapisz dokument':'Zapisz kampanię'}</button><button id="m-export" class="accent" ${documentDraft?'':'data-source-continue data-source-saved="'+(!campaignCreating)+'"'}>${documentDraft?'Zapisz i otwórz PDF':'Kontynuuj do dokumentu'}</button></div></div>
     <div class="marketing-layout"><div class="marketing-controls"><form id="m-form"><section class="panel"><h2>Kampania</h2>${documentDraft?'<p>Rodzaj danych dokumentu: '+e(SourcePicker.origins[documentDraft.data_origin||'unknown'])+'</p>':SourcePicker.originField(campaign.data_origin||'unknown','campaign-origin')}<div class="fields"><div class="full">${field('Tytuł kampanii','title',campaign.title,'required maxlength="200"')}</div>
     <label>Kompozycja<select data-m-field="layout_variant"><option value="new_trips" ${campaign.layout_variant==='new_trips'?'selected':''}>Nowe kierunki</option><option value="theme_collection" ${campaign.layout_variant==='theme_collection'?'selected':''}>Kolekcja tematyczna</option></select></label>
     ${field('Sezon / podtytuł','season',campaign.season,'maxlength="200"')}${field('Opcjonalny prowadzący','leader',campaign.leader,'maxlength="200"')}
@@ -65,6 +65,13 @@ window.MarketingEditor = (() => {
       const [index,offset]=button.dataset.mMove.split(',').map(Number);
       [campaign.items[index],campaign.items[index+offset]]=[campaign.items[index+offset],campaign.items[index]];ui.dirty(true);draw();
     }));
+    if(documentDraft)DocumentFlow.decorateEditor(documentDraft,{...ui,review:async()=>{if(await save())ui.review();}});
+    else {
+      const banner=document.createElement('div');banner.innerHTML=DocumentFlow.steps(2,ui.flow||{template:'marketing.collection',variant:campaign.layout_variant,kind:'campaign',sourceId:campaign.campaign_id})+'<section class="panel flow-source-info"><strong>Przygotowanie kampanii</strong><p>Zapisz wspólną kolekcję wycieczek. Dopiero „Kontynuuj do dokumentu” utworzy jej niezależną wersję do dalszej edycji.</p></section>';ui.main.prepend(banner);
+      if(ui.pause){const pause=document.createElement('button');pause.type='button';pause.textContent='Zapisz kampanię i wróć później';pause.onclick=async()=>{if(!ui.isDirty()&&!campaignCreating||await save())ui.pause();};ui.main.querySelector('.heading .actions').append(pause);}
+      find('#m-export').disabled=campaignCreating||ui.isDirty();
+    }
+    for(const fields of ui.main.querySelectorAll('.crop-fields')){const details=document.createElement('details');details.className='flow-crop';details.innerHTML='<summary>Dopasuj kadr zdjęcia</summary>';fields.before(details);details.append(fields);}
     preview();
   }
   function changeField(event) {
@@ -101,23 +108,21 @@ window.MarketingEditor = (() => {
     if(!find('#m-form').reportValidity() || !campaign.items.length){ui.message('Podaj tytuł i dodaj co najmniej jeden kierunek.',true);return false;}
     saving=true;ui.busy(true);ui.main.inert=true;find('#m-save').disabled=true;
     try{
-      if(documentDraft){Object.assign(documentDraft,await ui.api('drafts/'+documentDraft.document_id,{method:'PUT',body:JSON.stringify({revision:documentDraft.revision,title:campaign.title,sections:documentDraft.sections,campaign_snapshot:normalize()})}));campaign=clone(documentDraft.campaign_snapshot);}else campaign=await ui.api('campaigns/'+campaign.campaign_id,{method:'PUT',body:JSON.stringify(normalize())});
-      ui.dirty(false);let warning='';try{await ui.refresh();}catch{warning=' Biblioteka wymaga odświeżenia.';}ui.message((documentDraft?'Dokument zapisany. Rewizja '+documentDraft.revision+'.':'Kampania zapisana.')+warning,!!warning);return true;
-    }catch(error){ui.message(error.message,true);return false;}
+      if(documentDraft){Object.assign(documentDraft,await ui.api('drafts/'+documentDraft.document_id,{method:'PUT',body:JSON.stringify({revision:documentDraft.revision,title:campaign.title,sections:documentDraft.sections,campaign_snapshot:normalize()})}));campaign=clone(documentDraft.campaign_snapshot);}else {campaign=campaignCreating?await ui.persistCreate('campaigns',normalize()):await ui.api('campaigns/'+campaign.campaign_id,{method:'PUT',body:JSON.stringify(normalize())});campaignCreating=false;find('#m-export').dataset.sourceSaved='true';ui.sourceSaved?.(campaign);}
+      ui.dirty(false);let warning='';try{await ui.refresh();}catch{warning=' Biblioteka wymaga odświeżenia.';}ui.message((documentDraft?'Dokument zapisany. Możesz kontynuować edycję lub przejść do sprawdzenia.':'Kampania zapisana.')+warning,!!warning);return true;
+    }catch(error){ui.message(error.message,true);ui.recovery?.(error);return false;}
     finally{saving=false;ui.busy(false);ui.main.inert=false;if(find('#m-save'))find('#m-save').disabled=false;}
   }
   async function exportDocument() {
     if(saving)return;
-    // Open synchronously so browsers do not block the preview as an async popup.
-    const tab=window.open('about:blank','_blank');
-    if(!tab){ui.message('Zezwól na otwarcie okna podglądu PDF.',true);return;}
-    try{
-      if(!await save()){tab.close();return;}
-      const draft=documentDraft||await ui.api('drafts',{method:'POST',body:JSON.stringify({template_id:'marketing.collection',source_type:'campaign',source_id:campaign.campaign_id,layout_variant:campaign.layout_variant})});
-      await ui.refresh();
-      tab.opener=null;tab.location.href=`/api/document-studio/drafts/${draft.document_id}/preview?output_format=${format}`;
-    }catch(error){tab.close();ui.message(error.message,true);}
+    if(!documentDraft){
+      if(campaignCreating||ui.isDirty()){ui.message('Najpierw zapisz kampanię.',true);return;}
+      await ui.continueSource(campaign);return;
+    }
+    const tab=window.open('about:blank','_blank');if(!tab){ui.message('Zezwól na otwarcie podglądu PDF.',true);return;}
+    if(await save()){tab.opener=null;tab.location.href=`/api/document-studio/drafts/${documentDraft.document_id}/preview?output_format=${format}`;}else tab.close();
   }
+
   async function upload() {
     const file=find('#m-file').files[0],rights=find('#m-rights').checked;
     if(!file||!rights){ui.message('Wybierz zdjęcie i potwierdź prawo do użycia.',true);return;}
@@ -140,6 +145,6 @@ window.MarketingEditor = (() => {
     if(version!==generation||context.isCurrent&&!context.isCurrent())return;
     campaign=clone(source);catalog=trips;ui=context;format='a4';documentDraft=initialized;sourceFilters={};
     if(documentDraft){campaign.layout_variant=documentDraft.layout_variant;campaign.title=documentDraft.title;}
-    assets=loadedAssets;draw();
+    campaignCreating=!!context.creating;assets=loadedAssets;draw();
   }};
 })();
