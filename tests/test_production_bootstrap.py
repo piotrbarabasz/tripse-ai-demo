@@ -1,6 +1,7 @@
 """PROD bootstrap contracts: offline only, no IAM/GitHub/resource mutations."""
 from pathlib import Path
 import json
+import re
 
 import pytest
 
@@ -38,7 +39,7 @@ def test_reviewed_production_profile_has_real_values_and_no_dev_service_accounts
 def test_prod_data_root_is_separate_and_does_not_manage_dev_shared_apis():
     root = Path('infra/gcp/cloud-demo-prod/main.tf').read_text(encoding='utf-8')
     assert 'environment         = "prod"' in root and 'manage_project_apis = false' in root
-    assert 'live_secret_ids     = []' in root
+    assert re.search(r'(?m)^[ \t]*live_secret_ids[ \t]*=[ \t]*\[[ \t]*\][ \t]*$', root)
     assert 'terraform.tfstate' not in root
     module = Path('infra/gcp/cloud-demo/main.tf').read_text(encoding='utf-8')
     assert 'var.manage_project_apis ?' in module and 'default     = true' in module
