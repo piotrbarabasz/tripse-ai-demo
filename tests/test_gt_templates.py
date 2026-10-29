@@ -128,11 +128,28 @@ def test_verified_route_requires_evidence_and_unknown_is_not_zero(model):
 
 def test_partial_seed_resumes_without_duplicate_or_overwrite(store):
     first=build_example('GT-DEMO-01')
-    store.save('drafts',first,create=True)
+    saved_first=store.save('drafts',first,create=True)
+    assert saved_first.revision==first.revision==1
+    # save() assigns updated_at; retain its complete persisted value as baseline.
+    assert store.get('drafts',saved_first.document_id)==saved_first
     report=seed(store,apply=True)
     assert sum(r['status']=='created' for r in report)==8
-    assert store.get('drafts',first.document_id)==first
-    assert all(r['status']=='verified' for r in seed(store))
+    assert store.get('drafts',saved_first.document_id)==saved_first
+    assert len(store.list('drafts'))==9
+    assert all(r['status']=='verified' for r in seed(store,apply=True))
+    assert store.get('drafts',saved_first.document_id)==saved_first
+    assert len(store.list('drafts'))==9
+    # A subsequent user edit must survive a repeated seed, including all metadata.
+    edited=saved_first.model_copy(deep=True)
+    edited.title='User-edited example — preserve content and metadata'
+    edited.sections[0].body='User text retained during seed resume'
+    saved_edited=store.save('drafts',edited)
+    assert saved_edited.revision==2
+    retried=seed(store,apply=True)
+    assert next(r['status'] for r in retried if r['id']==saved_edited.document_id)=='conflict_preserved'
+    assert not any(r['status']=='created' for r in retried)
+    assert store.get('drafts',saved_edited.document_id)==saved_edited
+    assert store.get_revision(saved_edited.document_id,1)==saved_first
 
 
 def test_no_seed_at_startup_catalog_get_is_readonly_copy_and_api_guards(tmp_path, monkeypatch):

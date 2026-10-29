@@ -22,7 +22,7 @@ Dockerfile, oba Compose, `infra/gcp/`, `scripts/gcp/`, `tests/`, main i worker.
   (lokalny Caddy). API domyślnie wiąże `127.0.0.1:8000`.
   `compose.dev.yaml` to osobna publiczna konfiguracja z DNS/WAHA/Caddy;
   nie jest automatycznie używana przez Make.
-- Jest siedem skryptów `browser*.py`. Sześć samo uruchamia API; tylko
+- Jest dziewięć skryptów `browser*.py`. Osiem ma własny izolowany harness HTTP/ASGI; tylko
   `browser_demo_smoke.py` wymaga już uruchomionego API i workera; zastany adres
   `localhost:8000` rozszerzono o opcjonalne `TRIPSE_BROWSER_BASE_URL` na potrzeby
   izolowanego harnessu. Domyślne uruchomienie ręczne testu pozostaje bez zmian.
@@ -176,8 +176,13 @@ make check
 
 `test` i `test-unit` to ten sam standardowy `python -m pytest -q`, łącznie
 z obecnymi testami integracyjnymi offline. Testy nie czytają głównego `.env`.
-`test-browser` uruchamia kolejno wszystkie siedem istniejących skryptów:
-viewer, Hub, Studio, marketing, pilot/oferta, Cloud Preview i starszy symulator.
+`test-browser` uruchamia kolejno wszystkie dziewięć skryptów:
+viewer, Hub, Studio, marketing, pilot/oferta, Cloud Preview, authenticated cloud demo,
+GT templates i starszy symulator. `browser_gt_templates.py` sprawdza dziewięć
+przykładów: otwarcie/kopia/edycja/zapis/ponowne otwarcie/podgląd w lokalnym JSON
+i symulowanym GCS (18 przepływów), a także 11 rzeczywistych PDF-ów. Wymaga
+Playwright/Chromium, pypdf i PyMuPDF z istniejącego `requirements-dev.txt`;
+`make install-dev` i `make install-browser` przygotowują zależności.
 Nie przekazuje im wymyślonych wspólnych argumentów. Dla starszego symulatora
 tworzy własne tymczasowe SQLite/JSON, API i worker, które sprząta również po błędzie.
 Harness wybiera wolny port i przekazuje go przez `TRIPSE_BROWSER_BASE_URL`;
@@ -185,7 +190,7 @@ test nie podłącza się do Twojej aktywnej bazy ani nie zatrzymuje istniejąceg
 Pozostałe skrypty samodzielnie wybierają porty. Wyniki/screenshoty/PDF pozostają
 w dotychczasowych ignorowanych katalogach skryptów.
 
-`test-all`: pytest → siedem browser smoke → istniejący Docker container smoke.
+`test-all`: pytest → dziewięć browser smoke → istniejący Docker container smoke.
 Potrzebuje zależności dev, Chromium i działającego Dockera. Niczego nie pomija
 po cichu; pierwszy błąd przerywa wykonanie. `check`: `git diff --check` oraz
 `docker compose -f compose.yaml config --quiet`; wymaga Git i Compose, bez startu
