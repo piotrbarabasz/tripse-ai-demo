@@ -220,6 +220,11 @@ class OperationalEntry(Model):
     details: Text = ""
     booking_reference: Annotated[str, StringConstraints(max_length=200)] = ""
     source: Annotated[str, StringConstraints(max_length=1000)] = ""
+    carrier: Title | None = None
+    flight_number: Title | None = None
+    origin: Title | None = None
+    destination: Title | None = None
+    travel_group: Title | None = None
 
     @model_validator(mode="after")
     def local_times(self):
@@ -288,7 +293,26 @@ class EducationalGoal(Model):
     stop_id: Identifier | None = None
 
 
+class RouteSummary(Model):
+    start: Text = ""
+    end: Text = ""
+    regions: list[Title] = Field(default_factory=list)
+    intensity: Text = ""
+    drive_km: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    walk_km: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    verification_status: Verification = "unverified"
+    source: Text = ""
+
+    @model_validator(mode="after")
+    def verification_source(self):
+        if self.verification_status == "verified" and not self.source.strip():
+            raise ValueError("Zweryfikowana trasa wymaga źródła pomiaru")
+        return self
+
+
 class OfferDetails(Model):
+    route_summary: RouteSummary = Field(default_factory=RouteSummary)
+    safety_requirements: Text = ""
     organization_scope: Text = ""
     self_arrangements: Text = ""
     materials: Text = ""
@@ -306,6 +330,8 @@ class OfferDetails(Model):
 
 
 class DayLogistics(Model):
+    verification_status: Verification = "unverified"
+    source: Text = ""
     date: Date | None = None
     route_start: Text = ""
     route_end: Text = ""
@@ -321,6 +347,8 @@ class DayLogistics(Model):
 
     @model_validator(mode="after")
     def valid_zone(self):
+        if self.verification_status == "verified" and not self.source.strip():
+            raise ValueError("Zweryfikowane metryki wymagają źródła pomiaru")
         if self.time_zone:
             try:
                 ZoneInfo(self.time_zone)

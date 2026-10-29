@@ -10,6 +10,11 @@ Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej
 **Rodzina:** `marketing` · **Odbiorca:** publiczny, social media, mailing, strona WWW  
 **Format początkowy:** A4 PDF i grafika 1080×1350 (warianty rozmiaru: [DO UZGODNIENIA]).
 
+Aktualizacja DOC-TEMPLATES-006: lokalny szablon 0.5.0, uzupełniony przykład GT v1
+i kopia do edycji przez `#examples`. Pola, kolejność oraz granice weryfikacji:
+[raport implementacji](../../../DOC_TEMPLATES_006.md). Specyfikacja poniżej
+nie oznacza zatwierdzenia biznesowego Ground Truth.
+
 ## 1. Cel i odbiorca
 
 Szybko pokazać kilka nowych lub tematycznie powiązanych wypraw TRIPSE i zachęcić do kontaktu. Użytkownik powinien na pierwszy rzut oka zobaczyć **kierunek, termin i kluczową obietnicę każdego wyjazdu**.

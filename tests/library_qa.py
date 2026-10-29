@@ -16,6 +16,8 @@ ROOT=Path(__file__).resolve().parents[1]
 
 
 def run_library():
+    import os
+    os.environ['DOCUMENT_STUDIO_FIXTURES_PATH']=str(ROOT/'tests/fixtures/legacy-demo')  # explicit historical regression dataset
     artifacts=ROOT/'local-data'/'document-library-qa';artifacts.mkdir(parents=True,exist_ok=True)
     with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
     base=f'http://127.0.0.1:{port}'

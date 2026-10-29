@@ -1,0 +1,193 @@
+{
+  "trip_id": "gt-v1-roadtrip",
+  "title": "Kanada i USA — Self-Guide, 8 dni",
+  "categories": [
+    "self_guide",
+    "private"
+  ],
+  "data_origin": "demo",
+  "destinations": [
+    "Kanada",
+    "USA"
+  ],
+  "description": "PRZYKŁAD DEMO — DANE FIKCYJNE. Kanada i USA — Self-Guide, 8 dni. Autorski koncept; wymaga sprawdzenia dostępności, trasy i świadczeń.",
+  "duration_days": 8,
+  "status": "draft",
+  "updated_at": "2026-10-28T00:00:00Z",
+  "days": [
+    {
+      "day_id": "roadtrip-day-1",
+      "day_number": 1,
+      "title": "Vancouver — odbiór i orientacja",
+      "public_description": "Odbiór auta dopiero po indywidualnym uzgodnieniu umowy. Spacer w parku i przygotowanie map offline; nocleg w rejonie miasta.",
+      "time_zone": "America/Vancouver",
+      "stops": [
+        {
+          "stop_id": "roadtrip-day-1-stop-1",
+          "name": "Vancouver",
+          "description": "W planie: Vancouver. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "roadtrip-day-1-stop-2",
+          "name": "Stanley Park",
+          "description": "W planie: Stanley Park. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "roadtrip-day-2",
+      "day_number": 2,
+      "title": "Whistler — etap górski",
+      "public_description": "Przejazd z przerwami widokowymi. Wariant spacerowy dobrany po sprawdzeniu pogody, parkingów i dostępności dróg.",
+      "time_zone": "America/Vancouver",
+      "stops": [
+        {
+          "stop_id": "roadtrip-day-2-stop-1",
+          "name": "Squamish",
+          "description": "W planie: Squamish. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "roadtrip-day-2-stop-2",
+          "name": "Whistler",
+          "description": "W planie: Whistler. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "roadtrip-day-3",
+      "day_number": 3,
+      "title": "Kamloops — dzień wielu postojów",
+      "public_description": "Etap z kilkoma przerwami na odpoczynek, posiłek i krajobraz. Szczegółowy harmonogram jest fikcyjnym ćwiczeniem, wymaga przeliczenia trasy.",
+      "time_zone": "America/Vancouver",
+      "stops": [
+        {
+          "stop_id": "roadtrip-day-3-stop-1",
+          "name": "Pemberton",
+          "description": "W planie: Pemberton. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "roadtrip-day-3-stop-2",
+          "name": "Lillooet",
+          "description": "W planie: Lillooet. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "roadtrip-day-3-stop-3",
+          "name": "Kamloops",
+          "description": "W planie: Kamloops. Krótki postój zamykający etap; czas pobytu zależy od warunków.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "roadtrip-day-4",
+      "day_number": 4,
+      "title": "Revelstoke — dolina i las",
+      "public_description": "Spokojniejszy przejazd z krótkim spacerem w docelowej miejscowości. Zakupy i przygotowanie kolejnego dnia we własnym zakresie.",
+      "time_zone": "America/Vancouver",
+      "stops": [
+        {
+          "stop_id": "roadtrip-day-4-stop-1",
+          "name": "Salmon Arm",
+          "description": "W planie: Salmon Arm. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "roadtrip-day-4-stop-2",
+          "name": "Revelstoke",
+          "description": "W planie: Revelstoke. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "roadtrip-day-5",
+      "day_number": 5,
+      "title": "Banff — zmiana strefy",
+      "public_description": "Dzień przejazdowy z jawną zmianą strefy na America/Edmonton. Rezerwa czasu i sprawdzenie sezonowych ograniczeń pozostają obowiązkowym zadaniem organizatora.",
+      "time_zone": "America/Edmonton",
+      "stops": [
+        {
+          "stop_id": "roadtrip-day-5-stop-1",
+          "name": "Golden",
+          "description": "W planie: Golden. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "roadtrip-day-5-stop-2",
+          "name": "Banff",
+          "description": "W planie: Banff. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "roadtrip-day-6",
+      "day_number": 6,
+      "title": "Waterton — jeziorny wariant",
+      "public_description": "Planowany odcinek w kierunku południowym. Alternatywa przy pogodzie: skrócony spacer i czas wolny zamiast dłuższej wędrówki.",
+      "time_zone": "America/Edmonton",
+      "stops": [
+        {
+          "stop_id": "roadtrip-day-6-stop-1",
+          "name": "Canmore",
+          "description": "W planie: Canmore. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "roadtrip-day-6-stop-2",
+          "name": "Waterton",
+          "description": "W planie: Waterton. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "roadtrip-day-7",
+      "day_number": 7,
+      "title": "Glacier — granica i formalności",
+      "public_description": "Przekroczenie granicy wyłącznie po osobnym sprawdzeniu wymagań. Nie deklarujemy otwartych dróg, pozwoleń ani czasu odprawy.",
+      "time_zone": "America/Edmonton",
+      "stops": [
+        {
+          "stop_id": "roadtrip-day-7-stop-1",
+          "name": "Przejście graniczne Kanada–USA",
+          "description": "W planie: Przejście graniczne Kanada–USA. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "roadtrip-day-7-stop-2",
+          "name": "Glacier",
+          "description": "W planie: Glacier. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "roadtrip-day-8",
+      "day_number": 8,
+      "title": "Kalispell — zamknięcie podróży",
+      "public_description": "Zwrot auta i transfer zależne od potwierdzonej umowy i lotu. Popołudnie bez napiętego programu; ewentualny dodatkowy nocleg do ustalenia.",
+      "time_zone": "America/Edmonton",
+      "stops": [
+        {
+          "stop_id": "roadtrip-day-8-stop-1",
+          "name": "Whitefish",
+          "description": "W planie: Whitefish. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "roadtrip-day-8-stop-2",
+          "name": "Kalispell",
+          "description": "W planie: Kalispell. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    }
+  ]
+}

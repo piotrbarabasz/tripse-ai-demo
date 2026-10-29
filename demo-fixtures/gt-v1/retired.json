@@ -1,0 +1,22 @@
+[
+  {
+    "kind": "trips",
+    "id": "demo-canada",
+    "content_sha256": "c7a9343b051fe13bfb8173894d890924c6d518d919bffa3dfe2cf389c9f433af"
+  },
+  {
+    "kind": "trips",
+    "id": "demo-iceland",
+    "content_sha256": "b57c24075f4d2d25157100a066b19d0f7d2b99108033108539ec299c7273d45e"
+  },
+  {
+    "kind": "trips",
+    "id": "demo-norway",
+    "content_sha256": "8308bddc9e31c1bb9aa9e58585ccba174b0a39bf9834eb229057b54ca23297f3"
+  },
+  {
+    "kind": "campaigns",
+    "id": "demo-northern-journeys",
+    "content_sha256": "c897f6c4acd25906dff78d6438c68e0a2ad5a333f007cb4e6b28692564c5fccc"
+  }
+]

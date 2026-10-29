@@ -16,6 +16,8 @@ ROOT=Path(__file__).resolve().parents[1]
 
 
 def run():
+    import os
+    os.environ['DOCUMENT_STUDIO_FIXTURES_PATH']=str(ROOT/'tests/fixtures/legacy-demo')  # explicit historical regression dataset
     artifacts=ROOT/'local-data'/'trip-documents-qa'
     artifacts.mkdir(parents=True,exist_ok=True)
     with socket.socket() as listener:
@@ -77,9 +79,11 @@ def run():
                     page.goto(base+'/documents/demo#trips/demo-iceland')
                     page.locator('#create-draft').click()
                     page.locator('[data-create-template="'+template+'"]').click()
-                    page.locator('#source-demo-option details').evaluate('el=>el.open=true')
-                    page.locator('#flow-demo').check()
                     page.locator('#source-create').click()
+                    expect(page.locator("#d-save")).to_be_visible()
+                    from legacy_document_content import initialize_legacy_demo
+                    initialize_legacy_demo(api,page.evaluate('location.hash').split('/')[-1])
+                    page.reload()
                     expect(page.locator('#d-save')).to_be_visible()
                     document_id=page.evaluate('location.hash').split('/')[-1]
                     saved_ids.append(document_id)
@@ -93,7 +97,7 @@ def run():
                         page.locator('[data-d-field="pilot_data.schedule.0.start_local"]').fill('2027-06-01T11:30')
                     page.locator('#d-save').click()
                     expect(page.locator('#message')).to_contain_text('Dokument zapisany')
-                    expect(page.locator('#d-revision')).to_have_text('2')
+                    expect(page.locator('#d-revision')).to_have_text('3')
                     page.screenshot(path=str(artifacts/(template+'-editor.png')),full_page=True)
                     page.locator('#document-review').click()
                     with page.expect_popup() as popup:page.locator('#review-export').click()

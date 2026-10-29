@@ -10,6 +10,11 @@ Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej
 **Poufność:** dokument klientowski  
 **Format początkowy:** PDF A4, orientacyjnie 4–7 stron.
 
+Aktualizacja DOC-TEMPLATES-006: lokalny szablon 0.5.0, uzupełniony przykład GT v1
+i kopia do edycji przez `#examples`. Pola, kolejność oraz granice weryfikacji:
+[raport implementacji](../../../DOC_TEMPLATES_006.md). Specyfikacja poniżej
+nie oznacza zatwierdzenia biznesowego Ground Truth.
+
 ## 1. Cel i odbiorca
 
 Sprzedać i jasno wyjaśnić wyjazd, w którym **nie ma pilota prowadzącego na miejscu**. Klient musi zrozumieć, co jest gotowe i zorganizowane, co wykona samodzielnie oraz jaka pomoc rzeczywiście jest dostępna.

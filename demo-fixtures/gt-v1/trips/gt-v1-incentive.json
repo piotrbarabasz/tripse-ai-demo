@@ -1,0 +1,101 @@
+{
+  "trip_id": "gt-v1-incentive",
+  "title": "Chorwacja — przestrzeń dla zespołu, 4 dni",
+  "categories": [
+    "incentive"
+  ],
+  "data_origin": "demo",
+  "destinations": [
+    "Chorwacja"
+  ],
+  "description": "PRZYKŁAD DEMO — DANE FIKCYJNE. Chorwacja — przestrzeń dla zespołu, 4 dni. Autorski koncept; wymaga sprawdzenia dostępności, trasy i świadczeń.",
+  "duration_days": 4,
+  "status": "draft",
+  "updated_at": "2026-10-28T00:00:00Z",
+  "days": [
+    {
+      "day_id": "incentive-day-1",
+      "day_number": 1,
+      "title": "Split — wspólny początek",
+      "public_description": "Powitanie i spacer w małych grupach. Kolacja otwierająca z rozmową o oczekiwaniach; lokal oraz menu pozostają propozycją.",
+      "time_zone": "Europe/Zagreb",
+      "stops": [
+        {
+          "stop_id": "incentive-day-1-stop-1",
+          "name": "Split",
+          "description": "W planie: Split. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "incentive-day-1-stop-2",
+          "name": "Nabrzeże w Splicie",
+          "description": "W planie: Nabrzeże w Splicie. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "incentive-day-2",
+      "day_number": 2,
+      "title": "Trogir — współpraca w praktyce",
+      "public_description": "Autorska gra zespołowa bez rywalizacji sportowej. Po obiedzie moderowane podsumowanie i swobodny czas na odpoczynek.",
+      "time_zone": "Europe/Zagreb",
+      "stops": [
+        {
+          "stop_id": "incentive-day-2-stop-1",
+          "name": "Trogir",
+          "description": "W planie: Trogir. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "incentive-day-2-stop-2",
+          "name": "Okolice Trogiru",
+          "description": "W planie: Okolice Trogiru. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "incentive-day-3",
+      "day_number": 3,
+      "title": "Omiš — warsztat i wybór",
+      "public_description": "Przedpołudniowy warsztat komunikacji, po nim wariant spacerowy lub odpoczynek. Nie zakładamy raftingu, rejsu ani dostępu do konkretnej sali.",
+      "time_zone": "Europe/Zagreb",
+      "stops": [
+        {
+          "stop_id": "incentive-day-3-stop-1",
+          "name": "Omiš",
+          "description": "W planie: Omiš. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "incentive-day-3-stop-2",
+          "name": "Wybrzeże dalmatyńskie",
+          "description": "W planie: Wybrzeże dalmatyńskie. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "incentive-day-4",
+      "day_number": 4,
+      "title": "Split — wnioski na powrót",
+      "public_description": "Sesja podsumowania z dobrowolną listą wniosków dla zespołu. Transfer po uzgodnieniu rozkładu podróży; brak obietnicy rezultatów szkoleniowych.",
+      "time_zone": "Europe/Zagreb",
+      "stops": [
+        {
+          "stop_id": "incentive-day-4-stop-1",
+          "name": "Split",
+          "description": "W planie: Split. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "incentive-day-4-stop-2",
+          "name": "Lotnisko Split",
+          "description": "W planie: Lotnisko Split. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    }
+  ]
+}

@@ -7,7 +7,7 @@ from app.document_studio.sections import section_issues
 from app.document_studio.marketing import build_marketing, Issue
 from app.document_studio.rendering import render_shell, marketing_blocks, render_marketing
 from app.document_studio.rendering.components import text, photo
-from app.document_studio.rendering.trip_documents import section, listing, program, operational_entry, chunks, render_trip_document
+from app.document_studio.rendering.trip_documents import section, listing, program, operational_entry, operational_entries, chunks, render_trip_document
 from app.document_studio.trip_documents import trip_document_issues, date_label
 
 
@@ -69,13 +69,26 @@ def bound_content(draft, item, assets, output_format="a4"):
     if key == "price":
         return section(title, pricing(offer), "price-section")
     if key == "route":
-        return table(title, ["Dzień / data", "Program", "Atrakcje"], [[f"{d.day_number} · {d.date or 'Termin do ustalenia'}", d.title, ', '.join(s.name for s in d.stops)] for d in trip.days])
+        rows = []
+        for day in trip.days:
+            log = next((s.logistics for s in draft.sections or [] if s.day_id == day.day_id and s.logistics), None)
+            events = sorted((e for e in pilot.schedule if e.day_id == day.day_id), key=schedule_order)
+            window = ' – '.join(v.strftime('%H:%M') for v in ([events[0].start_local, events[-1].end_local] if events else []) if v) or 'Do ustalenia'
+            metrics = ' / '.join(str(getattr(log, k)) if log and getattr(log, k) is not None else 'Do ustalenia' for k in ('drive_km', 'walk_km'))
+            hotels = ', '.join(e.title for e in pilot.accommodations if e.day_id == day.day_id) or 'Do ustalenia / koniec podróży'
+            rows.append([f"{day.day_number} · {log.date if log and log.date else day.date or 'Termin do ustalenia'}", day.title, metrics, window, hotels])
+        return table(title, ["Dzień / data", "Trasa", "Km auto / pieszo (szacunek)", "Godziny lokalne", "Nocleg"], rows)
+    if key == "route_summary":
+        route = details.route_summary
+        return section(title, f"Start: {route.start or 'Do ustalenia'}\nMeta: {route.end or 'Do ustalenia'}\nRegiony: {', '.join(route.regions) or 'Do ustalenia'}\nIntensywność: {route.intensity or 'Do ustalenia'}\nJazda km: {route.drive_km if route.drive_km is not None else 'Do ustalenia'}\nPieszo km: {route.walk_km if route.walk_km is not None else 'Do ustalenia'}\nWeryfikacja: {route.verification_status}\nŹródło: {route.source or 'Pomiar do wykonania'}")
+    if key == "team_group":
+        return section(title, f"Założona liczebność zespołu: {details.group_size or 'Do ustalenia'}\nStandard i potrzeby: {details.hotel.name_or_standard or 'Do uzgodnienia'}")
     if key == "pilot_group":
         return section(title, f"Pilot: {pilot.leader or 'Do ustalenia'}\nGrupa: {pilot.participant_count or 'Do ustalenia'}\nZbiórka: {pilot.meeting or 'Do ustalenia'}")
     if key == "contacts":
         return listing(title, [f"{c.label}: {c.value}" for c in pilot.contacts])
     if key in {"flights", "transfers", "accommodations", "activity_bookings", "open_items"}:
-        return ''.join(operational_entry(title, e) for e in getattr(pilot, key)) or section(title, "Do ustalenia / do potwierdzenia")
+        return operational_entries(title, getattr(pilot, key)) if getattr(pilot, key) else section(title, "Do ustalenia / do potwierdzenia")
     if key == "internal_notes":
         return section(title, pilot.internal_notes or "Do uzupełnienia")
     if key == "self_guide":
@@ -121,9 +134,11 @@ def render_section(draft, item, assets, output_format="a4"):
         result = section(title, f"Data: {log.date or day.date or 'Do ustalenia'}\nTrasa: {log.route_start or 'Do ustalenia'} → {log.route_end or 'Do ustalenia'}\nStrefa: {log.time_zone or 'Do ustalenia'}\n{item.body or day.public_description}", "day-section")
         result += listing("Atrakcje programu", [s.name for s in day.stops])
         result += table("Czasy i dystanse — planowane", ["Parametr", "Wartość"], [[label, str(getattr(log, key)) if getattr(log, key) is not None else 'Do ustalenia'] for key, label in (("drive_km", "Jazda km"), ("walk_km", "Pieszo km"), ("elevation_gain_m", "Przewyższenie m"), ("drive_minutes", "Czas jazdy min"), ("activity_minutes", "Aktywności min"))])
-        result += ''.join(operational_entry("Harmonogram chronologiczny", e) for e in sorted(pilot.schedule, key=schedule_order) if e.day_id == day.day_id) or section("Harmonogram", "Godziny i postoje do ustalenia")
+        entries = [e for e in sorted(pilot.schedule, key=schedule_order) if e.day_id == day.day_id]
+        result += operational_entries("Harmonogram chronologiczny", entries) if entries else section("Harmonogram", "Godziny i postoje do ustalenia")
         hotels = [e for e in pilot.accommodations if e.entry_id == log.accommodation_entry_id or e.day_id == day.day_id]
         result += ''.join(operational_entry("Nocleg", h) for h in hotels) or section("Nocleg", "Nocleg nie został potwierdzony")
+        result += section("Weryfikacja metryk", f"{log.verification_status} · {log.source or 'Pomiar do wykonania; wartości nie są potwierdzone'}")
         result += section("Notatki organizacyjne", log.organizational_notes or "Do uzupełnienia") + section("Ryzyka i plan B", log.plan_b or "Do uzupełnienia")
     if item.kind == "knowledge":
         knowledge = item.knowledge
@@ -161,7 +176,7 @@ def render_document(draft, assets, output_format="a4"):
     if draft.template_id == "offer.school":
         blocks += section("EDUKACJA / PRZYRODA / INTEGRACJA", "Cele i ich powiązanie z programem wymagają uzupełnienia.", "demo-banner")
     if draft.demo_example:
-        blocks += section("FIKCYJNY PRZYKŁAD DEMO", "Terminy, usługi, ceny i statusy są demonstracyjne.", "demo-banner")
+        blocks += section("PRZYKŁAD DEMO — DANE FIKCYJNE", "Terminy, usługi, ceny i statusy są demonstracyjne. FIKCYJNY PRZYKŁAD DEMO.", "demo-banner")
     for item in sorted(draft.sections, key=lambda s: s.order):
         if item.visible:
             blocks += render_section(draft, item, assets, output_format)

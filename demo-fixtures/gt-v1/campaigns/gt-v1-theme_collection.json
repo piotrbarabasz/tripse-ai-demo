@@ -1,0 +1,37 @@
+{
+  "campaign_id": "gt-v1-theme_collection",
+  "title": "Górskie inspiracje 2027",
+  "data_origin": "demo",
+  "season": "2027 — koncept DEMO",
+  "layout_variant": "theme_collection",
+  "theme": "Góry w rytmie obserwacji",
+  "description": "PRZYKŁAD DEMO — DANE FIKCYJNE. Wspólny motyw: krajobraz, uważność i aktywne dni. Możliwe połączenie dwóch etapów wyłącznie po sprawdzeniu trasy i osobnej wycenie.",
+  "cta": "Porozmawiajmy o Twoim wariancie. Kontakt DEMO: studio@example.invalid (adres niedziałający).",
+  "updated_at": "2026-10-28T00:00:00Z",
+  "items": [
+    {
+      "trip_id": "gt-v1-rockies",
+      "display_title": "Kanadyjskie Rockies — notes narratora, 3 dni",
+      "short_hook": "Dwa miejsca połączone tematem wody. Dostęp sezonowy wymaga sprawdzenia; materiał do narracji nie zastępuje planu operacyjnego.",
+      "date_range_or_label": "Sezon 2027 — termin do ustalenia, DEMO",
+      "highlights": [
+        "Banff — czytanie krajobrazu",
+        "Yoho — woda jako motyw"
+      ],
+      "badge": "concept",
+      "publication_status": "draft"
+    },
+    {
+      "trip_id": "gt-v1-roadtrip",
+      "display_title": "Kanada i USA — Self-Guide, 8 dni",
+      "short_hook": "Przejazd z przerwami widokowymi. Wariant spacerowy dobrany po sprawdzeniu pogody, parkingów i dostępności dróg.",
+      "date_range_or_label": "Sezon 2027 — termin do ustalenia, DEMO",
+      "highlights": [
+        "Vancouver — odbiór i orientacja",
+        "Whistler — etap górski"
+      ],
+      "badge": "concept",
+      "publication_status": "draft"
+    }
+  ]
+}

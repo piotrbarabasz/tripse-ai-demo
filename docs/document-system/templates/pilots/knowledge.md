@@ -10,6 +10,11 @@ Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej
 **Poufność:** `internal`; domyślnie bez danych uczestników i rezerwacji  
 **Format początkowy:** PDF A4, orientacyjnie **3 strony na dzień**, jeśli materiał uzasadnia taką objętość.
 
+Aktualizacja DOC-TEMPLATES-006: lokalny szablon 0.5.0, uzupełniony przykład GT v1
+i kopia do edycji przez `#examples`. Pola, kolejność oraz granice weryfikacji:
+[raport implementacji](../../../DOC_TEMPLATES_006.md). Specyfikacja poniżej
+nie oznacza zatwierdzenia biznesowego Ground Truth.
+
 ## 1. Cel i odbiorca
 
 Przekazać pilotowi informacje, które może wykorzystać podczas przejazdów i na miejscu: kontekst historyczny, przyrodę, kulturę, ciekawostki, krótkie historie do opowiadania. Dokument nie powtarza godzinowego harmonogramu.

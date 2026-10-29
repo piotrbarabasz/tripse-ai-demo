@@ -444,3 +444,8 @@ def test_cloud_demo_configuration_fails_closed(cloud_demo, monkeypatch, key, val
     monkeypatch.setenv(key, value)
     with pytest.raises(ValueError):
         create_app(cloud_components=cloud_demo.components())
+
+
+# Explicit historical regression sources; active catalogue is tested in test_gt_templates.py.
+import pytest as _pytest
+pytestmark = _pytest.mark.usefixtures("legacy_document_sources")

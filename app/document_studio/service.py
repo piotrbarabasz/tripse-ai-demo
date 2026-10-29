@@ -1,7 +1,3 @@
-import json
-from datetime import datetime, timedelta
-from pathlib import Path
-
 from app.document_studio.models import DocumentDraft, OfferData, PilotData, OfferDetails
 from app.document_studio.sections import default_sections, section_issues
 from app.document_studio.repository import Repository
@@ -24,7 +20,7 @@ class DocumentService:
             self.repository.get("assets", campaign.hero_asset_id)
         return self.repository.save("campaigns", campaign, create=create)
 
-    def create_draft(self, request, actor=None):
+    def create_draft(self, request, actor=None, *, persist=True):
         from app.document_studio.repository import ConflictError
         identifier = getattr(request, "document_id", None)
         source_revision = getattr(request, "source_revision", None)
@@ -74,24 +70,10 @@ class DocumentService:
             pilot_data=PilotData() if template.template_id in {"pilot.basic", "pilot.advanced"} else None,
         )
         if getattr(request, "demo_example", False):
-            if template.template_id not in {"offer.private", "pilot.basic"} or source.trip_id != "demo-iceland":
-                raise ValueError("Fikcyjny przykład dostępny dla wycieczki demo-iceland i dwóch nowych szablonów")
-            data = json.loads((Path(__file__).resolve().parents[2] / "demo-fixtures/document-presets/iceland.json").read_text(encoding="utf-8"))
-            draft.demo_example = True
-            draft.date_label = data["date_label"]
-            if len(source.days) != 10:
-                end = datetime(2027,6,1) + timedelta(days=max(0,len(source.days)-1))
-                draft.date_label = f"01.06.2027 – {end:%d.%m.%Y} — FIKCYJNY TERMIN DEMO"
-            if template.template_id == "offer.private":
-                draft.offer_data = OfferData.model_validate(data["offer_data"])
-            else:
-                pilot = data["pilot_data"]
-                pilot["accommodations"] = [{"day_id":day.day_id,"title":f"Pensjonat demonstracyjny {day.day_number} — DEMO", "status":"confirmed" if day.day_number == 1 else "planned", "source":"Fikcyjne potwierdzenie DEMO — brak rzeczywistej rezerwacji" if day.day_number == 1 else "", "details":"Fikcyjny obiekt demonstracyjny, pokój dwuosobowy. Nie jest rzeczywistym noclegiem."} for day in source.days[:-1]]
-                pilot["schedule"] = [{"day_id":day.day_id,"title":day.title + " — program DEMO", "start_local":(datetime(2027,6,1,9)+timedelta(days=index)).isoformat(),"time_zone":"Atlantic/Reykjavik", "status":"planned", "details":"Fikcyjny harmonogram. Godziny i dostępność atrakcji do potwierdzenia."} for index,day in enumerate(source.days)]
-                if source.days:
-                    pilot["activity_bookings"] = [{"day_id":source.days[0].day_id,"title":"Wejście demonstracyjne — DEMO", "status":"unknown", "details":"Brak rezerwacji, godzina do ustalenia."}]
-                draft.pilot_data = PilotData.model_validate(pilot)
+            raise ValueError("Wybierz przykład w katalogu Przykładowe dokumenty DEMO i utwórz kopię do edycji.")
         draft.sections = default_sections(draft)
+        if not persist:
+            return draft
         try:
             return self.repository.save("drafts", draft, create=True)
         except ConflictError:
@@ -100,6 +82,8 @@ class DocumentService:
             raise
 
     def update_draft(self, identifier, value, actor=None):
+        from app.document_studio.examples import protect_canonical
+        protect_canonical(identifier)
         draft = self.repository.get("drafts", identifier)
         if draft.document_status == "archived":
             from app.document_studio.repository import ConflictError

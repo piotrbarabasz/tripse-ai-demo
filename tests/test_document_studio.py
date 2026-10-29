@@ -151,7 +151,7 @@ def test_api_persistence_campaign_draft_and_planner_isolation(tmp_path):
             draft_ids.append(data["document_id"])
             snapshots = [data["trip_snapshot"]] if data["trip_snapshot"] else data["campaign_trip_snapshots"]
             assert snapshots[0]["days"][0]["internal_notes"] == ("Notatka wyłącznie dla pilota" if template == "pilot.basic" else "")
-            assert data["template_version"] == "0.4.0"
+            assert data["template_version"] == "0.5.0"
         changed = updated.json()
         changed["title"] = "Późniejsza edycja"
         assert client.put(f"/api/document-studio/trips/{trip_id}",json=changed).status_code == 200
@@ -222,3 +222,8 @@ def test_corrupt_file_returns_controlled_error(tmp_path):
         response = client.get("/api/document-studio/trips/demo-iceland")
         assert response.status_code == 503
         assert str(tmp_path) not in response.text
+
+
+# Explicit historical regression sources; active catalogue is tested in test_gt_templates.py.
+import pytest as _pytest
+pytestmark = _pytest.mark.usefixtures("legacy_document_sources")

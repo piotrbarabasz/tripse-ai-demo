@@ -33,7 +33,7 @@ def test_all_trip_templates_sections_persistence_independence_and_missing_data(t
                       'stops': [{'name': 'Atrakcja programu', 'source': 'PRIVATE_RESERVATION_SOURCE'}]} for i in range(days)]}).json()
         draft = create(client, template, trip['trip_id'])
         assert draft['sections'] and all(s['section_id'] for s in draft['sections'])
-        assert draft['template_version'] == '0.4.0'
+        assert draft['template_version'] == '0.5.0'
         assert draft['trip_snapshot']['start_date'] is None
         another = create(client, template, trip['trip_id'])
         body = update(draft)
@@ -188,3 +188,8 @@ def test_cloud_section_assets_use_private_adapter_and_reader_write_denial(cloud_
 
 # Reuse the existing private GCS/Firestore fixture, not a parallel cloud harness.
 from tests.test_cloud_demo import cloud_demo
+
+
+# Explicit historical regression sources; active catalogue is tested in test_gt_templates.py.
+import pytest as _pytest
+pytestmark = _pytest.mark.usefixtures("legacy_document_sources")

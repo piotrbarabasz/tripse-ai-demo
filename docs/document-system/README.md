@@ -8,6 +8,10 @@
 i eksport serwerowy opisane dalej pozostają propozycjami.
 **Lokalizacja:** `docs/document-system/` w repozytorium `tripse-ai-demo`.
 
+Bieżący etap [DOC-TEMPLATES-006](../DOC_TEMPLATES_006.md): dziewięć chronionych
+przykładów GT v1, kopie do istniejących edytorów, szablony 0.5.0.
+[Ground Truth](general/template-content-ground-truth.md) pozostaje **DRAFT / DO WALIDACJI Z TRIPSE**.
+
 ## Po co istnieje ten moduł
 
 Jeden uporządkowany opis wycieczki ma zasilać wiele dokumentów: oferty dla klientów, materiały marketingowe i wewnętrzne materiały dla pilotów. Użytkownik wybiera rodzaj dokumentu, uzupełnia brakujące dane i zdjęcia, ogląda podgląd, zatwierdza treść i eksportuje PDF. Dane niepewne muszą być oznaczane; system nie może wymyślać cen, rezerwacji ani potwierdzać dostępności.

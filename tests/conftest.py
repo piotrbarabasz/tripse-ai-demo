@@ -1,5 +1,12 @@
 import httpx
 import pytest
+from pathlib import Path
+
+
+@pytest.fixture
+def legacy_document_sources(monkeypatch):
+    """Explicit regression dataset: saved 0.4-era sources, never shipped in the app."""
+    monkeypatch.setenv("DOCUMENT_STUDIO_FIXTURES_PATH", str(Path(__file__).parent / "fixtures" / "legacy-demo"))
 
 
 @pytest.fixture(autouse=True)

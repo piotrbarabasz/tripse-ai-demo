@@ -43,6 +43,8 @@ def audit_before():
 
 
 def run_structure():
+    import os
+    os.environ['DOCUMENT_STUDIO_FIXTURES_PATH']=str(ROOT/'tests/fixtures/legacy-demo')  # explicit historical regression dataset
     from test_cloud_demo import cloud_demo,ORIGIN
     out=ROOT/'local-data'/'flow-structure-qa';out.mkdir(parents=True,exist_ok=True)
     with pytest.MonkeyPatch.context() as patch:

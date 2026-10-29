@@ -17,6 +17,8 @@ from playwright.sync_api import expect, sync_playwright
 
 
 def run():
+    import os
+    os.environ['DOCUMENT_STUDIO_FIXTURES_PATH']=str(ROOT/'tests/fixtures/legacy-demo')  # explicit historical regression dataset
     with pytest.MonkeyPatch.context() as patch:
         patch.setenv("CLOUD_FEATURE_MODE", "local")
         patch.setenv("PLANNING_MODE", "mock")
@@ -82,12 +84,14 @@ def run():
                 page.goto(ORIGIN + "/documents/demo#trips/demo-iceland")
                 page.locator("#create-draft").click()
                 page.locator('[data-create-template="'+template+'"]').click()
-                page.locator('#source-demo-option details').evaluate('el=>el.open=true')
-                page.locator('#flow-demo').check()
                 page.locator("#source-create").click()
                 expect(page.locator("#d-save")).to_be_visible()
+                from legacy_document_content import initialize_legacy_demo
+                initialize_legacy_demo(client,page.evaluate('location.hash').split('/')[-1])
+                page.reload()
+                expect(page.locator("#d-save")).to_be_visible()
                 page.locator("#d-save").click()
-                expect(page.locator("#d-revision")).to_have_text("2")
+                expect(page.locator("#d-revision")).to_have_text("3")
                 frame = page.frame_locator("#d-preview")
                 expect(frame.locator(".sheet").first).to_be_visible()
                 page.locator("#document-review").click()

@@ -32,7 +32,7 @@ SECTION_DEFINITIONS = {
         ("excluded", "Świadczenia poza ceną", "excluded"), ("price", "Cena i warunki", "price"), ("cta", "Kontakt / CTA", "cta")],
     "offer.self_guide": [
         ("cover", "Self-Guide — bez pilota na miejscu", "cover"),
-        ("how", "Jak działa Self-Guide?", "self_guide"), ("scope", "Organizacja po stronie TRIPSE", "organization_scope"),
+        ("how", "Jak działa Self-Guide?", "self_guide"), ("route_summary", "Podsumowanie trasy", "route_summary"), ("scope", "Organizacja po stronie TRIPSE", "organization_scope"),
         ("own", "Co klient organizuje samodzielnie?", "self_arrangements"), ("program", "Program dzień po dniu", "program"),
         ("transport", "Transport i przemieszczanie się", "transport"), ("accommodation", "Zakwaterowanie", "accommodation"),
         ("materials", "Materiały i mapy dla uczestników", "materials"), ("support", "Zakres wsparcia", "support"),
@@ -44,11 +44,12 @@ SECTION_DEFINITIONS = {
         ("program", "Program wycieczki", "program"), ("activities", "Aktywności i warsztaty", "workshops"),
         ("transport", "Transport", "transport"), ("accommodation", "Wyżywienie i zakwaterowanie", "accommodation"),
         ("supervision", "Organizacja i odpowiedzialność opiekunów", "supervision"),
+        ("safety", "Wymagania i bezpieczeństwo organizacyjne", "safety_requirements"),
         ("included", "Świadczenia w cenie", "included"), ("excluded", "Poza ceną", "excluded"),
         ("price", "Cena i warunki", "price"), ("cta", "Kontakt", "cta")],
     "offer.incentive": [
         ("cover", "Wyjazd firmowy / incentive", "cover"), ("summary", "Cel wyjazdu dla zespołu", "summary"),
-        ("highlights", "Najważniejsze doświadczenia", "highlights"), ("program", "Program dzień po dniu", "program"),
+        ("highlights", "Najważniejsze doświadczenia", "highlights"), ("team_group", "Parametry zespołu", "team_group"), ("program", "Program dzień po dniu", "program"),
         ("hotel", "Hotel / nocleg / infrastruktura obiektu", "hotel"), ("team", "Integracja i team building", "team_building"),
         ("workshops", "Szkolenia, warsztaty i spotkania", "workshops"), ("meals", "Posiłki i wydarzenia wieczorne", "meals_events"),
         ("transport", "Transport i logistyka", "transport"), ("included", "W cenie", "included"), ("excluded", "Poza ceną", "excluded"),
@@ -60,7 +61,7 @@ SECTION_DEFINITIONS = {
         ("program", "Program każdego dnia", "program"), ("contacts", "Kontakty organizacyjne", "contacts"),
         ("open", "Sprawy do potwierdzenia", "open_items"), ("notes", "Notatki pilota", "internal_notes")],
     "pilot.advanced": [
-        ("cover", "Metryka wyjazdu", "cover"), ("route", "Tabela całej trasy", "route"),
+        ("cover", "Metryka wyjazdu", "cover"), ("group", "Pilot i grupa", "pilot_group"), ("route", "Tabela całej trasy", "route"),
         ("flights", "Transport i loty", "flights"), ("transfers", "Transfery", "transfers"),
         ("accommodations", "Noclegi i rezerwacje", "accommodations"), ("bookings", "Rezerwacje atrakcji", "activity_bookings"),
         ("contacts", "Kontakty organizacyjne", "contacts"), ("open", "Sprawy do potwierdzenia", "open_items")],
@@ -68,6 +69,6 @@ SECTION_DEFINITIONS = {
     "marketing.collection": [("collection", "Kolekcja wyjazdów", "collection")],
 }
 for identifier, definitions in SECTION_DEFINITIONS.items():
-    TEMPLATES[identifier].template_version = "0.4.0"
+    TEMPLATES[identifier].template_version = "0.5.0"
     TEMPLATES[identifier].default_sections = [SectionSpec(role=role, title=title, binding=binding,
-        required=role not in {"team", "workshops", "meals", "notes", "briefing"}) for role, title, binding in definitions]
+        required=role not in {"team", "workshops", "meals", "notes", "briefing", "route_summary", "safety", "team_group"} and not (identifier == "pilot.advanced" and role == "group")) for role, title, binding in definitions]

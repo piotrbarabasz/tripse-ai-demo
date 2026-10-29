@@ -22,6 +22,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def run():
+    import os
+    os.environ['DOCUMENT_STUDIO_FIXTURES_PATH']=str(ROOT/'tests/fixtures/legacy-demo')  # explicit historical regression dataset
     artifacts = ROOT / "local-data" / "marketing-qa"
     artifacts.mkdir(parents=True, exist_ok=True)
     with socket.socket() as listener:

@@ -91,6 +91,8 @@ class DocumentLibrary:
             and (kind != "status" or draft.document_status == mutation.document_status))
 
     def transition(self, identifier, mutation, kind, actor=None):
+        from app.document_studio.examples import protect_canonical
+        protect_canonical(identifier)
         draft = self.repository.get("drafts", identifier)
         if self._matches(draft, mutation, kind):
             return draft

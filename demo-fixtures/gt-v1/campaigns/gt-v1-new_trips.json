@@ -1,0 +1,49 @@
+{
+  "campaign_id": "gt-v1-new_trips",
+  "title": "Nowe kierunki 2027",
+  "data_origin": "demo",
+  "season": "2027 — koncept DEMO",
+  "layout_variant": "new_trips",
+  "theme": "Podróż zaczyna się od ciekawości",
+  "description": "PRZYKŁAD DEMO — DANE FIKCYJNE. Trzy pomysły na różne podróże. Wyróżnik konceptu: czas na własne doświadczenie, zamiast wyścigu atrakcji.",
+  "cta": "Porozmawiajmy o Twoim wariancie. Kontakt DEMO: studio@example.invalid (adres niedziałający).",
+  "updated_at": "2026-10-28T00:00:00Z",
+  "items": [
+    {
+      "trip_id": "gt-v1-iceland",
+      "display_title": "Islandia — południowy szlak, 7 dni",
+      "short_hook": "Dwa postoje krajobrazowe z przerwą na obiad. Wariant spacerów i dojazdy wymagają sprawdzenia przed wyjazdem.",
+      "date_range_or_label": "Sezon 2027 — termin do ustalenia, DEMO",
+      "highlights": [
+        "Reykjavík — spokojny początek",
+        "Złoty Krąg — krajobraz i woda"
+      ],
+      "badge": "concept",
+      "publication_status": "draft"
+    },
+    {
+      "trip_id": "gt-v1-roadtrip",
+      "display_title": "Kanada i USA — Self-Guide, 8 dni",
+      "short_hook": "Przejazd z przerwami widokowymi. Wariant spacerowy dobrany po sprawdzeniu pogody, parkingów i dostępności dróg.",
+      "date_range_or_label": "Sezon 2027 — termin do ustalenia, DEMO",
+      "highlights": [
+        "Vancouver — odbiór i orientacja",
+        "Whistler — etap górski"
+      ],
+      "badge": "concept",
+      "publication_status": "draft"
+    },
+    {
+      "trip_id": "gt-v1-incentive",
+      "display_title": "Chorwacja — przestrzeń dla zespołu, 4 dni",
+      "short_hook": "Autorska gra zespołowa bez rywalizacji sportowej. Po obiedzie moderowane podsumowanie i swobodny czas na odpoczynek.",
+      "date_range_or_label": "Sezon 2027 — termin do ustalenia, DEMO",
+      "highlights": [
+        "Split — wspólny początek",
+        "Trogir — współpraca w praktyce"
+      ],
+      "badge": "concept",
+      "publication_status": "draft"
+    }
+  ]
+}

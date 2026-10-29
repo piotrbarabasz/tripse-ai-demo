@@ -304,3 +304,6 @@ verification blockers recorded in DEV_DEPLOY.md.
 **WhatsApp jest adapterem wejściowym.** Całe planowanie musi działać niezależnie od niego poprzez `POST /api/trips`. Dzięki temu demo nie jest zakładnikiem sesji WhatsApp.
 
 **Zakres i terminy:** max. 1 dzień pracy, bez przerabiania tego na produkcyjny system. Przyszłe moduły intencji, edycji tras i multi-agent orchestration odkładamy.
+
+Przykładowe dokumenty GT v1: `/documents/demo#examples` — dziewięć konfiguracji,
+kopie do edycji i PDF. [DOC-TEMPLATES-006](docs/DOC_TEMPLATES_006.md).

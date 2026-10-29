@@ -10,6 +10,11 @@ Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej
 **Poufność:** `internal_restricted` — zawiera operacyjne dane osobowe i rezerwacyjne.  
 **Format początkowy:** PDF A4, początkowe podsumowanie + skrót dnia po dniu.
 
+Aktualizacja DOC-TEMPLATES-006: lokalny szablon 0.5.0, uzupełniony przykład GT v1
+i kopia do edycji przez `#examples`. Pola, kolejność oraz granice weryfikacji:
+[raport implementacji](../../../DOC_TEMPLATES_006.md). Specyfikacja poniżej
+nie oznacza zatwierdzenia biznesowego Ground Truth.
+
 ## 1. Cel i odbiorca
 
 Szybki dostęp do istotnych informacji operacyjnych, kiedy pilot zna region i nie potrzebuje opisu każdego kilometra. Ma ułatwiać prowadzenie grupy, koordynację przylotów, noclegów, wejść i kontaktu z usługodawcami.

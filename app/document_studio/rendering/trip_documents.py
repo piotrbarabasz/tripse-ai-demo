@@ -50,9 +50,9 @@ def program(draft, operational=False):
         for stop in day.stops:
             blocks += section(f"Dzień {day.day_number} · {stop.name}", stop.description or stop.location or "Atrakcja do weryfikacji", "stop-section")
         if operational:
-            for entry in pilot.schedule:
-                if entry.day_id == day.day_id:
-                    blocks += operational_entry("Harmonogram · " + heading, entry)
+            entries = [e for e in pilot.schedule if e.day_id == day.day_id]
+            if entries:
+                blocks += operational_entries("Harmonogram · " + heading, entries)
             hotels = [entry for entry in pilot.accommodations if entry.day_id == day.day_id]
             if not hotels and day.day_number < len(draft.trip_snapshot.days):
                 blocks += section(f"Dzień {day.day_number} · Nocleg", "KRYTYCZNE: brak noclegu — DO POTWIERDZENIA", "missing-data")
@@ -67,8 +67,11 @@ def local(value, zone):
     return f"{value:%d.%m.%Y %H:%M} · {zone}" if value else "Godzina do ustalenia"
 
 
-def operational_entry(label, entry):
+def operational_row(entry):
     body = entry.details
+    for field, title in (("carrier", "Przewoźnik"), ("flight_number", "Numer lotu"), ("origin", "Z"), ("destination", "Do"), ("travel_group", "Grupa przylotowa / powrotna")):
+        if getattr(entry, field):
+            body += f"\n{title}: {getattr(entry, field)}"
     if entry.booking_reference:
         body += "\nNumer rezerwacji: " + entry.booking_reference
     if entry.source:
@@ -76,7 +79,15 @@ def operational_entry(label, entry):
     time = local(entry.start_local, entry.time_zone)
     if entry.end_local:
         time += "\n→ " + local(entry.end_local, entry.end_time_zone or entry.time_zone)
-    return f'<section class="block operation-entry operational-table"><h2>{text(label)}</h2><table><thead><tr><th>Godzina lokalna</th><th>Zdarzenie / ustalenia</th><th>Status</th></tr></thead><tbody><tr><td>{text(time)}</td><td><strong>{text(entry.title)}</strong><p>{text(body)}</p></td><td><span class="operation-status {entry.status}">{STATUS[entry.status]}</span></td></tr></tbody></table></section>'
+    return f'<tr><td>{text(time)}</td><td><strong>{text(entry.title)}</strong><p>{text(body)}</p></td><td><span class="operation-status {entry.status}">{STATUS[entry.status]}</span></td></tr>'
+
+
+def operational_entries(label, entries):
+    return f'<section class="block operation-entry operational-table"><h2>{text(label)}</h2><table><thead><tr><th>Godzina lokalna</th><th>Zdarzenie / ustalenia</th><th>Status</th></tr></thead><tbody>' + ''.join(operational_row(e) for e in entries) + '</tbody></table></section>'
+
+
+def operational_entry(label, entry):
+    return operational_entries(label, [entry])
 
 
 def render_trip_document(draft, assets):

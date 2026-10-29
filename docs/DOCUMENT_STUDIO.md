@@ -1,5 +1,36 @@
 # TRIPSE Document Studio — funkcjonalne DEMO lokalne
 
+## Dziewięć gotowych przykładów — DOC-TEMPLATES-006
+
+W bieżącym checkoutcie otwórz **Przykładowe dokumenty DEMO** (`#examples`).
+Wybierz GT-DEMO-01…09, otwórz podgląd i kliknij **Utwórz kopię do edycji**.
+Kopia otwiera istniejący edytor, zapisuje się w bibliotece i zachowuje rewizje.
+Katalog wzorców jest chroniony i dostępny bez seeda. Czytelnik może oglądać,
+edytor może kopiować. Wszystko jest oznaczone **PRZYKŁAD DEMO — DANE FIKCYJNE**.
+
+Nowe dokumenty używają szablonów **0.5.0**, schemat pozostaje 1. Self-Guide ma
+podsumowanie trasy (początek/meta/regiony/intensywność/metryki/weryfikacja/źródło).
+Szkoła ma jawne wymagania organizacyjne, incentive wykorzystuje istniejącą
+liczebność zespołu. Loty mają osobne pola przewoźnika/numeru/trasy/podgrupy.
+Advanced ma tabelę z metrykami i zakresem godzin, źródło/status pomiarów oraz
+wspólną, edytowalną oś czasu. Puste metryki oznaczają „Do ustalenia”.
+Sekcje logistyczne i merytoryczne są edytowane bez konkurującego formularza
+nadpisań programu, którego te renderery nie używają.
+
+Nie ma już checkboxa starego presetu Islandii. Trzy dawne programy i kampania
+zostały wycofane z aktywnych fixture’ów; zapisane snapshoty i rewizje nadal
+można otwierać. API z `demo_example=true` odsyła do nowego katalogu. Historyczne
+instrukcje i testy 10/15 dni poniżej opisują starsze przebiegi/regresje.
+
+[Raport, pełny manifest, struktury i instrukcja DEV](DOC_TEMPLATES_006.md) ·
+[receptury i CLI](../demo-fixtures/README.md) ·
+[macierz Ground Truth](audits/DOC_TEMPLATES_006_COVERAGE.md).
+GET `/api/document-studio/examples` zwraca manifest; GET
+`/examples/{GT-DEMO-ID}/preview?output_format=a4|social` daje podgląd;
+POST `/examples/{GT-DEMO-ID}/copy` z `{operation_id: UUID}` tworzy idempotentną kopię.
+Prefiks wspólny to `/api/document-studio`. Social jest dostępny dla marketingu.
+Seed CLI jest wyłącznie jawny; aplikacja nie inicjalizuje DEV/PROD przy starcie.
+
 ## Jak utworzyć pierwszy dokument w TRIPSE
 
 **DOC-FLOW-005 — zmiany lokalne na `dev`, jeszcze bez wdrożenia.**
@@ -377,7 +408,7 @@ Pola pominięte w PUT nie są zerowane przez starszego klienta.
 `output_format`. `POST /api/document-studio/trip-documents/initialize` przygotowuje
 sekcje starego draftu bez zapisu; nadal obowiązuje autoryzacja routera.
 
-Nowe szablony mają wersję **0.4.0**, a wersja schematu pozostaje 1 dzięki polom
+Historyczny etap DOC-TEMPLATES miał wersję **0.4.0**; bieżąca wersja to 0.5.0, a wersja schematu pozostaje 1 dzięki polom
 opcjonalnym. Brak `sections` w starym JSON oznacza legacy; odczyt nie przepisuje
 pliku. Stare private/basic/marketing zachowują podgląd; dawniej katalogowe typy
 otrzymują domyślne sekcje w podglądzie. Pierwszy jawny zapis sekcji podnosi wersję
@@ -468,7 +499,7 @@ do obsługi tego panelu: jego proxy nie udostępnia ścieżek studia.
 
 ## Ścieżka demonstracyjna
 
-1. Otwórz Islandię (10 dni), Kanadę (15 dni) lub Norwegię (5 dni).
+1. Historyczny przebieg (fixture’y regresji): Islandia 10 dni, Kanada 15 dni, Norwegia 5 dni. Bieżące przykłady otwieraj przez `#examples`.
 2. Wybierz „Nowa wycieczka”, zmień nazwę, kierunki, opis, status i opcjonalny termin.
 3. Dodaj lub usuń dni oraz atrakcje; uzupełnij opisy. Zakończenie wylicza się
    z daty rozpoczęcia i liczby dni. Brak terminu pozostaje jawnym brakiem.
@@ -545,7 +576,7 @@ Przykładowe body POST `/drafts`:
 {
   "template_id": "offer.private",
   "source_type": "trip",
-  "source_id": "demo-iceland",
+  "source_id": "gt-v1-iceland",
   "layout_variant": "standard",
   "editorial_notes": "Do opracowania przez autora"
 }

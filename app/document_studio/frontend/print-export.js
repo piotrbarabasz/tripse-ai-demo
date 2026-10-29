@@ -8,7 +8,13 @@ function newPage(){
   const wrap=document.querySelector('#page-template').content.firstElementChild.cloneNode(true);
   pageRoot.append(wrap);return wrap.querySelector('.page-body');
 }
-function fits(body){return body.scrollHeight<=body.clientHeight+1&&body.scrollWidth<=body.clientWidth+1;}
+function fits(body){
+  // scroll/client dimensions are rounded to integers; their one-pixel allowance
+  // can accept a fragment whose real bottom crosses the printable boundary.
+  const last=body.lastElementChild;
+  return body.scrollHeight<=body.clientHeight+1&&body.scrollWidth<=body.clientWidth+1
+    &&(!last||last.getBoundingClientRect().bottom<=body.getBoundingClientRect().bottom+.5);
+}
 function issue(kind,section,message){window.layoutDiagnostics.push({kind,section,message});window.layoutErrors.push(message);}
 function titleOf(block){return block?.querySelector('h1,h2,h3,.eyebrow')?.textContent.trim()||'Treść dokumentu';}
 function dayContext(block){

@@ -94,3 +94,8 @@ def test_creation_ui_capability_uses_authenticated_role(cloud_demo,identity,expe
             # The display hint does not grant write permission.
             result=client.post('/api/document-studio/trips',json={'title':'Role QA'})
             assert result.status_code==(201 if expected else 403)
+
+
+# Explicit historical regression sources; active catalogue is tested in test_gt_templates.py.
+import pytest as _pytest
+pytestmark = _pytest.mark.usefixtures("legacy_document_sources")
