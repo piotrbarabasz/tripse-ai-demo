@@ -8,7 +8,7 @@ below are historical snapshots, superseded for rollout status. Do not replay
 completed bootstrap/import/cutover steps or use old saved plans. Human login,
 restore/isolation drills and real customer-data readiness remain unverified.
 
-## CI-006 integrated release candidate — local only
+## CI-006 reviewed release candidate — PR and hosted CI
 
 [CI-006](CI_006_INTEGRATION_ACCEPTANCE.md) combines CI-001–CI-005 in reviewed commit
 `c2f6f988dc88b86914e009e053b606bad3e4ba5d`, published in PR #7 after operator

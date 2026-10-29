@@ -5,7 +5,7 @@ Repozytorium `piotrbarabasz/tripse-ai-demo`. Integracja:
 `ci/ci-006-integration-acceptance`, `D:/Projects/tripse-ai-ci-integration`,
 baza `e9731635fcf1dc424ccecebecc0299dafb7936b7` zawiera już CI-001.
 CI-002–CI-005 dołączono jako przejrzane patche, bez kopiowania danych ignorowanych,
-merge oryginalnych gałęzi ani operacji cloud. Po zgodzie operatora powstał commit
+łączenia oryginalnych gałęzi ani operacji cloud. Po zgodzie operatora powstał commit
 `c2f6f988dc88b86914e009e053b606bad3e4ba5d` i PR #7 do master. Pięć worktree źródłowych
 pozostaje bez zmian. [Aktualny stan i bramki CI-006](CI_006_INTEGRATION_ACCEPTANCE.md).
 
