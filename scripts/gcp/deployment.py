@@ -124,6 +124,9 @@ def run(args, *, binary=False):
     if result.returncode:
         name, operation = safe_command_operation(args)
         diagnostic = safe_build_error(getattr(result, "stderr", b"")) if operation in {"gcloud builds submit", "gcloud builds describe"} else None
+        if _COMMAND_STAGE.get() in {"release.source_proof", "release.digest"} and operation in {"gcloud storage cat", "gcloud artifacts docker images describe"}:
+            phase = "source_archive_read" if operation == "gcloud storage cat" else "registry_image_lookup"
+            diagnostic = safe_build_error(getattr(result, "stderr", b"")).replace("submit_phase=submit_or_wait", "submit_phase=" + phase)
         if _COMMAND_STAGE.get() == "build.source_bucket" and operation in {"gcloud storage buckets describe", "gcloud projects describe"}:
             diagnostic = safe_build_error(getattr(result, "stderr", b""), source_metadata=True)
         raise CommandError(name, result.returncode, operation=operation, diagnostic=diagnostic)
@@ -441,6 +444,7 @@ def build(g, sha):
             wait_for_build(g, submitted.get("id"))
     with command_stage("build.verify_digest"):
         digest(g, sha)
+    return submitted["id"]  # Lookup hint only; CI still verifies recipe and source bytes.
 
 
 def validate_url(value):

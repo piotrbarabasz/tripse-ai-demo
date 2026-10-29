@@ -1,0 +1,8 @@
+{
+  "SDK_version": "590.0.1",
+  "query": "status=\"SUCCESS\" AND results.images.name=\"europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" AND results.images.digest=\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\"",
+  "client_filter": null,
+  "server_filter": "status=\"SUCCESS\" AND (results.images.name=\"europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" AND results.images.digest=\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\")",
+  "filter_module_sha256": "32d46404fa8722748e0c3053444f0c336bda6d802c0756b3fc65a69bffa2c802",
+  "live_API_verified": false
+}

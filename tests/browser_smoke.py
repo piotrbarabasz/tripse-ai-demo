@@ -82,8 +82,8 @@ def seed(database):
 
 
 def run():
-    artifacts = ROOT / ".venv" / "viewer-artifacts"
-    artifacts.mkdir(exist_ok=True)
+    artifacts = ROOT / "local-data" / "viewer-qa"
+    artifacts.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as directory:
         database = Database(Path(directory) / "browser.sqlite3")
         database.initialize()

@@ -22,3 +22,19 @@ docs/**
 scripts/**
 infra/**
 gha-creds-*.json
+
+# Local developer outputs and additional credential containers are never inputs.
+.tmp
+.worktrees
+output
+tmp
+node_modules
+.mypy_cache
+.ruff_cache
+.coverage
+htmlcov
+**/*.pyc
+**/*.pyo
+**/*.log
+**/*.p12
+**/*.pfx

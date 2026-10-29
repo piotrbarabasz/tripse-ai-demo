@@ -1,0 +1,302 @@
+{
+  "date": "2026-10-29",
+  "classification": "READY FOR REVIEW",
+  "branch": "ci/ci-006-integration-acceptance",
+  "base": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+  "combined_source_committed": false,
+  "phase_B_executed": false,
+  "cloud_release_accepted": false,
+  "pytest": {
+    "passed": 1006,
+    "warnings": 1,
+    "seconds": 58.16
+  },
+  "focused": {
+    "CI-001": {
+      "passed": 22,
+      "seconds": 1.48
+    },
+    "CI-002": {
+      "passed": 5,
+      "seconds": 0.29
+    },
+    "CI-003": {
+      "passed": 15,
+      "seconds": 3.16
+    },
+    "CI-004": {
+      "passed": 37,
+      "seconds": 0.54
+    },
+    "CI-005": {
+      "passed": 251,
+      "seconds": 1.88
+    }
+  },
+  "cross_workstream_tests": 2,
+  "browser": {
+    "make_test_browser_exit": 0,
+    "scripts": 9,
+    "isolated_viewer_rerun_exit": 0
+  },
+  "existing_container_test_exit": 0,
+  "container_acceptance": {
+    "session": "eb68ff19acd4",
+    "release_image": false,
+    "source": "committed allowlist plus declared working-tree Docker/ignore overlay",
+    "checks": {
+      "readonly_image_audit": {
+        "status": "PASS",
+        "python": "3.12.16 (main, Oct 28 2026, 02:01:20) [GCC 14.2.0]",
+        "size_bytes": 76099224,
+        "rootfs_diffids": [
+          "sha256:a5d6d345f6afa08d7c31272055746d60a838b290bfcc82c0a23e8e984d61a933",
+          "sha256:fab99bd4639aec48a77ec4d2e3564c0907e0e1e962bbf773219a0b503a168955",
+          "sha256:bca572b9549074f7cbc5f2d9d29f589038ff21c5f68cef2965167a33f177a9c0",
+          "sha256:cae4cb2b5e819765b847e67faa443b377607452f2ec949d142cad15d9d7ea0b3",
+          "sha256:880b476517d4cef88c21b41e781974e23e9dcbd42491d39ab8fd10cd6639bd20",
+          "sha256:3a11ce6d2fea41d36efe6e70440129198652144da55ccd6e8f13054410e7c979",
+          "sha256:174421b25f56ccd4e593af77ba0bb7f34ec6897f72387415bfda3acb0db21b1d",
+          "sha256:e0258ca8565483723660f82cf2fc6220230c569ba6ae43ae07fee475f723f489",
+          "sha256:88da9c23d0c98c8cbb3a928021dd41021e34c0fa1fe356fc87e1a713621ad77c"
+        ],
+        "image_id": "sha256:77a6722bc916419713323f86a30702239919719794e9448e4793afe74861414a",
+        "entrypoint": [
+          "python",
+          "-m",
+          "uvicorn",
+          "app.main:app",
+          "--host",
+          "0.0.0.0",
+          "--port",
+          "8000",
+          "--no-access-log",
+          "--timeout-graceful-shutdown",
+          "8"
+        ],
+        "health": {
+          "status": "ok",
+          "environment": "dev",
+          "generation_mode": "mock",
+          "feature_mode": "readonly_demo",
+          "image_version": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+          "service": "tripse-ai-dev",
+          "storage": "fixtures_readonly"
+        },
+        "verified_files": 78
+      },
+      "api_and_worker_fixture_startup": "PASS",
+      "document_revision_history_asset_write": "PASS",
+      "permissions": {
+        "uid": 0,
+        "gid": 0,
+        "/data": true,
+        "/app/local-data/document-studio": true,
+        "/tmp": true
+      },
+      "sqlite_document_history_asset_restart": "PASS",
+      "graceful_sigterm": "PASS"
+    },
+    "cleanup_errors": [],
+    "app_source_sha": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+    "working_tree_overlay": [
+      ".dockerignore",
+      ".gcloudignore",
+      "Dockerfile"
+    ],
+    "context_manifest_sha256": "982f75b97ff1e73de1c447a168640cf03162563c7464af2020647202b5e9008a",
+    "status": "PASS"
+  },
+  "docker_environment": {
+    "version": "29.6.1",
+    "platform": "linux/amd64",
+    "resources": {
+      "OSType": "linux",
+      "Architecture": "x86_64",
+      "NCPU": 8,
+      "MemTotal": 8304398336,
+      "Driver": "overlayfs",
+      "KernelVersion": "6.18.54.1-microsoft-standard-WSL2"
+    }
+  },
+  "actionlint": {
+    "version": "1.7.12",
+    "all_workflows_exit": 0,
+    "workflow_files": [
+      ".github/workflows/ci.yml",
+      ".github/workflows/delivery.yml"
+    ]
+  },
+  "checks_exit_codes": {
+    "offline": 0,
+    "make-check": 0,
+    "diff-check": 0,
+    "unchanged-deployment-boundaries": 0
+  },
+  "cached_historical_contracts": {
+    "cached_records_only": true,
+    "live_request_performed": false,
+    "contracts": {
+      "dev": "PASS",
+      "prod": "PASS"
+    }
+  },
+  "preservation": {
+    "source_and_git_preserved": {
+      "CI-001": true,
+      "CI-002": true,
+      "CI-003": true,
+      "CI-004": true,
+      "CI-005": true
+    },
+    "existing_volumes_preserved": [
+      "tripse-ai-demo_caddy_config",
+      "tripse-ai-demo_caddy_data",
+      "tripse-ai-demo_tripse_data",
+      "tripse-ai-demo_waha_sessions"
+    ],
+    "owned_resources_remaining": false,
+    "shared_cache_not_pruned": true,
+    "ignored_QA_exception": {
+      "path": "shared CI-001 .venv/viewer-artifacts",
+      "files": [
+        "desktop.png",
+        "mobile.png",
+        "server.log"
+      ],
+      "prior_hashes_available": false,
+      "future_output_fixed_to": "integration/local-data/viewer-qa"
+    },
+    "documentation_links": "PASS",
+    "ADR_0015": "proposed"
+  },
+  "core_source_matches": [
+    {
+      "task": "CI-002",
+      "path": "Dockerfile",
+      "sha256": "50212946037b0f641870d8f22e560d4ad0c950d3b2cea04ef174c72c879ce117",
+      "matches_source": true
+    },
+    {
+      "task": "CI-002",
+      "path": ".dockerignore",
+      "sha256": "d82c3fbdb2a08042e814183a145ac0e8b1e83981713c1556cd25f916485c8fc9",
+      "matches_source": true
+    },
+    {
+      "task": "CI-002",
+      "path": ".gcloudignore",
+      "sha256": "5d9b8d09ea260f2b6da3ee107a999b44b100aa5205f8dd6a59f6a56bc788b2f0",
+      "matches_source": true
+    },
+    {
+      "task": "CI-002",
+      "path": "tests/test_docker_image_contract.py",
+      "sha256": "379caa748b01dbb4f81728a32da5716e8f4646ba6f3378a060682d7a0d7421df",
+      "matches_source": true
+    },
+    {
+      "task": "CI-004",
+      "path": "scripts/gcp/registry_audit.py",
+      "sha256": "9c0c624667a023460b6a3bbd0456181f02872d82c382656af232c570302a7e13",
+      "matches_source": true
+    },
+    {
+      "task": "CI-004",
+      "path": "tests/test_registry_audit.py",
+      "sha256": "5b555e1b559b3538f88e0a3954945ca018107da80e7085d8d090c451ba08b5db",
+      "matches_source": true
+    },
+    {
+      "task": "CI-004",
+      "path": "tests/fixtures/registry_audit/synthetic.json",
+      "sha256": "1523700664e3c2cc930daf895410f0a413c79fb4e797475f90a85f616bfeafc3",
+      "matches_source": true
+    },
+    {
+      "task": "CI-005",
+      "path": "scripts/gcp/build_proof.py",
+      "sha256": "2e48acecac95034f2d547a43018d7fa9c7ea4be8de8211dca305d7b8b933333b",
+      "matches_source": true
+    },
+    {
+      "task": "CI-005",
+      "path": "scripts/gcp/ci.py",
+      "sha256": "1ba77bd0067cea869f395b8a6a2b4366cfbc062cedfd1ea0c83eb04bcaea82f0",
+      "matches_source": true
+    },
+    {
+      "task": "CI-005",
+      "path": "scripts/gcp/deployment.py",
+      "sha256": "bb1e6c3087b39e4a404a6210f19ec23cb0786c0b62d2297ee4a71f606b78ed39",
+      "matches_source": true
+    },
+    {
+      "task": "CI-005",
+      "path": "tests/test_github_cicd.py",
+      "sha256": "3012752b9d32dad8ea67a3291d958d4bb680381ce13ae39c8eebe0143971ff61",
+      "matches_source": true
+    },
+    {
+      "task": "CI-005",
+      "path": "tests/test_delivery_hardening.py",
+      "sha256": "8bb341d1774ba83009cd3e3e1f7e45ca1724813f9374a432d2108074d8f3907c",
+      "matches_source": true
+    }
+  ],
+  "intentional_adaptations": [
+    "benchmark preserves pinned FROM and leading comments",
+    "experimental automatic workflow excluded with regression guard",
+    "browser QA output moved from shared .venv to worktree-local local-data",
+    "two cross-workstream contracts",
+    "semantic documentation/status merge"
+  ],
+  "adapted_source_sha256": {
+    "Dockerfile": "50212946037b0f641870d8f22e560d4ad0c950d3b2cea04ef174c72c879ce117",
+    ".dockerignore": "d82c3fbdb2a08042e814183a145ac0e8b1e83981713c1556cd25f916485c8fc9",
+    ".gcloudignore": "5d9b8d09ea260f2b6da3ee107a999b44b100aa5205f8dd6a59f6a56bc788b2f0",
+    "scripts/benchmark_buildx.py": "9dce1702c939676de7ba6163264f7d7235ca8050dc865b617d2d4ac4b6fdfdc1",
+    "tests/test_buildx_benchmark.py": "f5496b8b3fedaa8121981971fdc2771b609c89cd81ba708e2858683c20a24b2e",
+    "tests/test_ci_integration.py": "a199b7315e4c392c6955ce93c73ead83792086d882dd1b6ead5f11e86dfb07a5",
+    "tests/browser_smoke.py": "a57f7adbe0636a84f60d1b33eef116f2ec6fe2f9e8c531b6d595d8928b1a5871"
+  },
+  "candidate_files": [
+    ".dockerignore",
+    ".gcloudignore",
+    "Dockerfile",
+    "docs/ARTIFACT_REGISTRY_CICD_PLAN.md",
+    "docs/CI_001_PYTHON_CACHE.md",
+    "docs/CI_002_DOCKER_OPTIMIZATION.md",
+    "docs/CI_003_BUILDX_CACHE_BENCHMARK.md",
+    "docs/CI_004_ARTIFACT_REGISTRY_AUDIT.md",
+    "docs/CI_005_DELIVERY_HARDENING.md",
+    "docs/CI_006_INTEGRATION_ACCEPTANCE.md",
+    "docs/DEPLOY_GCP.md",
+    "docs/GITHUB_CICD.md",
+    "docs/VIEWER.md",
+    "docs/adr/0015-registry-build-cache-evolution.md",
+    "docs/adr/README.md",
+    "docs/benchmarks/ci-003-local-2026-10-29.json",
+    "docs/benchmarks/ci-004-historical-release-evidence.json",
+    "docs/benchmarks/ci-004-synthetic-dry-run.json",
+    "docs/benchmarks/ci-005-filter-semantics.json",
+    "docs/benchmarks/ci-005-offline-validation.json",
+    "docs/benchmarks/ci-006-local-validation.json",
+    "docs/benchmarks/ci-006-source-inventory.json",
+    "docs/tracking/README.md",
+    "docs/tracking/worklog.csv",
+    "scripts/benchmark_buildx.py",
+    "scripts/gcp/build_proof.py",
+    "scripts/gcp/ci.py",
+    "scripts/gcp/deployment.py",
+    "scripts/gcp/registry_audit.py",
+    "tests/browser_smoke.py",
+    "tests/fixtures/registry_audit/synthetic.json",
+    "tests/test_buildx_benchmark.py",
+    "tests/test_ci_integration.py",
+    "tests/test_delivery_hardening.py",
+    "tests/test_docker_image_contract.py",
+    "tests/test_github_cicd.py",
+    "tests/test_registry_audit.py"
+  ]
+}

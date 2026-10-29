@@ -1,5 +1,11 @@
 # CI-001 — Python CI: cache pip i pomiary
 
+CI-006 integration note (2026-10-29): this is the historical isolated-task report.
+The selected implementation is now in the local integration candidate; current
+combined validation and outstanding committed-source/hosted/cloud gates are in
+[CI-006](CI_006_INTEGRATION_ACCEPTANCE.md). Original measurements below remain
+attributed to their original worktree and source, not to a new release SHA.
+
 2026-10-29, repozytorium `piotrbarabasz/tripse-ai-demo`.
 Baza: `777e0662da5e57894371529f3af0bdafeb2fed11`. Gałąź do przeglądu:
 `ci/ci-001-python-cache`. Zmiany lokalne; bez commita, pusha, uruchomienia workflow

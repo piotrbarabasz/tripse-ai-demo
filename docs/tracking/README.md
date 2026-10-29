@@ -10,6 +10,10 @@ and real customer-data acceptance remain separate criteria.
 uzasadnienia decyzji, a [estimates.md](estimates.md) zakres i zasady przyszłej wyceny.
 Punkt odniesienia: [audyt master z 25.10.2026](repository-audit.md).
 
+2026-10-29: [CI-006 integration](../CI_006_INTEGRATION_ACCEPTANCE.md) reconciles
+CI-001–CI-005 locally. Source patches/hashes and regression results are recorded;
+hosted/cloud acceptance is a separate operator-gated phase, not completed here.
+
 ## Format worklogu
 
 UTF-8, nagłówek obowiązkowy, separator przecinek, standardowe cytowanie CSV.

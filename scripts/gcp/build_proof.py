@@ -7,9 +7,16 @@ generation-pinned source bytes before issuing its release evidence.
 import io
 import re
 import tarfile
-
 from scripts.gcp import deployment as d
 
+BUILD_ID = re.compile(r"[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}")
+
+
+class ProvenanceError(ValueError):
+    """Fixed operator-facing categories, never raw API/command response bodies."""
+    def __init__(self, category):
+        self.category = category
+        super().__init__("Cloud Build provenance rejected: " + category)
 
 def validate_recipe(build, config, sha, digest):
     tag = f"{config.image}:{sha}"
@@ -54,19 +61,59 @@ def validate_archive(raw, expected):
             raise ValueError("Actual Cloud Build source does not equal the committed image context")
 
 
-def verify(g, sha, digest):
-    builds = g("builds", "list", "--region=europe-central2", "--filter=status=SUCCESS",
-               "--sort-by=~createTime", "--limit=1000", json_output=True)
-    candidates = [b for b in builds if any(i.get("digest") == digest and i.get("name") == f"{g.config.image}:{sha}"
-                   for i in b.get("results", {}).get("images", []))]
+def verify(g, sha, digest, build_id=None):
+    d.image_tag(sha)
+    if not isinstance(digest, str) or not re.fullmatch(r"sha256:[a-f0-9]{64}", digest):
+        raise ProvenanceError("invalid_image_digest")
     expected = dict(d.source_files(sha)) | {"app/_build_version.txt": sha.encode()}
+    if build_id is not None:
+        if not isinstance(build_id, str) or not BUILD_ID.fullmatch(build_id):
+            raise ProvenanceError("invalid_build_lookup_hint")
+        # A hint from a fresh submission or accepted artifact is NOT proof.
+        # Describe the exact regional ID; do not silently fall back on mismatch.
+        build = g("builds", "describe", build_id, "--region=europe-central2", json_output=True)
+        if not isinstance(build, dict) or build.get("id") != build_id:
+            raise ProvenanceError("missing_or_conflicting_build_record")
+        return verify_candidate(g, build, sha, digest, expected)
+    # Compatibility only: an existing tag without accepted evidence has no ID.
+    # Keep resource bounds and fail closed instead of scanning history forever.
+    query = f'status="SUCCESS" AND results.images.name="{g.config.image}:{sha}" AND results.images.digest="{digest}"'
+    builds = g("builds", "list", "--region=europe-central2", "--filter=" + query,
+               "--page-size=100", "--limit=1000", json_output=True)
+    if not isinstance(builds, list) or len(builds) > 1000 or any(not isinstance(b, dict) for b in builds):
+        raise ProvenanceError("invalid_or_incomplete_discovery")
+    try:
+        candidates = [b for b in builds if any(i.get("digest") == digest and i.get("name") == f"{g.config.image}:{sha}"
+                       for i in b.get("results", {}).get("images", []))]
+    except (TypeError, AttributeError):
+        raise ProvenanceError("invalid_or_incomplete_discovery") from None
     for build in candidates:
         try:
-            source = validate_recipe(build, g.config, sha, digest)
-            uri = f"gs://{source['bucket']}/{source['object']}#{source['generation']}"
-            raw = d.run([g.executable, "storage", "cat", uri, "--project=" + g.config["GCP_PROJECT_ID"], "--quiet"], binary=True)
-            validate_archive(raw, expected)
-            return build["id"]
+            return verify_candidate(g, build, sha, digest, expected)
         except ValueError:
             continue
-    raise ValueError("No matching verified Cloud Build source/recipe for this digest; tag reuse is insufficient")
+    raise ProvenanceError("bounded_discovery_exhausted; exact_build_id_required_for_older_history")
+
+
+def verify_candidate(g, build, sha, digest, expected):
+    if not isinstance(build.get("id"), str) or not BUILD_ID.fullmatch(build["id"]):
+        raise ProvenanceError("invalid_build_identity")
+    if build.get("projectId", g.config["GCP_PROJECT_ID"]) != g.config["GCP_PROJECT_ID"]:
+        raise ProvenanceError("conflicting_build_project")
+    if "name" in build:
+        projects = {g.config["GCP_PROJECT_ID"], g.config.values.get("GCP_PROJECT_NUMBER", "")}
+        names = {f"projects/{project}/locations/europe-central2/builds/{build['id']}" for project in projects if project}
+        if build["name"] not in names:
+            raise ProvenanceError("conflicting_build_resource")
+    try:
+        source = validate_recipe(build, g.config, sha, digest)
+    except (ValueError, TypeError, AttributeError, KeyError):
+        raise ProvenanceError("invalid_build_recipe_or_identity") from None
+    uri = f"gs://{source['bucket']}/{source['object']}#{source['generation']}"
+    # CommandError retains the safe source-read operation/stage and exit code.
+    raw = d.run([g.executable, "storage", "cat", uri, "--project=" + g.config["GCP_PROJECT_ID"], "--quiet"], binary=True)
+    try:
+        validate_archive(raw, expected)
+    except (ValueError, TypeError, tarfile.TarError, OSError, EOFError):
+        raise ProvenanceError("invalid_source_archive_bytes") from None
+    return build["id"]

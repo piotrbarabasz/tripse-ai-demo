@@ -1,12 +1,19 @@
 # TRIPSE — plan Artifact Registry i optymalizacji CI/CD
 
-**Status: plan usprawnień; CI-001 zaimplementowane lokalnie, odbiór hosted otwarty.** Repozytorium:
-`piotrbarabasz/tripse-ai-demo`, lokalna gałąź `dev`, bazowy HEAD
-`ae8c051513f0300d19a16d7ce7b96499b6f388cd`, 2026-10-28.
-Aktualizacja 2026-10-29: CI-001 ma lokalną implementację cache pip i podsumowania
-pomiarów, zweryfikowaną testami. Nie wysłano workflow ani nie potwierdzono poprawy
-wydajności na GitHub Actions. CI-002–CI-005 pozostają propozycjami.
-[Raport, baseline i procedura cold/warm](CI_001_PYTHON_CACHE.md).
+**Status: CI-001–CI-005 zintegrowane lokalnie w CI-006; odbiór hosted/GCP pozostaje otwarty.**
+Repozytorium `piotrbarabasz/tripse-ai-demo`. Integracja:
+`ci/ci-006-integration-acceptance`, `D:/Projects/tripse-ai-ci-integration`,
+baza `e9731635fcf1dc424ccecebecc0299dafb7936b7` zawiera już CI-001.
+CI-002–CI-005 dołączono jako przejrzane patche, bez kopiowania danych ignorowanych,
+commita, pusha, merge oryginalnych gałęzi ani operacji cloud. Pięć worktree źródłowych
+pozostaje bez zmian. [Aktualny stan i bramki CI-006](CI_006_INTEGRATION_ACCEPTANCE.md).
+
+- CI-001: cache pip i bezwarunkowe instalacje w CI/DEV/PROD zachowane; hosted cold/warm niezmierzone.
+- CI-002: pin Python 3.12, ograniczony COPY i ignore; root zachowany, non-root odłożony.
+- CI-003: Option A — Cloud Build; wyniki i ręczny helper zachowane, automatyczny workflow wyłączony z integracji.
+- CI-004: offline audit/dry-run bez delete/apply; bieżące registry/IAM/usage nadal niezweryfikowane.
+- CI-005: direct Build ID + targeted discovery, dowody i prywatne recovery; bez zmiany --no-cache lub IAM.
+- Phase B: Gate A — przegląd i ponowna walidacja lokalna; publikacja wymaga zgody operatora. Gate B hosted CI oraz odbiór GCP pozostają otwarte.
 
 Powiązania: [obecny CI/CD](GITHUB_CICD.md), [dowody wydania](RELEASE_2026_10_28.md),
 [deployment](DEPLOY_GCP.md), [ADR-0012](adr/0012-github-actions-delivery.md),
@@ -45,7 +52,7 @@ nowym projektem migracji proponowanym przez ten plan.
 |---|---|---|
 | Python CI | `ci.yml`: Ubuntu 24.04, Python 3.12, `make install-dev`, `make test`, offline contracts, Chromium i `make test-browser` | CI-001: cache pip dodany lokalnie; baseline odczytany; hosted cold/warm oczekuje walidacji |
 | Zależności | `requirements-dev.txt` dołącza `requirements.txt`; wersje bezpośrednie przypięte | Pełna reprodukowalność zależności przechodnich i aktualizacji |
-| Kontener | `Dockerfile`: Python 3.12-slim, Uvicorn `app.main:app`, 0.0.0.0:8000, warstwa zależności przed kodem | Pin digestu obrazu bazowego, non-root i pomiary rozmiaru/startu; bez zmiany istniejącego kontraktu portu |
+| Kontener | Python 3.12-slim przypięty digestem, Uvicorn `app.main:app`, port 8000, warstwa zależności przed kodem, tylko GT v1 | Odbiór Cloud Run i przyszła migracja non-root; lokalne pomiary CI-002 oraz kontenery CI-006 opisane w raportach |
 | Źródło obrazu | `deployment.py:source_files()` eksportuje wyłącznie dozwolone pliki konkretnego commita i weryfikuje ścieżki; build dodaje `_build_version.txt` | Każdy nowy builder musi zachować tę samą granicę źródła |
 | Builder | `deployment.py:build()` korzysta z regionalnego Cloud Build, jawnego stagingu/logów i konta buildera | Buildx nie jest obecnym builderem wydania; jego przyjęcie wymaga dowodu równoważnej proweniencji |
 | Artifact Registry | Istniejący kontrakt wymaga formatu Docker i niezmiennych tagów; tag pełnego SHA jest ponownie używany bez przebudowy | Retencja, wzrost zajętości, podatności i odpowiedzialność za utrzymanie |
@@ -58,33 +65,30 @@ Nie odczytywano aktualnych sekretów ani konfiguracji live GCP. Wartości projek
 regionu i usług z istniejącej dokumentacji nie oznaczają autoryzacji do provisioning.
 Nowe wartości pozostają parametrami istniejącego kontraktu konfiguracji.
 
-## 3. Proponowana architektura cache
+## 3. Wybrana architektura cache
 
 ```mermaid
 flowchart TD
   R[requirements.txt i requirements-dev.txt] --> Pip[setup-python: cache pobrań i wheels pip]
   Pip --> Tests[Każdorazowa instalacja i pełne dotychczasowe CI]
   Tests --> Existing[Obecny Cloud Build i Artifact Registry]
-  Tests --> Spike[Opcjonalny benchmark Buildx bez publikacji i bez GCP]
-  Spike --> GHA[GHA layer cache: odrębny od rejestru wydań]
-  GHA --> Review[Pomiary i decyzja właściciela]
-  Review -->|tylko po zgodności kontraktów| Future[Osobne zadanie integracji buildera]
+  Tests --> Spike[Ręczny benchmark bez publikacji i bez GCP]
+  Spike --> Review[CI-003: Option A - zachować Cloud Build]
 ```
 
 Cache pip przyspiesza ewentualne pobieranie zależności, cache warstw dotyczy budowy
 obrazu, a Artifact Registry przechowuje dystrybuowany obraz. To trzy różne role.
 Cloud Build nie zacznie używać cache Buildx przez samo dodanie `type=gha` do Actions.
 
-Domyślna propozycja dla eksperymentu Buildx: GHA cache, Linux/amd64, osobny scope
-obrazu/platformy, zaufany eksport tylko z dozwolonej gałęzi. PR nie otrzymuje
-uprawnień publikacji. Cache nie zawiera ADC, `.env`, mediów ani danych klientów.
-Rejestr warstw z aktualizowanym tagiem cache **nie może używać obecnego repozytorium
-z niezmiennymi tagami**. Osobny mutable cache repository rozważyć dopiero po pomiarach
-i osobnej zgodzie; początkowo nie jest potrzebny.
+CI-003 nie uzasadniło migracji buildera. W RC nie ma automatycznego workflow
+benchmarku, GHA layer cache ani registry-backed cache. Ręczny helper i historyczne
+wyniki pozwalają odtworzyć pomiary na osobny wniosek. Każda przyszła integracja
+cache wymaga nowego przeglądu granic zaufania i proweniencji; obecne immutable
+repozytorium wydań nie służy jako mutable cache. Nie deklarujemy zysku hosted bez pomiarów.
 
 ## 4. CI-001 — cache i metryki istniejącego Python CI
 
-**Stan 2026-10-29:** implementacja lokalna na `ci/ci-001-python-cache`, walidacja
+**Stan 2026-10-29:** CI-001 jest w commicie bazowym `e973163`; walidacja
 lokalna PASS (844 pytest i kontrakty YAML). GitHub Actions nowej konfiguracji:
 NOT VERIFIED. Potwierdzona poprawa wydajności: Not measured. Brak push/merge/deploy.
 [Pełny raport](CI_001_PYTHON_CACHE.md) zawiera baseline pięciu jobów, powody
@@ -113,6 +117,8 @@ zachowania trzech instalacji oraz procedurę pomiaru exact hit/miss/fallback.
 
 ## 5. CI-002 — audyt i hardening istniejącego kontenera API
 
+**Stan integracji:** Pin/kontekst i testy CI-002 są w RC; port, entrypointy i Compose zachowane. Non-root nie wdrażano. [Raport CI-002](CI_002_DOCKER_OPTIMIZATION.md).
+
 - **Cel / obecny stan:** kontener FastAPI już istnieje; nie tworzyć drugiego API
   ani przenosić Document Studio do innego frameworka.
 - **Zakres:** ocenić pin bazowego digestu, prawa użytkownika i zapisy do katalogów,
@@ -133,6 +139,8 @@ zachowania trzech instalacji oraz procedurę pomiaru exact hit/miss/fallback.
 
 ## 6. CI-003 — benchmark Buildx i cache warstw, bez zmiany release path
 
+**Stan integracji:** Option A zachowana. Ręczny helper obsługuje przypięty Dockerfile bez zmiany digestu; eksperymentalny workflow nie jest częścią RC. [Wyniki CI-003](CI_003_BUILDX_CACHE_BENCHMARK.md).
+
 - **Cel:** sprawdzić, czy inny builder ma uzasadnienie wobec obecnego Cloud Build.
 - **Zakres:** izolowany Buildx, cold/warm i source-only rebuild, GHA cache, pomiary
   cache import/export, rozmiaru i czasu; Linux/amd64, przypięte narzędzia/base inputs.
@@ -140,8 +148,8 @@ zachowania trzech instalacji oraz procedurę pomiaru exact hit/miss/fallback.
   nowe IAM, QEMU/multiarch i bezpośredni deploy z workflow eksperymentalnego.
 - **Zależności:** CI-002 lub udokumentowany niezmieniony baseline obrazu;
   porównywalny allowlistowany eksport commita, bez developer working tree.
-- **Przyszłe pliki:** osobny nieuprzywilejowany workflow benchmarku i helper/testy
-  eksportu, jeśli potrzebne; bez podmiany koordynatora produkcyjnego.
+- **Wybrane pliki:** ręczny helper/testy eksportu i raport wyników; eksperymentalny
+  workflow nie jest integrowany. Bez podmiany koordynatora produkcyjnego.
 - **Kroki:** potwierdzić cache API/driver; dobrać scope; zbudować identyczne źródła;
   uruchomić image smoke; porównać czasy i koszty operacyjne z Cloud Build.
 - **Akceptacja:** brak wycieku cache między granicami zaufania; poprawny cold build
@@ -155,6 +163,8 @@ sprawdza Cloud Build ID oraz źródło. Sam udany Buildx push nie spełnia tej b
 Nie wolno poluzować jej lub ominąć `verify_image_source`, aby benchmark stał się wydaniem.
 
 ## 7. CI-004 — utrzymanie istniejącego Artifact Registry
+
+**Stan integracji:** Offline helper, fixture i testy są w RC. Live audit nadal niezweryfikowany; brak zatwierdzenia usuwania obrazów. [CI-004](CI_004_ARTIFACT_REGISTRY_AUDIT.md).
 
 - **Cel:** czytelna tożsamość obrazów, retencja i koszt bez duplikowania zasobów.
 - **Zakres:** read-only inwentaryzacja właściwego repozytorium, formatu, regionu,
@@ -182,6 +192,10 @@ Build cache i release images mają różne zasady retencji. Wygaśniętego dowod
 wydania nie wolno zastąpić samym istniejącym tagiem jako rzekomym dowodem akceptacji.
 
 ## 8. CI-005 — zachowanie i walidacja istniejącej promocji Cloud Run
+
+**Stan integracji:** direct ID, targeted discovery, pełne bajty źródła i kontrole
+release/recovery są w lokalnym RC. Odbiór hosted/live pozostaje otwarty.
+[CI-005](CI_005_DELIVERY_HARDENING.md), [CI-006](CI_006_INTEGRATION_ACCEPTANCE.md).
 
 - **Cel:** poprawiać operacyjność obecnego wdrożenia, bez tworzenia nowego CD.
 - **Obecny stan:** WIF, środowiska development/production, osobne identity/probe,

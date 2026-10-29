@@ -1,0 +1,107 @@
+{
+  "synthetic": true,
+  "observed_at": "2026-10-29T00:00:00Z",
+  "repository": {
+    "name": "projects/tripse-ai/locations/europe-central2/repositories/tripse-ai",
+    "format": "DOCKER",
+    "dockerConfig": {
+      "immutableTags": true
+    },
+    "sizeBytes": "512000"
+  },
+  "coverage": {
+    "registry": true,
+    "services": true,
+    "revisions": true,
+    "release_evidence": true,
+    "rollback": true,
+    "build_sources": true
+  },
+  "image_pages": [
+    {
+      "request_page_token": "",
+      "response": {
+        "dockerImages": [
+          {
+            "uri": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "tags": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            ],
+            "imageSizeBytes": "100",
+            "uploadTime": "2026-01-01T00:00:00Z",
+            "updateTime": "2026-01-01T00:00:00Z"
+          },
+          {
+            "uri": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "tags": [
+              "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            ],
+            "imageSizeBytes": "100",
+            "uploadTime": "2026-01-01T00:00:00Z",
+            "updateTime": "2026-01-01T00:00:00Z"
+          },
+          {
+            "uri": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "tags": [
+              "cccccccccccccccccccccccccccccccccccccccc"
+            ],
+            "imageSizeBytes": "100",
+            "uploadTime": "2026-01-01T00:00:00Z",
+            "updateTime": "2026-01-01T00:00:00Z"
+          },
+          {
+            "uri": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "tags": [
+              "dddddddddddddddddddddddddddddddddddddddd"
+            ],
+            "imageSizeBytes": "100",
+            "uploadTime": "2026-01-01T00:00:00Z",
+            "updateTime": "2026-01-01T00:00:00Z"
+          },
+          {
+            "uri": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "tags": [],
+            "imageSizeBytes": "100",
+            "uploadTime": "2026-01-01T00:00:00Z",
+            "updateTime": "2026-01-01T00:00:00Z"
+          },
+          {
+            "uri": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "tags": [],
+            "imageSizeBytes": "100",
+            "uploadTime": "2026-01-01T00:00:00Z",
+            "updateTime": "2026-01-01T00:00:00Z"
+          }
+        ]
+      }
+    }
+  ],
+  "references": [
+    {
+      "kind": "deployed_dev",
+      "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidence_status": "valid"
+    },
+    {
+      "kind": "deployed_prod",
+      "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidence_status": "valid"
+    },
+    {
+      "kind": "rollback",
+      "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "evidence_status": "expired"
+    },
+    {
+      "kind": "historical",
+      "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "evidence_status": "expired"
+    }
+  ],
+  "reviews": {
+    "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee": {
+      "provenance_reviewed": true,
+      "references_reviewed": true
+    }
+  }
+}

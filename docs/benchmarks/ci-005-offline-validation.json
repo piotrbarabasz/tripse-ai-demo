@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-29",
+  "base": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+  "pytest": {
+    "passed": 947,
+    "warnings": 1,
+    "seconds": 55.22
+  },
+  "focused": {
+    "passed": 251,
+    "seconds": 2.34
+  },
+  "new_tests": 103,
+  "checks_exit_codes": {
+    "offline": 0,
+    "make-check": 0,
+    "diff-check": 0,
+    "protected-production-contracts": 0
+  },
+  "historical_cached_contracts": {
+    "source": "Existing CI-004 cached GitHub records; no fresh live request",
+    "GCP_verified": false,
+    "contracts": {
+      "dev": "PASS",
+      "prod": "PASS"
+    }
+  },
+  "live_GCP": {
+    "verified": false,
+    "preflight_exit": 1,
+    "blocker": "Reauthentication failed; cannot prompt during non-interactive execution"
+  },
+  "hosted_and_live_delivery_verified": false,
+  "protected_worktrees_unchanged": {
+    "D:\\Projects\\tripse-ai-demo": true,
+    "D:\\Projects\\tripse-ai-ci-002": true,
+    "D:\\Projects\\tripse-ai-ci-003": true,
+    "D:\\Projects\\tripse-ai-ci-004": true
+  },
+  "source_sha256": {
+    "scripts/gcp/build_proof.py": "2e48acecac95034f2d547a43018d7fa9c7ea4be8de8211dca305d7b8b933333b",
+    "scripts/gcp/ci.py": "1ba77bd0067cea869f395b8a6a2b4366cfbc062cedfd1ea0c83eb04bcaea82f0",
+    "scripts/gcp/deployment.py": "bb1e6c3087b39e4a404a6210f19ec23cb0786c0b62d2297ee4a71f606b78ed39",
+    "tests/test_delivery_hardening.py": "8bb341d1774ba83009cd3e3e1f7e45ca1724813f9374a432d2108074d8f3907c",
+    "tests/test_github_cicd.py": "3012752b9d32dad8ea67a3291d958d4bb680381ce13ae39c8eebe0143971ff61"
+  }
+}
