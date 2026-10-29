@@ -22,7 +22,7 @@ task opisuje pracę, a [worklog](../tracking/worklog.csv) jej udokumentowany prz
 | [ADR-0012](0012-github-actions-delivery.md) | GitHub Actions, WIF and immutable DEV acceptance before PROD | proposed | Operational WIF CI/CD; protected master run 40614584902 accepted DEV/PROD; ADR approval unrecorded |
 | [ADR-0013](0013-canonical-hub-navigation.md) | Canonical Hub homepage and explicit planner navigation | proposed | Implemented locally; API/access contracts preserved; not deployed |
 | [ADR-0014](0014-document-library-history.md) | Biblioteka dokumentów, metadane i zachowane rewizje | proposed | Implementacja lokalna JSON/GCS; bez wdrożenia chmurowego |
-| [ADR-0015](0015-registry-build-cache-evolution.md) | Rozwój istniejącego Artifact Registry i cache CI/CD | proposed | Wyłącznie plan; usprawnienia niezaimplementowane |
+| [ADR-0015](0015-registry-build-cache-evolution.md) | Rozwój istniejącego Artifact Registry i cache CI/CD | proposed | CI-001 lokalnie z testami; hosted i zysk otwarte; CI-002–CI-005 nadal plan |
 
 | [ADR-0016](0016-versioned-demo-recipes.md) | Wersjonowane receptury DEMO i niezależne kopie | proposed | Implementacja lokalna; bez seedowania DEV/PROD |
 

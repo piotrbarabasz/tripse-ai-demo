@@ -1,9 +1,12 @@
 # TRIPSE — plan Artifact Registry i optymalizacji CI/CD
 
-**Status: propozycja, wyłącznie dokumentacja.** Repozytorium:
+**Status: plan usprawnień; CI-001 zaimplementowane lokalnie, odbiór hosted otwarty.** Repozytorium:
 `piotrbarabasz/tripse-ai-demo`, lokalna gałąź `dev`, bazowy HEAD
 `ae8c051513f0300d19a16d7ce7b96499b6f388cd`, 2026-10-28.
-Nie wdrożono żadnego z poniższych usprawnień.
+Aktualizacja 2026-10-29: CI-001 ma lokalną implementację cache pip i podsumowania
+pomiarów, zweryfikowaną testami. Nie wysłano workflow ani nie potwierdzono poprawy
+wydajności na GitHub Actions. CI-002–CI-005 pozostają propozycjami.
+[Raport, baseline i procedura cold/warm](CI_001_PYTHON_CACHE.md).
 
 Powiązania: [obecny CI/CD](GITHUB_CICD.md), [dowody wydania](RELEASE_2026_10_28.md),
 [deployment](DEPLOY_GCP.md), [ADR-0012](adr/0012-github-actions-delivery.md),
@@ -40,7 +43,7 @@ nowym projektem migracji proponowanym przez ten plan.
 
 | Obszar | Fakt z repozytorium | Co pozostaje do oceny |
 |---|---|---|
-| Python CI | `ci.yml`: Ubuntu 24.04, Python 3.12, `make install-dev`, `make test`, offline contracts, Chromium i `make test-browser` | Brak zadeklarowanego cache pip; brak pomiarów cold/warm w tym zadaniu |
+| Python CI | `ci.yml`: Ubuntu 24.04, Python 3.12, `make install-dev`, `make test`, offline contracts, Chromium i `make test-browser` | CI-001: cache pip dodany lokalnie; baseline odczytany; hosted cold/warm oczekuje walidacji |
 | Zależności | `requirements-dev.txt` dołącza `requirements.txt`; wersje bezpośrednie przypięte | Pełna reprodukowalność zależności przechodnich i aktualizacji |
 | Kontener | `Dockerfile`: Python 3.12-slim, Uvicorn `app.main:app`, 0.0.0.0:8000, warstwa zależności przed kodem | Pin digestu obrazu bazowego, non-root i pomiary rozmiaru/startu; bez zmiany istniejącego kontraktu portu |
 | Źródło obrazu | `deployment.py:source_files()` eksportuje wyłącznie dozwolone pliki konkretnego commita i weryfikuje ścieżki; build dodaje `_build_version.txt` | Każdy nowy builder musi zachować tę samą granicę źródła |
@@ -81,16 +84,24 @@ i osobnej zgodzie; początkowo nie jest potrzebny.
 
 ## 4. CI-001 — cache i metryki istniejącego Python CI
 
+**Stan 2026-10-29:** implementacja lokalna na `ci/ci-001-python-cache`, walidacja
+lokalna PASS (844 pytest i kontrakty YAML). GitHub Actions nowej konfiguracji:
+NOT VERIFIED. Potwierdzona poprawa wydajności: Not measured. Brak push/merge/deploy.
+[Pełny raport](CI_001_PYTHON_CACHE.md) zawiera baseline pięciu jobów, powody
+zachowania trzech instalacji oraz procedurę pomiaru exact hit/miss/fallback.
+
+
 - **Cel / stan docelowy:** zachować dotychczasowe bramki, ograniczyć zbędne pobrania.
-  Dziś setup-python nie ma cache; projekt nie wymaga Qt ani zależności desktopowych.
+  Bazowy workflow nie miał cache; lokalnie cache pip jest w CI, DEV i PROD.
+  Projekt nie wymaga Qt ani zależności desktopowych.
 - **Zakres:** cache pip dla Python 3.12, z kluczem zależnym od obu plików requirements;
   pomiar instalacji, testów, browser QA oraz czasu całego jobu. Sprawdzić również
   instalacje w odrębnych zadaniach Delivery, zamiast zakładać współdzielony venv.
 - **Poza zakresem:** wycinanie testów, zmiana wersji Pythona, timeoutów, providerów,
   konfiguracji chmury i cache zawierający skopiowany `.venv`.
 - **Zależności:** osobne polecenie wdrożenia CI-001; nie wymaga GCP ani Buildx.
-- **Przyszłe pliki:** `ci.yml`, ewentualnie odpowiadające kroki `delivery.yml`,
-  dokumentacja pomiarów. Lockfile tylko po oddzielnym zatwierdzeniu strategii.
+- **Zmienione pliki:** `ci.yml`, `delivery.yml`, testy konfiguracji i dokumentacja
+  pomiarów. Lockfile pozostaje poza zakresem, do odrębnej decyzji.
 - **Kroki:** zebrać baseline; dodać cache przy zachowaniu pinów Actions; nadal
   wykonywać `make install-dev`; przetestować cache miss/hit i zmianę każdego
   requirements; ocenić pełne constraints/hashowanie zależności przechodnich.
@@ -232,7 +243,7 @@ requirements-dev.txt. Zachowaj Python 3.12, wszystkie testy i browser QA, piny
 Actions, brak chmury w CI i cały istniejący proces DEV/PROD. Nie zmieniaj
 Cloud Build, Artifact Registry, IAM, aplikacji ani nie wykonuj deploy.”**
 
-## 11. Walidacja i granice tego zadania
+## 11. Historyczna walidacja planu dokumentacyjnego (2026-10-28)
 
 To plan dokumentacyjny oparty na lokalnym kodzie i istniejącym zapisie wydania.
 Nie wykonano nowego audytu live GCP, builda, pusha obrazu, IAM ani wdrożenia.

@@ -11,8 +11,13 @@ restore/isolation drills and real customer-data readiness remain unverified.
 ## Proposed registry/cache improvements
 
 [TRIPSE CI-001–CI-005 plan](ARTIFACT_REGISTRY_CICD_PLAN.md) and
-[ADR-0015](adr/0015-registry-build-cache-evolution.md) describe documentation-only
-proposals over this existing pipeline. Artifact Registry and Cloud Build already
+[ADR-0015](adr/0015-registry-build-cache-evolution.md) describe improvements over
+this existing pipeline. CI-001 is implemented locally on `ci/ci-001-python-cache`:
+native pip caching in CI/DEV/PROD, both requirements as cache inputs, unchanged
+per-job virtualenv installation and a safe cache/native-timing summary.
+[Measurements and validation](CI_001_PYTHON_CACHE.md): local tests PASS; the new
+workflow has not run on GitHub and no performance gain is claimed. CI-002–CI-005
+remain proposals; ADR-0015 remains proposed. Artifact Registry and Cloud Build already
 exist in the recorded architecture. Buildx is an optional isolated benchmark,
 not a replacement activated by the plan. Immutable release tags, provenance and
 DEV-to-PROD digest promotion remain unchanged. Do not replay registry bootstrap.

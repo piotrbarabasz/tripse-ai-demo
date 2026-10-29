@@ -13,7 +13,9 @@ supersedes: []
 # ADR-0015: Rozwój rejestru obrazów i cache CI/CD
 
 Stan implementacji: istniejący rejestr i delivery są opisane w ADR-0012;
-usprawnienia tego ADR nie zostały wdrożone. Akceptacja właściciela: brak.
+CI-001 zaimplementowano lokalnie 2026-10-29, bez publikacji workflow i pomiaru
+zysku hosted. CI-002–CI-005 pozostają propozycjami. Akceptacja ADR przez właściciela:
+brak; status pozostaje proposed. [Raport CI-001](../CI_001_PYTHON_CACHE.md).
 CI-001–CI-005 to lokalne identyfikatory propozycji planu, nie numery GitHub Issues.
 
 ## 1. Kontekst i problem
@@ -54,7 +56,8 @@ retencji niezmiennie otagowanych obrazów; nie deklarujemy oszczędności bez da
 
 ## 6. Dług techniczny i ograniczenia
 
-Brak cache pip w obecnych krokach, niezmierzony profil buildu i storage,
+Cache pip dodany lokalnie; hosted cold/warm pozostaje niezweryfikowany.
+Niezmierzony profil buildu i storage,
 nieprzypięty digest bazowego obrazu oraz ewentualny hardening UID wymagają
 oddzielnych checkpointów. Nie wolno wyłączyć weryfikacji Cloud Build, aby przyjąć
 obraz z innego buildera. Historia wydania nie jest nową inspekcją live.
@@ -83,3 +86,4 @@ zmiana środowisk — wyłącznie po pomiarach i osobnej decyzji.
 | Data | Autor | Zmiana i uzasadnienie | Powiązanie |
 |---|---|---|---|
 | 2026-10-28 | Codex | Propozycja rozwoju istniejącego rejestru, bez zmian operacyjnych | CI-001–CI-005 |
+| 2026-10-29 | Codex | Lokalna implementacja CI-001 i baseline; hosted i zysk niezweryfikowane, status proposed zachowany | CI-001 |
