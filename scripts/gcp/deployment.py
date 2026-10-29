@@ -5,7 +5,7 @@ from contextvars import ContextVar
 import io
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 import shutil
 import subprocess
@@ -316,15 +316,22 @@ def source_files(sha):
             allowed = name in {"Dockerfile", "requirements.txt", ".dockerignore", ".gcloudignore"} or name.startswith(("app/", "demo-fixtures/gt-v1/"))
             if not allowed or member.isdir():
                 continue
-            path = Path(name)
-            if not member.isfile() or path.is_absolute() or ".." in path.parts:
+            if not member.isfile():
                 raise ValueError("Unsafe source archive entry")
-            if any(p.startswith(".env") or p in {"local-data", "data", "__pycache__"} for p in path.parts) or re.search(r"\.(pem|key|db|sqlite3)(-|$|\.)|credentials|service.account", name, re.I):
-                raise ValueError("Forbidden sensitive file in committed build context")
             content = tar.extractfile(member).read()
-            if re.search(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\"private_key\"\s*:|AIza[0-9A-Za-z_-]{35}|sk-proj-[0-9A-Za-z_-]{20,}", content):
-                raise ValueError("Possible credential detected in build context; file content suppressed")
+            validate_source_file(name, content)
             yield name, content
+
+
+def validate_source_file(name, content):
+    """Shared current/historical source safety checks; never include content in errors."""
+    path = PurePosixPath(name)
+    if path.is_absolute() or PureWindowsPath(name).drive or "\\" in name or ".." in path.parts:
+        raise ValueError("Unsafe source archive entry")
+    if any(p.startswith(".env") or p in {"local-data", "data", "__pycache__"} for p in path.parts) or re.search(r"\.(pem|key|db|sqlite3)(-|$|\.)|credentials|service.account", name, re.I):
+        raise ValueError("Forbidden sensitive file in committed build context")
+    if re.search(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\"private_key\"\s*:|AIza[0-9A-Za-z_-]{35}|sk-proj-[0-9A-Za-z_-]{20,}", content):
+        raise ValueError("Possible credential detected in build context; file content suppressed")
 
 
 def clean_head():

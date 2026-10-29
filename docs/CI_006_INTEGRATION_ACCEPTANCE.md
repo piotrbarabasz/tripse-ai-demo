@@ -1,6 +1,6 @@
 # CI-006 — integration, regression and release acceptance preparation
 
-2026-10-29. **HOSTED CI VERIFIED — Gate A approved; PR #7 open; cloud acceptance remains outstanding.**
+2026-10-29. **C.1/C.2 publication approved; new hosted CI required; cloud acceptance remains outstanding.**
 Worktree: `D:\Projects\tripse-ai-ci-integration`.
 Branch: `ci/ci-006-integration-acceptance`.
 Base HEAD: `e9731635fcf1dc424ccecebecc0299dafb7936b7`.
@@ -11,6 +11,37 @@ No accepted deployment artifact or deployed image is claimed. ADR-0015 remains
 **proposed**. Sections before Phase B retain the Phase A snapshot; current committed
 and hosted status is recorded in the Phase B section. Follow-up documentation
 commits are identified by Git history, not a self-referential embedded SHA.
+
+Gate C follow-up (2026-10-29): **GATE C PARTIALLY VERIFIED** after operator
+reauthentication. Current DEV/PROD identity/source and readable IAM/WIF were
+checked; historical source-policy compatibility, PROD rollback and retention
+readiness remain unresolved. PR/head/required CI checks remain verified.
+[Local Gate C report and conditional DEV path](CI_006_GATE_C_READ_ONLY_AUDIT.md).
+The first authentication failure stopped cloud queries; the resumed audit used
+only reads. This paragraph records the Gate C investigation checkpoint; later
+findings and separately approved IAM execution are linked below.
+
+## Current follow-up publication
+
+The operator approved collecting the prepared CI/CD follow-ups onto the existing
+PR #7 branch. This publication includes the exact historical source-policy fix
+and its negative tests, the isolated legacy-worker cleanup module and plan guard,
+and the Gate C/C.1/C.2 and Gate D preflight reports. Private raw evidence, state,
+saved plans and credentials remain excluded. The five original source worktrees
+are preserved; their unselected experiments are not part of this publication.
+
+The [C.1 remediation](CI_006_GATE_C1_REMEDIATION.md) binds the historical exception
+to one full SHA, build, digest and trusted manifest. The separately approved
+[IAM removal](CI_006_GATE_C2_IAM_APPLY_RESULT.md) removed only the numeric legacy
+worker's broad membership and was verified live. Earlier proposal-only reports
+are historical snapshots, not the current execution status.
+
+The [Gate D preflight](CI_006_GATE_D_PREFLIGHT.md) is a pre-publication snapshot:
+1086 local tests, offline contracts and make check passed; real GitHub WIF probe
+health remains pending. Publishing this follow-up addresses its candidate
+publication prerequisite only after new hosted CI succeeds. Prior c8fec87 CI
+success does not cover this new commit. No Gate D dispatch, DEV/PROD deployment,
+rollback, merge or additional cloud mutation is authorized by publication.
 
 ## Source-of-truth inventory
 

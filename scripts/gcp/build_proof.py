@@ -5,11 +5,66 @@ production. A trusted master acceptance verifies the builder command and exact
 generation-pinned source bytes before issuing its release evidence.
 """
 import io
+import hashlib
+import json
 import re
 import tarfile
+from dataclasses import dataclass
+from types import MappingProxyType
 from scripts.gcp import deployment as d
 
 BUILD_ID = re.compile(r"[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}")
+
+
+@dataclass(frozen=True)
+class HistoricalContext:
+    version: str
+    image: str
+    build_id: str
+    digest: str
+    extra_files: tuple[str, ...]
+    manifest_sha256: str
+
+
+# Code-reviewed trust anchor, NOT a policy version supplied by an artifact/build.
+# Gate C.1 independently verified this commit, accepted master PROD evidence,
+# build recipe and generation-pinned source. No range/ancestry/prefix fallback.
+HISTORICAL_CONTEXTS = MappingProxyType({
+    "497ea150b158bd10ec347e8bdc2b6b44dc94d2a4": HistoricalContext(
+        "legacy-fixtures-497ea150-v1",
+        "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai",
+        "23f06da9-270d-4250-bdc8-670c37bd3267",
+        "sha256:4bf16a5a8fc9aafa11576e8e91444e6ca4c8ac773c64e7c8df342e409771b2e6",
+        ("demo-fixtures/campaigns/demo-northern-journeys.json",
+         "demo-fixtures/document-presets/iceland.json",
+         "demo-fixtures/trips/demo-canada.json",
+         "demo-fixtures/trips/demo-iceland.json",
+         "demo-fixtures/trips/demo-norway.json"),
+        "59284ce900e3e41c080117c485a4469810ef4e24bc629fbef1d7aec2a3228cd7",
+    ),
+})
+
+
+def context_manifest(files):
+    entries = [[name, hashlib.sha256(content).hexdigest()] for name, content in sorted(files.items())]
+    return hashlib.sha256(json.dumps(entries, separators=(",", ":")).encode()).hexdigest()
+
+
+def expected_source(sha):
+    d.image_tag(sha)
+    files = dict(d.source_files(sha))
+    policy = HISTORICAL_CONTEXTS.get(sha)
+    if policy is not None:
+        for name in policy.extra_files:
+            # Paths are fixed in reviewed code; bytes come from the exact commit.
+            content = d.run(["git", "show", sha + ":" + name], binary=True)
+            d.validate_source_file(name, content)
+            if name in files:
+                raise ProvenanceError("conflicting_historical_source_policy")
+            files[name] = content
+        if context_manifest(files) != policy.manifest_sha256:
+            raise ProvenanceError("historical_source_manifest_mismatch")
+    return files | {"app/_build_version.txt": sha.encode()}
 
 
 class ProvenanceError(ValueError):
@@ -65,7 +120,11 @@ def verify(g, sha, digest, build_id=None):
     d.image_tag(sha)
     if not isinstance(digest, str) or not re.fullmatch(r"sha256:[a-f0-9]{64}", digest):
         raise ProvenanceError("invalid_image_digest")
-    expected = dict(d.source_files(sha)) | {"app/_build_version.txt": sha.encode()}
+    policy = HISTORICAL_CONTEXTS.get(sha)
+    if policy is not None and (digest != policy.digest or g.config.image != policy.image
+                              or (build_id is not None and build_id != policy.build_id)):
+        raise ProvenanceError("historical_build_identity_mismatch")
+    expected = expected_source(sha)
     if build_id is not None:
         if not isinstance(build_id, str) or not BUILD_ID.fullmatch(build_id):
             raise ProvenanceError("invalid_build_lookup_hint")
@@ -96,6 +155,10 @@ def verify(g, sha, digest, build_id=None):
 
 
 def verify_candidate(g, build, sha, digest, expected):
+    policy = HISTORICAL_CONTEXTS.get(sha)
+    if policy is not None and (build.get("id") != policy.build_id or digest != policy.digest
+                              or g.config.image != policy.image):
+        raise ProvenanceError("historical_build_identity_mismatch")
     if not isinstance(build.get("id"), str) or not BUILD_ID.fullmatch(build["id"]):
         raise ProvenanceError("invalid_build_identity")
     if build.get("projectId", g.config["GCP_PROJECT_ID"]) != g.config["GCP_PROJECT_ID"]:
