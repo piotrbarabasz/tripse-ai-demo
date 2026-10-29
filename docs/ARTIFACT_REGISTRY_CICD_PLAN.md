@@ -1,19 +1,20 @@
 # TRIPSE — plan Artifact Registry i optymalizacji CI/CD
 
-**Status: CI-001–CI-005 zintegrowane lokalnie w CI-006; odbiór hosted/GCP pozostaje otwarty.**
+**Status: CI-001–CI-005 opublikowane w PR #7; HOSTED CI VERIFIED, odbiór GCP pozostaje otwarty.**
 Repozytorium `piotrbarabasz/tripse-ai-demo`. Integracja:
 `ci/ci-006-integration-acceptance`, `D:/Projects/tripse-ai-ci-integration`,
 baza `e9731635fcf1dc424ccecebecc0299dafb7936b7` zawiera już CI-001.
 CI-002–CI-005 dołączono jako przejrzane patche, bez kopiowania danych ignorowanych,
-commita, pusha, merge oryginalnych gałęzi ani operacji cloud. Pięć worktree źródłowych
+merge oryginalnych gałęzi ani operacji cloud. Po zgodzie operatora powstał commit
+`c2f6f988dc88b86914e009e053b606bad3e4ba5d` i PR #7 do master. Pięć worktree źródłowych
 pozostaje bez zmian. [Aktualny stan i bramki CI-006](CI_006_INTEGRATION_ACCEPTANCE.md).
 
-- CI-001: cache pip i bezwarunkowe instalacje w CI/DEV/PROD zachowane; hosted cold/warm niezmierzone.
+- CI-001: cache pip i bezwarunkowe instalacje w CI/DEV/PROD zachowane; pomiary hosted i ich ograniczenia opisuje CI-006.
 - CI-002: pin Python 3.12, ograniczony COPY i ignore; root zachowany, non-root odłożony.
 - CI-003: Option A — Cloud Build; wyniki i ręczny helper zachowane, automatyczny workflow wyłączony z integracji.
 - CI-004: offline audit/dry-run bez delete/apply; bieżące registry/IAM/usage nadal niezweryfikowane.
 - CI-005: direct Build ID + targeted discovery, dowody i prywatne recovery; bez zmiany --no-cache lub IAM.
-- Phase B: Gate A — przegląd i ponowna walidacja lokalna; publikacja wymaga zgody operatora. Gate B hosted CI oraz odbiór GCP pozostają otwarte.
+- Phase B: Gate A zatwierdzona przez operatora, gałąź integracyjna opublikowana; Gate B hosted CI PASS w dwóch próbach tego samego SHA (miss, następnie exact cache hit; brak dowodu przyspieszenia). Odbiór GCP pozostaje osobną bramką.
 
 Powiązania: [obecny CI/CD](GITHUB_CICD.md), [dowody wydania](RELEASE_2026_10_28.md),
 [deployment](DEPLOY_GCP.md), [ADR-0012](adr/0012-github-actions-delivery.md),

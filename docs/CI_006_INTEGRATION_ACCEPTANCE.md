@@ -1,11 +1,16 @@
 # CI-006 — integration, regression and release acceptance preparation
 
-2026-10-29. **READY FOR REVIEW — Gate A review complete; publication approval pending; Gate B not executed.**
+2026-10-29. **HOSTED CI VERIFIED — Gate A approved; PR #7 open; cloud acceptance remains outstanding.**
 Worktree: `D:\Projects\tripse-ai-ci-integration`.
 Branch: `ci/ci-006-integration-acceptance`.
 Base HEAD: `e9731635fcf1dc424ccecebecc0299dafb7936b7`.
-The candidate remains **uncommitted**. No new release SHA, hosted run, accepted
-release artifact or deployed image is claimed. ADR-0015 remains **proposed**.
+Implementation RC: `c2f6f988dc88b86914e009e053b606bad3e4ba5d`.
+Operator explicitly approved commit, feature-branch publication, PR and Gate B.
+PR: [#7](https://github.com/piotrbarabasz/tripse-ai-demo/pull/7), targeting master.
+No accepted deployment artifact or deployed image is claimed. ADR-0015 remains
+**proposed**. Sections before Phase B retain the Phase A snapshot; current committed
+and hosted status is recorded in the Phase B section. Follow-up documentation
+commits are identified by Git history, not a self-referential embedded SHA.
 
 ## Source-of-truth inventory
 
@@ -351,7 +356,7 @@ ignored QA output preservation has the stated exception. The Phase B Gate A revi
 below supersedes the earlier documentation-only status. Publication still requires
 explicit operator approval.
 
-## Phase B — Gate A release candidate review (2026-10-29)
+## Phase B — Gate A release candidate review snapshot (2026-10-29)
 
 The current branch remains `ci/ci-006-integration-acceptance`, at full base HEAD
 `e9731635fcf1dc424ccecebecc0299dafb7936b7`. The index is empty. There is no new
@@ -438,7 +443,7 @@ current definition. Container execution and those checks remain local-only;
 pytest covers static container, provenance, evidence, audit and rollback contracts.
 No hosted timing or cold/warm improvement is inferred from local validation.
 
-### Concrete publication proposal — approval pending
+### Reviewed publication proposal — subsequently approved
 
 Commit message: `ci: integrate CI-001 through CI-005 improvements`.
 Remote: `origin` (`https://github.com/piotrbarabasz/tripse-ai-demo.git`).
@@ -446,14 +451,97 @@ Publish only `ci/ci-006-integration-acceptance`, then create a PR targeting `mas
 and observe credential-free CI. Do not merge, dispatch Delivery or push dev/master.
 A draft PR body is prepared under ignored `local-data/phase-b-gate-a/pr-body.md`.
 
-Sections 5–6 of the Phase B operator task explicitly require approval after Gate A
-and before staging/committing/publication. Until approval, keep all candidate
-files unstaged. After approval, record the actual new SHA, verify the committed
-allowlist/provenance contracts, then publish only the reviewed feature branch.
-PR/run IDs, cache outcomes and timings remain pending Gate B. Gates C–E remain
+Sections 5–6 of the Phase B operator task explicitly required approval after Gate A
+and before staging/committing/publication. The operator then replied "masz zgode",
+authorizing this proposal. The original Gate A JSON is retained as the pre-approval
+snapshot; the Gate B record below supersedes its pending fields. Gates C–E remain
 separately unauthorized: read-only GCP audit, DEV acceptance and protected PROD.
 
 Original source worktree file hashes, branch/HEAD and complete Git status were
 rechecked against the Phase A inventory. The earlier three ignored shared
 `.venv/viewer-artifacts` files still have unverified pre-incident contents; no
 remediation was attempted. Current browser outputs are worktree-local.
+
+## Phase B — reviewed commit and publication
+
+The exact 38-file Gate A inventory and byte hashes were rechecked before staging;
+the index was empty and no extra paths were included. Commit
+`c2f6f988dc88b86914e009e053b606bad3e4ba5d`
+(`ci: integrate CI-001 through CI-005 improvements`) was created on the integration
+branch. The working tree was clean after committing. Committed-source offline
+contracts passed against that actual HEAD, followed by 169 provenance/evidence/
+cross-integration tests. No production source or clean-head guard was bypassed.
+
+Only `HEAD:refs/heads/ci/ci-006-integration-acceptance` was pushed to origin.
+PR #7 targets master (`c3d3e922dae3c8bd15c5a8c78c4b4a51263074cf` at creation).
+It contains the inherited CI-001 commit plus the RC, so GitHub initially reports
+41 changed files versus master; the reviewed RC commit itself changes 38 files.
+The additional PR paths are CI-001's two workflows and cache contract tests.
+No base update/merge/rebase was performed. PR merge status BEHIND is not permission
+to merge or deploy. No auto-merge was enabled.
+
+The initial PR event started CI run `40898383454`, job `123533641846`.
+No Delivery run was associated with the RC SHA. Only credential-free PR CI is
+eligible for the subsequent cache repeat; never rerun a Delivery/production job.
+
+## Phase B — Gate B hosted CI verification
+
+[Sanitized native job/step evidence](benchmarks/ci-006-hosted-validation.json).
+Run [40898383454](https://github.com/piotrbarabasz/tripse-ai-demo/actions/runs/40898383454)
+completed successfully twice on the exact same RC head SHA. Attempt 2 was a safe
+rerun of only the credential-free CI job, not a Delivery dispatch or production
+rerun. Both attempts checked out GitHub's PR merge commit
+`59e5e81f82b56c21fe3ea20d1060ef999a817b25`; the recorded PR head remains
+`c2f6f988dc88b86914e009e053b606bad3e4ba5d`. This synthetic CI merge ref is not an
+operator merge of master. Ubuntu 24.04 runners used Python 3.12.15, versus the
+Windows local environment and Python 3.12.16 container recorded at Gate A.
+
+| Metric | Historical pre-cache baseline | RC attempt 1 | Same RC attempt 2 |
+|---|---:|---:|---:|
+| Run ID | 40838439862 | 40898383454 | 40898383454 |
+| Job ID | 123328693692 | 123533641846 | 123536524286 |
+| Cache result | No explicit workflow pip cache | Miss, new key saved | Exact hit, same key restored |
+| Python/cache setup | 0 s | 1 s | 4 s |
+| Dependency installation | 14 s | 14 s | 14 s |
+| Pytest step | 25 s | 29 s | 38 s |
+| Offline provenance/contracts | 2 s | 1 s | 2 s |
+| Chromium/system setup | 17 s | 28 s | 36 s |
+| Browser QA | 175 s | 179 s | 210 s |
+| Full CI job, including post steps | 239 s | 261 s | 312 s |
+| Run attempt elapsed, including startup/queue | Not compared | 264 s | 318 s |
+
+Times are native API timestamp differences with one-second resolution; pytest's
+own durations were 28.01 s and 36.78 s. The first setup log explicitly reports
+`pip cache is not found`; its post step saves the dependency key. The second log
+reports that exact key restored and `PIP_CACHE_HIT: true`. Neither sample used a
+fallback cache. Cache scope includes Python 3.12.15 and the combined dependency
+hash `a728f6b6d5d2f07709b4e3ad4704d6efb1c897055dacd2b0d770ce946e89ffb2`.
+Installation still runs unconditionally. **No installation or total CI speedup is
+demonstrated**: installation is unchanged, and the warm job is slower. Two samples
+do not isolate runner noise; the historical baseline also has different source/
+test counts. No DEV/PROD deployment was used for these measurements.
+
+Each attempt reports **1005 passed, 1 skipped, 1 existing deprecation warning**.
+The single platform-specific skip is the existing `test_powershell_syntax`, guarded
+by availability of Windows `powershell`; it passed locally on Windows. No test
+selection/assertion was weakened. Offline committed-source contracts and all nine
+browser scripts passed. Hosted pytest covers Docker/context static contracts,
+direct/targeted provenance lookup, source-byte checks, evidence integrity,
+fail-closed registry analysis, rollback failure and existing security boundaries.
+Actual Docker runtime/persistence, actionlint and Compose configuration remain
+local-only, as already distinguished at Gate A.
+
+Job logs report only `Contents: read` and `Metadata: read`. The PR job has no
+id-token write permission, deployment Environment binding, GCP secret reference,
+WIF/auth action or gcloud/Cloud Build/deployment step. Only CI was listed for the
+RC SHA. This verifies credential-free PR execution boundaries; it is not a live
+audit of organization IAM, WIF providers or GitHub Environment reviewer settings.
+No GCP operation was executed. ADR-0015 remains proposed, and cloud deployment
+is not verified. Gates C–E are still separately authorized work.
+
+The follow-up documentation-only commit records these completed measurements and
+updates shared current-status links. It triggers the same full PR CI again; its
+latest check/run is discoverable on PR #7. The final branch SHA and that check's
+result are returned in the operator report, avoiding an endless sequence of
+self-referential documentation commits. Original source worktrees and the prior
+ignored-QA incident limitation remain preserved.

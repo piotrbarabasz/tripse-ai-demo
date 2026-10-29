@@ -10,8 +10,9 @@ restore/isolation drills and real customer-data readiness remain unverified.
 
 ## CI-006 integrated release candidate — local only
 
-[CI-006](CI_006_INTEGRATION_ACCEPTANCE.md) combines CI-001–CI-005 in one uncommitted
-integration worktree. CI-001 native pip caching remains in CI/DEV/PROD with both
+[CI-006](CI_006_INTEGRATION_ACCEPTANCE.md) combines CI-001–CI-005 in reviewed commit
+`c2f6f988dc88b86914e009e053b606bad3e4ba5d`, published in PR #7 after operator
+approval. CI-001 native pip caching remains in CI/DEV/PROD with both
 requirements as keys and unconditional installation. CI-002 pins Python 3.12 and
 narrows context. CI-003 retains Cloud Build (Option A); only manual benchmark tooling
 and historical results are retained, with no experimental workflow trigger.
@@ -21,9 +22,10 @@ measurements; isolated test counts are not combined release proof.
 
 CI/Delivery workflows, WIF authority, Environment requirements, branch restrictions,
 concurrency groups, immutable tags and DEV-to-PROD promotion remain unchanged.
-Hosted cache performance, read-only GCP audit and deployed DEV/PROD acceptance are
-not verified by local tests. Phase B Gate A review and local revalidation are recorded
-in CI-006; publication awaits explicit operator approval. Gate B has not executed.
+Hosted cache measurements and CI results are recorded separately in CI-006;
+local tests cannot establish hosted performance or current cloud state.
+Read-only GCP audit and deployed DEV/PROD acceptance remain open. Gate A is approved;
+only the integration branch and PR were published. No merge or deployment is authorized.
 ADR-0015 remains proposed. Do not replay registry/bootstrap or push dev/master to test.
 
 ## Historical bootstrap and incident timeline
