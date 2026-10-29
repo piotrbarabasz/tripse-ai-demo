@@ -211,3 +211,8 @@ def test_manipulated_client_preview_does_not_render_internal_snapshot_fields(tmp
         assert response.status_code == 200
         assert 'INTERNAL-SECRET-MUST-NOT-PRINT' not in response.text
         assert '<img src=x' not in response.text and '&lt;img' in response.text
+
+
+# Explicit historical regression sources; active catalogue is tested in test_gt_templates.py.
+import pytest as _pytest
+pytestmark = _pytest.mark.usefixtures("legacy_document_sources")

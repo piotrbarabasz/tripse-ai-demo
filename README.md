@@ -50,6 +50,12 @@ master na DEV i promował ten sam digest do chronionego PROD.
 Logowanie każdego użytkownika w przeglądarce oraz gotowość na rzeczywiste dane
 klienta nie zostały potwierdzone. LIVE i rzeczywisty WhatsApp pozostają wyłączone.
 
+## Plan rozwoju Artifact Registry i CI/CD
+
+[Plan TRIPSE CI-001–CI-005](docs/ARTIFACT_REGISTRY_CICD_PLAN.md) opisuje audyt
+istniejącego rejestru, cache i warianty budowy obrazów. To dokumentacja propozycji,
+bez nowego wdrożenia ani zmiany istniejącej promocji DEV → PROD.
+
 ## TRIPSE AI Hub — start demonstracji
 
 Otwórz **[http://localhost:8000/hub](http://localhost:8000/hub)**, aby przejść do
@@ -298,3 +304,6 @@ verification blockers recorded in DEV_DEPLOY.md.
 **WhatsApp jest adapterem wejściowym.** Całe planowanie musi działać niezależnie od niego poprzez `POST /api/trips`. Dzięki temu demo nie jest zakładnikiem sesji WhatsApp.
 
 **Zakres i terminy:** max. 1 dzień pracy, bez przerabiania tego na produkcyjny system. Przyszłe moduły intencji, edycji tras i multi-agent orchestration odkładamy.
+
+Przykładowe dokumenty GT v1: `/documents/demo#examples` — dziewięć konfiguracji,
+kopie do edycji i PDF. [DOC-TEMPLATES-006](docs/DOC_TEMPLATES_006.md).

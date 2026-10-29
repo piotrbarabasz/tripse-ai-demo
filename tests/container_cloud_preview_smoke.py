@@ -26,7 +26,7 @@ def main():
             for name in ("Dockerfile","requirements.txt",".dockerignore"):
                 shutil.copy2(ROOT/name,context/name)
             shutil.copytree(ROOT/"app",context/"app",ignore=shutil.ignore_patterns("__pycache__","*.pyc","_build_version.txt"))
-            for name in ("trips","campaigns"):
+            for name in ("gt-v1",):
                 shutil.copytree(ROOT/"demo-fixtures"/name,context/"demo-fixtures"/name)
             (context/"app/_build_version.txt").write_text("a"*40)
             command("build","--platform=linux/amd64","-t",image,str(context))

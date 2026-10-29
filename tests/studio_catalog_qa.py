@@ -12,6 +12,8 @@ from pypdf import PdfReader
 
 
 def run_catalog():
+    import os
+    os.environ['DOCUMENT_STUDIO_FIXTURES_PATH']=str(ROOT/'tests/fixtures/legacy-demo')  # explicit historical regression dataset
     from test_cloud_demo import cloud_demo, ORIGIN
     artifacts = ROOT/'local-data'/'studio-catalog-qa'
     artifacts.mkdir(parents=True, exist_ok=True)

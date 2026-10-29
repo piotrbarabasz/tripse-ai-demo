@@ -2,6 +2,7 @@ import ipaddress
 import os
 from pathlib import Path
 from typing import Literal
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Path as ApiPath
 from fastapi.responses import FileResponse, HTMLResponse, Response
@@ -64,6 +65,10 @@ class DraftUpdate(Model):
     document_status: Literal["draft", "in_review", "ready"] = "draft"
 
 
+class ExampleCopyRequest(Model):
+    operation_id: UUID
+
+
 class TripPreviewRequest(Model):
     draft: DocumentDraft
     output_format: Literal["a4", "social"] = "a4"
@@ -124,6 +129,22 @@ def document_router(repository, *, access_policy=local_only, asset_store=None, c
     @router.get("/api/document-studio/templates")
     def templates():
         return list(TEMPLATES.values())
+
+    @router.get("/api/document-studio/examples")
+    def examples():
+        from app.document_studio.examples import catalog
+        return run(catalog)
+
+    @router.get("/api/document-studio/examples/{identifier}/preview")
+    def example_preview(identifier: str, output_format: Literal["a4", "social"] = "a4"):
+        from app.document_studio.examples import build_example
+        from app.document_studio.rendering.sections import render_document
+        return run(lambda: HTMLResponse(render_document(build_example(identifier), assets, output_format), headers={"Cache-Control": "no-store"}))
+
+    @router.post("/api/document-studio/examples/{identifier}/copy", status_code=201, response_model=DocumentDraft)
+    def example_copy(identifier: str, value: ExampleCopyRequest, request: Request):
+        from app.document_studio.examples import copy_example
+        return run(lambda: copy_example(repository, identifier, value.operation_id, actor(request)))
 
     @router.get("/api/document-studio/trips", response_model=list[Trip])
     def trips():

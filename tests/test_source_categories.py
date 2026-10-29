@@ -53,7 +53,7 @@ def test_legacy_models_and_explicit_demo_fixtures():
             model = Trip if kind=='trips' else Campaign
             value = model.model_validate_json(path.read_bytes())
             assert value.data_origin == 'demo'
-            if kind=='trips':assert value.categories == []  # no country/name inference
+            if kind=='trips':assert value.categories  # explicitly authored GT categories; legacy defaults checked above
 
 
 @pytest.mark.parametrize('origin', ['business','demo','synthetic_test','unknown'])

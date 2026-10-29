@@ -95,7 +95,23 @@ def test_context_only_committed_allowlist():
     assert not any(".env" in Path(name).parts for name in files)
     # Authenticated Studio uses the reviewed fictional example. Preview still
     # registers no preset/draft route; other presets are outside the build allowlist.
-    assert {name for name in files if "document-presets" in name} == {"demo-fixtures/document-presets/iceland.json"}
+    assert not any("document-presets" in name or "tests/fixtures" in name for name in files)
+    assert all(name.startswith("demo-fixtures/gt-v1/") for name in files if name.startswith("demo-fixtures/"))
+
+
+def test_gt_examples_are_in_image_proof_but_legacy_and_user_data_are_excluded(monkeypatch):
+    import io
+    import tarfile
+    archive=io.BytesIO()
+    names=['app/main.py','demo-fixtures/gt-v1/examples.json','demo-fixtures/gt-v1/trips/gt-v1-iceland.json',
+        'demo-fixtures/gt-v1/campaigns/gt-v1-new_trips.json','demo-fixtures/trips/demo-iceland.json',
+        'tests/fixtures/legacy-demo/trips/demo-iceland.json','local-data/private.json']
+    with tarfile.open(fileobj=archive,mode='w') as tar:
+        for name in names:
+            member=tarfile.TarInfo(name);member.size=2;tar.addfile(member,io.BytesIO(b'{}'))
+    monkeypatch.setattr(deploy,'run',lambda *args,**kwargs:archive.getvalue())
+    files=dict(deploy.source_files('a'*40))
+    assert set(files)==set(names[:4])
 
 
 @pytest.mark.parametrize("environment", ["dev", "prod"])

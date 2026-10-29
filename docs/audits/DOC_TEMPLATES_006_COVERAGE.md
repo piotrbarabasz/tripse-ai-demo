@@ -1,0 +1,19 @@
+# DOC-TEMPLATES-006 — macierz pokrycia Ground Truth
+
+Audyt przed implementacją, baza `53947b4`, 2026-10-28. Ground Truth przeczytany w całości; pozostaje DRAFT / DO WALIDACJI Z TRIPSE. MUST oznacza kompletność finalnego dokumentu, nie blokadę zapisu draftu. Kolumny opisują stan zastany; wynik i dowody po implementacji w `../DOC_TEMPLATES_006.md`.
+
+| Template | GT section | Model | Editor | Save | Renderer | Validation | Status | Required change |
+|---|---|---|---|---|---|---|---|---|
+| offer.private | 3.1 | OfferData, Trip | TripDocumentEditor | DraftUpdate → service → JSON/GCS | cover, summary, program, price, CTA | price/source/concept, privacy | PARTIAL | Pełny siedmiodniowy przykład, jawne warunki w assumptions, kopia/snapshot/revizje/PDF |
+| offer.self_guide | 3.2 | OfferDetails ma scope/own/materials/support; brak podsumowania trasy | istniejące pola zakresu | OfferDetails przechodzi PUT | brak osobnego podsumowania trasy | bez pilota/support | PARTIAL | Addytywne RouteSummary, edytor, binding, osiem dni DEMO |
+| offer.school | 3.3 | age/group/goals(day/stop)/supervision | trzy filary istnieją | PUT z OfferDetails | powiązania celów i dni istnieją | wiek/liczebność | PARTIAL | Jawne wymagania organizacyjne/bezpieczeństwo, trzydniowy przykład bez danych uczniów |
+| offer.incentive | 3.4 | hotel/team/workshops/meals/variants/group_size istnieją | brak pola liczebności incentive | PUT zachowuje group_size | brak parametrów grupy | źródło hotelu | PARTIAL | Udostępnić istniejącą liczebność, binding grupy, cztery dni DEMO |
+| pilot.basic | 4.1 | PilotData, OperationalEntry, contacts | listy zdarzeń istnieją | zagnieżdżone PUT, CAS | loty/transfery/noclegi/program/open | strefy, status i źródło | PARTIAL | Strukturalne grupy przylotowe, dane lotu; syntetyczny plan bez potwierdzeń |
+| pilot.advanced | 4.2 | DayLogistics + wspólny schedule istnieją | edycja metryk i wielu zdarzeń istnieje | sections + PilotData przez PUT | tabela trasy pomija metryki, brak metryki grupy | null, IANA, odwołania noclegów | PARTIAL | Tabela metryk i zakresu godzin, weryfikacja pomiarów, wspólna grupa, pełna oś czasu |
+| pilot.knowledge | 4.3 | KnowledgeContent + źródła istnieją | pola i stop_ids istnieją | sekcje niezależne | atrakcje/kontekst/narracja istnieją | verified wymaga dat i źródeł | PARTIAL | Dedykowany trzydniowy materiał redakcyjny, bez udawanej weryfikacji |
+| marketing.collection/new_trips | 5.1–5.2 | Campaign + CampaignItem | niezależny snapshot | kampania snapshot PUT | A4/social istnieją | draft/approved, brak zdjęć | PARTIAL | Nowa kampania wielokierunkowa 2027, osobny przykład |
+| marketing.collection/theme_collection | 5.1,5.3 | jeden silnik Campaign | istniejące pola motywu | jak wyżej | odrębny hero i kompozycja | jak wyżej | PARTIAL | Osobna kolekcja górska; rozszerzenia opcjonalne |
+| wszystkie | 2,7,10 | snapshot i historyczne rewizje | brak katalogu dziewięciu przykładów | stary preset Islandii dla dwóch typów | wspólny paginowany HTML | demo nie oznacza approved | MISSING | Wersjonowane źródła i specyfikacje, deterministyczny seed, katalog i kopia do istniejącego edytora; testy JSON/fake GCS/browser/PDF |
+| opcjonalne GT | 9 | bez narzucania biznesowej semantyki | edycja robocza | zapis z brakami | jawne braki | ostrzeżenia | DESIGN DECISION | Zakres Self-Guide, nadzór, ceny konceptowe, publikacja, prawa i brand wymagają TRIPSE; seed niczego nie zatwierdza |
+
+Ścieżka kontroli: GT → modele `models.py` → `api.DraftUpdate` → `service.update_draft` → `trip-editor.js`/`marketing-editor.js`/`section-editor.js` → JSON/GCS CAS → `rendering/sections.py` → walidacja → rzeczywisty Chromium i PDF. Nie dodajemy drugich modeli zakresu Self-Guide, hotelu, celów, harmonogramu ani wiedzy. Stare zapisane dokumenty nie będą migrowane ani usuwane.

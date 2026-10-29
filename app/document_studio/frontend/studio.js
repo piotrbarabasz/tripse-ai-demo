@@ -113,8 +113,7 @@ function sourceChooser(templateId,variant,selected=null,options={}) {
   function choose(source){
     chosen=source;$('#edit-source').hidden=!source;$('#source-create').disabled=!source;
     $('#source-summary').innerHTML=source?DocumentFlow.summary(source,kind):'';
-    $('#source-demo-option').innerHTML=source?.trip_id==='demo-iceland'&&['offer.private','pilot.basic'].includes(templateId)?`<details><summary>Przykład demonstracyjny</summary><label><input id="flow-demo" type="checkbox" ${flow.demo?'checked':''}>Użyj fikcyjnego przykładu DEMO</label></details>`:'';
-    if($('#flow-demo'))$('#flow-demo').onchange=()=>{flow.demo=$('#flow-demo').checked;};
+    $('#source-demo-option').innerHTML='';
   }
   if(selected)choose(selected);
   else SourcePicker.mount($('#source-picker'),{entries,kind,id:'source-select',category:SourcePicker.suggested[templateId],onChange:values=>choose(entries.find(x=>(x.trip_id||x.campaign_id)===values[0]))});
@@ -276,6 +275,25 @@ async function reviewDocument(draft,isCurrent) {
     $('#review-validation').innerHTML=`<p>${errors.length?'Wymaga uzupełnienia: '+errors.length:'Brak błędów walidacji danych. Nadal sprawdź treść i układ.'}</p><details ${errors.length?'open':''}><summary>Uwagi do dokumentu: ${issues.length}</summary><ul>${issues.map(i=>`<li class="${i.severity}">${e(i.message)}</li>`).join('')}</ul></details>`;
   }catch(error){if(isCurrent())$('#review-validation').textContent='Nie udało się pobrać listy uwag. Sprawdź je w podglądzie dokumentu. '+error.message;}
 }
+async function exampleCatalog(identifier, load, context) {
+  const entries=await load('examples');
+  if(!identifier){
+    main.innerHTML=heading('DANE FIKCYJNE','Przykładowe dokumenty DEMO','Dziewięć kompletnych przykładów. Otwórz podgląd, następnie utwórz własną kopię.')+`<div class="cards">${entries.map(x=>`<article class="card" data-example-id="${e(x.example_id)}"><span class="tag">${e(x.example_id)} · DEMO</span><h2>${e(x.title)}</h2><p>${e(x.template_id)} · ${e(x.layout_variant)}</p><p>PRZYKŁAD DEMO — DANE FIKCYJNE</p><button data-go="examples/${e(x.example_id)}">Otwórz przykład</button></article>`).join('')}</div>`;
+    return;
+  }
+  const item=entries.find(x=>x.example_id===identifier);if(!item)throw new Error('Nie znaleziono przykładu.');
+  main.innerHTML=heading('PRZYKŁAD DEMO — DANE FIKCYJNE',item.title,'Chroniony wzorzec. Edycja odbywa się na niezależnej kopii.','<button data-go="examples">← Przykłady</button>')+`<section class="panel"><p>${e(item.template_id)} · ${e(item.layout_variant)}</p>${canEdit?'<button id="copy-example" class="primary">Utwórz kopię do edycji</button>':''}<a target="_blank" rel="noopener" href="/api/document-studio/examples/${encodeURIComponent(identifier)}/preview">Podgląd / PDF</a></section><iframe id="example-preview" title="Podgląd przykładu DEMO" style="width:100%;height:75vh"></iframe>`;
+  const response=await fetch('/api/document-studio/examples/'+encodeURIComponent(identifier)+'/preview');
+  if(!response.ok)throw new Error('Nie udało się otworzyć podglądu.');
+  const html=await response.text();if(!context.isCurrent())return;DocumentFlow.embeddedPreview($('#example-preview'),html);
+  const operation_id=crypto.randomUUID();
+  if($('#copy-example'))$('#copy-example').onclick=async()=>{
+    if(busy)return;busy=true;$('#copy-example').disabled=true;
+    try{const copy=await api('examples/'+encodeURIComponent(identifier)+'/copy',{method:'POST',body:JSON.stringify({operation_id})});await refresh();busy=false;forward('edit-draft/'+copy.document_id);}
+    catch(error){message(error.message,true);}finally{busy=false;if($('#copy-example'))$('#copy-example').disabled=false;}
+  };
+}
+
 async function route() {
   if(busy){history.replaceState(null,'',location.pathname+activeHash);return;}
   if(dirty&&!confirm('Masz niezapisane zmiany. Opuścić ten widok?')){history.replaceState(null,'',location.pathname+activeHash);return;}
@@ -292,8 +310,9 @@ async function route() {
     if(!canEdit&&['templates','create-document','prepare-trip','prepare-campaign'].includes(view)){forward('drafts');return;}
     if(!canEdit&&view==='edit-draft'){forward('review-draft/'+resourceId);return;}
     if(!canEdit&&view==='marketing'){forward('campaigns/'+resourceId);return;}
-    if(!['templates','create-document','prepare-trip','prepare-campaign','trips','campaigns','drafts','marketing','edit-draft','review-draft','revisions'].includes(view))throw new Error('Nie znaleziono widoku.');
-    if(view==='templates'){
+    if(!['templates','create-document','prepare-trip','prepare-campaign','trips','campaigns','drafts','marketing','edit-draft','review-draft','revisions','examples'].includes(view))throw new Error('Nie znaleziono widoku.');
+    if(view==='examples')await exampleCatalog(resourceId,load,context);
+    else if(view==='templates'){
       const fixed=parts[1]&&parts[2]?await load((parts[1]==='trip'?'trips/':'campaigns/')+encodeURIComponent(parts[2])):null;
       templateCatalog(fixed);
     }

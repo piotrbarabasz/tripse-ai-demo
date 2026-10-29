@@ -10,7 +10,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 
 ROOT = Path(__file__).resolve().parent
-FIXTURES = ROOT.parent / "demo-fixtures"
+FIXTURES = ROOT.parent / "demo-fixtures" / "gt-v1"
 VERSION_FILE = ROOT / "_build_version.txt"
 DOCUMENT_ASSETS = {"brand-tokens.css", "marketing.css", "trip-documents.css", "print-export.js"}
 
@@ -107,7 +107,7 @@ def create_preview_app(settings):
 
     @app.get("/preview/documents")
     def documents():
-        return page("Kolekcja północnych podróży", '''<p class="lead">Przykładowe kierunki: Islandia, Kanada i Norwegia. Neutralne placeholdery zastępują fotografie.</p>
+        return page("Kolekcje podróży 2027 — DEMO", '''<p class="lead">Nowe kierunki i inspiracje górskie. Dane są fikcyjne. Neutralne placeholdery zastępują fotografie.</p>
 <div class="cards"><section><h2>Nowe wyprawy</h2><p>Przejrzysta kolekcja kart kierunków.</p><a class="button" href="/preview/documents/collection?variant=new_trips">Podgląd A4 i druk →</a></section>
 <section><h2>Kolekcja tematyczna</h2><p>Wspólny temat z większą sekcją otwierającą.</p><a class="button" href="/preview/documents/collection?variant=theme_collection">Podgląd A4 i druk →</a></section></div>
 <aside>Edycja, uploady, oferty prywatne i materiały pilota są niedostępne w publicznym podglądzie.</aside>''')
@@ -118,8 +118,8 @@ def create_preview_app(settings):
         from app.document_studio.marketing import build_marketing
         from app.document_studio.rendering import render_marketing
         # Fixed, reviewed fixture IDs only. No local repository, drafts or upload directory.
-        campaign = Campaign.model_validate_json((FIXTURES / "campaigns/demo-northern-journeys.json").read_text(encoding="utf-8"))
-        trips = [Trip.model_validate_json((FIXTURES / f"trips/demo-{name}.json").read_text(encoding="utf-8")) for name in ("iceland", "canada", "norway")]
+        campaign = Campaign.model_validate_json((FIXTURES / f"campaigns/gt-v1-{variant}.json").read_text(encoding="utf-8"))
+        trips = [Trip.model_validate_json((FIXTURES / "trips" / (item.trip_id + ".json")).read_text(encoding="utf-8")) for item in campaign.items]
         campaign.layout_variant = variant
         campaign.hero_asset_id = None
         for item in campaign.items:

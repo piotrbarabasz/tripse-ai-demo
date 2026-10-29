@@ -1,23 +1,44 @@
-# Fikcyjne dane Document Studio
+# Przykładowe dokumenty TRIPSE — GT v1
 
-Wycieczki do Islandii (10 dni), Kanady (15 dni) i Norwegii (5 dni) oraz kampania
-obejmująca te trzy kierunki są wyłącznie materiałami demonstracyjnymi.
-Nazwy miejsc służą pokazaniu struktury programu; atrakcje, przejazdy, terminy,
-dostępność i usługi nie zostały zweryfikowane. Nie są to gotowe oferty.
-Brak danych uczestników, rezerwacji, kodów dostępu, cen i cudzych zdjęć.
+Aktywny zestaw to `gt-v1/`: pięć programów Trip, dwie kampanie oraz dziewięć
+receptur w `examples.json`. Receptura zawiera uzupełnienia dokumentu, nie surowy
+rekord DocumentDraft. `examples.build_example` korzysta z modeli, usługi tworzenia
+draftu i aktualnych sekcji. `retired.json` zawiera wyłącznie odciski treści czterech
+wycofanych źródeł; nie przywraca ich do katalogu.
 
-Wszystkie Trip i Campaign w tych katalogach mają jawne `data_origin: "demo"`.
-Kategorie Trip pozostają nieprzypisane; nie zgadujemy ich na podstawie kraju ani
-programu. Aby użyć fixture'a w nowym kreatorze/listach źródeł, włącz **Pokaż dane
-DEMO**, a przy konkretnej kategorii również **Pokaż wszystkie kategorie** lub
-**Uwzględnij nieprzypisane**. Dokument utworzony z fixture'a przejmuje pochodzenie demo.
+Otwórz `/documents/demo#examples` → przykład → **Utwórz kopię do edycji**.
+Podgląd wzorca niczego nie zapisuje. Kopia trafia do zwykłej biblioteki, istniejącego
+edytora i mechanizmu rewizji. Edycja kopii nie zmienia źródeł ani wzorca. GET
+katalogu działa również dla uprawnionego czytelnika; kopiowanie wymaga edytora.
 
-`document-presets/iceland.json` dodaje jawnie fikcyjne dane oferty i rozpiski:
-przykładową kwotę oznaczoną DEMO, role organizacyjne, fikcyjne godziny oraz
-kontakty `example.invalid`. Nie są ładowane do Trip; użytkownik wybiera je
-świadomie przy tworzeniu dokumentu. Nie zawierają prawdziwych osób ani sekretów.
+Wszystkie źródła i dokumenty mają `data_origin=demo`. Oznaczenie:
+**PRZYKŁAD DEMO — DANE FIKCYJNE**. Ceny są wyłącznie `example`; loty nie mają
+zmyślonych przewoźników/numerów, rezerwacje nie są potwierdzone. Hotel incentive
+jest wymaganym/proponowanym standardem, nie konkretną zarezerwowaną usługą.
+Nieznane odległości są `null`; jeden dzień ma jawnie fikcyjne liczby dydaktyczne.
+Wiedza pozostaje `unverified`, bez udawanych źródeł i dat sprawdzenia. Zdjęcia
+zastępują neutralne placeholdery. Adresy `example.invalid` są niedziałające.
 
-Pliki są walidowane przez te same modele Pydantic co lokalne dane użytkownika.
-Edytor nigdy ich nie nadpisuje: zapisuje lokalną wersję pod tym samym ID
-w `local-data/document-studio/`. Usunięcie lokalnej wersji przy zatrzymanej
-aplikacji przywraca widoczność fixture'a.
+Seed nie uruchamia się przy starcie aplikacji. Opcjonalne polecenia lokalne:
+
+```powershell
+.venv/Scripts/python.exe -m scripts.document_examples manifest
+.venv/Scripts/python.exe -m scripts.document_examples dry-run --data-root local-data/gt-demo-store
+.venv/Scripts/python.exe -m scripts.document_examples init --data-root local-data/gt-demo-store
+.venv/Scripts/python.exe -m scripts.document_examples verify --data-root local-data/gt-demo-store
+.venv/Scripts/python.exe -m scripts.document_examples obsolete --data-root local-data/document-studio
+```
+
+`init` tworzy tylko brakujące rekordy. Zgodny rekord daje `verified`; różnica daje
+`conflict_preserved` i kod wyjścia 2, bez nadpisania. Przerwany seed można powtórzyć.
+Źródła mogą być dostępne jako fallback fixture bez materializacji overlay.
+`obsolete` niczego nie usuwa: raportuje dokładne ID, zgodność z odciskiem starej
+ treści oraz dokumenty wymagające zachowania snapshotów/historii.
+
+Stare trzy programy, kampania i preset Islandii są wycofane z aplikacji. Ich
+historyczne kopie znajdują się wyłącznie w `tests/fixtures/legacy-demo/`, jawnie
+włączanych przez testy regresji. Nie są kopiowane do kontekstu obrazu Cloud Build.
+Nie usuwaj zapisanych dokumentów, assetów ani danych użytkownika po prefiksie
+lub samym `data_origin`.
+
+Pełny manifest, struktury, utrzymanie DEV i wyniki: [DOC_TEMPLATES_006](../docs/DOC_TEMPLATES_006.md).

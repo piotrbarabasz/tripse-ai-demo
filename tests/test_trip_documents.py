@@ -10,9 +10,21 @@ from tests.test_document_studio import client_for
 
 
 def create_draft(client, template, source="demo-iceland", demo=False):
-    response = client.post("/api/document-studio/drafts",json={"template_id":template,"source_type":"trip","source_id":source,"demo_example":demo})
+    response = client.post("/api/document-studio/drafts",json={"template_id":template,"source_type":"trip","source_id":source,"demo_example":False})
     assert response.status_code == 201,response.text
-    return response.json()
+    draft = response.json()
+    if demo:
+        from app.document_studio.examples import build_example
+        recipe = build_example('GT-DEMO-01' if template == 'offer.private' else 'GT-DEMO-05')
+        # Seed content through normal update, retaining the intentionally mutated legacy snapshot.
+        if template == 'offer.private':
+            body=update_body(draft);body['offer_data']=recipe.offer_data.model_dump(mode='json')
+        else:
+            body=update_body(draft);body['pilot_data']={'contacts':[{'label':'QA','value':'qa@example.invalid'}],'activity_bookings':[{'title':'Synthetic QA booking','status':'unknown'}]}
+        saved=client.put('/api/document-studio/drafts/'+draft['document_id'],json=body)
+        assert saved.status_code == 200,saved.text
+        draft=saved.json()
+    return draft
 
 
 def update_body(draft):
@@ -29,7 +41,7 @@ def test_one_trip_two_documents_privacy_and_restart(tmp_path):
         offer = create_draft(client,"offer.private",demo=True)
         pilot = create_draft(client,"pilot.basic",demo=True)
         assert offer["trip_snapshot"]["trip_id"] == pilot["trip_snapshot"]["trip_id"]
-        assert offer["template_version"] == pilot["template_version"] == "0.4.0"
+        assert offer["template_version"] == pilot["template_version"] == "0.5.0"
         assert offer["pilot_data"] is None
         assert offer["trip_snapshot"]["days"][0]["internal_notes"] == ""
         assert offer["trip_snapshot"]["days"][0]["stops"][0]["source"] is None
@@ -53,7 +65,7 @@ def test_one_trip_two_documents_privacy_and_restart(tmp_path):
         edited["day_overrides"]=[{"day_id":original["days"][0]["day_id"],"title":"Tytuł tylko w ofercie","description":"Opis redakcyjny"}]
         saved=client.put(f"/api/document-studio/drafts/{offer['document_id']}",json=edited)
         assert saved.status_code==200,saved.text
-        assert saved.json()["revision"]==2
+        assert saved.json()["revision"]==3
         assert client.put(f"/api/document-studio/drafts/{offer['document_id']}",json=edited).status_code==409
         assert client.get("/api/document-studio/trips/demo-iceland").json()==original
         assert "Tytuł tylko w ofercie" not in client.get(pilot_url).text
@@ -61,7 +73,7 @@ def test_one_trip_two_documents_privacy_and_restart(tmp_path):
         assert client.get(pilot_url,headers={"X-Forwarded-For":"127.0.0.1"}).status_code==403
         assert client.get(offer_url+"?output_format=social").status_code==422
     with client_for(tmp_path) as restarted:
-        assert restarted.get(f"/api/document-studio/drafts/{offer['document_id']}").json()["revision"]==2
+        assert restarted.get(f"/api/document-studio/drafts/{offer['document_id']}").json()["revision"]==3
         assert "Opis redakcyjny" in restarted.get(offer_url).text
         assert "PRIVATE_BOOKING_REF_9831" in restarted.get(pilot_url).text
 
@@ -126,3 +138,8 @@ def test_timezones_and_price_validation():
     assert event.start_local.hour==8 and event.end_local.hour==7
     with pytest.raises(ValidationError):OfferPrice(amount=-1)
     with pytest.raises(ValidationError):OfferPrice(amount="100",status="confirmed")
+
+
+# Explicit historical regression sources; active catalogue is tested in test_gt_templates.py.
+import pytest as _pytest
+pytestmark = _pytest.mark.usefixtures("legacy_document_sources")

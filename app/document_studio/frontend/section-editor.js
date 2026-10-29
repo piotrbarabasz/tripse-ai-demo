@@ -24,6 +24,7 @@ window.SectionEditor = (() => {
         html+=field(label,path+'.logistics.'+key,s.logistics[key],numeric?'number':'text',numeric?'number':'');
       }
       html+=select('Nocleg ze wspólnej logistyki',path+'.logistics.accommodation_entry_id',s.logistics.accommodation_entry_id,[['','Wpisy przypisane do dnia'],...(draft.pilot_data?.accommodations||[]).map(e=>[e.entry_id,e.title])],'nullable');
+      html+=select('Weryfikacja metryk',path+'.logistics.verification_status',s.logistics.verification_status,[['unverified','Niezweryfikowane'],['proposed','Proponowane'],['verified','Zweryfikowane — wymagane źródło'],['rejected','Odrzucone']])+area('Źródło pomiaru',path+'.logistics.source',s.logistics.source);
       html+=area('Notatki organizacyjne',path+'.logistics.organizational_notes',s.logistics.organizational_notes)+area('Ryzyka / plan B',path+'.logistics.plan_b',s.logistics.plan_b);
     }
     if(s.knowledge) {

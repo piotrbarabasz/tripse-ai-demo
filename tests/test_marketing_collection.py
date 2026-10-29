@@ -162,3 +162,8 @@ def test_animated_upload_is_rejected(tmp_path):
     image.save(data,format="WEBP",save_all=True,append_images=[Image.new("RGB",(20,20),"blue")],duration=100)
     with pytest.raises(ValueError,match="statyczne"):
         AssetStore(JsonRepository(tmp_path)).upload(data.getvalue(),"image/webp","animation.webp",True)
+
+
+# Explicit historical regression sources; active catalogue is tested in test_gt_templates.py.
+import pytest as _pytest
+pytestmark = _pytest.mark.usefixtures("legacy_document_sources")

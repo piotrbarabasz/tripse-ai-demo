@@ -257,3 +257,8 @@ def test_history_metadata_does_not_download_full_snapshots(store,monkeypatch):
         monkeypatch.setattr(store.repo,'get',fail)
         monkeypatch.setattr(store.repo,'_historical',fail)
     assert [r.revision for r in store.repo.list_revisions(doc.document_id)]==[2,1]
+
+
+# Explicit historical regression sources; active catalogue is tested in test_gt_templates.py.
+import pytest as _pytest
+pytestmark = _pytest.mark.usefixtures("legacy_document_sources")

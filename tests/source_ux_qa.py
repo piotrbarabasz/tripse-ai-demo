@@ -10,6 +10,8 @@ from playwright.sync_api import expect, sync_playwright
 
 
 def run_sources():
+    import os
+    os.environ['DOCUMENT_STUDIO_FIXTURES_PATH']=str(ROOT/'tests/fixtures/legacy-demo')  # explicit historical regression dataset
     from test_cloud_demo import cloud_demo, ORIGIN
     artifacts=ROOT/'local-data'/'source-ux-qa';artifacts.mkdir(parents=True,exist_ok=True)
     with pytest.MonkeyPatch.context() as patch:

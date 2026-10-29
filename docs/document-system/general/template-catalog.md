@@ -1,8 +1,11 @@
 # Katalog szablonów
 
-Stan implementacji lokalnej 2026-10-28: Wszystkie osiem ID poniżej ma zaimplementowany edytor i podgląd sekcyjny 0.4.0. Marketing używa jednego silnika z dwoma wariantami. Katalog UI: `/documents/demo#templates`.
+Stan implementacji lokalnej 2026-10-28: Wszystkie osiem ID poniżej ma zaimplementowany edytor i podgląd sekcyjny 0.5.0. Marketing używa jednego silnika z dwoma wariantami. Katalog UI: `/documents/demo#templates`.
 
 Szczegóły operacyjne: [Document Studio](../../DOCUMENT_STUDIO.md).
+
+Katalog gotowych dziewięciu przykładów: `/documents/demo#examples`;
+[manifest i zakres GT](../../DOC_TEMPLATES_006.md).
 
 ## Konwencja
 

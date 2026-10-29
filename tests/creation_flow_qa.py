@@ -11,6 +11,8 @@ from playwright.sync_api import expect,sync_playwright
 
 
 def run_flow():
+    import os
+    os.environ['DOCUMENT_STUDIO_FIXTURES_PATH']=str(ROOT/'tests/fixtures/legacy-demo')  # explicit historical regression dataset
     from test_cloud_demo import cloud_demo,ORIGIN
     out=ROOT/'local-data/creation-flow-qa';out.mkdir(parents=True,exist_ok=True)
     with pytest.MonkeyPatch.context() as patch:

@@ -45,3 +45,6 @@ body[class*="variant-pilot-"] .offer-cover .eyebrow{color:var(--brand-muted)}
 body[class*="variant-pilot-"] .offer-cover h1{font-size:30px}
 body[class*="variant-pilot-"] .document-footer strong{color:var(--brand-error)}
 @media print{.operation-entry thead{display:table-header-group}.operation-entry tr{break-inside:avoid}}
+
+/* Preserved whitespace must participate in wrapping in the final cascade. */
+.document-section p,.document-section li,.operation-entry td,.operation-entry td p{white-space:break-spaces}

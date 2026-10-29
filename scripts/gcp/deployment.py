@@ -310,7 +310,7 @@ def source_files(sha):
     with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
         for member in tar.getmembers():
             name = member.name
-            allowed = name in {"Dockerfile", "requirements.txt", ".dockerignore", ".gcloudignore", "demo-fixtures/document-presets/iceland.json"} or name.startswith(("app/", "demo-fixtures/trips/", "demo-fixtures/campaigns/"))
+            allowed = name in {"Dockerfile", "requirements.txt", ".dockerignore", ".gcloudignore"} or name.startswith(("app/", "demo-fixtures/gt-v1/"))
             if not allowed or member.isdir():
                 continue
             path = Path(name)

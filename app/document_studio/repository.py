@@ -35,7 +35,7 @@ class Repository(Protocol):
 class JsonRepository:
     def __init__(self, root=None, fixtures=None):
         self.root = Path(root) if root is not None else ROOT / "local-data" / "document-studio"
-        self.fixtures = Path(fixtures) if fixtures is not None else ROOT / "demo-fixtures"
+        self.fixtures = Path(fixtures) if fixtures is not None else Path(os.getenv("DOCUMENT_STUDIO_FIXTURES_PATH", str(ROOT / "demo-fixtures" / "gt-v1")))
         self.lock = _ROOT_LOCKS.setdefault(str(self.root.resolve()), RLock())
 
     def initialize(self):

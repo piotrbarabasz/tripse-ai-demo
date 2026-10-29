@@ -1,0 +1,1796 @@
+[
+  {
+    "example_id": "GT-DEMO-01",
+    "document_id": "gt-demo-01",
+    "template_id": "offer.private",
+    "layout_variant": "standard",
+    "source_type": "trip",
+    "source_id": "gt-v1-iceland",
+    "title": "Islandia — południowy szlak, 7 dni",
+    "fields": {
+      "date_label": "Sezon 2027 — FIKCYJNY TERMIN DEMO, dokładne daty do ustalenia",
+      "offer_data": {
+        "summary": "Islandia — południowy szlak, 7 dni. Założenie: 6 osób, tempo umiarkowane, program możliwy do dostosowania. Koncept demonstracyjny bez rezerwacji.",
+        "highlights": [
+          "Reykjavík — spokojny początek",
+          "Złoty Krąg — krajobraz i woda",
+          "Południowe wybrzeże — rytm wodospadów",
+          "Vík — wybrzeże bez pośpiechu"
+        ],
+        "accommodation": "Proponowany standard: pokoje dwuosobowe, śniadania do uzgodnienia. Lokalizacje zgodnie z etapami programu; żaden obiekt nie jest zarezerwowany.",
+        "transport": "Proponowany samochód / bus, zależnie od uzgodnionej formuły. Loty i transfery nie zostały zakupione.",
+        "included": [
+          "DEMO: opracowanie programu i materiałów podróży",
+          "DEMO: proponowane noclegi ze śniadaniem — zakres do kalkulacji"
+        ],
+        "excluded": [
+          "Bilety lotnicze i wydatki osobiste",
+          "Opcjonalne aktywności i świadczenia nieuzgodnione"
+        ],
+        "price": {
+          "status": "example",
+          "amount": 12900,
+          "currency": "PLN",
+          "unit": "person",
+          "participant_count": 6,
+          "assumptions": "FIKCYJNA KALKULACJA dla 6 osób. Nie jest ofertą handlową. Brak terminu ważności; płatności i anulacje do osobnego uzgodnienia. Zakres usług i dostępność wymagają potwierdzenia."
+        },
+        "cta": "Omów wariant programu z opiekunem projektu TRIPSE. Kontakt demonstracyjny: studio@example.invalid — nie wysyłaj zapytania."
+      },
+      "offer_details": {},
+      "day_overrides": [
+        {
+          "day_id": "iceland-day-1",
+          "title": "Reykjavík — spokojny początek",
+          "description": "Spacer orientacyjny po centrum i wspólne omówienie tempa podróży. Wieczór pozostaje wolny po przylocie; godzin nie ustalono."
+        },
+        {
+          "day_id": "iceland-day-2",
+          "title": "Złoty Krąg — krajobraz i woda",
+          "description": "Dwa postoje krajobrazowe z przerwą na obiad. Wariant spacerów i dojazdy wymagają sprawdzenia przed wyjazdem."
+        },
+        {
+          "day_id": "iceland-day-3",
+          "title": "Południowe wybrzeże — rytm wodospadów",
+          "description": "Dzień przeznaczony na oglądanie wodospadów z dostępnych punktów. Bez obietnicy wejścia na ścieżki zależne od warunków."
+        },
+        {
+          "day_id": "iceland-day-4",
+          "title": "Vík — wybrzeże bez pośpiechu",
+          "description": "Poranny spacer w miejscowości, następnie planowany postój widokowy nad oceanem. Zasady dostępu i warunki przy brzegu do weryfikacji."
+        },
+        {
+          "day_id": "iceland-day-5",
+          "title": "Skaftafell — dzień na własne tempo",
+          "description": "Propozycja krótszego spaceru oraz dłuższego wariantu dla chętnych. Dobór trasy zależy od kondycji i bieżących ograniczeń."
+        },
+        {
+          "day_id": "iceland-day-6",
+          "title": "Jökulsárlón — obserwacja krajobrazu",
+          "description": "Obserwacja laguny z lądu bez deklaracji rejsu. Popołudnie na odpoczynek i kolację; obiekt noclegowy nie został wybrany."
+        },
+        {
+          "day_id": "iceland-day-7",
+          "title": "Powrót — czas na podsumowanie",
+          "description": "Dojazd w kierunku lotniska z zapasem ustalanym po wyborze lotu. Zakończenie programu, bez dodatkowej płatnej atrakcji."
+        }
+      ]
+    },
+    "section_fields": {}
+  },
+  {
+    "example_id": "GT-DEMO-02",
+    "document_id": "gt-demo-02",
+    "template_id": "offer.self_guide",
+    "layout_variant": "standard",
+    "source_type": "trip",
+    "source_id": "gt-v1-roadtrip",
+    "title": "Kanada i USA — Self-Guide, 8 dni",
+    "fields": {
+      "date_label": "Sezon 2027 — FIKCYJNY TERMIN DEMO, dokładne daty do ustalenia",
+      "offer_data": {
+        "summary": "Kanada i USA — Self-Guide, 8 dni. Założenie: 4 osób, tempo umiarkowane, program możliwy do dostosowania. Koncept demonstracyjny bez rezerwacji.",
+        "highlights": [
+          "Vancouver — odbiór i orientacja",
+          "Whistler — etap górski",
+          "Kamloops — dzień wielu postojów",
+          "Revelstoke — dolina i las"
+        ],
+        "accommodation": "Proponowany standard: pokoje dwuosobowe, śniadania do uzgodnienia. Lokalizacje zgodnie z etapami programu; żaden obiekt nie jest zarezerwowany.",
+        "transport": "Proponowany samochód / bus, zależnie od uzgodnionej formuły. Loty i transfery nie zostały zakupione.",
+        "included": [
+          "DEMO: opracowanie programu i materiałów podróży",
+          "DEMO: proponowane noclegi ze śniadaniem — zakres do kalkulacji"
+        ],
+        "excluded": [
+          "Bilety lotnicze i wydatki osobiste",
+          "Opcjonalne aktywności i świadczenia nieuzgodnione"
+        ],
+        "price": {
+          "status": "example",
+          "amount": 14800,
+          "currency": "PLN",
+          "unit": "person",
+          "participant_count": 4,
+          "assumptions": "FIKCYJNA KALKULACJA dla 4 osób. Nie jest ofertą handlową. Brak terminu ważności; płatności i anulacje do osobnego uzgodnienia. Zakres usług i dostępność wymagają potwierdzenia."
+        },
+        "cta": "Omów wariant programu z opiekunem projektu TRIPSE. Kontakt demonstracyjny: studio@example.invalid — nie wysyłaj zapytania."
+      },
+      "offer_details": {
+        "route_summary": {
+          "start": "Vancouver",
+          "end": "Kalispell",
+          "regions": [
+            "Kolumbia Brytyjska",
+            "Alberta",
+            "Montana"
+          ],
+          "intensity": "Samodzielny roadtrip, dni przejazdowe przeplatane spacerami. Metryki pozostają nieustalone.",
+          "drive_km": null,
+          "walk_km": null,
+          "verification_status": "unverified",
+          "source": ""
+        },
+        "organization_scope": "DEMO: projekt programu i propozycja etapów. Żadna rezerwacja nie została wykonana.",
+        "self_arrangements": "Podróżny prowadzi auto, sprawdza dokumenty, samodzielnie realizuje rezerwacje i dostosowuje dzień do warunków. Bez pilota na miejscu.",
+        "materials": "Plan etapów i lista miejsc. Mapy offline oraz linki mają zostać przygotowane po weryfikacji; nie są jeszcze dostarczonym świadczeniem.",
+        "support": "DEMO: kanał i godziny kontaktu do uzgodnienia przed zawarciem umowy. Brak gwarancji pomocy całodobowej lub opieki na miejscu.",
+        "online_briefing": "Opcjonalna propozycja rozmowy przed wyjazdem — do uzgodnienia."
+      },
+      "day_overrides": [
+        {
+          "day_id": "roadtrip-day-1",
+          "title": "Vancouver — odbiór i orientacja",
+          "description": "Odbiór auta dopiero po indywidualnym uzgodnieniu umowy. Spacer w parku i przygotowanie map offline; nocleg w rejonie miasta."
+        },
+        {
+          "day_id": "roadtrip-day-2",
+          "title": "Whistler — etap górski",
+          "description": "Przejazd z przerwami widokowymi. Wariant spacerowy dobrany po sprawdzeniu pogody, parkingów i dostępności dróg."
+        },
+        {
+          "day_id": "roadtrip-day-3",
+          "title": "Kamloops — dzień wielu postojów",
+          "description": "Etap z kilkoma przerwami na odpoczynek, posiłek i krajobraz. Szczegółowy harmonogram jest fikcyjnym ćwiczeniem, wymaga przeliczenia trasy."
+        },
+        {
+          "day_id": "roadtrip-day-4",
+          "title": "Revelstoke — dolina i las",
+          "description": "Spokojniejszy przejazd z krótkim spacerem w docelowej miejscowości. Zakupy i przygotowanie kolejnego dnia we własnym zakresie."
+        },
+        {
+          "day_id": "roadtrip-day-5",
+          "title": "Banff — zmiana strefy",
+          "description": "Dzień przejazdowy z jawną zmianą strefy na America/Edmonton. Rezerwa czasu i sprawdzenie sezonowych ograniczeń pozostają obowiązkowym zadaniem organizatora."
+        },
+        {
+          "day_id": "roadtrip-day-6",
+          "title": "Waterton — jeziorny wariant",
+          "description": "Planowany odcinek w kierunku południowym. Alternatywa przy pogodzie: skrócony spacer i czas wolny zamiast dłuższej wędrówki."
+        },
+        {
+          "day_id": "roadtrip-day-7",
+          "title": "Glacier — granica i formalności",
+          "description": "Przekroczenie granicy wyłącznie po osobnym sprawdzeniu wymagań. Nie deklarujemy otwartych dróg, pozwoleń ani czasu odprawy."
+        },
+        {
+          "day_id": "roadtrip-day-8",
+          "title": "Kalispell — zamknięcie podróży",
+          "description": "Zwrot auta i transfer zależne od potwierdzonej umowy i lotu. Popołudnie bez napiętego programu; ewentualny dodatkowy nocleg do ustalenia."
+        }
+      ]
+    },
+    "section_fields": {}
+  },
+  {
+    "example_id": "GT-DEMO-03",
+    "document_id": "gt-demo-03",
+    "template_id": "offer.school",
+    "layout_variant": "standard",
+    "source_type": "trip",
+    "source_id": "gt-v1-school",
+    "title": "Polska — laboratorium przyrody, 3 dni",
+    "fields": {
+      "date_label": "Sezon 2027 — FIKCYJNY TERMIN DEMO, dokładne daty do ustalenia",
+      "offer_data": {
+        "summary": "Polska — laboratorium przyrody, 3 dni. Założenie: 24 osób, tempo umiarkowane, program możliwy do dostosowania. Koncept demonstracyjny bez rezerwacji.",
+        "highlights": [
+          "Kielce — obserwacja i pytania",
+          "Chęciny — teren i współpraca",
+          "Świętokrzyskie — podsumowanie terenowe"
+        ],
+        "accommodation": "Proponowany standard: pokoje dwuosobowe, śniadania do uzgodnienia. Lokalizacje zgodnie z etapami programu; żaden obiekt nie jest zarezerwowany.",
+        "transport": "Proponowany autokar z przerwami i uzgodnionym planem pracy kierowcy. Loty i transfery nie zostały zakupione.",
+        "included": [
+          "DEMO: opracowanie programu i materiałów podróży",
+          "DEMO: proponowane noclegi ze śniadaniem — zakres do kalkulacji"
+        ],
+        "excluded": [
+          "Bilety lotnicze i wydatki osobiste",
+          "Opcjonalne aktywności i świadczenia nieuzgodnione"
+        ],
+        "price": {
+          "status": "example",
+          "amount": 1650,
+          "currency": "PLN",
+          "unit": "person",
+          "participant_count": 24,
+          "assumptions": "FIKCYJNA KALKULACJA dla 24 osób. Nie jest ofertą handlową. Brak terminu ważności; płatności i anulacje do osobnego uzgodnienia. Koszty opiekunów niewliczone; zasady kalkulacji wymagają ustaleń ze szkołą."
+        },
+        "cta": "Omów wariant programu z opiekunem projektu TRIPSE. Kontakt demonstracyjny: studio@example.invalid — nie wysyłaj zapytania."
+      },
+      "offer_details": {
+        "age_group": "Klasy VII–VIII — założenie demonstracyjne",
+        "group_size": 24,
+        "supervision": "DEMO: szkoła wyznacza opiekunów; podział odpowiedzialności z organizatorem pozostaje do uzgodnienia. Brak deklaracji spełnienia standardu prawnego.",
+        "safety_requirements": "Przed wyjazdem uzgodnić ograniczenia aktywności, wyposażenie, posiłki i procedurę zmiany pogody. W przykładzie nie ma danych dzieci ani informacji medycznych.",
+        "workshops": "Dziennik obserwacji, szkic krajobrazu i prezentacja zespołowa. Prowadzący zajęcia nie został potwierdzony.",
+        "goals": [
+          {
+            "pillar": "education",
+            "day_id": "school-day-1",
+            "stop_id": "school-day-1-stop-1",
+            "description": "Formułowanie pytań o krajobraz na podstawie własnego szkicu."
+          },
+          {
+            "pillar": "nature",
+            "day_id": "school-day-2",
+            "stop_id": "school-day-2-stop-1",
+            "description": "Porównanie obserwacji terenowych bez zbierania okazów."
+          },
+          {
+            "pillar": "integration",
+            "day_id": "school-day-3",
+            "stop_id": "school-day-3-stop-1",
+            "description": "Wspólne przygotowanie plakatu i podział ról w zespole."
+          }
+        ]
+      },
+      "day_overrides": [
+        {
+          "day_id": "school-day-1",
+          "title": "Kielce — obserwacja i pytania",
+          "description": "Praca w małych zespołach: szkicowanie krajobrazu i tworzenie pytań do przewodnika. Przerwa obiadowa i spokojny spacer po mieście."
+        },
+        {
+          "day_id": "school-day-2",
+          "title": "Chęciny — teren i współpraca",
+          "description": "Zadanie orientacyjne w uzgodnionym, dostępnym terenie. Uczniowie porównują własne obserwacje, a opiekunowie uzgadniają granice aktywności."
+        },
+        {
+          "day_id": "school-day-3",
+          "title": "Świętokrzyskie — podsumowanie terenowe",
+          "description": "Krótka trasa przyrodnicza dobrana do grupy, wspólny plakat obserwacji i prezentacja zespołów. Po obiedzie planowany powrót autokarem."
+        }
+      ]
+    },
+    "section_fields": {}
+  },
+  {
+    "example_id": "GT-DEMO-04",
+    "document_id": "gt-demo-04",
+    "template_id": "offer.incentive",
+    "layout_variant": "standard",
+    "source_type": "trip",
+    "source_id": "gt-v1-incentive",
+    "title": "Chorwacja — przestrzeń dla zespołu, 4 dni",
+    "fields": {
+      "date_label": "Sezon 2027 — FIKCYJNY TERMIN DEMO, dokładne daty do ustalenia",
+      "offer_data": {
+        "summary": "Chorwacja — przestrzeń dla zespołu, 4 dni. Założenie: 18 osób, tempo umiarkowane, program możliwy do dostosowania. Koncept demonstracyjny bez rezerwacji.",
+        "highlights": [
+          "Split — wspólny początek",
+          "Trogir — współpraca w praktyce",
+          "Omiš — warsztat i wybór",
+          "Split — wnioski na powrót"
+        ],
+        "accommodation": "Proponowany standard: pokoje dwuosobowe, śniadania do uzgodnienia. Lokalizacje zgodnie z etapami programu; żaden obiekt nie jest zarezerwowany.",
+        "transport": "Proponowany samochód / bus, zależnie od uzgodnionej formuły. Loty i transfery nie zostały zakupione.",
+        "included": [
+          "DEMO: opracowanie programu i materiałów podróży",
+          "DEMO: proponowane noclegi ze śniadaniem — zakres do kalkulacji"
+        ],
+        "excluded": [
+          "Bilety lotnicze i wydatki osobiste",
+          "Opcjonalne aktywności i świadczenia nieuzgodnione"
+        ],
+        "price": {
+          "status": "example",
+          "amount": 6200,
+          "currency": "PLN",
+          "unit": "person",
+          "participant_count": 18,
+          "assumptions": "FIKCYJNA KALKULACJA dla 18 osób. Nie jest ofertą handlową. Brak terminu ważności; płatności i anulacje do osobnego uzgodnienia. Zakres usług i dostępność wymagają potwierdzenia."
+        },
+        "cta": "Omów wariant programu z opiekunem projektu TRIPSE. Kontakt demonstracyjny: studio@example.invalid — nie wysyłaj zapytania."
+      },
+      "offer_details": {
+        "group_size": 18,
+        "hotel": {
+          "name_or_standard": "Proponowany standard hotelu 4* — bez wskazania konkretnego obiektu",
+          "location": "Rejon Splitu, połączenie z planem transferów do sprawdzenia",
+          "room_types": "Założenie: pokoje dwuosobowe; single jako opcja do wyceny",
+          "amenities": [
+            "Oczekiwana restauracja — do potwierdzenia",
+            "Przestrzeń spotkań — wymaganie, nie gwarancja"
+          ],
+          "common_spaces": "Oczekiwana wspólna przestrzeń wieczorna; rezerwacja nie istnieje.",
+          "conference_rooms": "Sala dla 18 osób jako kryterium wyboru obiektu; wyposażenie i dostępność do sprawdzenia.",
+          "status": "proposed"
+        },
+        "team_building": "Gra współpracy w Trogirze i dobrowolne podsumowanie doświadczeń. Bez gwarantowania efektów zespołowych.",
+        "workshops": "Propozycja moderowanego warsztatu komunikacji w dniu trzecim; trener i sala do ustalenia.",
+        "meals_events": "Śniadania w proponowanym standardzie oraz dwie wspólne kolacje do kalkulacji; menu, alergeny i dostępność do uzgodnienia.",
+        "variants": "A: program spacerowy; B: dodatkowy dzień odpoczynku. Oba warianty wymagają osobnej wyceny."
+      },
+      "day_overrides": [
+        {
+          "day_id": "incentive-day-1",
+          "title": "Split — wspólny początek",
+          "description": "Powitanie i spacer w małych grupach. Kolacja otwierająca z rozmową o oczekiwaniach; lokal oraz menu pozostają propozycją."
+        },
+        {
+          "day_id": "incentive-day-2",
+          "title": "Trogir — współpraca w praktyce",
+          "description": "Autorska gra zespołowa bez rywalizacji sportowej. Po obiedzie moderowane podsumowanie i swobodny czas na odpoczynek."
+        },
+        {
+          "day_id": "incentive-day-3",
+          "title": "Omiš — warsztat i wybór",
+          "description": "Przedpołudniowy warsztat komunikacji, po nim wariant spacerowy lub odpoczynek. Nie zakładamy raftingu, rejsu ani dostępu do konkretnej sali."
+        },
+        {
+          "day_id": "incentive-day-4",
+          "title": "Split — wnioski na powrót",
+          "description": "Sesja podsumowania z dobrowolną listą wniosków dla zespołu. Transfer po uzgodnieniu rozkładu podróży; brak obietnicy rezultatów szkoleniowych."
+        }
+      ]
+    },
+    "section_fields": {}
+  },
+  {
+    "example_id": "GT-DEMO-05",
+    "document_id": "gt-demo-05",
+    "template_id": "pilot.basic",
+    "layout_variant": "standard",
+    "source_type": "trip",
+    "source_id": "gt-v1-iceland",
+    "title": "Islandia — rozpiska pilota, 7 dni",
+    "fields": {
+      "date_label": "01–07.06.2027 — FIKCYJNY TERMIN DEMO",
+      "pilot_data": {
+        "leader": "Rola pilota DEMO — osoba nieprzypisana",
+        "participant_count": 6,
+        "meeting": "DEMO: punkt w hali przylotów; godzina po ustaleniu lotów, lokalna strefa według dnia.",
+        "flights": [
+          {
+            "entry_id": "iceland-flight-0-0",
+            "day_id": "iceland-day-1",
+            "title": "Przylot — Grupa A — DEMO",
+            "status": "planned",
+            "origin": "Lotnisko do ustalenia",
+            "destination": "Reykjavík",
+            "travel_group": "Grupa A — DEMO",
+            "details": "Lot nie został wybrany; przewoźnik, numer i godziny pozostają puste. To demonstracja podgrup, nie rezerwacja."
+          },
+          {
+            "entry_id": "iceland-flight-0-6",
+            "day_id": "iceland-day-7",
+            "title": "Powrót — Grupa A — DEMO",
+            "status": "planned",
+            "origin": "Keflavík",
+            "destination": "Lotnisko do ustalenia",
+            "travel_group": "Grupa A — DEMO",
+            "details": "Lot nie został wybrany; przewoźnik, numer i godziny pozostają puste. To demonstracja podgrup, nie rezerwacja."
+          },
+          {
+            "entry_id": "iceland-flight-1-0",
+            "day_id": "iceland-day-1",
+            "title": "Przylot — Grupa B — DEMO",
+            "status": "planned",
+            "origin": "Lotnisko do ustalenia",
+            "destination": "Reykjavík",
+            "travel_group": "Grupa B — DEMO",
+            "details": "Lot nie został wybrany; przewoźnik, numer i godziny pozostają puste. To demonstracja podgrup, nie rezerwacja."
+          },
+          {
+            "entry_id": "iceland-flight-1-6",
+            "day_id": "iceland-day-7",
+            "title": "Powrót — Grupa B — DEMO",
+            "status": "planned",
+            "origin": "Keflavík",
+            "destination": "Lotnisko do ustalenia",
+            "travel_group": "Grupa B — DEMO",
+            "details": "Lot nie został wybrany; przewoźnik, numer i godziny pozostają puste. To demonstracja podgrup, nie rezerwacja."
+          }
+        ],
+        "transfers": [
+          {
+            "entry_id": "iceland-day-1-transfer",
+            "day_id": "iceland-day-1",
+            "title": "Przejazd: Reykjavík — spokojny początek",
+            "status": "planned",
+            "details": "Fikcyjny plan transferu; pojazd, kierowca i czas do weryfikacji."
+          },
+          {
+            "entry_id": "iceland-day-7-transfer",
+            "day_id": "iceland-day-7",
+            "title": "Przejazd: Powrót — czas na podsumowanie",
+            "status": "planned",
+            "details": "Fikcyjny plan transferu; pojazd, kierowca i czas do weryfikacji."
+          }
+        ],
+        "accommodations": [
+          {
+            "entry_id": "iceland-day-1-hotel",
+            "day_id": "iceland-day-1",
+            "title": "Stary port — proponowany standard DEMO",
+            "start_local": "2027-06-01T18:00:00",
+            "end_local": "2027-06-02T08:00:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          },
+          {
+            "entry_id": "iceland-day-2-hotel",
+            "day_id": "iceland-day-2",
+            "title": "Gullfoss — proponowany standard DEMO",
+            "start_local": "2027-06-02T18:00:00",
+            "end_local": "2027-06-03T08:00:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          },
+          {
+            "entry_id": "iceland-day-3-hotel",
+            "day_id": "iceland-day-3",
+            "title": "Skógafoss — proponowany standard DEMO",
+            "start_local": "2027-06-03T18:00:00",
+            "end_local": "2027-06-04T08:00:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          },
+          {
+            "entry_id": "iceland-day-4-hotel",
+            "day_id": "iceland-day-4",
+            "title": "Reynisfjara — proponowany standard DEMO",
+            "start_local": "2027-06-04T18:00:00",
+            "end_local": "2027-06-05T08:00:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          },
+          {
+            "entry_id": "iceland-day-5-hotel",
+            "day_id": "iceland-day-5",
+            "title": "Svartifoss — proponowany standard DEMO",
+            "start_local": "2027-06-05T18:00:00",
+            "end_local": "2027-06-06T08:00:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          },
+          {
+            "entry_id": "iceland-day-6-hotel",
+            "day_id": "iceland-day-6",
+            "title": "Höfn — proponowany standard DEMO",
+            "start_local": "2027-06-06T18:00:00",
+            "end_local": "2027-06-07T08:00:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          }
+        ],
+        "activity_bookings": [
+          {
+            "entry_id": "iceland-day-2-booking",
+            "day_id": "iceland-day-2",
+            "title": "Þingvellir — sprawdzenie zasad wejścia",
+            "status": "unknown",
+            "details": "Brak biletu; konieczność rezerwacji i dostępność do sprawdzenia."
+          },
+          {
+            "entry_id": "iceland-day-4-booking",
+            "day_id": "iceland-day-4",
+            "title": "Vík — sprawdzenie zasad wejścia",
+            "status": "unknown",
+            "details": "Brak biletu; konieczność rezerwacji i dostępność do sprawdzenia."
+          }
+        ],
+        "schedule": [
+          {
+            "entry_id": "iceland-day-1-event-0",
+            "day_id": "iceland-day-1",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-01T08:00:00",
+            "end_local": "2027-06-01T08:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-1-event-5",
+            "day_id": "iceland-day-1",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-01T13:00:00",
+            "end_local": "2027-06-01T13:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-2-event-0",
+            "day_id": "iceland-day-2",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-02T08:00:00",
+            "end_local": "2027-06-02T08:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-2-event-5",
+            "day_id": "iceland-day-2",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-02T13:00:00",
+            "end_local": "2027-06-02T13:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-3-event-0",
+            "day_id": "iceland-day-3",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-03T08:00:00",
+            "end_local": "2027-06-03T08:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-3-event-5",
+            "day_id": "iceland-day-3",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-03T13:00:00",
+            "end_local": "2027-06-03T13:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-4-event-0",
+            "day_id": "iceland-day-4",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-04T08:00:00",
+            "end_local": "2027-06-04T08:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-4-event-5",
+            "day_id": "iceland-day-4",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-04T13:00:00",
+            "end_local": "2027-06-04T13:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-5-event-0",
+            "day_id": "iceland-day-5",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-05T08:00:00",
+            "end_local": "2027-06-05T08:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-5-event-5",
+            "day_id": "iceland-day-5",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-05T13:00:00",
+            "end_local": "2027-06-05T13:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-6-event-0",
+            "day_id": "iceland-day-6",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-06T08:00:00",
+            "end_local": "2027-06-06T08:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-6-event-5",
+            "day_id": "iceland-day-6",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-06T13:00:00",
+            "end_local": "2027-06-06T13:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-7-event-0",
+            "day_id": "iceland-day-7",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-07T08:00:00",
+            "end_local": "2027-06-07T08:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "iceland-day-7-event-5",
+            "day_id": "iceland-day-7",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-07T13:00:00",
+            "end_local": "2027-06-07T13:40:00",
+            "time_zone": "Atlantic/Reykjavik",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          }
+        ],
+        "contacts": [
+          {
+            "label": "Koordynacja projektu — rola DEMO",
+            "value": "koordynacja@example.invalid — fikcyjny, niedziałający adres"
+          },
+          {
+            "label": "Kontakt awaryjny organizatora — do ustalenia",
+            "value": "Brak rzeczywistego numeru. Uzupełnić po zatwierdzeniu procedury."
+          }
+        ],
+        "open_items": [
+          {
+            "entry_id": "iceland-day-1-open",
+            "day_id": "iceland-day-1",
+            "title": "Koordynator DEMO: zweryfikować etap 1",
+            "status": "planned",
+            "details": "Przed akceptacją sprawdzić nocleg, posiłki, przejazdy i dostępność. Termin: przed zatwierdzeniem programu."
+          },
+          {
+            "entry_id": "iceland-day-2-open",
+            "day_id": "iceland-day-2",
+            "title": "Koordynator DEMO: zweryfikować etap 2",
+            "status": "planned",
+            "details": "Przed akceptacją sprawdzić nocleg, posiłki, przejazdy i dostępność. Termin: przed zatwierdzeniem programu."
+          },
+          {
+            "entry_id": "iceland-day-3-open",
+            "day_id": "iceland-day-3",
+            "title": "Koordynator DEMO: zweryfikować etap 3",
+            "status": "planned",
+            "details": "Przed akceptacją sprawdzić nocleg, posiłki, przejazdy i dostępność. Termin: przed zatwierdzeniem programu."
+          }
+        ],
+        "internal_notes": "DEMO: nie ma zakupionych usług. Przed użyciem w terenie sprawdzić wszystkie godziny, warunki trasy i zgody. Bez PIN-ów, danych osób i numerów rezerwacji."
+      },
+      "day_overrides": [
+        {
+          "day_id": "iceland-day-1",
+          "title": "Reykjavík — spokojny początek",
+          "description": "Spacer orientacyjny po centrum i wspólne omówienie tempa podróży. Wieczór pozostaje wolny po przylocie; godzin nie ustalono."
+        },
+        {
+          "day_id": "iceland-day-2",
+          "title": "Złoty Krąg — krajobraz i woda",
+          "description": "Dwa postoje krajobrazowe z przerwą na obiad. Wariant spacerów i dojazdy wymagają sprawdzenia przed wyjazdem."
+        },
+        {
+          "day_id": "iceland-day-3",
+          "title": "Południowe wybrzeże — rytm wodospadów",
+          "description": "Dzień przeznaczony na oglądanie wodospadów z dostępnych punktów. Bez obietnicy wejścia na ścieżki zależne od warunków."
+        },
+        {
+          "day_id": "iceland-day-4",
+          "title": "Vík — wybrzeże bez pośpiechu",
+          "description": "Poranny spacer w miejscowości, następnie planowany postój widokowy nad oceanem. Zasady dostępu i warunki przy brzegu do weryfikacji."
+        },
+        {
+          "day_id": "iceland-day-5",
+          "title": "Skaftafell — dzień na własne tempo",
+          "description": "Propozycja krótszego spaceru oraz dłuższego wariantu dla chętnych. Dobór trasy zależy od kondycji i bieżących ograniczeń."
+        },
+        {
+          "day_id": "iceland-day-6",
+          "title": "Jökulsárlón — obserwacja krajobrazu",
+          "description": "Obserwacja laguny z lądu bez deklaracji rejsu. Popołudnie na odpoczynek i kolację; obiekt noclegowy nie został wybrany."
+        },
+        {
+          "day_id": "iceland-day-7",
+          "title": "Powrót — czas na podsumowanie",
+          "description": "Dojazd w kierunku lotniska z zapasem ustalanym po wyborze lotu. Zakończenie programu, bez dodatkowej płatnej atrakcji."
+        }
+      ]
+    },
+    "section_fields": {}
+  },
+  {
+    "example_id": "GT-DEMO-06",
+    "document_id": "gt-demo-06",
+    "template_id": "pilot.advanced",
+    "layout_variant": "standard",
+    "source_type": "trip",
+    "source_id": "gt-v1-roadtrip",
+    "title": "Kanada i USA — plan operacyjny, 8 dni",
+    "fields": {
+      "date_label": "01–08.06.2027 — FIKCYJNY TERMIN DEMO",
+      "pilot_data": {
+        "leader": "Rola pilota DEMO — osoba nieprzypisana",
+        "participant_count": 4,
+        "meeting": "DEMO: punkt w hali przylotów; godzina po ustaleniu lotów, lokalna strefa według dnia.",
+        "flights": [
+          {
+            "entry_id": "roadtrip-flight-0-0",
+            "day_id": "roadtrip-day-1",
+            "title": "Przylot — Grupa A — DEMO",
+            "status": "planned",
+            "origin": "Lotnisko do ustalenia",
+            "destination": "Vancouver",
+            "travel_group": "Grupa A — DEMO",
+            "details": "Lot nie został wybrany; przewoźnik, numer i godziny pozostają puste. To demonstracja podgrup, nie rezerwacja."
+          },
+          {
+            "entry_id": "roadtrip-flight-0-7",
+            "day_id": "roadtrip-day-8",
+            "title": "Powrót — Grupa A — DEMO",
+            "status": "planned",
+            "origin": "Kalispell",
+            "destination": "Lotnisko do ustalenia",
+            "travel_group": "Grupa A — DEMO",
+            "details": "Lot nie został wybrany; przewoźnik, numer i godziny pozostają puste. To demonstracja podgrup, nie rezerwacja."
+          },
+          {
+            "entry_id": "roadtrip-flight-1-0",
+            "day_id": "roadtrip-day-1",
+            "title": "Przylot — Grupa B — DEMO",
+            "status": "planned",
+            "origin": "Lotnisko do ustalenia",
+            "destination": "Vancouver",
+            "travel_group": "Grupa B — DEMO",
+            "details": "Lot nie został wybrany; przewoźnik, numer i godziny pozostają puste. To demonstracja podgrup, nie rezerwacja."
+          },
+          {
+            "entry_id": "roadtrip-flight-1-7",
+            "day_id": "roadtrip-day-8",
+            "title": "Powrót — Grupa B — DEMO",
+            "status": "planned",
+            "origin": "Kalispell",
+            "destination": "Lotnisko do ustalenia",
+            "travel_group": "Grupa B — DEMO",
+            "details": "Lot nie został wybrany; przewoźnik, numer i godziny pozostają puste. To demonstracja podgrup, nie rezerwacja."
+          }
+        ],
+        "transfers": [
+          {
+            "entry_id": "roadtrip-day-1-transfer",
+            "day_id": "roadtrip-day-1",
+            "title": "Przejazd: Vancouver — odbiór i orientacja",
+            "status": "planned",
+            "details": "Fikcyjny plan transferu; pojazd, kierowca i czas do weryfikacji."
+          },
+          {
+            "entry_id": "roadtrip-day-8-transfer",
+            "day_id": "roadtrip-day-8",
+            "title": "Przejazd: Kalispell — zamknięcie podróży",
+            "status": "planned",
+            "details": "Fikcyjny plan transferu; pojazd, kierowca i czas do weryfikacji."
+          }
+        ],
+        "accommodations": [
+          {
+            "entry_id": "roadtrip-day-1-hotel",
+            "day_id": "roadtrip-day-1",
+            "title": "Stanley Park — proponowany standard DEMO",
+            "start_local": "2027-06-01T18:00:00",
+            "end_local": "2027-06-02T08:00:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          },
+          {
+            "entry_id": "roadtrip-day-2-hotel",
+            "day_id": "roadtrip-day-2",
+            "title": "Whistler — proponowany standard DEMO",
+            "start_local": "2027-06-02T18:00:00",
+            "end_local": "2027-06-03T08:00:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          },
+          {
+            "entry_id": "roadtrip-day-3-hotel",
+            "day_id": "roadtrip-day-3",
+            "title": "Kamloops — proponowany standard DEMO",
+            "start_local": "2027-06-03T18:00:00",
+            "end_local": "2027-06-04T08:00:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          },
+          {
+            "entry_id": "roadtrip-day-4-hotel",
+            "day_id": "roadtrip-day-4",
+            "title": "Revelstoke — proponowany standard DEMO",
+            "start_local": "2027-06-04T18:00:00",
+            "end_local": "2027-06-05T08:00:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          },
+          {
+            "entry_id": "roadtrip-day-5-hotel",
+            "day_id": "roadtrip-day-5",
+            "title": "Banff — proponowany standard DEMO",
+            "start_local": "2027-06-05T18:00:00",
+            "end_local": "2027-06-06T08:00:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          },
+          {
+            "entry_id": "roadtrip-day-6-hotel",
+            "day_id": "roadtrip-day-6",
+            "title": "Waterton — proponowany standard DEMO",
+            "start_local": "2027-06-06T18:00:00",
+            "end_local": "2027-06-07T08:00:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          },
+          {
+            "entry_id": "roadtrip-day-7-hotel",
+            "day_id": "roadtrip-day-7",
+            "title": "Glacier — proponowany standard DEMO",
+            "start_local": "2027-06-07T18:00:00",
+            "end_local": "2027-06-08T08:00:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Nie wybrano obiektu. Założenie: pokoje dwuosobowe, śniadanie do ustalenia. Brak rezerwacji."
+          }
+        ],
+        "activity_bookings": [
+          {
+            "entry_id": "roadtrip-day-2-booking",
+            "day_id": "roadtrip-day-2",
+            "title": "Squamish — sprawdzenie zasad wejścia",
+            "status": "unknown",
+            "details": "Brak biletu; konieczność rezerwacji i dostępność do sprawdzenia."
+          },
+          {
+            "entry_id": "roadtrip-day-4-booking",
+            "day_id": "roadtrip-day-4",
+            "title": "Salmon Arm — sprawdzenie zasad wejścia",
+            "status": "unknown",
+            "details": "Brak biletu; konieczność rezerwacji i dostępność do sprawdzenia."
+          }
+        ],
+        "schedule": [
+          {
+            "entry_id": "roadtrip-day-1-event-0",
+            "day_id": "roadtrip-day-1",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-01T08:00:00",
+            "end_local": "2027-06-01T08:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-1-event-1",
+            "day_id": "roadtrip-day-1",
+            "title": "Przejazd i przerwa",
+            "start_local": "2027-06-01T09:00:00",
+            "end_local": "2027-06-01T09:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Planowany przejazd; rzeczywisty czas i dystans wymagają pomiaru. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-1-event-2",
+            "day_id": "roadtrip-day-1",
+            "title": "Spacer: Vancouver",
+            "start_local": "2027-06-01T10:00:00",
+            "end_local": "2027-06-01T10:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-1-event-3",
+            "day_id": "roadtrip-day-1",
+            "title": "Obiad i odpoczynek",
+            "start_local": "2027-06-01T11:00:00",
+            "end_local": "2027-06-01T11:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Przerwa na posiłek we własnym zakresie; miejsce do ustalenia. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-1-event-4",
+            "day_id": "roadtrip-day-1",
+            "title": "Drugi punkt: Stanley Park",
+            "start_local": "2027-06-01T12:00:00",
+            "end_local": "2027-06-01T12:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-1-event-5",
+            "day_id": "roadtrip-day-1",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-01T13:00:00",
+            "end_local": "2027-06-01T13:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-2-event-0",
+            "day_id": "roadtrip-day-2",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-02T08:00:00",
+            "end_local": "2027-06-02T08:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-2-event-1",
+            "day_id": "roadtrip-day-2",
+            "title": "Przejazd i przerwa",
+            "start_local": "2027-06-02T09:00:00",
+            "end_local": "2027-06-02T09:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Planowany przejazd; rzeczywisty czas i dystans wymagają pomiaru. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-2-event-2",
+            "day_id": "roadtrip-day-2",
+            "title": "Spacer: Squamish",
+            "start_local": "2027-06-02T10:00:00",
+            "end_local": "2027-06-02T10:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-2-event-3",
+            "day_id": "roadtrip-day-2",
+            "title": "Obiad i odpoczynek",
+            "start_local": "2027-06-02T11:00:00",
+            "end_local": "2027-06-02T11:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Przerwa na posiłek we własnym zakresie; miejsce do ustalenia. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-2-event-4",
+            "day_id": "roadtrip-day-2",
+            "title": "Drugi punkt: Whistler",
+            "start_local": "2027-06-02T12:00:00",
+            "end_local": "2027-06-02T12:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-2-event-5",
+            "day_id": "roadtrip-day-2",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-02T13:00:00",
+            "end_local": "2027-06-02T13:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-3-event-0",
+            "day_id": "roadtrip-day-3",
+            "title": "Odprawa i sprawdzenie pogody",
+            "start_local": "2027-06-03T08:00:00",
+            "end_local": "2027-06-03T08:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-3-event-1",
+            "day_id": "roadtrip-day-3",
+            "title": "Przejazd do Pemberton",
+            "start_local": "2027-06-03T09:00:00",
+            "end_local": "2027-06-03T09:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Planowany przejazd; rzeczywisty czas i dystans wymagają pomiaru. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-3-event-2",
+            "day_id": "roadtrip-day-3",
+            "title": "Postój w Pemberton",
+            "start_local": "2027-06-03T10:00:00",
+            "end_local": "2027-06-03T10:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-3-event-3",
+            "day_id": "roadtrip-day-3",
+            "title": "Odcinek przejazdowy",
+            "start_local": "2027-06-03T11:00:00",
+            "end_local": "2027-06-03T11:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Planowany przejazd; rzeczywisty czas i dystans wymagają pomiaru. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-3-event-4",
+            "day_id": "roadtrip-day-3",
+            "title": "Przerwa regeneracyjna",
+            "start_local": "2027-06-03T12:00:00",
+            "end_local": "2027-06-03T12:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-3-event-5",
+            "day_id": "roadtrip-day-3",
+            "title": "Spacer w Lillooet",
+            "start_local": "2027-06-03T13:00:00",
+            "end_local": "2027-06-03T13:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-3-event-6",
+            "day_id": "roadtrip-day-3",
+            "title": "Obiad",
+            "start_local": "2027-06-03T14:00:00",
+            "end_local": "2027-06-03T14:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Przerwa na posiłek we własnym zakresie; miejsce do ustalenia. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-3-event-7",
+            "day_id": "roadtrip-day-3",
+            "title": "Przejazd do Kamloops",
+            "start_local": "2027-06-03T15:00:00",
+            "end_local": "2027-06-03T15:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Planowany przejazd; rzeczywisty czas i dystans wymagają pomiaru. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-3-event-8",
+            "day_id": "roadtrip-day-3",
+            "title": "Zakupy i check-in",
+            "start_local": "2027-06-03T16:00:00",
+            "end_local": "2027-06-03T16:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Zaopatrzenie grupy i uzgodnienie planowanego zakwaterowania. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-3-event-9",
+            "day_id": "roadtrip-day-3",
+            "title": "Podsumowanie i plan kolejnego dnia",
+            "start_local": "2027-06-03T17:00:00",
+            "end_local": "2027-06-03T17:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-4-event-0",
+            "day_id": "roadtrip-day-4",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-04T08:00:00",
+            "end_local": "2027-06-04T08:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-4-event-1",
+            "day_id": "roadtrip-day-4",
+            "title": "Przejazd i przerwa",
+            "start_local": "2027-06-04T09:00:00",
+            "end_local": "2027-06-04T09:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Planowany przejazd; rzeczywisty czas i dystans wymagają pomiaru. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-4-event-2",
+            "day_id": "roadtrip-day-4",
+            "title": "Spacer: Salmon Arm",
+            "start_local": "2027-06-04T10:00:00",
+            "end_local": "2027-06-04T10:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-4-event-3",
+            "day_id": "roadtrip-day-4",
+            "title": "Obiad i odpoczynek",
+            "start_local": "2027-06-04T11:00:00",
+            "end_local": "2027-06-04T11:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Przerwa na posiłek we własnym zakresie; miejsce do ustalenia. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-4-event-4",
+            "day_id": "roadtrip-day-4",
+            "title": "Drugi punkt: Revelstoke",
+            "start_local": "2027-06-04T12:00:00",
+            "end_local": "2027-06-04T12:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-4-event-5",
+            "day_id": "roadtrip-day-4",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-04T13:00:00",
+            "end_local": "2027-06-04T13:40:00",
+            "time_zone": "America/Vancouver",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-5-event-0",
+            "day_id": "roadtrip-day-5",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-05T08:00:00",
+            "end_local": "2027-06-05T08:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-5-event-1",
+            "day_id": "roadtrip-day-5",
+            "title": "Przejazd i przerwa",
+            "start_local": "2027-06-05T09:00:00",
+            "end_local": "2027-06-05T09:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Planowany przejazd; rzeczywisty czas i dystans wymagają pomiaru. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-5-event-2",
+            "day_id": "roadtrip-day-5",
+            "title": "Spacer: Golden",
+            "start_local": "2027-06-05T10:00:00",
+            "end_local": "2027-06-05T10:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-5-event-3",
+            "day_id": "roadtrip-day-5",
+            "title": "Obiad i odpoczynek",
+            "start_local": "2027-06-05T11:00:00",
+            "end_local": "2027-06-05T11:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Przerwa na posiłek we własnym zakresie; miejsce do ustalenia. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-5-event-4",
+            "day_id": "roadtrip-day-5",
+            "title": "Drugi punkt: Banff",
+            "start_local": "2027-06-05T12:00:00",
+            "end_local": "2027-06-05T12:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-5-event-5",
+            "day_id": "roadtrip-day-5",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-05T13:00:00",
+            "end_local": "2027-06-05T13:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-6-event-0",
+            "day_id": "roadtrip-day-6",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-06T08:00:00",
+            "end_local": "2027-06-06T08:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-6-event-1",
+            "day_id": "roadtrip-day-6",
+            "title": "Przejazd i przerwa",
+            "start_local": "2027-06-06T09:00:00",
+            "end_local": "2027-06-06T09:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Planowany przejazd; rzeczywisty czas i dystans wymagają pomiaru. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-6-event-2",
+            "day_id": "roadtrip-day-6",
+            "title": "Spacer: Canmore",
+            "start_local": "2027-06-06T10:00:00",
+            "end_local": "2027-06-06T10:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-6-event-3",
+            "day_id": "roadtrip-day-6",
+            "title": "Obiad i odpoczynek",
+            "start_local": "2027-06-06T11:00:00",
+            "end_local": "2027-06-06T11:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Przerwa na posiłek we własnym zakresie; miejsce do ustalenia. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-6-event-4",
+            "day_id": "roadtrip-day-6",
+            "title": "Drugi punkt: Waterton",
+            "start_local": "2027-06-06T12:00:00",
+            "end_local": "2027-06-06T12:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-6-event-5",
+            "day_id": "roadtrip-day-6",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-06T13:00:00",
+            "end_local": "2027-06-06T13:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-7-event-0",
+            "day_id": "roadtrip-day-7",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-07T08:00:00",
+            "end_local": "2027-06-07T08:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-7-event-1",
+            "day_id": "roadtrip-day-7",
+            "title": "Przejazd i przerwa",
+            "start_local": "2027-06-07T09:00:00",
+            "end_local": "2027-06-07T09:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Planowany przejazd; rzeczywisty czas i dystans wymagają pomiaru. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-7-event-2",
+            "day_id": "roadtrip-day-7",
+            "title": "Spacer: Przejście graniczne Kanada–USA",
+            "start_local": "2027-06-07T10:00:00",
+            "end_local": "2027-06-07T10:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-7-event-3",
+            "day_id": "roadtrip-day-7",
+            "title": "Obiad i odpoczynek",
+            "start_local": "2027-06-07T11:00:00",
+            "end_local": "2027-06-07T11:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Przerwa na posiłek we własnym zakresie; miejsce do ustalenia. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-7-event-4",
+            "day_id": "roadtrip-day-7",
+            "title": "Drugi punkt: Glacier",
+            "start_local": "2027-06-07T12:00:00",
+            "end_local": "2027-06-07T12:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-7-event-5",
+            "day_id": "roadtrip-day-7",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-07T13:00:00",
+            "end_local": "2027-06-07T13:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-8-event-0",
+            "day_id": "roadtrip-day-8",
+            "title": "Odprawa dnia",
+            "start_local": "2027-06-08T08:00:00",
+            "end_local": "2027-06-08T08:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Omówienie wariantu dnia i sprawdzenie pogody. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-8-event-1",
+            "day_id": "roadtrip-day-8",
+            "title": "Przejazd i przerwa",
+            "start_local": "2027-06-08T09:00:00",
+            "end_local": "2027-06-08T09:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Planowany przejazd; rzeczywisty czas i dystans wymagają pomiaru. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-8-event-2",
+            "day_id": "roadtrip-day-8",
+            "title": "Spacer: Whitefish",
+            "start_local": "2027-06-08T10:00:00",
+            "end_local": "2027-06-08T10:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-8-event-3",
+            "day_id": "roadtrip-day-8",
+            "title": "Obiad i odpoczynek",
+            "start_local": "2027-06-08T11:00:00",
+            "end_local": "2027-06-08T11:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Przerwa na posiłek we własnym zakresie; miejsce do ustalenia. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-8-event-4",
+            "day_id": "roadtrip-day-8",
+            "title": "Drugi punkt: Kalispell",
+            "start_local": "2027-06-08T12:00:00",
+            "end_local": "2027-06-08T12:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Proponowany postój lub spacer; dostępność do weryfikacji. Godziny DEMO."
+          },
+          {
+            "entry_id": "roadtrip-day-8-event-5",
+            "day_id": "roadtrip-day-8",
+            "title": "Zakończenie etapu",
+            "start_local": "2027-06-08T13:00:00",
+            "end_local": "2027-06-08T13:40:00",
+            "time_zone": "America/Edmonton",
+            "status": "planned",
+            "details": "Czas na odpoczynek i przygotowanie kolejnego etapu. Godziny DEMO."
+          }
+        ],
+        "contacts": [
+          {
+            "label": "Koordynacja projektu — rola DEMO",
+            "value": "koordynacja@example.invalid — fikcyjny, niedziałający adres"
+          },
+          {
+            "label": "Kontakt awaryjny organizatora — do ustalenia",
+            "value": "Brak rzeczywistego numeru. Uzupełnić po zatwierdzeniu procedury."
+          }
+        ],
+        "open_items": [
+          {
+            "entry_id": "roadtrip-day-1-open",
+            "day_id": "roadtrip-day-1",
+            "title": "Koordynator DEMO: zweryfikować etap 1",
+            "status": "planned",
+            "details": "Przed akceptacją sprawdzić nocleg, posiłki, przejazdy i dostępność. Termin: przed zatwierdzeniem programu."
+          },
+          {
+            "entry_id": "roadtrip-day-2-open",
+            "day_id": "roadtrip-day-2",
+            "title": "Koordynator DEMO: zweryfikować etap 2",
+            "status": "planned",
+            "details": "Przed akceptacją sprawdzić nocleg, posiłki, przejazdy i dostępność. Termin: przed zatwierdzeniem programu."
+          },
+          {
+            "entry_id": "roadtrip-day-3-open",
+            "day_id": "roadtrip-day-3",
+            "title": "Koordynator DEMO: zweryfikować etap 3",
+            "status": "planned",
+            "details": "Przed akceptacją sprawdzić nocleg, posiłki, przejazdy i dostępność. Termin: przed zatwierdzeniem programu."
+          }
+        ],
+        "internal_notes": "DEMO: nie ma zakupionych usług. Przed użyciem w terenie sprawdzić wszystkie godziny, warunki trasy i zgody. Bez PIN-ów, danych osób i numerów rezerwacji."
+      }
+    },
+    "section_fields": {
+      "day-f3194c5660989cd298810934": {
+        "body": "Odbiór auta dopiero po indywidualnym uzgodnieniu umowy. Spacer w parku i przygotowanie map offline; nocleg w rejonie miasta.",
+        "logistics": {
+          "date": "2027-06-01",
+          "route_start": "Vancouver",
+          "route_end": "Stanley Park",
+          "drive_km": null,
+          "walk_km": null,
+          "drive_minutes": null,
+          "elevation_gain_m": null,
+          "time_zone": "America/Vancouver",
+          "accommodation_entry_id": "roadtrip-day-1-hotel",
+          "organizational_notes": "Szacunkowa struktura dnia DEMO. Metryki celowo nieustalone; przed użyciem wykonać pomiar rzeczywistej trasy. Sprawdzić parkingi, przerwy i godziny dostępności.",
+          "plan_b": "Propozycja: skrócić spacer i przenieść posiłek do miejscowości końcowej. Przy zamknięciu trasy wstrzymać odcinek i uzgodnić alternatywę z koordynatorem. Nie stanowi potwierdzenia przejezdności.",
+          "verification_status": "unverified",
+          "source": ""
+        }
+      },
+      "day-72bd671584253cbf152f8447": {
+        "body": "Przejazd z przerwami widokowymi. Wariant spacerowy dobrany po sprawdzeniu pogody, parkingów i dostępności dróg.",
+        "logistics": {
+          "date": "2027-06-02",
+          "route_start": "Squamish",
+          "route_end": "Whistler",
+          "drive_km": null,
+          "walk_km": null,
+          "drive_minutes": null,
+          "elevation_gain_m": null,
+          "time_zone": "America/Vancouver",
+          "accommodation_entry_id": "roadtrip-day-2-hotel",
+          "organizational_notes": "Szacunkowa struktura dnia DEMO. Metryki celowo nieustalone; przed użyciem wykonać pomiar rzeczywistej trasy. Sprawdzić parkingi, przerwy i godziny dostępności.",
+          "plan_b": "Propozycja: skrócić spacer i przenieść posiłek do miejscowości końcowej. Przy zamknięciu trasy wstrzymać odcinek i uzgodnić alternatywę z koordynatorem. Nie stanowi potwierdzenia przejezdności.",
+          "verification_status": "unverified",
+          "source": ""
+        }
+      },
+      "day-0d678e33d76c0da47ed047e3": {
+        "body": "Etap z kilkoma przerwami na odpoczynek, posiłek i krajobraz. Szczegółowy harmonogram jest fikcyjnym ćwiczeniem, wymaga przeliczenia trasy.",
+        "logistics": {
+          "date": "2027-06-03",
+          "route_start": "Pemberton",
+          "route_end": "Kamloops",
+          "drive_km": 210,
+          "walk_km": 4.5,
+          "drive_minutes": 180,
+          "elevation_gain_m": 180,
+          "time_zone": "America/Vancouver",
+          "accommodation_entry_id": "roadtrip-day-3-hotel",
+          "organizational_notes": "Szacunkowa struktura dnia DEMO. Metryki celowo nieustalone; przed użyciem wykonać pomiar rzeczywistej trasy. Sprawdzić parkingi, przerwy i godziny dostępności.",
+          "plan_b": "Propozycja: skrócić spacer i przenieść posiłek do miejscowości końcowej. Przy zamknięciu trasy wstrzymać odcinek i uzgodnić alternatywę z koordynatorem. Nie stanowi potwierdzenia przejezdności.",
+          "verification_status": "proposed",
+          "source": "Fikcyjne liczby dydaktyczne DEMO; nie są pomiarem rzeczywistej trasy. Wymagają zastąpienia sprawdzonymi danymi."
+        }
+      },
+      "day-2575a9c94ef4823800a22869": {
+        "body": "Spokojniejszy przejazd z krótkim spacerem w docelowej miejscowości. Zakupy i przygotowanie kolejnego dnia we własnym zakresie.",
+        "logistics": {
+          "date": "2027-06-04",
+          "route_start": "Salmon Arm",
+          "route_end": "Revelstoke",
+          "drive_km": null,
+          "walk_km": null,
+          "drive_minutes": null,
+          "elevation_gain_m": null,
+          "time_zone": "America/Vancouver",
+          "accommodation_entry_id": "roadtrip-day-4-hotel",
+          "organizational_notes": "Szacunkowa struktura dnia DEMO. Metryki celowo nieustalone; przed użyciem wykonać pomiar rzeczywistej trasy. Sprawdzić parkingi, przerwy i godziny dostępności.",
+          "plan_b": "Propozycja: skrócić spacer i przenieść posiłek do miejscowości końcowej. Przy zamknięciu trasy wstrzymać odcinek i uzgodnić alternatywę z koordynatorem. Nie stanowi potwierdzenia przejezdności.",
+          "verification_status": "unverified",
+          "source": ""
+        }
+      },
+      "day-1ff424c05b0b8aa9b4a2ef03": {
+        "body": "Dzień przejazdowy z jawną zmianą strefy na America/Edmonton. Rezerwa czasu i sprawdzenie sezonowych ograniczeń pozostają obowiązkowym zadaniem organizatora.",
+        "logistics": {
+          "date": "2027-06-05",
+          "route_start": "Golden",
+          "route_end": "Banff",
+          "drive_km": null,
+          "walk_km": null,
+          "drive_minutes": null,
+          "elevation_gain_m": null,
+          "time_zone": "America/Edmonton",
+          "accommodation_entry_id": "roadtrip-day-5-hotel",
+          "organizational_notes": "Szacunkowa struktura dnia DEMO. Metryki celowo nieustalone; przed użyciem wykonać pomiar rzeczywistej trasy. Punkt krytyczny: zmiana strefy czasu; sprawdzić kolejność przejazdów.",
+          "plan_b": "Propozycja: skrócić spacer i przenieść posiłek do miejscowości końcowej. Przy zamknięciu trasy wstrzymać odcinek i uzgodnić alternatywę z koordynatorem. Nie stanowi potwierdzenia przejezdności.",
+          "verification_status": "unverified",
+          "source": ""
+        }
+      },
+      "day-339f1e229e179d540a3c5923": {
+        "body": "Planowany odcinek w kierunku południowym. Alternatywa przy pogodzie: skrócony spacer i czas wolny zamiast dłuższej wędrówki.",
+        "logistics": {
+          "date": "2027-06-06",
+          "route_start": "Canmore",
+          "route_end": "Waterton",
+          "drive_km": null,
+          "walk_km": null,
+          "drive_minutes": null,
+          "elevation_gain_m": null,
+          "time_zone": "America/Edmonton",
+          "accommodation_entry_id": "roadtrip-day-6-hotel",
+          "organizational_notes": "Szacunkowa struktura dnia DEMO. Metryki celowo nieustalone; przed użyciem wykonać pomiar rzeczywistej trasy. Sprawdzić parkingi, przerwy i godziny dostępności.",
+          "plan_b": "Propozycja: skrócić spacer i przenieść posiłek do miejscowości końcowej. Przy zamknięciu trasy wstrzymać odcinek i uzgodnić alternatywę z koordynatorem. Nie stanowi potwierdzenia przejezdności.",
+          "verification_status": "unverified",
+          "source": ""
+        }
+      },
+      "day-f66c63f6d4cafccdaecc7ab0": {
+        "body": "Przekroczenie granicy wyłącznie po osobnym sprawdzeniu wymagań. Nie deklarujemy otwartych dróg, pozwoleń ani czasu odprawy.",
+        "logistics": {
+          "date": "2027-06-07",
+          "route_start": "Przejście graniczne Kanada–USA",
+          "route_end": "Glacier",
+          "drive_km": null,
+          "walk_km": null,
+          "drive_minutes": null,
+          "elevation_gain_m": null,
+          "time_zone": "America/Edmonton",
+          "accommodation_entry_id": "roadtrip-day-7-hotel",
+          "organizational_notes": "Szacunkowa struktura dnia DEMO. Metryki celowo nieustalone; przed użyciem wykonać pomiar rzeczywistej trasy. Punkt krytyczny: zasady przekroczenia granicy do osobnej weryfikacji.",
+          "plan_b": "Propozycja: skrócić spacer i przenieść posiłek do miejscowości końcowej. Przy zamknięciu trasy wstrzymać odcinek i uzgodnić alternatywę z koordynatorem. Nie stanowi potwierdzenia przejezdności.",
+          "verification_status": "unverified",
+          "source": ""
+        }
+      },
+      "day-097970a577a5b3c208710265": {
+        "body": "Zwrot auta i transfer zależne od potwierdzonej umowy i lotu. Popołudnie bez napiętego programu; ewentualny dodatkowy nocleg do ustalenia.",
+        "logistics": {
+          "date": "2027-06-08",
+          "route_start": "Whitefish",
+          "route_end": "Kalispell",
+          "drive_km": null,
+          "walk_km": null,
+          "drive_minutes": null,
+          "elevation_gain_m": null,
+          "time_zone": "America/Edmonton",
+          "accommodation_entry_id": null,
+          "organizational_notes": "Szacunkowa struktura dnia DEMO. Metryki celowo nieustalone; przed użyciem wykonać pomiar rzeczywistej trasy. Sprawdzić parkingi, przerwy i godziny dostępności.",
+          "plan_b": "Propozycja: skrócić spacer i przenieść posiłek do miejscowości końcowej. Przy zamknięciu trasy wstrzymać odcinek i uzgodnić alternatywę z koordynatorem. Nie stanowi potwierdzenia przejezdności.",
+          "verification_status": "unverified",
+          "source": ""
+        }
+      }
+    }
+  },
+  {
+    "example_id": "GT-DEMO-07",
+    "document_id": "gt-demo-07",
+    "template_id": "pilot.knowledge",
+    "layout_variant": "standard",
+    "source_type": "trip",
+    "source_id": "gt-v1-rockies",
+    "title": "Kanadyjskie Rockies — notes narratora, 3 dni",
+    "fields": {
+      "date_label": "Sezon 2027 — FIKCYJNY TERMIN DEMO, dokładne daty do ustalenia"
+    },
+    "section_fields": {
+      "attractions-9bbe734d291ab7e687d5b11e": {
+        "body": "Banff / Bow Falls — redakcyjny przykład DEMO, niezweryfikowany.",
+        "knowledge": {
+          "part": "attractions",
+          "stop_ids": [
+            "rockies-day-1-stop-1",
+            "rockies-day-1-stop-2"
+          ],
+          "verification_status": "unverified",
+          "sources": [
+            {
+              "reference": "Parks Canada — Paddling, Banff National Park; Bow Falls i dolina Bow — https://parks.canada.ca/pn-np/ab/banff/activ/nautiques-sports/canotage-canoeing (zakres: kontekst powiązanych miejsc; do ponownego przeglądu przed sezonem 2027)",
+              "checked_on": "2026-10-28"
+            }
+          ],
+          "facts": "Banff jest bazą spaceru w tym programie. Bow Falls należy do krajobrazu rzeki Bow; oficjalny opis Parks Canada łączy wodospad z odcinkiem doliny prowadzącym w stronę Canmore. Nie proponujemy spływu: źródło wykorzystujemy do kontekstu miejsca, a nie instrukcji aktywności. Materiał wymaga przeglądu redakcyjnego.",
+          "observations": "W Banff zwróć uwagę na relację zabudowy i otaczającego krajobrazu. Przy Bow Falls poproś o opis rytmu wody i dźwięków z udostępnionego punktu, bez schodzenia poza trasę."
+        }
+      },
+      "context-9bbe734d291ab7e687d5b11e": {
+        "body": "Banff / Bow Falls — redakcyjny przykład DEMO, niezweryfikowany.",
+        "knowledge": {
+          "part": "context",
+          "stop_ids": [
+            "rockies-day-1-stop-1",
+            "rockies-day-1-stop-2"
+          ],
+          "verification_status": "unverified",
+          "sources": [
+            {
+              "reference": "Parks Canada — Paddling, Banff National Park; Bow Falls i dolina Bow — https://parks.canada.ca/pn-np/ab/banff/activ/nautiques-sports/canotage-canoeing (zakres: kontekst powiązanych miejsc; do ponownego przeglądu przed sezonem 2027)",
+              "checked_on": "2026-10-28"
+            }
+          ],
+          "connection": "Miejscowość i wodospad tworzą przejście od codziennej przestrzeni podróży do obserwacji rzeki. Pytanie dla grupy: co zmienia się w odbiorze krajobrazu, kiedy zamiast panoramy słuchamy wody?",
+          "history": "Nie przypisujemy miejscu nieudokumentowanych wydarzeń ani dat. W tym wariancie opowieść opiera się na krajobrazie i obserwacji.",
+          "geology_nature": "Interpretacja obserwacyjna: oddziel widoczne formy, wodę i roślinność od wyjaśnienia ich genezy. Opisu procesów geologicznych nie uznajemy za zweryfikowany bez osobnego źródła.",
+          "culture": "Nie przypisujemy opowieści lokalnym społecznościom bez źródła i kontekstu. Ustalić właściwe nazwy i zasady interpretacji przed wystąpieniem."
+        }
+      },
+      "narrative-9bbe734d291ab7e687d5b11e": {
+        "body": "Banff / Bow Falls — redakcyjny przykład DEMO, niezweryfikowany.",
+        "knowledge": {
+          "part": "narrative",
+          "stop_ids": [
+            "rockies-day-1-stop-1",
+            "rockies-day-1-stop-2"
+          ],
+          "verification_status": "unverified",
+          "sources": [
+            {
+              "reference": "Parks Canada — Paddling, Banff National Park; Bow Falls i dolina Bow — https://parks.canada.ca/pn-np/ab/banff/activ/nautiques-sports/canotage-canoeing (zakres: kontekst powiązanych miejsc; do ponownego przeglądu przed sezonem 2027)",
+              "checked_on": "2026-10-28"
+            }
+          ],
+          "stories": "AUTORSKA PROPOZYCJA NARRACJI, nie fakt historyczny: „Zatrzymajmy się na chwilę. Każdy widzi ten sam widok, ale wybiera inny szczegół. Spróbujmy złożyć z naszych obserwacji wspólny opis tego miejsca”. Następnie poproś grupę o jedno zdanie bez ocen i jedno z własną interpretacją.",
+          "pilot_notes": "Wskazaną stronę Parks Canada odczytano 28.10.2026. Samo odczytanie nie jest zatwierdzeniem materiału przez TRIPSE. Status pozostaje unverified; ponownie sprawdzić źródło i sezonowość przed użyciem w 2027. Bez logistyki minutowej."
+        }
+      },
+      "attractions-cbd35e3521aa709fb6252393": {
+        "body": "Emerald Lake / Takakkaw Falls — redakcyjny przykład DEMO, niezweryfikowany.",
+        "knowledge": {
+          "part": "attractions",
+          "stop_ids": [
+            "rockies-day-2-stop-1",
+            "rockies-day-2-stop-2"
+          ],
+          "verification_status": "unverified",
+          "sources": [
+            {
+              "reference": "Parks Canada — Hikes and walks, Yoho; Emerald Lakeshore i Takakkaw Falls — https://parks.canada.ca/pn-np/bc/yoho/activ/randonnee-hike/jour-day (zakres: kontekst powiązanych miejsc; do ponownego przeglądu przed sezonem 2027)",
+              "checked_on": "2026-10-28"
+            }
+          ],
+          "facts": "Emerald Lake: Parks Canada opisuje szlak brzegowy jako otoczony widokami gór i lodowców. Takakkaw Falls: osobny opis przedstawia dojście do podstawy wodospadu po płaskiej, utwardzonej ścieżce. To dwa odmienne sposoby obserwacji wody: rozległa powierzchnia jeziora i skupiony ruch kaskady. Dostęp sezonowy trzeba ponownie sprawdzić.",
+          "observations": "Nad Emerald Lake porównaj odbicie z widokiem bezpośrednim. Przy Takakkaw Falls opisz zmianę odczuwanego dźwięku i ruchu wody z dozwolonej przestrzeni. Nie sugeruj wspinania się po skałach."
+        }
+      },
+      "context-cbd35e3521aa709fb6252393": {
+        "body": "Emerald Lake / Takakkaw Falls — redakcyjny przykład DEMO, niezweryfikowany.",
+        "knowledge": {
+          "part": "context",
+          "stop_ids": [
+            "rockies-day-2-stop-1",
+            "rockies-day-2-stop-2"
+          ],
+          "verification_status": "unverified",
+          "sources": [
+            {
+              "reference": "Parks Canada — Hikes and walks, Yoho; Emerald Lakeshore i Takakkaw Falls — https://parks.canada.ca/pn-np/bc/yoho/activ/randonnee-hike/jour-day (zakres: kontekst powiązanych miejsc; do ponownego przeglądu przed sezonem 2027)",
+              "checked_on": "2026-10-28"
+            }
+          ],
+          "connection": "Jezioro i wodospad można połączyć motywem ruchu: od odbić na spokojnej powierzchni do rozprysku i dźwięku. To autorski klucz interpretacyjny, nie teza o genezie konkretnych form.",
+          "history": "Nie przypisujemy miejscu nieudokumentowanych wydarzeń ani dat. W tym wariancie opowieść opiera się na krajobrazie i obserwacji.",
+          "geology_nature": "Interpretacja obserwacyjna: oddziel widoczne formy, wodę i roślinność od wyjaśnienia ich genezy. Opisu procesów geologicznych nie uznajemy za zweryfikowany bez osobnego źródła.",
+          "culture": "Nie przypisujemy opowieści lokalnym społecznościom bez źródła i kontekstu. Ustalić właściwe nazwy i zasady interpretacji przed wystąpieniem."
+        }
+      },
+      "narrative-cbd35e3521aa709fb6252393": {
+        "body": "Emerald Lake / Takakkaw Falls — redakcyjny przykład DEMO, niezweryfikowany.",
+        "knowledge": {
+          "part": "narrative",
+          "stop_ids": [
+            "rockies-day-2-stop-1",
+            "rockies-day-2-stop-2"
+          ],
+          "verification_status": "unverified",
+          "sources": [
+            {
+              "reference": "Parks Canada — Hikes and walks, Yoho; Emerald Lakeshore i Takakkaw Falls — https://parks.canada.ca/pn-np/bc/yoho/activ/randonnee-hike/jour-day (zakres: kontekst powiązanych miejsc; do ponownego przeglądu przed sezonem 2027)",
+              "checked_on": "2026-10-28"
+            }
+          ],
+          "stories": "AUTORSKA PROPOZYCJA NARRACJI, nie fakt historyczny: „Zatrzymajmy się na chwilę. Każdy widzi ten sam widok, ale wybiera inny szczegół. Spróbujmy złożyć z naszych obserwacji wspólny opis tego miejsca”. Następnie poproś grupę o jedno zdanie bez ocen i jedno z własną interpretacją.",
+          "pilot_notes": "Wskazaną stronę Parks Canada odczytano 28.10.2026. Samo odczytanie nie jest zatwierdzeniem materiału przez TRIPSE. Status pozostaje unverified; ponownie sprawdzić źródło i sezonowość przed użyciem w 2027. Bez logistyki minutowej."
+        }
+      },
+      "attractions-c89a602a54cb041586208ffc": {
+        "body": "Lake Louise / Moraine Lake — redakcyjny przykład DEMO, niezweryfikowany.",
+        "knowledge": {
+          "part": "attractions",
+          "stop_ids": [
+            "rockies-day-3-stop-1",
+            "rockies-day-3-stop-2"
+          ],
+          "verification_status": "unverified",
+          "sources": [
+            {
+              "reference": "Parks Canada — Visiting Lake Louise and Moraine Lake; interpretacja miejsca i historia transportu — https://parks.canada.ca/pn-np/ab/banff/visit/parkbus/louise (zakres: kontekst powiązanych miejsc; do ponownego przeglądu przed sezonem 2027)",
+              "checked_on": "2026-10-28"
+            }
+          ],
+          "facts": "Lake Louise i Moraine Lake są przedstawiane przez Parks Canada jako dwa popularne miejsca w jednym regionie. Zestawienie w dokumencie służy porównaniu własnych obserwacji krajobrazu. Tekst źródłowy opisuje również dawną linię tramwajową w rejonie Lake Louise; nie dodajemy jej do listy zwiedzanych atrakcji.",
+          "observations": "Przy obu jeziorach poproś o wybranie jednego detalu na brzegu i jednego w tle. Porównanie własnych notatek będzie bardziej uczciwe niż obietnica konkretnego koloru lub widoku."
+        }
+      },
+      "context-c89a602a54cb041586208ffc": {
+        "body": "Lake Louise / Moraine Lake — redakcyjny przykład DEMO, niezweryfikowany.",
+        "knowledge": {
+          "part": "context",
+          "stop_ids": [
+            "rockies-day-3-stop-1",
+            "rockies-day-3-stop-2"
+          ],
+          "verification_status": "unverified",
+          "sources": [
+            {
+              "reference": "Parks Canada — Visiting Lake Louise and Moraine Lake; interpretacja miejsca i historia transportu — https://parks.canada.ca/pn-np/ab/banff/visit/parkbus/louise (zakres: kontekst powiązanych miejsc; do ponownego przeglądu przed sezonem 2027)",
+              "checked_on": "2026-10-28"
+            }
+          ],
+          "connection": "Dwa jeziora dają okazję do porównania pierwszego planu, koloru i górskiej ramy widoku. Nie zakładamy jednak identycznej pogody, barwy wody ani możliwości dotarcia w danym terminie.",
+          "history": "Historia transportu jako kontekst Lake Louise: Parks Canada opisuje dawną linię tramwajową z lat 1912–1930. Jest to tło opowieści, nie nowy punkt zwiedzania.",
+          "geology_nature": "Interpretacja obserwacyjna: oddziel widoczne formy, wodę i roślinność od wyjaśnienia ich genezy. Opisu procesów geologicznych nie uznajemy za zweryfikowany bez osobnego źródła.",
+          "culture": "Nie przypisujemy opowieści lokalnym społecznościom bez źródła i kontekstu. Ustalić właściwe nazwy i zasady interpretacji przed wystąpieniem."
+        }
+      },
+      "narrative-c89a602a54cb041586208ffc": {
+        "body": "Lake Louise / Moraine Lake — redakcyjny przykład DEMO, niezweryfikowany.",
+        "knowledge": {
+          "part": "narrative",
+          "stop_ids": [
+            "rockies-day-3-stop-1",
+            "rockies-day-3-stop-2"
+          ],
+          "verification_status": "unverified",
+          "sources": [
+            {
+              "reference": "Parks Canada — Visiting Lake Louise and Moraine Lake; interpretacja miejsca i historia transportu — https://parks.canada.ca/pn-np/ab/banff/visit/parkbus/louise (zakres: kontekst powiązanych miejsc; do ponownego przeglądu przed sezonem 2027)",
+              "checked_on": "2026-10-28"
+            }
+          ],
+          "stories": "AUTORSKA PROPOZYCJA NARRACJI, nie fakt historyczny: „Zatrzymajmy się na chwilę. Każdy widzi ten sam widok, ale wybiera inny szczegół. Spróbujmy złożyć z naszych obserwacji wspólny opis tego miejsca”. Następnie poproś grupę o jedno zdanie bez ocen i jedno z własną interpretacją.",
+          "pilot_notes": "Wskazaną stronę Parks Canada odczytano 28.10.2026. Samo odczytanie nie jest zatwierdzeniem materiału przez TRIPSE. Status pozostaje unverified; ponownie sprawdzić źródło i sezonowość przed użyciem w 2027. Bez logistyki minutowej."
+        }
+      }
+    }
+  },
+  {
+    "example_id": "GT-DEMO-08",
+    "document_id": "gt-demo-08",
+    "template_id": "marketing.collection",
+    "layout_variant": "new_trips",
+    "source_type": "campaign",
+    "source_id": "gt-v1-new_trips",
+    "title": "Nowe kierunki 2027",
+    "fields": {},
+    "section_fields": {}
+  },
+  {
+    "example_id": "GT-DEMO-09",
+    "document_id": "gt-demo-09",
+    "template_id": "marketing.collection",
+    "layout_variant": "theme_collection",
+    "source_type": "campaign",
+    "source_id": "gt-v1-theme_collection",
+    "title": "Górskie inspiracje 2027",
+    "fields": {},
+    "section_fields": {}
+  }
+]

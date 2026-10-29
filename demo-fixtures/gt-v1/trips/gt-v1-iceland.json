@@ -1,0 +1,165 @@
+{
+  "trip_id": "gt-v1-iceland",
+  "title": "Islandia — południowy szlak, 7 dni",
+  "categories": [
+    "private",
+    "group"
+  ],
+  "data_origin": "demo",
+  "destinations": [
+    "Islandia"
+  ],
+  "description": "PRZYKŁAD DEMO — DANE FIKCYJNE. Islandia — południowy szlak, 7 dni. Autorski koncept; wymaga sprawdzenia dostępności, trasy i świadczeń.",
+  "duration_days": 7,
+  "status": "draft",
+  "updated_at": "2026-10-28T00:00:00Z",
+  "days": [
+    {
+      "day_id": "iceland-day-1",
+      "day_number": 1,
+      "title": "Reykjavík — spokojny początek",
+      "public_description": "Spacer orientacyjny po centrum i wspólne omówienie tempa podróży. Wieczór pozostaje wolny po przylocie; godzin nie ustalono.",
+      "time_zone": "Atlantic/Reykjavik",
+      "stops": [
+        {
+          "stop_id": "iceland-day-1-stop-1",
+          "name": "Reykjavík",
+          "description": "W planie: Reykjavík. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "iceland-day-1-stop-2",
+          "name": "Stary port",
+          "description": "W planie: Stary port. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "iceland-day-2",
+      "day_number": 2,
+      "title": "Złoty Krąg — krajobraz i woda",
+      "public_description": "Dwa postoje krajobrazowe z przerwą na obiad. Wariant spacerów i dojazdy wymagają sprawdzenia przed wyjazdem.",
+      "time_zone": "Atlantic/Reykjavik",
+      "stops": [
+        {
+          "stop_id": "iceland-day-2-stop-1",
+          "name": "Þingvellir",
+          "description": "W planie: Þingvellir. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "iceland-day-2-stop-2",
+          "name": "Gullfoss",
+          "description": "W planie: Gullfoss. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "iceland-day-3",
+      "day_number": 3,
+      "title": "Południowe wybrzeże — rytm wodospadów",
+      "public_description": "Dzień przeznaczony na oglądanie wodospadów z dostępnych punktów. Bez obietnicy wejścia na ścieżki zależne od warunków.",
+      "time_zone": "Atlantic/Reykjavik",
+      "stops": [
+        {
+          "stop_id": "iceland-day-3-stop-1",
+          "name": "Seljalandsfoss",
+          "description": "W planie: Seljalandsfoss. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "iceland-day-3-stop-2",
+          "name": "Skógafoss",
+          "description": "W planie: Skógafoss. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "iceland-day-4",
+      "day_number": 4,
+      "title": "Vík — wybrzeże bez pośpiechu",
+      "public_description": "Poranny spacer w miejscowości, następnie planowany postój widokowy nad oceanem. Zasady dostępu i warunki przy brzegu do weryfikacji.",
+      "time_zone": "Atlantic/Reykjavik",
+      "stops": [
+        {
+          "stop_id": "iceland-day-4-stop-1",
+          "name": "Vík",
+          "description": "W planie: Vík. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "iceland-day-4-stop-2",
+          "name": "Reynisfjara",
+          "description": "W planie: Reynisfjara. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "iceland-day-5",
+      "day_number": 5,
+      "title": "Skaftafell — dzień na własne tempo",
+      "public_description": "Propozycja krótszego spaceru oraz dłuższego wariantu dla chętnych. Dobór trasy zależy od kondycji i bieżących ograniczeń.",
+      "time_zone": "Atlantic/Reykjavik",
+      "stops": [
+        {
+          "stop_id": "iceland-day-5-stop-1",
+          "name": "Skaftafell",
+          "description": "W planie: Skaftafell. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "iceland-day-5-stop-2",
+          "name": "Svartifoss",
+          "description": "W planie: Svartifoss. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "iceland-day-6",
+      "day_number": 6,
+      "title": "Jökulsárlón — obserwacja krajobrazu",
+      "public_description": "Obserwacja laguny z lądu bez deklaracji rejsu. Popołudnie na odpoczynek i kolację; obiekt noclegowy nie został wybrany.",
+      "time_zone": "Atlantic/Reykjavik",
+      "stops": [
+        {
+          "stop_id": "iceland-day-6-stop-1",
+          "name": "Jökulsárlón",
+          "description": "W planie: Jökulsárlón. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "iceland-day-6-stop-2",
+          "name": "Höfn",
+          "description": "W planie: Höfn. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    },
+    {
+      "day_id": "iceland-day-7",
+      "day_number": 7,
+      "title": "Powrót — czas na podsumowanie",
+      "public_description": "Dojazd w kierunku lotniska z zapasem ustalanym po wyborze lotu. Zakończenie programu, bez dodatkowej płatnej atrakcji.",
+      "time_zone": "Atlantic/Reykjavik",
+      "stops": [
+        {
+          "stop_id": "iceland-day-7-stop-1",
+          "name": "Reykjavík",
+          "description": "W planie: Reykjavík. Postój na spokojną obserwację i rozmowę; zakres zwiedzania do ustalenia.",
+          "verification_status": "unverified"
+        },
+        {
+          "stop_id": "iceland-day-7-stop-2",
+          "name": "Keflavík",
+          "description": "W planie: Keflavík. Propozycja spaceru z przerwą na odpoczynek; warunki wejścia wymagają sprawdzenia.",
+          "verification_status": "unverified"
+        }
+      ]
+    }
+  ]
+}

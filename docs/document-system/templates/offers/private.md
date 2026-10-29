@@ -10,6 +10,11 @@ Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej
 **Poufność:** dokument klientowski; może być wysłany odbiorcy, ale nie zawiera danych operacyjnych.  
 **Format początkowy:** PDF A4, orientacyjnie 3–6 stron; liczba stron zależy od długości programu.
 
+Aktualizacja DOC-TEMPLATES-006: lokalny szablon 0.5.0, uzupełniony przykład GT v1
+i kopia do edycji przez `#examples`. Pola, kolejność oraz granice weryfikacji:
+[raport implementacji](../../../DOC_TEMPLATES_006.md). Specyfikacja poniżej
+nie oznacza zatwierdzenia biznesowego Ground Truth.
+
 ## 1. Cel i odbiorca
 
 Przedstawić dopasowaną do potrzeb podróż, jej wartość, przebieg i koszt. Odbiorca powinien szybko ocenić, czy wyprawa odpowiada jego zainteresowaniom, oczekiwanej intensywności i budżetowi.
