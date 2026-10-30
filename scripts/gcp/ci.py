@@ -163,6 +163,44 @@ def prerequisites(g):
     return current
 
 
+def dev_health(g):
+    """Authenticate to the serving DEV revision; metadata reads and GET /health only."""
+    c = g.config
+    if (c["APP_ENV"] != "dev" or c["GCP_PROJECT_ID"] != "tripse-ai"
+        or c["GCP_SERVICE_NAME"] != "tripse-ai-dev" or c["CLOUD_FEATURE_MODE"] != "cloud_demo"
+        or os.getenv("DEPLOY_SERVICE_ACCOUNT") != "tripse-ai-dev-ci-deploy@tripse-ai.iam.gserviceaccount.com"):
+        raise ValueError("DEV health preflight requires the reviewed DEV cloud_demo target and deployer")
+    try:
+        current = d.service(g)
+        if not current:
+            raise ValueError("Missing DEV service")
+        annotations = current.get("metadata", {}).get("annotations", {})
+        if (annotations.get("run.googleapis.com/iap-enabled") != "true"
+            or annotations.get("run.googleapis.com/invoker-iam-disabled") == "true"):
+            raise ValueError("DEV private access unavailable")
+        policy = g("run", "services", "get-iam-policy", "tripse-ai-dev",
+                   "--region=europe-central2", json_output=True)
+        if any(m in {"allUsers", "allAuthenticatedUsers"}
+               for b in policy.get("bindings", []) for m in b.get("members", [])):
+            raise ValueError("Public DEV invoker")
+        previous = snapshot(current, g)
+        if previous["mode"] != c["CLOUD_FEATURE_MODE"]:
+            raise ValueError("Serving DEV mode differs from reviewed mode")
+        from scripts.gcp.smoke_auth import probe_token
+        from scripts.gcp.parity_smoke import Acceptance
+        token = probe_token(g, previous["url"], iap=True)
+        health = Acceptance(previous["url"], token).call("/health")
+        expected = {"status": "ok", "environment": "dev", "feature_mode": previous["mode"],
+                    "image_version": previous["sha"], "service": "tripse-ai-dev",
+                    "generation_mode": "mock", "storage": "gcs_firestore"}
+        if not isinstance(health, dict) or any(health.get(k) != v for k, v in expected.items()):
+            raise ValueError("Serving DEV health identity mismatch")
+    except Exception:
+        # External response bodies, request objects and credentials never reach logs.
+        raise ValueError("DEV authenticated health preflight failed; no build or deployment attempted") from None
+    print("Authenticated serving DEV health identity verified; no build or deployment attempted")
+
+
 def check_production_builder_isolation(policy):
     project = "tripse-ai"
     principal = lambda name: "serviceAccount:" + name + "@tripse-ai.iam.gserviceaccount.com"
@@ -650,12 +688,17 @@ def offline():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["offline", "configure", "execute"])
+    parser.add_argument("action", choices=["offline", "configure", "dev-health", "execute"])
     parser.add_argument("--basic", action="store_true", help="Dependency-free configuration check only")
     args = parser.parse_args()
     try:
         if args.action == "offline":
             offline()
+        elif args.action == "dev-health":
+            if os.getenv("CI_TARGET_ENV") != "dev":
+                raise ValueError("DEV health preflight cannot target another environment")
+            config = config_from_environment("dev", Path(os.environ["RUNNER_TEMP"]) / "tripse-deployment/config")
+            dev_health(d.Gcloud(config))
         elif args.action == "configure":
             if args.basic:
                 validate_environment(os.environ["CI_TARGET_ENV"])

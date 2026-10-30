@@ -108,6 +108,8 @@ jobs:
           echo '## IAM/WIF authentication failed' >> "$GITHUB_STEP_SUMMARY"
           echo 'Configuration validation passed. Check the reviewed WIF provider, account binding, event/ref/environment trust and IAM propagation. See docs/GITHUB_CICD.md. No application deployment was attempted.' >> "$GITHUB_STEP_SUMMARY"
       - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
+      - name: Verify serving DEV health through IAP before build
+        run: .venv/bin/python -m scripts.gcp.ci dev-health
       - name: Install headless browser
         run: .venv/bin/python -m playwright install --with-deps chromium
       - name: Build, deploy and accept exact DEV image

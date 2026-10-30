@@ -1,5 +1,192 @@
 # Gate D preflight after IAM hardening
 
+## Current-status addendum — Gate D.0, 2026-10-30 (Europe/Warsaw)
+
+**PREPARED FOR COMMIT REVIEW. No commit, push, Delivery dispatch or deployment
+was performed in Gate D.0. Actual CI-probe authentication and post-IAM-change
+Cloud Build execution are still unverified.** The historical report below is
+preserved; its references to c8fec87 and unpublished C.1 describe its earlier
+checkpoint, not the current candidate.
+
+### Current published candidate and security evidence
+
+PR #7 is open/unmerged. Local HEAD, remote feature branch and PR head all match
+**`86adcdbebf86cf1e7e4ef00b22febfa6a6bb3083`**. This published commit includes
+C.1/C.2 and their tests/reports. [Hosted CI run 40964945914](https://github.com/piotrbarabasz/tripse-ai-demo/actions/runs/40964945914)
+passed for that exact head: 1085 passed, one existing Windows-only skip and one
+deprecation warning on Ubuntu; offline source contracts and browser QA passed.
+This hosted result does not cover the uncommitted Gate D.0 changes described here.
+
+Fresh read-only GCP evidence repeated all 33 previously successful policy/config
+queries: all match the post-apply snapshots. The numeric legacy worker has no
+direct project binding. The dedicated builder still has only its scoped metadata,
+source-reader, log-writer and repository-publisher grants; the Cloud Build service
+agent role and DEV/PROD isolation are preserved. No new build was submitted.
+The previously denied service-agent own-policy read remains an evidence limit,
+not proof of absent impersonation bindings; no new permissions were requested.
+
+Published C.1 still binds its historical exception to the exact 497ea150 full SHA,
+build, image, digest, fixed fixture paths and trusted manifest. Shared path/secret
+checks, normal new-build allowlist, clean-head checks and accepted-release
+provenance requirements remain unchanged and fail closed. The deletion-only C.2
+guard remains separate from release authorization. No Terraform/IAM changes are
+part of Gate D.0. Evidence and validation logs stay ignored in `local-data/gate-d0/`.
+
+### New DEV-only pre-deployment health gate
+
+The DEV job now runs `.venv/bin/python -m scripts.gcp.ci dev-health` after the
+existing WIF authentication and setup-gcloud, before browser installation and
+`make gcp-ci`. It has no conditional skip or continue-on-error. PROD steps,
+authorization conditions, WIF, IAM, dispatch inputs and concurrency are unchanged.
+
+The new action validates the existing DEV configuration and dedicated deployer,
+then uses metadata reads to identify the single 100% receiving DEV revision,
+its Ready state, immutable image digest, SHA, environment and mode. It requires
+IAP enabled, invoker checks enabled and no public service invoker binding.
+It uses the existing `smoke_auth.probe_token` keyless signJwt contract for
+`tripse-ai-dev-ci-probe@tripse-ai.iam.gserviceaccount.com`; JWT aud is the exact
+reviewed origin plus `/*`, with a 600-second lifetime. The only application
+request is authenticated **GET `/health`**, with redirects refused.
+
+The response must be a JSON object with status=ok, environment=dev,
+feature_mode=cloud_demo, generation_mode=mock, storage=gcs_firestore,
+service=tripse-ai-dev and image_version equal to the **currently serving**
+revision's SHA. It intentionally does not expect the undeployed new RC SHA.
+Unknown/missing values, split traffic, invalid revision/digest, failed signing,
+401/403, redirects, network errors and malformed responses stop the step and
+therefore the job before image publication or Cloud Run mutation.
+Errors are reduced to a fixed safe message; access/JWT tokens and response bodies
+are never printed, passed in argv or persisted. Configuration files under the
+existing runner temp config directory contain no tokens. No cloud-writing
+application endpoint, acceptance method or release coordinator is called by
+`dev-health`. The existing coordinator's own prerequisites/probe check remains.
+
+This gate is intentionally for the currently configured cloud_demo DEV rollout.
+A different/readonly current mode is rejected for operator review rather than
+silently accepted as a bootstrap transition. The live DEV is already cloud_demo;
+the existing feature-branch DEV dispatch remains eligible.
+
+Required signing and resource-read grants are already observed on the DEV
+deployer. No authentication bypass or permission addition is needed in the design.
+The local user's missing signJwt grant from the earlier investigation is not
+substituted for the actual WIF runner. No real probe JWT or health request was
+executed here, so successful authentication is still a future runtime result.
+
+### Exact synthetic DEV acceptance write inventory (not executed)
+
+This inventory follows `ci.execute`, `Acceptance.writes`, Document Studio's API/
+GCS adapter and `CloudJobs`. Acceptance runs **after** deployment and is distinct
+from the new GET-only gate. The live DEV configuration names bucket
+`tripse-ai-tripse-ai-dev-documents`, Firestore database `tripse-ai-dev` and queue
+`projects/tripse-ai/locations/europe-central2/queues/tripse-ai-dev`.
+
+| Target | Intended writes for one successful acceptance run |
+|---|---|
+| GCS `documents/trips/<uuid4hex>.json` | One new 15-day trip, title `CLOUD-PARITY synthetic DEV <8 hex>`, data_origin=synthetic_test, day titles `Synthetic day N`, internal marker `PARITY_PRIVATE_OPS`. One successful PUT advances it from revision 1 to 2. A repeated stale PUT must return 409 without another successful write. |
+| GCS `documents/drafts/<uuid4hex>.json` | Two new draft snapshots: `offer.private` and `pilot.basic`, sourced from that synthetic trip. Draft title/data_origin inherit the synthetic source; the client-facing offer must not expose the internal marker. No draft update or revision-archive operation is requested. |
+| GCS `images/<asset uuid4hex>` | One sanitized 32x20 blue PNG, uploaded as `synthetic.png` with rights_confirmed=true; immutable binary create uses generation-match 0. |
+| GCS `documents/assets/<asset uuid4hex>.json` | One asset metadata object for that image. |
+| GCS `documents/campaigns/<uuid4hex>.json` | One new campaign with the synthetic trip's title, data_origin=synthetic_test and references to that trip and uploaded image. |
+| Firestore `jobs/<trip_id>` in DEV database | Three distinct jobs: one `/api/trips` mock plan, one simulator message, and one expired-viewer simulator case. Creation, dispatched flag, processing lease/attempt/status, mock result_json, viewer hash/expiry and notification are transactional updates to each job. The duplicate simulator request reuses the same job. |
+| DEV Cloud Tasks | Normally three named tasks, one per distinct job: `<queue>/tasks/<trip_id>`, POST to DEV `/internal/jobs/<trip_id>` with `{}` body and existing dedicated task-account OIDC/IAP audience. Redelivery/retries may repeat processing requests; this suite does not invoke operator recovery or create recovery-suffix tasks. |
+| Document Studio storage | The trip, two drafts, campaign and asset metadata above are the actual durable Studio records. Cloud mode uses GCS, not SQLite or `/app/local-data/document-studio`; no PDF export or persisted preview is requested. |
+
+That is **six distinct GCS object names**, with a second generation of the trip
+object; previews render/read existing records without persisting extra drafts.
+There are three Firestore job documents and normally three unique task names,
+not one task/document per duplicate HTTP request. Partial failure can leave a
+subset of these objects, including unreferenced image bytes after an ambiguous
+storage result. Existing asset error handling is unchanged; no destructive
+cleanup has been added.
+
+Studio IDs come from fresh UUID4 hex values. Planner idempotency uses a fresh
+UUID; simulator conversation and message IDs are fresh UUIDs. Cloud job IDs are
+UUID5-derived from the verified caller's owner hash and planner/demo event key;
+the demo key includes conversation and message ID. The duplicate request has
+the same key; the expired case has a new message ID. Job request text is the
+first built-in demo scenario: **Firestore jobs have no synthetic_test field or
+CLOUD-PARITY title**. Their unique IDs, owner and conversation/event context are
+the identifiers; do not rely on a text prefix to discover every test job.
+
+Trip and campaign synthetic markers are visible in the shared DEV Studio library;
+drafts inherit the synthetic origin. Studio is shared among approved DEV editors,
+so accumulation and accidental later manual edits are real risks. Create-only
+checks and GCS generation/revision CAS protect against overwriting an existing
+record on collision; the intentional PUT addresses only the newly created trip.
+Firestore owner/event isolation and idempotency avoid reusing existing jobs.
+These are collision controls, not permission to erase records after acceptance.
+
+GCS objects/versions and Firestore jobs survive container restart and traffic
+rollback; this suite deletes none of them and defines no automatic expiry for
+them. Viewer expiry makes links inaccessible without deleting job data.
+Cloud Tasks follows its configured dispatch/retry lifecycle; it is not a durable
+audit store. Mock jobs do not call paid AI or real WhatsApp. Browser acceptance
+visits the hub, existing synthetic trip and chat without submitting forms;
+third-party requests are blocked. No such writes or browser acceptance occurred
+in Gate D.0, and no data-cleanup behavior was introduced.
+
+### Review, validation and publication checkpoint
+
+Prepared scope: four files only — DEV workflow (one mandatory step), `ci.py`
+(DEV-only action and serving-health validation), new
+`tests/test_dev_health_preflight.py`, and this current-status addendum.
+The historical report, published C.1/C.2 implementation and other worktrees are
+preserved. Proposed commit: **`ci: verify serving DEV identity through IAP before release`**.
+If separately approved, commit/push goes to `ci/ci-006-integration-acceptance`
+and updates existing PR #7; it starts credential-free PR CI, not Delivery.
+
+| Final local validation | Result |
+|---|---|
+| New DEV health preflight tests | 39 PASS |
+| Focused probe/IAP, workflow, delivery, historical and bootstrap contracts | 336 PASS, 2.39 s |
+| Full `make test PYTHON=.venv/Scripts/python.exe` | 1125 PASS, 62.27 s pytest; one existing Starlette/AnyIO deprecation warning |
+| `python -m scripts.gcp.ci offline` | PASS |
+| actionlint v1.7.12, both workflows | PASS; official Windows asset checksum verified; optional shellcheck/pyflakes not installed/enabled |
+| `make check` and `git diff --check` | PASS; existing LF/CRLF advisory only |
+| Actual WIF/probe authentication / post-change Cloud Build | NOT RUN / NOT RUN |
+
+The new tests
+exercise real keyless/HTTP request construction with synthetic transports,
+identity mismatches, absent fields, redirect/auth/network failures, metadata
+and privacy failures, wrong targets, no coordinator entry and workflow order.
+No existing security assertions were weakened.
+
+### Exact intended path and separate Gate D approval
+
+After commit/push approval and successful hosted CI, obtain the **new full SHA**
+from PR #7. It does not exist yet; 86adcdb is the published baseline, not a SHA
+containing this new health gate. Return the new SHA and hosted result for separate
+deployment authorization. The intended path is manual Delivery on the feature
+branch, operation=dev and target_environment=dev, with release_sha explicitly
+equal to the approved new SHA. Development Environment/WIF identity and global
+DEV concurrency stay unchanged. PROD remains excluded by master-ref and operation
+conditions; no merge to master is part of either approval.
+
+Documentation-only command template; **not executed**:
+
+```powershell
+$approvedDevSha = 'REPLACE_WITH_NEW_PUBLISHED_40_HEX_SHA'
+if ($approvedDevSha -cnotmatch '^[0-9a-f]{40}$') { throw 'A reviewed full SHA is required' }
+$remoteDevSha = gh api repos/piotrbarabasz/tripse-ai-demo/git/ref/heads/ci/ci-006-integration-acceptance --jq .object.sha
+if ($LASTEXITCODE -ne 0 -or $remoteDevSha -cne $approvedDevSha) { throw 'Approved candidate differs from branch head' }
+gh workflow run delivery.yml --repo piotrbarabasz/tripse-ai-demo --ref ci/ci-006-integration-acceptance -f operation=dev -f target_environment=dev -f "release_sha=$approvedDevSha"
+```
+
+Publication approval authorizes no cloud mutation. A later separate Gate D approval
+must cover the exact new SHA, Cloud Build image publication, DEV Cloud Run
+deployment, the synthetic writes listed above, and the existing automatic
+traffic-recovery behavior. It must explicitly exclude PROD deployment and master
+merge. Recheck the branch/workflow SHA and Environment/WIF immediately before
+dispatch and inspect the selected run identity; do not accept a moved branch as
+the approved policy. The signed health gate must pass before build in that run.
+Automatic recovery, if needed after a later failed deployment, restores verified
+traffic/private access and checks prior health; it does not undo synthetic data
+writes. A mocked recovery test is not a live restoration drill.
+
+**STOP: publication approval required now. Gate D requires its own later approval.**
+
+## Historical preflight snapshot — 2026-10-29 (preserved)
+
 2026-10-29, approximately 22:01–22:04 UTC. **PARTIALLY READY. Gate D was not executed.**
 
 IAM hardening and recovery metadata pass. Two prerequisites remain: publication
