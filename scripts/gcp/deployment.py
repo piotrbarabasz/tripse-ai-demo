@@ -5,7 +5,7 @@ from contextvars import ContextVar
 import io
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 import shutil
 import subprocess
@@ -124,6 +124,9 @@ def run(args, *, binary=False):
     if result.returncode:
         name, operation = safe_command_operation(args)
         diagnostic = safe_build_error(getattr(result, "stderr", b"")) if operation in {"gcloud builds submit", "gcloud builds describe"} else None
+        if _COMMAND_STAGE.get() in {"release.source_proof", "release.digest"} and operation in {"gcloud storage cat", "gcloud artifacts docker images describe"}:
+            phase = "source_archive_read" if operation == "gcloud storage cat" else "registry_image_lookup"
+            diagnostic = safe_build_error(getattr(result, "stderr", b"")).replace("submit_phase=submit_or_wait", "submit_phase=" + phase)
         if _COMMAND_STAGE.get() == "build.source_bucket" and operation in {"gcloud storage buckets describe", "gcloud projects describe"}:
             diagnostic = safe_build_error(getattr(result, "stderr", b""), source_metadata=True)
         raise CommandError(name, result.returncode, operation=operation, diagnostic=diagnostic)
@@ -313,15 +316,22 @@ def source_files(sha):
             allowed = name in {"Dockerfile", "requirements.txt", ".dockerignore", ".gcloudignore"} or name.startswith(("app/", "demo-fixtures/gt-v1/"))
             if not allowed or member.isdir():
                 continue
-            path = Path(name)
-            if not member.isfile() or path.is_absolute() or ".." in path.parts:
+            if not member.isfile():
                 raise ValueError("Unsafe source archive entry")
-            if any(p.startswith(".env") or p in {"local-data", "data", "__pycache__"} for p in path.parts) or re.search(r"\.(pem|key|db|sqlite3)(-|$|\.)|credentials|service.account", name, re.I):
-                raise ValueError("Forbidden sensitive file in committed build context")
             content = tar.extractfile(member).read()
-            if re.search(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\"private_key\"\s*:|AIza[0-9A-Za-z_-]{35}|sk-proj-[0-9A-Za-z_-]{20,}", content):
-                raise ValueError("Possible credential detected in build context; file content suppressed")
+            validate_source_file(name, content)
             yield name, content
+
+
+def validate_source_file(name, content):
+    """Shared current/historical source safety checks; never include content in errors."""
+    path = PurePosixPath(name)
+    if path.is_absolute() or PureWindowsPath(name).drive or "\\" in name or ".." in path.parts:
+        raise ValueError("Unsafe source archive entry")
+    if any(p.startswith(".env") or p in {"local-data", "data", "__pycache__"} for p in path.parts) or re.search(r"\.(pem|key|db|sqlite3)(-|$|\.)|credentials|service.account", name, re.I):
+        raise ValueError("Forbidden sensitive file in committed build context")
+    if re.search(rb"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\"private_key\"\s*:|AIza[0-9A-Za-z_-]{35}|sk-proj-[0-9A-Za-z_-]{20,}", content):
+        raise ValueError("Possible credential detected in build context; file content suppressed")
 
 
 def clean_head():
@@ -441,6 +451,7 @@ def build(g, sha):
             wait_for_build(g, submitted.get("id"))
     with command_stage("build.verify_digest"):
         digest(g, sha)
+    return submitted["id"]  # Lookup hint only; CI still verifies recipe and source bytes.
 
 
 def validate_url(value):
@@ -486,14 +497,26 @@ def deploy(g, sha):
     if not repository(g):
         raise ValueError("Run setup first")
     existing = service(g)
+    preserve_private_dev = c["APP_ENV"] == "dev" and c["CLOUD_FEATURE_MODE"] == "cloud_demo"
+    if preserve_private_dev and not existing:
+        raise ValueError("Bootstrap the private IAP DEV service before deployment; no security configuration is created automatically")
     check_act_as(g, c.runtime_account)
     pinned = f"{c.image}@{digest(g, sha)}"
     if existing:
         policy = g("run", "services", "get-iam-policy", c["GCP_SERVICE_NAME"], f'--region={c["GCP_REGION"]}', json_output=True)
         bindings = policy.get("bindings", [])
         for binding in bindings:
-            if "allAuthenticatedUsers" in binding.get("members", []) or ("allUsers" in binding.get("members", []) and (binding["role"] != "roles/run.invoker" or binding.get("condition"))):
+            if "allAuthenticatedUsers" in binding.get("members", []) or ("allUsers" in binding.get("members", []) and (preserve_private_dev or binding["role"] != "roles/run.invoker" or binding.get("condition"))):
                 raise ValueError("Unexpected public IAM binding; inspect it manually before deployment")
+        if preserve_private_dev:
+            annotations = existing.get("metadata", {}).get("annotations", {})
+            iap_agent = f'serviceAccount:service-{c["GCP_PROJECT_NUMBER"]}@gcp-sa-iap.iam.gserviceaccount.com'
+            if (c["GCP_PUBLIC_ACCESS"] != "false"
+                or annotations.get("run.googleapis.com/iap-enabled") != "true"
+                or annotations.get("run.googleapis.com/invoker-iam-disabled") not in (None, "false")
+                or not any(b.get("role") == "roles/run.invoker" and iap_agent in b.get("members", [])
+                           and not b.get("condition") for b in bindings)):
+                raise ValueError("Existing DEV must have IAP, Invoker IAM checks and the IAP service-agent grant; operator bootstrap required")
         if any("allUsers" in binding.get("members", []) for binding in bindings):
             g("run", "services", "remove-iam-policy-binding", c["GCP_SERVICE_NAME"], f'--region={c["GCP_REGION"]}',
               "--member=allUsers", "--role=roles/run.invoker", "--condition=None")
@@ -517,7 +540,10 @@ def deploy(g, sha):
           "--command=", "--args=",
           labels,
           "--startup-probe=httpGet.path=/health,httpGet.port=8000,initialDelaySeconds=0,timeoutSeconds=2,periodSeconds=5,failureThreshold=12",
-          "--no-allow-unauthenticated", *(["--iap"] if c["CLOUD_FEATURE_MODE"] == "cloud_demo" else ["--no-iap"]))
+          # Both flags trigger SetIamPolicy even when bindings already match.
+          # Existing private DEV was verified above; omitted IAP state is retained.
+          *([] if preserve_private_dev else ["--no-allow-unauthenticated",
+             "--iap" if c["CLOUD_FEATURE_MODE"] == "cloud_demo" else "--no-iap"]))
     g("run", "services", "update-traffic", c["GCP_SERVICE_NAME"], f'--region={c["GCP_REGION"]}', "--to-latest")
     state = deployed_state(g, sha)
     # Record the actual URL even if smoke subsequently fails; failure is still propagated.

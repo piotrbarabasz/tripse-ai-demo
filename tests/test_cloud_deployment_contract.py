@@ -79,12 +79,16 @@ def test_cloud_deploy_requires_smoke_token_before_mutations(demo_configs, monkey
         deployment.deploy(SimpleNamespace(config=config), "a" * 40)
 
 
-def test_cloud_deploy_pins_private_image_iap_and_secret_reference(demo_configs, monkeypatch, tmp_path):
-    config = load_pair("dev", demo_configs)
-    config.values["GCP_BROWSER_MAPS_SECRET"] = "projects/tripse-test-123/secrets/tripse-ai-dev-maps-browser/versions/1"
+@pytest.mark.parametrize("environment,existing", [("dev", True), ("prod", False), ("prod", True)])
+def test_cloud_deploy_pins_private_image_iap_and_secret_reference(demo_configs, monkeypatch, tmp_path, environment, existing):
+    config = load_pair(environment, demo_configs)
+    config.values["GCP_BROWSER_MAPS_SECRET"] = f"projects/tripse-test-123/secrets/tripse-ai-{environment}-maps-browser/versions/1"
     calls = []
     def g(*args, **kwargs):
         calls.append(args)
+        if args[:3] == ("run", "services", "get-iam-policy"):
+            return {"bindings": [{"role": "roles/run.invoker", "members": [
+                "serviceAccount:service-123456789@gcp-sa-iap.iam.gserviceaccount.com"]}]}
         if args[:2] == ("run", "deploy"):
             path = next(a.split("=", 1)[1] for a in args if a.startswith("--env-vars-file="))
             assert json.loads(Path(path).read_text()) == config.runtime("a" * 40)
@@ -93,7 +97,8 @@ def test_cloud_deploy_pins_private_image_iap_and_secret_reference(demo_configs, 
     monkeypatch.setattr(deployment, "check_release_source", lambda _: {name: b"" for name in (
         "app/cloud_runtime.py", "app/cloud_access.py", "app/cloud_jobs.py", "app/document_studio/cloud_storage.py")})
     monkeypatch.setattr(deployment, "repository", lambda _: True)
-    monkeypatch.setattr(deployment, "service", lambda _: None)
+    monkeypatch.setattr(deployment, "service", lambda _: {"metadata": {"annotations": {
+        "run.googleapis.com/iap-enabled": "true"}}} if existing else None)
     monkeypatch.setattr(deployment, "check_act_as", lambda *a: None)
     monkeypatch.setattr(deployment, "digest", lambda *a: "sha256:" + "b" * 64)
     monkeypatch.setattr(deployment, "deployed_state", lambda *a: {"url": ORIGIN})
@@ -102,9 +107,13 @@ def test_cloud_deploy_pins_private_image_iap_and_secret_reference(demo_configs, 
     monkeypatch.setattr(deployment, "ROOT", tmp_path)
     deployment.deploy(g, "a" * 40)
     args = next(c for c in calls if c[:2] == ("run", "deploy"))
-    assert "--iap" in args and "--no-allow-unauthenticated" in args and "--invoker-iam-check" in args
+    assert "--invoker-iam-check" in args
+    if environment == "dev":
+        assert "--iap" not in args and "--no-iap" not in args and "--no-allow-unauthenticated" not in args
+    else:
+        assert "--iap" in args and "--no-allow-unauthenticated" in args
     assert f"--image={config.image}@sha256:{'b' * 64}" in args
-    assert "--set-secrets=GOOGLE_MAPS_BROWSER_KEY=projects/tripse-test-123/secrets/tripse-ai-dev-maps-browser:1" in args
+    assert f"--set-secrets=GOOGLE_MAPS_BROWSER_KEY=projects/tripse-test-123/secrets/tripse-ai-{environment}-maps-browser:1" in args
     assert "--clear-secrets" not in args
     assert not any("--no-invoker-iam-check" in c or "offline-secret-token" in str(c) for c in calls)
 

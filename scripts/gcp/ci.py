@@ -4,6 +4,7 @@ No provisioning. Runtime config, proof verification and prerequisites fail close
 The executable path is only used by explicit CI jobs / the gcp-ci Make target.
 """
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import io
 import json
@@ -162,6 +163,44 @@ def prerequisites(g):
     return current
 
 
+def dev_health(g):
+    """Authenticate to the serving DEV revision; metadata reads and GET /health only."""
+    c = g.config
+    if (c["APP_ENV"] != "dev" or c["GCP_PROJECT_ID"] != "tripse-ai"
+        or c["GCP_SERVICE_NAME"] != "tripse-ai-dev" or c["CLOUD_FEATURE_MODE"] != "cloud_demo"
+        or os.getenv("DEPLOY_SERVICE_ACCOUNT") != "tripse-ai-dev-ci-deploy@tripse-ai.iam.gserviceaccount.com"):
+        raise ValueError("DEV health preflight requires the reviewed DEV cloud_demo target and deployer")
+    try:
+        current = d.service(g)
+        if not current:
+            raise ValueError("Missing DEV service")
+        annotations = current.get("metadata", {}).get("annotations", {})
+        if (annotations.get("run.googleapis.com/iap-enabled") != "true"
+            or annotations.get("run.googleapis.com/invoker-iam-disabled") == "true"):
+            raise ValueError("DEV private access unavailable")
+        policy = g("run", "services", "get-iam-policy", "tripse-ai-dev",
+                   "--region=europe-central2", json_output=True)
+        if any(m in {"allUsers", "allAuthenticatedUsers"}
+               for b in policy.get("bindings", []) for m in b.get("members", [])):
+            raise ValueError("Public DEV invoker")
+        previous = snapshot(current, g)
+        if previous["mode"] != c["CLOUD_FEATURE_MODE"]:
+            raise ValueError("Serving DEV mode differs from reviewed mode")
+        from scripts.gcp.smoke_auth import probe_token
+        from scripts.gcp.parity_smoke import Acceptance
+        token = probe_token(g, previous["url"], iap=True)
+        health = Acceptance(previous["url"], token).call("/health")
+        expected = {"status": "ok", "environment": "dev", "feature_mode": previous["mode"],
+                    "image_version": previous["sha"], "service": "tripse-ai-dev",
+                    "generation_mode": "mock", "storage": "gcs_firestore"}
+        if not isinstance(health, dict) or any(health.get(k) != v for k, v in expected.items()):
+            raise ValueError("Serving DEV health identity mismatch")
+    except Exception:
+        # External response bodies, request objects and credentials never reach logs.
+        raise ValueError("DEV authenticated health preflight failed; no build or deployment attempted") from None
+    print("Authenticated serving DEV health identity verified; no build or deployment attempted")
+
+
 def check_production_builder_isolation(policy):
     project = "tripse-ai"
     principal = lambda name: "serviceAccount:" + name + "@tripse-ai.iam.gserviceaccount.com"
@@ -203,28 +242,67 @@ class GitHub:
                 return json.load(response)
         except HTTPError as error:
             if not archive or error.code != 302:
-                raise ValueError("GitHub release evidence cannot be read") from None
+                category = "missing_or_expired_artifact" if error.code in {404, 410} else "github_evidence_access_failed"
+                raise ValueError(category) from None
             location = error.headers.get("Location", "")
             if not location.startswith("https://"):
                 raise ValueError("Unsafe artifact redirect")
             # Never forward the GitHub bearer token to artifact storage.
-            with urlopen(Request(location), timeout=30) as response:
-                data = response.read(2_000_001)
+            try:
+                with urlopen(Request(location), timeout=30) as response:
+                    data = response.read(2_000_001)
+            except OSError:
+                raise ValueError("Artifact archive download unavailable") from None
             if len(data) > 2_000_000:
                 raise ValueError("Oversized evidence archive")
             return data
+        except (OSError, ValueError):
+            raise ValueError("GitHub release evidence response unavailable or invalid") from None
 
     def pages(self, path, field):
         values = []
         for page in range(1, 101):
-            data = self.request(path + ("&" if "?" in path else "?") + f"per_page=100&page={page}")[field]
+            response = self.request(path + ("&" if "?" in path else "?") + f"per_page=100&page={page}")
+            if not isinstance(response, dict) or not isinstance(response.get(field), list) or len(response[field]) > 100:
+                raise ValueError("Invalid evidence pagination response")
+            data = response[field]
             values.extend(data)
             if len(data) < 100:
+                if type(response.get("total_count")) is int and response["total_count"] != len(values):
+                    raise ValueError("Incomplete evidence pagination")
                 return values
         raise ValueError("Evidence listing exceeded pagination limit")
 
 
 def validate_proof(record, run, artifact, jobs, environment, sha, mode, *, production):
+    if (not all(isinstance(v, dict) for v in (record, run, artifact))
+        or not isinstance(jobs, list) or any(not isinstance(j, dict) for j in jobs)
+        or not isinstance(run.get("repository"), dict) or not isinstance(artifact.get("workflow_run"), dict)
+        or not isinstance(record.get("image_digest"), str)
+        or not isinstance(run.get("head_sha"), str) or not re.fullmatch(r"[a-f0-9]{40}", run["head_sha"])
+        or type(record.get("run_id")) is not int or type(record.get("run_attempt")) is not int):
+        raise ValueError("Invalid release evidence metadata")
+    try:
+        expires = datetime.fromisoformat(artifact["expires_at"].replace("Z", "+00:00"))
+        if expires.tzinfo is None or expires <= datetime.now(timezone.utc):
+            raise ValueError()
+    except (KeyError, TypeError, AttributeError, ValueError):
+        raise ValueError("Release artifact expiry missing or expired") from None
+    from scripts.gcp.build_proof import BUILD_ID
+    service = "tripse-ai-" + environment
+    traffic = record.get("traffic")
+    if (artifact.get("expired") is not False
+        or type(run.get("id")) is not int or run["id"] <= 0
+        or type(run.get("run_attempt")) is not int or run["run_attempt"] <= 0
+        or record.get("project") != "tripse-ai" or record.get("region") != "europe-central2"
+        or record.get("service") != service
+        or not isinstance(record.get("revision"), str)
+        or not re.fullmatch(re.escape(service) + r"-[a-z0-9-]+", record["revision"])
+        or not isinstance(traffic, list) or len(traffic) != 1 or not isinstance(traffic[0], dict)
+        or type(traffic[0].get("percent")) is not int or traffic[0]["percent"] != 100
+        or traffic[0].get("revisionName") != record["revision"]
+        or not isinstance(record.get("source_build_id"), str) or not BUILD_ID.fullmatch(record["source_build_id"])):
+        raise ValueError("Conflicting release runtime identity or provenance metadata")
     if (run.get("repository", {}).get("full_name") != REPOSITORY or run.get("path") != WORKFLOW
         or run.get("event") not in {"push", "workflow_dispatch"} or artifact.get("expired")
         or artifact.get("workflow_run", {}).get("id") != run.get("id")
@@ -233,13 +311,15 @@ def validate_proof(record, run, artifact, jobs, environment, sha, mode, *, produ
         or record.get("image_sha") != sha or record.get("feature_mode") != mode
         or not DIGEST.fullmatch(record.get("image_digest", ""))
         or record.get("accepted") is not True or record.get("source_verified") is not True
-        or not re.fullmatch(r"[a-f0-9-]{36}", record.get("source_build_id", ""))
         or record.get("source_ref") != "refs/heads/" + run.get("head_branch", "")
         or record.get("run_attempt") != run.get("run_attempt")
         or artifact.get("name") != f"{environment}-accepted-{sha}-{run.get('id')}-{run.get('run_attempt')}"):
         raise ValueError("Release artifact provenance or runtime contract mismatch")
     if production and run.get("head_branch") != "master":
         raise ValueError("A feature branch cannot supply a production release")
+    for key in ("head_sha", "head_branch"):
+        if artifact["workflow_run"].get(key) is not None and artifact["workflow_run"][key] != run.get(key):
+            raise ValueError("Conflicting artifact workflow identity")
     if not any(j.get("name") == JOBS[environment] and j.get("conclusion") == "success" and
                j.get("run_attempt") == record["run_attempt"] for j in jobs):
         raise ValueError("Evidence job did not finish successfully")
@@ -250,40 +330,122 @@ def validate_proof(record, run, artifact, jobs, environment, sha, mode, *, produ
 
 def release_proof(environment, sha, mode, *, production):
     run_id, artifact_id = os.getenv("CI_EVIDENCE_RUN_ID", ""), os.getenv("CI_EVIDENCE_ARTIFACT_ID", "")
-    if not run_id.isdigit() or not artifact_id.isdigit():
+    if not run_id.isdigit() or not artifact_id.isdigit() or int(run_id) <= 0 or int(artifact_id) <= 0:
         raise ValueError("Promotion/rollback requires an accepted run ID and immutable artifact ID")
     gh = GitHub()
     run = gh.request(f"/actions/runs/{run_id}")
     artifact = gh.request(f"/actions/artifacts/{artifact_id}")
+    if (not isinstance(run, dict) or not isinstance(artifact, dict)
+        or type(run.get("id")) is not int or type(artifact.get("id")) is not int
+        or run.get("id") != int(run_id) or artifact.get("id") != int(artifact_id)):
+        raise ValueError("Requested release run/artifact identity mismatch")
+    if artifact.get("expired") is not False:
+        raise ValueError("Release artifact missing or expired")
     raw = gh.request(f"/actions/artifacts/{artifact_id}/zip", archive=True)
-    with zipfile.ZipFile(io.BytesIO(raw)) as archive:
-        if archive.namelist() != ["release.json"] or archive.getinfo("release.json").file_size > 64_000:
-            raise ValueError("Invalid release evidence archive")
-        record = json.loads(archive.read("release.json"))
+    record = decode_release_archive(raw)
     jobs = gh.pages(f"/actions/runs/{run_id}/attempts/{run['run_attempt']}/jobs", "jobs")
     validate_proof(record, run, artifact, jobs, environment, sha, mode, production=production)
     return record
 
 
+def decode_release_archive(raw):
+    def invalid_constant(_):
+        raise ValueError("Invalid JSON constant")
+    def unique_object(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("Duplicate evidence fields")
+            result[key] = value
+        return result
+    try:
+        if not isinstance(raw, bytes) or len(raw) > 2_000_000:
+            raise ValueError()
+        with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+            if archive.namelist() != ["release.json"] or archive.getinfo("release.json").file_size > 64_000:
+                raise ValueError()
+            info = archive.getinfo("release.json")
+            if info.flag_bits & 1 or (info.external_attr >> 16) & 0o170000 == 0o120000:
+                raise ValueError()
+            record = json.loads(archive.read("release.json"), object_pairs_hook=unique_object, parse_constant=invalid_constant)
+            if not isinstance(record, dict):
+                raise ValueError()
+            return record
+    except (ValueError, OSError, zipfile.BadZipFile, RuntimeError, UnicodeError, RecursionError):
+        raise ValueError("Invalid or oversized release evidence archive") from None
+
+
 def fresh(current, sequence):
     labels = current.get("metadata", {}).get("labels", {})
-    if labels.get("github-workflow") == "delivery-v1" and int(labels.get("github-run-number", "0")) > sequence:
-        raise ValueError("Stale workflow cannot overwrite a newer deployment; start a new manual run instead")
+    if labels.get("github-workflow") == "delivery-v1":
+        number = labels.get("github-run-number")
+        if not isinstance(number, str) or not re.fullmatch(r"[0-9]{1,20}", number):
+            raise ValueError("Invalid deployment freshness metadata")
+        if int(number) > sequence:
+            raise ValueError("Stale workflow cannot overwrite a newer deployment; start a new manual run instead")
 
 
 def snapshot(current, g):
-    traffic = [t for t in current.get("status", {}).get("traffic", []) if t.get("percent", 0)]
+    traffic = [dict(t) for t in current.get("status", {}).get("traffic", []) if t.get("percent", 0)]
     if len(traffic) != 1 or traffic[0].get("percent") != 100 or not traffic[0].get("revisionName"):
         raise ValueError("Resolve split/unknown traffic before a CI release")
+    if (type(traffic[0]["percent"]) is not int or not isinstance(traffic[0]["revisionName"], str)
+        or not re.fullmatch(re.escape(g.config["GCP_SERVICE_NAME"]) + r"-[a-z0-9-]+", traffic[0]["revisionName"])):
+        raise ValueError("Previous traffic revision belongs to an unexpected service")
     revision = g("run", "revisions", "describe", traffic[0]["revisionName"], "--region=europe-central2", json_output=True)
+    if not isinstance(revision, dict):
+        raise ValueError("Previous revision metadata missing")
     env = {e["name"]: e.get("value") for c in revision.get("spec", {}).get("containers", []) for e in c.get("env", [])}
     image_tag(env.get("EXPECTED_IMAGE_SHA"))
     if env.get("APP_ENV") != g.config["APP_ENV"] or env.get("CLOUD_FEATURE_MODE") not in {"readonly_demo", "cloud_demo"}:
         raise ValueError("Previous receiving revision has no recognized runtime contract")
-    return {"sha": env.get("EXPECTED_IMAGE_SHA"), "mode": env.get("CLOUD_FEATURE_MODE"),
+    previous = {"sha": env.get("EXPECTED_IMAGE_SHA"), "mode": env.get("CLOUD_FEATURE_MODE"),
             "traffic": traffic,
             "iap_enabled": current.get("metadata", {}).get("annotations", {}).get("run.googleapis.com/iap-enabled") == "true",
-            "url": current.get("status", {}).get("url")}
+            "url": current.get("status", {}).get("url"),
+            "service": g.config["GCP_SERVICE_NAME"], "environment": g.config["APP_ENV"],
+            "image_digest": d.digest(g, env["EXPECTED_IMAGE_SHA"]),
+            "sequence": int(os.getenv("GITHUB_RUN_NUMBER", "0"))}
+    validate_snapshot(g, previous)
+    verify_previous_revision(g, previous, revision)
+    return previous
+
+
+def validate_snapshot(g, previous):
+    c = g.config
+    if not isinstance(previous, dict):
+        raise ValueError("Invalid recovery snapshot")
+    image_tag(previous.get("sha"))
+    d.validate_url(previous.get("url"))
+    traffic = previous.get("traffic")
+    if (previous.get("service") != c["GCP_SERVICE_NAME"] or previous.get("environment") != c["APP_ENV"]
+        or previous.get("mode") not in {"readonly_demo", "cloud_demo"}
+        or not isinstance(previous.get("image_digest"), str) or not DIGEST.fullmatch(previous["image_digest"])
+        or type(previous.get("sequence")) is not int or previous["sequence"] < 0
+        or not isinstance(traffic, list) or len(traffic) != 1 or not isinstance(traffic[0], dict)
+        or type(traffic[0].get("percent")) is not int or traffic[0]["percent"] != 100
+        or not isinstance(traffic[0].get("revisionName"), str)
+        or not re.fullmatch(re.escape(c["GCP_SERVICE_NAME"]) + r"-[a-z0-9-]+", traffic[0]["revisionName"])):
+        raise ValueError("Invalid recovery snapshot identity or traffic")
+    if previous["mode"] == "cloud_demo" and c.values.get("PUBLIC_BASE_URL") != previous["url"]:
+        raise ValueError("Recovery origin differs from reviewed private origin")
+
+
+def verify_previous_revision(g, previous, revision=None):
+    name = previous["traffic"][0]["revisionName"]
+    if revision is None:
+        revision = g("run", "revisions", "describe", name, "--region=europe-central2", json_output=True)
+    if not isinstance(revision, dict):
+        raise ValueError("Previous revision metadata missing")
+    containers = revision.get("spec", {}).get("containers", [])
+    env = {e["name"]: e.get("value") for c in containers for e in c.get("env", [])}
+    pinned = g.config.image + "@" + previous["image_digest"]
+    if (revision.get("metadata", {}).get("name") != name or len(containers) != 1
+        or containers[0].get("image") != pinned or revision.get("status", {}).get("imageDigest") != pinned
+        or not any(c.get("type") == "Ready" and c.get("status") == "True" for c in revision.get("status", {}).get("conditions", []))
+        or env.get("EXPECTED_IMAGE_SHA") != previous["sha"] or env.get("APP_ENV") != previous["environment"]
+        or env.get("CLOUD_FEATURE_MODE") != previous["mode"]):
+        raise ValueError("Previous revision identity/digest/readiness was not verified")
 
 
 def restore(g, previous):
@@ -293,6 +455,13 @@ def restore(g, previous):
     Storage and schemas are never restored/deleted by a code rollback.
     """
     c = g.config
+    validate_snapshot(g, previous)
+    verify_previous_revision(g, previous)
+    current = g("run", "services", "describe", c["GCP_SERVICE_NAME"], "--region=europe-central2", json_output=True)
+    d.assert_owned(current.get("metadata", {}).get("labels", {}), environment=c["APP_ENV"])
+    fresh(current, previous["sequence"])
+    if current.get("status", {}).get("url") != previous["url"]:
+        raise ValueError("Recovery service origin changed")
     sha = image_tag(previous.get("sha"))
     traffic = previous["traffic"]
     if not traffic or sum(t.get("percent", 0) for t in traffic) != 100:
@@ -301,19 +470,33 @@ def restore(g, previous):
         if not re.fullmatch(r"tripse-ai-(?:dev|prod)-[a-z0-9-]+", t.get("revisionName", "")):
             raise ValueError("Invalid previous revision")
     base = ("run", "services", "update", c["GCP_SERVICE_NAME"], "--region=europe-central2")
-    iap = previous["mode"] == "cloud_demo" or previous.get("iap_enabled", False)
-    g(*base, "--invoker-iam-check", "--iap" if iap else "--no-iap")
+    iap = (previous["mode"] == "cloud_demo" or previous.get("iap_enabled", False)
+           or current.get("metadata", {}).get("annotations", {}).get("run.googleapis.com/iap-enabled") == "true")
+    g(*base, "--invoker-iam-check", *(("--iap",) if iap else ()))
     allocation = ",".join(f"{t['revisionName']}={t['percent']}" for t in traffic)
     g("run", "services", "update-traffic", c["GCP_SERVICE_NAME"], "--region=europe-central2", "--to-revisions=" + allocation)
     from scripts.gcp.parity_smoke import Acceptance
     from scripts.gcp.smoke_auth import probe_token
     token = probe_token(g, d.validate_url(previous["url"]), iap=iap)
     health = Acceptance(previous["url"], token).call("/health")
-    if health.get("image_version") != sha or health.get("feature_mode") != previous["mode"]:
+    if (health.get("image_version") != sha or health.get("feature_mode") != previous["mode"]
+        or health.get("environment") != c["APP_ENV"]):
         raise ValueError("Previous runtime restoration was not verified")
     actual = g("run", "services", "describe", c["GCP_SERVICE_NAME"], "--region=europe-central2", json_output=True)
+    d.assert_owned(actual.get("metadata", {}).get("labels", {}), environment=c["APP_ENV"])
+    if actual.get("status", {}).get("url") != previous["url"]:
+        raise ValueError("Recovery service origin changed")
+    fresh(actual, previous["sequence"])
+    annotations = actual.get("metadata", {}).get("annotations", {})
+    if (annotations.get("run.googleapis.com/invoker-iam-disabled") == "true"
+        or (iap and annotations.get("run.googleapis.com/iap-enabled") != "true")):
+        raise ValueError("Recovery private access was not verified")
     if sorted((t.get("revisionName"), t.get("percent")) for t in actual.get("status", {}).get("traffic", []) if t.get("percent", 0)) != sorted((t["revisionName"], t["percent"]) for t in traffic):
         raise ValueError("Previous traffic restoration was not verified")
+    verify_previous_revision(g, previous)
+    policy = g("run", "services", "get-iam-policy", c["GCP_SERVICE_NAME"], "--region=europe-central2", json_output=True)
+    if any(member in {"allUsers", "allAuthenticatedUsers"} for binding in policy.get("bindings", []) for member in binding.get("members", [])):
+        raise ValueError("Recovery private invoker policy was not verified")
 
 
 def browser_acceptance(origin, token, trip_id):
@@ -342,8 +525,11 @@ def summary(record):
     path = os.getenv("GITHUB_STEP_SUMMARY")
     if path:
         safe = json.dumps(record, indent=2, ensure_ascii=True).replace("`", "\\u0060")
-        with open(path, "a", encoding="utf-8") as stream:
-            stream.write("\nTRIPSE deployment result\n\n```json\n" + safe + "\n```\n")
+        try:
+            with open(path, "a", encoding="utf-8") as stream:
+                stream.write("\nTRIPSE deployment result\n\n```json\n" + safe + "\n```\n")
+        except OSError:
+            print("Deployment summary unavailable; original outcome retained", file=sys.stderr)
 
 
 def execute():
@@ -362,6 +548,9 @@ def execute():
     if operation != "dev" and event != "workflow_dispatch" and not (operation == "promote" and ref == "refs/heads/master"):
         raise ValueError("Rollback is manual; promotion requires a master release")
     directory = Path(os.environ["RUNNER_TEMP"]) / "tripse-deployment"
+    release_path = directory / "release.json"
+    if release_path.exists():
+        raise ValueError("Existing release evidence path must be fresh; no deployment attempted")
     config = config_from_environment(environment, directory / "config")
     os.environ["GCP_CI"] = "1"
     expected_identity = f"tripse-ai-{environment}-ci-deploy@tripse-ai.iam.gserviceaccount.com"
@@ -400,9 +589,10 @@ def execute():
         remote = GitHub().request("/git/ref/" + quote(ref.removeprefix("refs/"), safe="/"))
         if remote.get("object", {}).get("sha") != os.environ["GITHUB_SHA"]:
             raise ValueError("Push was superseded by a newer branch head")
+    build_hint = proof["source_build_id"] if proof else None
     if operation == "dev":
         with d.command_stage("build"):
-            d.build(g, sha)
+            build_hint = d.build(g, sha)
     with d.command_stage("release.digest"):
         selected_digest = d.digest(g, sha)
     if proof and selected_digest != proof["image_digest"]:
@@ -410,7 +600,7 @@ def execute():
     if environment == "dev":
         from scripts.gcp.build_proof import verify
         with d.command_stage("release.source_proof"):
-            source_build_id = verify(g, sha, selected_digest)
+            source_build_id = verify(g, sha, selected_digest, build_hint) if build_hint else verify(g, sha, selected_digest)
     else:
         source_build_id = proof["source_build_id"]
     with d.command_stage("release.snapshot"):
@@ -422,9 +612,11 @@ def execute():
         "source_verified": True, "source_build_id": source_build_id,
         "previous_sha": previous["sha"], "accepted": False,
         "rollback": f"Manual rollback: select {environment}, SHA {previous['sha']} and its last successful acceptance artifact"}
+    phase, created_release = "release.deploy", False
     try:
         with d.command_stage("release.deploy"):
             d.deploy(g, sha)
+        phase = "release.verify"
         with d.command_stage("release.verify"):
             state = d.deployed_state(g, sha)
         if state["image_digest"] != selected_digest:
@@ -433,6 +625,7 @@ def execute():
         if environment == "dev" and config["CLOUD_FEATURE_MODE"] == "cloud_demo":
             from scripts.gcp.smoke_auth import probe_token
             from scripts.gcp.parity_smoke import Acceptance
+            phase = "release.acceptance"
             with d.command_stage("release.acceptance"):
                 token = probe_token(g, state["url"], iap=True)
                 acceptance = Acceptance(state["url"], token)
@@ -443,16 +636,27 @@ def execute():
         else:
             record["acceptance"] = "smoke"
         # Recheck after acceptance while the cross-branch DEV lock is still held.
+        phase = "release.verify"
         with d.command_stage("release.verify"):
-            record.update(d.deployed_state(g, sha))
+            final_state = d.deployed_state(g, sha)
+            if final_state["image_digest"] != selected_digest or final_state["image_sha"] != sha:
+                raise ValueError("Deployed digest changed after acceptance")
+            record.update(final_state)
         record.update(accepted=True, accepted_at=int(time.time()))
         record["config_hash"] = hashlib.sha256(json.dumps(config.values, sort_keys=True).encode()).hexdigest()
         directory.mkdir(parents=True, exist_ok=True)
-        (directory / "release.json").write_text(json.dumps(record, indent=2), encoding="utf-8")
         with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as stream:
             stream.write(f"sha={sha}\ndigest={selected_digest}\n")
+        with release_path.open("x", encoding="utf-8") as stream:
+            created_release = True
+            stream.write(json.dumps(record, indent=2))
     except Exception:
-        record["failure_stage"] = "Application deployment or deployed acceptance failed; release not accepted"
+        record.update(accepted=False, failure_stage=phase)
+        if created_release and release_path.exists():
+            try:
+                release_path.unlink()
+            except OSError:
+                record["evidence_cleanup"] = "Partial evidence file cleanup failed; release NOT accepted"
         try:
             with d.command_stage("release.restore"):
                 restore(g, previous)
@@ -484,12 +688,17 @@ def offline():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["offline", "configure", "execute"])
+    parser.add_argument("action", choices=["offline", "configure", "dev-health", "execute"])
     parser.add_argument("--basic", action="store_true", help="Dependency-free configuration check only")
     args = parser.parse_args()
     try:
         if args.action == "offline":
             offline()
+        elif args.action == "dev-health":
+            if os.getenv("CI_TARGET_ENV") != "dev":
+                raise ValueError("DEV health preflight cannot target another environment")
+            config = config_from_environment("dev", Path(os.environ["RUNNER_TEMP"]) / "tripse-deployment/config")
+            dev_health(d.Gcloud(config))
         elif args.action == "configure":
             if args.basic:
                 validate_environment(os.environ["CI_TARGET_ENV"])

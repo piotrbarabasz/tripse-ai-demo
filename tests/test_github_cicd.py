@@ -42,6 +42,17 @@ def workflow(name):
     return yaml.load((ROOT / ".github/workflows" / name).read_text(), Loader=yaml.BaseLoader)
 
 
+def receiving_revision(config, sha, mode, name):
+    """Realistic immutable revision metadata; original test assertions retained."""
+    pinned=config.image+"@"+IMAGE_DIGEST
+    return {"metadata":{"name":name},
+            "status":{"imageDigest":pinned,"conditions":[{"type":"Ready","status":"True"}]},
+            "spec":{"containers":[{"image":pinned,"env":[
+                {"name":"EXPECTED_IMAGE_SHA","value":sha},
+                {"name":"APP_ENV","value":config["APP_ENV"]},
+                {"name":"CLOUD_FEATURE_MODE","value":mode}]}]}}
+
+
 def test_workflows_events_credentials_and_environment_boundaries():
     checks, delivery = workflow("ci.yml"), workflow("delivery.yml")
     assert checks["on"]["pull_request"]["branches"] == ["master"]
@@ -95,11 +106,13 @@ def test_configs_are_outside_checkout_and_other_environment_is_only_stub(tmp_pat
 def proof():
     run = dict(id=123, repository={"full_name": ci.REPOSITORY}, path=ci.WORKFLOW, event="push",
                head_branch="master", head_sha=SHA, run_attempt=1)
-    artifact = dict(workflow_run={"id": 123}, expired=False, name=f"dev-accepted-{SHA}-123-1")
+    artifact = dict(id=456, workflow_run={"id": 123}, expired=False, expires_at="2035-01-01T00:00:00Z", name=f"dev-accepted-{SHA}-123-1")
     record = dict(repository=ci.REPOSITORY, run_id=123, policy_sha=SHA, environment="dev", image_sha=SHA,
                   feature_mode="cloud_demo", image_digest=IMAGE_DIGEST, accepted=True, source_ref="refs/heads/master",
                   run_attempt=1, acceptance="api_ui_mock")
     record.update(source_verified=True, source_build_id="9c54ce2d-d425-44cd-9328-a765affb8bad")
+    record.update(project="tripse-ai", region="europe-central2", service="tripse-ai-dev",
+                  revision="tripse-ai-dev-00003-test", traffic=[{"revisionName":"tripse-ai-dev-00003-test", "percent":100}])
     jobs = [{"name": "DEV deployment", "conclusion": "success", "run_attempt": 1}]
     return record, run, artifact, jobs
 
@@ -201,17 +214,24 @@ def test_traffic_digest_verification_uses_actual_receiving_revision():
 def test_failed_release_restores_previous_traffic_but_keeps_access_private(monkeypatch, mode):
     calls = []
     old = {"sha": SHA, "mode": mode, "iap_enabled": True, "url": ORIGIN,
+           "service":"tripse-ai-dev", "environment":"dev", "image_digest":IMAGE_DIGEST, "sequence":0,
            "traffic": [{"revisionName": "tripse-ai-dev-00001-old", "percent": 100}]}
     def g(*args, **kwargs):
         calls.append(args)
-        return {"status": {"traffic": old["traffic"]}}
+        if args[:3] == ("run", "revisions", "describe"):
+            return receiving_revision(g.config, SHA, mode, old["traffic"][0]["revisionName"])
+        if args[:3] == ("run", "services", "get-iam-policy"):return {"bindings":[]}
+        return {"metadata":{"labels":d.LABELS | {"environment":"dev"},
+                            "annotations":{"run.googleapis.com/iap-enabled":"true"}},
+                "status": {"traffic": old["traffic"], "url":ORIGIN}}
     g.config = Config(values(mode="cloud_demo"))
     monkeypatch.setattr(smoke_auth, "probe_token", lambda *a, **k: "private-token")
     from scripts.gcp.parity_smoke import Acceptance
-    monkeypatch.setattr(Acceptance, "call", lambda *a, **k: {"image_version": SHA, "feature_mode": mode})
+    monkeypatch.setattr(Acceptance, "call", lambda *a, **k: {"image_version": SHA, "feature_mode": mode, "environment":"dev"})
     ci.restore(g, old)
-    assert "--invoker-iam-check" in calls[0] and "--iap" in calls[0]
-    assert "--to-revisions=tripse-ai-dev-00001-old=100" in calls[1]
+    mutations=[c for c in calls if c[:3] in (("run","services","update"),("run","services","update-traffic"))]
+    assert "--invoker-iam-check" in mutations[0] and "--iap" in mutations[0]
+    assert "--to-revisions=tripse-ai-dev-00001-old=100" in mutations[1]
     assert not any("--no-invoker-iam-check" in c or "builds" in c or "delete" in c for c in calls)
 
 
@@ -241,6 +261,8 @@ def test_coordinator_builds_only_dev_and_never_records_failed_acceptance(tmp_pat
     monkeypatch.setattr(d, "check_release_source", lambda _: {})
     class FakeG:
         def __call__(self, *args, **kwargs):
+            if args[:3] == ("run","revisions","describe"):
+                return receiving_revision(config, "c"*40, "readonly_demo", f"tripse-ai-{environment}-00001-old")
             return {"spec": {"containers": [{"env": [{"name": "EXPECTED_IMAGE_SHA", "value": "c" * 40},
                 {"name": "CLOUD_FEATURE_MODE", "value": "readonly_demo"}, {"name": "APP_ENV", "value": environment}]}]}}
     g = FakeG()
@@ -250,7 +272,7 @@ def test_coordinator_builds_only_dev_and_never_records_failed_acceptance(tmp_pat
     monkeypatch.setattr(ci, "prerequisites", lambda _: {"metadata": {},
         "spec": {"template": {"spec": {"containers": [{"env": [{"name": "EXPECTED_IMAGE_SHA", "value": "c" * 40},
             {"name": "CLOUD_FEATURE_MODE", "value": "readonly_demo"}]}]}}},
-        "status": {"url": ORIGIN, "traffic": [{"revisionName": "tripse-ai-dev-00001-old", "percent": 100}]}})
+        "status": {"url": ORIGIN, "traffic": [{"revisionName": f"tripse-ai-{environment}-00001-old", "percent": 100}]}})
     monkeypatch.setattr(ci, "release_proof", lambda *a, **k: {"image_digest": IMAGE_DIGEST, "source_build_id": "9c54ce2d-d425-44cd-9328-a765affb8bad"})
     from scripts.gcp import build_proof
     monkeypatch.setattr(build_proof, "verify", lambda *a: "9c54ce2d-d425-44cd-9328-a765affb8bad")
@@ -353,9 +375,9 @@ def test_previous_sha_comes_from_receiving_revision_and_split_traffic_blocks_rel
     current = {"status": {"url": ORIGIN, "traffic": [{"revisionName": "tripse-ai-dev-00001-old", "percent": 100}]},
         "spec": {"template": {"spec": {"containers": [{"env": [{"name": "EXPECTED_IMAGE_SHA", "value": "f" * 40}]}]}}}}
     def g(*args, **kwargs):
+        if args[:3] == ("artifacts","docker","images"):return IMAGE_DIGEST
         assert args[3] == "tripse-ai-dev-00001-old"
-        return {"spec": {"containers": [{"env": [{"name": "EXPECTED_IMAGE_SHA", "value": SHA},
-            {"name": "APP_ENV", "value": "dev"}, {"name": "CLOUD_FEATURE_MODE", "value": "readonly_demo"}]}]}}
+        return receiving_revision(g.config, SHA, "readonly_demo", args[3])
     g.config = Config(values())
     assert ci.snapshot(current, g)["sha"] == SHA
     current["status"]["traffic"][0]["percent"] = 50

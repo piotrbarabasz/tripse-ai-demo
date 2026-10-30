@@ -12,9 +12,15 @@ supersedes: []
 
 # ADR-0015: Rozwój rejestru obrazów i cache CI/CD
 
-Stan implementacji: istniejący rejestr i delivery są opisane w ADR-0012;
-usprawnienia tego ADR nie zostały wdrożone. Akceptacja właściciela: brak.
-CI-001–CI-005 to lokalne identyfikatory propozycji planu, nie numery GitHub Issues.
+Stan implementacji 2026-10-29: CI-001 jest w commicie bazowym `e973163`;
+CI-002–CI-005 dołączono lokalnie w izolowanym CI-006, bez modyfikacji worktree
+źródłowych. Cloud Build pozostaje builderem (CI-003 Option A). Pin kontenera,
+offline registry audit i hardening source proof/recovery są w RC; automatyczny
+workflow benchmarku nie jest włączany. [Aktualny stan i bramki CI-006](../CI_006_INTEGRATION_ACCEPTANCE.md).
+Hosted CI/cache, live registry/IAM oraz Cloud Run delivery/rollback pozostają
+niezweryfikowane. Phase B przygotowano wyłącznie jako procedurę. Brak akceptacji
+właściciela ADR; status **proposed** zachowany. Taski CI są lokalnymi etykietami,
+nie numerami GitHub Issues.
 
 ## 1. Kontekst i problem
 
@@ -54,9 +60,9 @@ retencji niezmiennie otagowanych obrazów; nie deklarujemy oszczędności bez da
 
 ## 6. Dług techniczny i ograniczenia
 
-Brak cache pip w obecnych krokach, niezmierzony profil buildu i storage,
-nieprzypięty digest bazowego obrazu oraz ewentualny hardening UID wymagają
-oddzielnych checkpointów. Nie wolno wyłączyć weryfikacji Cloud Build, aby przyjąć
+Cache pip dodany lokalnie; hosted cold/warm pozostaje niezweryfikowany.
+Pin bazowego obrazu jest w RC; niezmierzony profil cloud buildu/storage oraz
+zgodność migracji UID wymagają oddzielnych checkpointów. Nie wolno wyłączyć weryfikacji Cloud Build, aby przyjąć
 obraz z innego buildera. Historia wydania nie jest nową inspekcją live.
 
 ## 7. Wpływ na kosztorys
@@ -83,3 +89,10 @@ zmiana środowisk — wyłącznie po pomiarach i osobnej decyzji.
 | Data | Autor | Zmiana i uzasadnienie | Powiązanie |
 |---|---|---|---|
 | 2026-10-28 | Codex | Propozycja rozwoju istniejącego rejestru, bez zmian operacyjnych | CI-001–CI-005 |
+| 2026-10-29 | Codex | Lokalna implementacja CI-001 i baseline; hosted i zysk niezweryfikowane, status proposed zachowany | CI-001 |
+| 2026-10-29 | Codex | CI-002 lokalnie: pin i kontekst; odbiór kontenerowy zablokowany, bez wdrożenia i akceptacji ADR | CI-002 |
+| 2026-10-29 | Codex | Po uruchomieniu Docker Engine lokalny odbiór obu obrazów PASS; pomiary bez dowodu poprawy; non-root odłożono; Cloud Run i release provenance niezweryfikowane, ADR nadal proposed | CI-002 |
+| 2026-10-29 | Codex | Izolowany benchmark CI-003 Docker/Buildx/internal/local i workflow GHA v2; hosted bez wyników; Option A zachować Cloud Build; bez zmian proof/delivery i akceptacji ADR | CI-003 |
+| 2026-10-29 | Codex | CI-004 audyt statyczny i dry-run offline; GitHub proof dostępny, GCP inventory blocked auth; bez live zmian i akceptacji ADR | CI-004 |
+| 2026-10-29 | Codex | CI-005 lokalnie: pełna weryfikacja direct ID i targeted discovery, runtime evidence/recovery hardening; bez deploy/IAM/integracji, hosted/live niezweryfikowane, proposed zachowany | CI-005 |
+| 2026-10-29 | Codex | CI-006 lokalna integracja CI-001–005; benchmark tylko ręczny, Phase B niewykonana, ADR nadal proposed | CI-006 |

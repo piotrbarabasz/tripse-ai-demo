@@ -1,0 +1,67 @@
+{
+  "observed_date": "2026-10-29",
+  "kind": "read_only_GitHub_verification_of_historical_release_records",
+  "current_GCP_state_verified": false,
+  "records": [
+    {
+      "environment": "dev",
+      "artifact_id": 12784708088,
+      "artifact_expired": false,
+      "expires_at": "2027-01-26T01:21:51Z",
+      "metadata_and_record_contract": "PASS",
+      "release_record": {
+        "repository": "piotrbarabasz/tripse-ai-demo",
+        "run_id": 40614584902,
+        "run_attempt": 1,
+        "policy_sha": "3f55a25276a7e92ce74b3e0c70460d4e967a0138",
+        "source_ref": "refs/heads/master",
+        "image_sha": "3f55a25276a7e92ce74b3e0c70460d4e967a0138",
+        "image_digest": "sha256:c9fdd47b93a49c3fbf27a5810c01f6d974fcd8faa3598950185d290a1a690566",
+        "environment": "dev",
+        "source_verified": true,
+        "source_build_id": "379950bf-7772-464a-9f16-47bc02472efb",
+        "previous_sha": "71419ec4f55cf97ac8f0fc4ec3cee1145dcf4d5b",
+        "accepted": true,
+        "revision": "tripse-ai-dev-00014-9jb",
+        "traffic": [
+          {
+            "latestRevision": true,
+            "percent": 100,
+            "revisionName": "tripse-ai-dev-00014-9jb"
+          }
+        ],
+        "accepted_at": 1793150952
+      }
+    },
+    {
+      "environment": "prod",
+      "artifact_id": 12784523829,
+      "artifact_expired": false,
+      "expires_at": "2027-01-26T01:21:51Z",
+      "metadata_and_record_contract": "PASS",
+      "release_record": {
+        "repository": "piotrbarabasz/tripse-ai-demo",
+        "run_id": 40614584902,
+        "run_attempt": 1,
+        "policy_sha": "3f55a25276a7e92ce74b3e0c70460d4e967a0138",
+        "source_ref": "refs/heads/master",
+        "image_sha": "3f55a25276a7e92ce74b3e0c70460d4e967a0138",
+        "image_digest": "sha256:c9fdd47b93a49c3fbf27a5810c01f6d974fcd8faa3598950185d290a1a690566",
+        "environment": "prod",
+        "source_verified": true,
+        "source_build_id": "379950bf-7772-464a-9f16-47bc02472efb",
+        "previous_sha": "c87377d331220d54ee3be27dee3c2eba69cc6649",
+        "accepted": true,
+        "revision": "tripse-ai-prod-00004-gg5",
+        "traffic": [
+          {
+            "latestRevision": true,
+            "percent": 100,
+            "revisionName": "tripse-ai-prod-00004-gg5"
+          }
+        ],
+        "accepted_at": 1793151083
+      }
+    }
+  ]
+}
