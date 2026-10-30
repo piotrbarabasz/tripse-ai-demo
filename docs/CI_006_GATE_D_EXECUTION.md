@@ -138,3 +138,64 @@ selected run, monitor snapshots, health/build ordering, original recovery eviden
 and `post-run/` accepted release, verified build, workflow logs, policy comparisons
 and IAM audit entries. Raw credentials, Terraform state and unrelated application
 data are not part of this report or a publication.
+
+## Follow-up — redundant IAM writes patch prepared, 2026-10-30
+
+**Prepared only: no commit/push, build, deployment, rollback or cloud mutation.**
+The working-tree baseline is `7b23184b386ddeb16e9978dc076e8c9a29758090`, whose
+only change after the deployed a171dec was publication of this incident report.
+
+The audit user-agent identifies **gcloud 591.0.0**, with both calls belonging to
+the same `gcloud.run.deploy` invocation. The exact 591.0.0 core sources were
+downloaded from [Google's official component archive](https://dl.google.com/dl/cloudsdk/channels/rapid/components/google-cloud-sdk-core-20261026202537.tar.gz),
+verified against the official component-manifest SHA-256
+`0485899fd0e2897d5eea2e868e4fc3babc3b8440f0435cd5d202cfe1a5b672a3`,
+and inspected without installing/updating the local SDK (590.0.1).
+
+Confirmed SDK behavior:
+
+- `--no-allow-unauthenticated` supplies false to `_HandleAllowUnauthenticated`,
+  which calls `AddOrRemoveIamPolicyBinding` to remove allUsers/run.invoker.
+- `--iap` supplies true to `_HandleIap`, which calls
+  `_AddIamPolicyBindingWithRetry` for the IAP service-agent invoker grant.
+- The shared binding helper always sends `SetIamPolicy`, even when removal finds
+  no binding or addition finds the member already present. This explains two
+  writes of equivalent policies. Audit entries alone do not identify which
+  individual call came from which handler; that ordering is inferred from the
+  matching SDK implementation, not a per-handler runtime trace.
+- `--invoker-iam-check` sets the service's invoker-check annotation through
+  `InvokerIamChange`; it is not either binding-reconciliation trigger. It is
+  retained. For an existing service, omitting allow-unauthenticated avoids the
+  new-service prompt, and omitting IAP leaves its current state unchanged.
+  See also the [official deploy flag reference](https://docs.cloud.google.com/sdk/gcloud/reference/run/deploy).
+
+The minimal patch affects only DEV cloud_demo: normal deployment now requires
+an existing private service, enabled IAP/Invoker checks, no allUsers or
+allAuthenticatedUsers member under any role/condition, and the correct project's
+unconditional IAP service-agent run.invoker grant. Missing service/bootstrap or
+invalid security state fails before any mutation, rather than repairing grants.
+Only after those reads succeed are `--no-allow-unauthenticated` and `--iap`
+omitted. Invoker checks, pinned image/runtime identity, provenance, smoke,
+recovery and WIF checks remain. PROD and readonly command flags/behavior are
+unchanged, including explicit security configuration on their existing paths.
+
+Read-only live verification confirms DEV remains private with IAP enabled,
+Invoker checks enabled, the service-agent grant intact and the same IAM policy
+as after Gate D. PROD service/IAM and DEV/PROD WIF match their prior snapshots.
+The patch has not been deployed to establish those results.
+
+Validation: **16 new regression cases; 343 focused tests PASS; full suite 1143
+PASS** (one existing deprecation warning), offline contracts, make check and
+git diff --check PASS. The existing cloud deployment test now separately covers
+private existing DEV and both existing/new PROD flag contracts, preserving its
+image, secret, private-smoke and no-publication assertions. An additional private
+offline execution of the actual SDK handlers with fake binding helpers produces
+two reconciliation requests for the old flags and zero for the verified-existing
+DEV path; it makes no network or GCP calls.
+
+**Limitation:** these tests confirm command construction, rejection of unsafe
+state and SDK handler behavior. A claim of zero live SetIamPolicy calls still
+requires a separately authorized DEV deployment and Cloud Audit Logs review.
+No such deployment or authorization is inferred here. Proposed commit:
+`fix(ci): preserve private DEV IAM during image deployment`.
+Private source/audit checks and logs remain in `local-data/iam-write-fix/`.

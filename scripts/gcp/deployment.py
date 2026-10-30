@@ -497,14 +497,26 @@ def deploy(g, sha):
     if not repository(g):
         raise ValueError("Run setup first")
     existing = service(g)
+    preserve_private_dev = c["APP_ENV"] == "dev" and c["CLOUD_FEATURE_MODE"] == "cloud_demo"
+    if preserve_private_dev and not existing:
+        raise ValueError("Bootstrap the private IAP DEV service before deployment; no security configuration is created automatically")
     check_act_as(g, c.runtime_account)
     pinned = f"{c.image}@{digest(g, sha)}"
     if existing:
         policy = g("run", "services", "get-iam-policy", c["GCP_SERVICE_NAME"], f'--region={c["GCP_REGION"]}', json_output=True)
         bindings = policy.get("bindings", [])
         for binding in bindings:
-            if "allAuthenticatedUsers" in binding.get("members", []) or ("allUsers" in binding.get("members", []) and (binding["role"] != "roles/run.invoker" or binding.get("condition"))):
+            if "allAuthenticatedUsers" in binding.get("members", []) or ("allUsers" in binding.get("members", []) and (preserve_private_dev or binding["role"] != "roles/run.invoker" or binding.get("condition"))):
                 raise ValueError("Unexpected public IAM binding; inspect it manually before deployment")
+        if preserve_private_dev:
+            annotations = existing.get("metadata", {}).get("annotations", {})
+            iap_agent = f'serviceAccount:service-{c["GCP_PROJECT_NUMBER"]}@gcp-sa-iap.iam.gserviceaccount.com'
+            if (c["GCP_PUBLIC_ACCESS"] != "false"
+                or annotations.get("run.googleapis.com/iap-enabled") != "true"
+                or annotations.get("run.googleapis.com/invoker-iam-disabled") not in (None, "false")
+                or not any(b.get("role") == "roles/run.invoker" and iap_agent in b.get("members", [])
+                           and not b.get("condition") for b in bindings)):
+                raise ValueError("Existing DEV must have IAP, Invoker IAM checks and the IAP service-agent grant; operator bootstrap required")
         if any("allUsers" in binding.get("members", []) for binding in bindings):
             g("run", "services", "remove-iam-policy-binding", c["GCP_SERVICE_NAME"], f'--region={c["GCP_REGION"]}',
               "--member=allUsers", "--role=roles/run.invoker", "--condition=None")
@@ -528,7 +540,10 @@ def deploy(g, sha):
           "--command=", "--args=",
           labels,
           "--startup-probe=httpGet.path=/health,httpGet.port=8000,initialDelaySeconds=0,timeoutSeconds=2,periodSeconds=5,failureThreshold=12",
-          "--no-allow-unauthenticated", *(["--iap"] if c["CLOUD_FEATURE_MODE"] == "cloud_demo" else ["--no-iap"]))
+          # Both flags trigger SetIamPolicy even when bindings already match.
+          # Existing private DEV was verified above; omitted IAP state is retained.
+          *([] if preserve_private_dev else ["--no-allow-unauthenticated",
+             "--iap" if c["CLOUD_FEATURE_MODE"] == "cloud_demo" else "--no-iap"]))
     g("run", "services", "update-traffic", c["GCP_SERVICE_NAME"], f'--region={c["GCP_REGION"]}', "--to-latest")
     state = deployed_state(g, sha)
     # Record the actual URL even if smoke subsequently fails; failure is still propagated.
