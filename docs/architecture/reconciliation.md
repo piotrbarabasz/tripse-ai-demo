@@ -103,7 +103,8 @@ source reconciliation are complete. No documentation blocker remains for PR revi
 the future architecture decisions above remain explicit review items, not accepted
 implementation scope. Do not target protected master. No PR is created here.
 
-[CI](../../.github/workflows/ci.yml) checks PRs targeting master only.
+[CI](../../.github/workflows/ci.yml) now checks PRs targeting dev and master in the
+CI-007 source change; hosted execution and mandatory-check enforcement remain separate.
 [Delivery](../../.github/workflows/delivery.yml) runs on pushes to dev/master and calls
 CI before the DEV job. There is no documentation-path exclusion: merging even this
 documentation-only branch into dev creates a qualifying push and can trigger DEV
@@ -111,10 +112,11 @@ deployment, subject to workflow success and environment controls. This review do
 authorize that deployment. Coordinate merge timing and existing delivery authorization
 with the owner; do not treat a documentation merge as operationally inert.
 
-Propose a separate CI change for PR targets `[dev, master]`, retaining read-only CI
-permissions and no deployment credentials. Delivery triggers, IAM/WIF, environment
-approvals, protected branches and promotion authorization remain unchanged. This task
-does not modify any workflow or add a deployment-skipping mechanism.
+[CI-007](../CI_007_DEV_PR_GATE.md) implements the separately proposed PR trigger
+extension with read-only CI permissions and no deployment credentials. Delivery
+triggers, IAM/WIF, environment approvals, protected branches and promotion authorization
+remain unchanged. ARCH-001 itself changed no workflow; its historical validation below
+remains a dated snapshot, not proof of CI-007 hosted acceptance.
 
 ## Historical final-review validation (before original restoration)
 

@@ -38,8 +38,9 @@ existing accepted-image rollback procedures; this task does not execute them.
 ## FRONT-001 — React foundation and app shell
 
 - Dependencies: ARCH-001 and owner agreement on ADR-0017 stack/entry/packaging;
-  separately proposed dev-PR CI improvement before merge, or explicit documented
-  manual checks while that gap remains. No API-001 dependency.
+  CI-007 dev-PR CI gate hosted acceptance and any required-check configuration before
+  relying on mandatory PR enforcement. Local source change alone does not verify
+  GitHub execution or branch protection. No API-001 dependency.
 - Exact scope: create frontend/ with pinned React/TypeScript/Vite, React Router,
   Tailwind and only shell-required shadcn/ui primitives; lockfile, strict type checking,
   documented install/dev/build commands. Add bootstrap, providers only as needed,
@@ -171,15 +172,16 @@ existing queue/auth/idempotency cases. Rollback disables the panel, retaining jo
 audit records. UI-free backend operations must remain usable from manual workflows.
 Neither Marketing nor AUTO-001 is part of FRONT-001 or claimed complete in ARCH-001.
 
-## Separate CI improvement proposal
+## CI-007 — separate DEV PR quality gate
 
-[ci.yml](../../.github/workflows/ci.yml) currently triggers PR checks only for master.
-Delivery reuses CI on dev/master pushes, which is not a pre-merge dev-PR gate. Propose
-a separate change to check PRs targeting dev and master with existing read-only
-permissions and no deployment credentials. Add frontend lockfile install/type/build,
-schema drift and scoped Markdown/link checks when their tooling exists. Validate
-workflow trigger/permission contracts and required-check configuration separately;
-do not broaden delivery triggers or change protected master policy in ARCH-001.
+[CI-007](../CI_007_DEV_PR_GATE.md) implements the separate source change to check PRs
+targeting dev and master using the existing read-only pipeline and no deployment
+credentials. Previously the PR trigger targeted master only, as recorded by the
+dated ARCH-001 audit. Hosted success and required branch checks are separate acceptance
+items; do not claim enforcement from YAML alone. Delivery still runs on dev/master
+pushes. Frontend install/type/build and schema drift checks remain later toolchain
+work, after FRONT-001A establishes it; none are added by CI-007. No delivery trigger,
+protected master policy or environment authorization changes are made.
 
 Delivery has no documentation-path exclusion. Merging this branch into dev creates a
 push that can run DEV deployment after CI and existing environment controls. Recommend

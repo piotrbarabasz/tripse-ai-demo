@@ -9,6 +9,11 @@ Audited baseline: `dev`,
 commit `0956ea2`; documentation prepared on `docs/arch-001-foundation`.
 Source observations below describe code, not a new claim of hosted acceptance.
 
+Dated follow-up, CI-007 (2026-10-31): the [DEV PR gate source change](../CI_007_DEV_PR_GATE.md)
+extends CI PR targets to dev/master without changing Delivery. Hosted execution and
+required-check enforcement are separate gates. The baseline table and risk record
+below retain the original ARCH-001 observations, including the then-missing dev PR gate.
+
 ## Current system: evidence from the working tree
 
 | Area | Observed implementation and primary evidence |

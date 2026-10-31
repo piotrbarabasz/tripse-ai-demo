@@ -1,5 +1,10 @@
 # Rejestr prac i podstawy kosztorysu
 
+2026-10-31: [CI-007 DEV PR gate](../CI_007_DEV_PR_GATE.md) is a user-supplied task ID.
+Local trigger/tests/docs work and real GitHub-hosted acceptance are tracked separately;
+Definition of Done remains pending until a dev PR completes the existing CI pipeline
+without deployment. No branch-protection setting or ADR approval is inferred.
+
 2026-10-31: [ARCH-001](../architecture/README.md) records a documentation-only source
 audit and proposed React migration. Stage IDs ARCH-001, FRONT-001, API-001, FRONT-002,
 FRONT-003 and AI-001 are user-supplied task labels, not verified GitHub issue IDs.

@@ -55,17 +55,37 @@ def receiving_revision(config, sha, mode, name):
 
 def test_workflows_events_credentials_and_environment_boundaries():
     checks, delivery = workflow("ci.yml"), workflow("delivery.yml")
-    assert checks["on"]["pull_request"]["branches"] == ["master"]
-    assert "pull_request_target" not in checks["on"] | delivery["on"]
+    # Exact events/filters forbid path exclusions and privileged PR handoffs.
+    assert set(checks["on"]) == {"pull_request", "workflow_call", "workflow_dispatch"}
+    assert checks["on"]["pull_request"] == {"branches": ["dev", "master"]}
+    assert checks["on"]["workflow_call"] == checks["on"]["workflow_dispatch"] == ""
+    assert set(delivery["on"]) == {"push", "workflow_dispatch"}
+    assert delivery["on"]["push"] == {"branches": ["dev", "master"]}
     assert checks["permissions"] == {"contents": "read"}
-    assert not any("auth@" in step.get("uses", "") for step in checks["jobs"]["checks"]["steps"])
-    assert delivery["on"]["push"]["branches"] == ["dev", "master"]
+    assert set(checks["jobs"]) == {"checks"}
+    pr_job = checks["jobs"]["checks"]
+    assert pr_job["permissions"] == {"contents": "read"}  # No OIDC write scope.
+    assert "environment" not in pr_job and "secrets" not in pr_job
+    assert "uses" not in pr_job  # No reusable privileged job hidden in PR CI.
+    ci_text = (ROOT / ".github/workflows/ci.yml").read_text()
+    assert "secrets." not in ci_text and "vars." not in ci_text
+    assert "id-token" not in ci_text and "google-github-actions/" not in ci_text
+    assert delivery["jobs"]["ci"]["uses"] == "./.github/workflows/ci.yml"
+    assert delivery["jobs"]["ci"]["permissions"] == {"contents": "read"}
+    assert "secrets" not in delivery["jobs"]["ci"]
     assert delivery["jobs"]["dev"]["concurrency"] == {"group": "tripse-dev-global", "cancel-in-progress": "false"}
     assert delivery["jobs"]["prod"]["concurrency"]["group"] == "tripse-prod-global"
     prod = delivery["jobs"]["prod"]
     assert prod["environment"] == "production" and "refs/heads/master" in prod["if"]
     assert "needs.dev.result == 'success'" in prod["if"]
+    assert prod["needs"] == ["ci", "dev"]
+    assert "needs.ci.result == 'success'" in prod["if"]
+    assert prod["env"]["CI_EVIDENCE_RUN_ID"] == "${{ github.event_name == 'push' && github.run_id || inputs.evidence_run_id }}"
+    assert prod["env"]["CI_EVIDENCE_ARTIFACT_ID"] == "${{ needs.dev.outputs.artifact_id || inputs.evidence_artifact_id }}"
     assert delivery["jobs"]["dev"]["needs"] == "ci"
+    assert delivery["jobs"]["dev"]["environment"] == "development"
+    assert "github.event_name == 'push'" in delivery["jobs"]["dev"]["if"]
+    assert "github.event_name == 'workflow_dispatch'" in delivery["jobs"]["dev"]["if"]
     for job in (delivery["jobs"]["dev"], prod):
         assert job["permissions"]["id-token"] == "write"
         assert any(s.get("uses", "").startswith("google-github-actions/auth@") and
@@ -77,6 +97,8 @@ def test_workflows_events_credentials_and_environment_boundaries():
             for step in job.get("steps", []):
                 if "uses" in step:
                     assert re.fullmatch(r"[\w/-]+@[a-f0-9]{40}", step["uses"])
+                    if step["uses"].startswith("actions/checkout@"):
+                        assert step["with"]["persist-credentials"] == "false"
 
 
 @pytest.mark.parametrize("change", [{"CLOUD_FEATURE_MODE": "readonly_demo"}, {"GCP_SERVICE_NAME": "tripse-ai-prod"},
@@ -177,6 +199,8 @@ def test_keyless_probe_signs_short_lived_jwt_or_generates_explicit_id_token(monk
 
 
 @pytest.mark.parametrize("event,ref,environment,operation", [("pull_request", "refs/pull/1/merge", "dev", "dev"),
+    ("pull_request", "refs/pull/1/merge", "prod", "promote"),
+    ("pull_request", "refs/heads/master", "prod", "promote"),
     ("pull_request_target", "refs/heads/master", "prod", "promote"),
     ("push", "refs/heads/feature", "prod", "promote"),
     ("push", "refs/heads/master", "dev", "rollback"),
