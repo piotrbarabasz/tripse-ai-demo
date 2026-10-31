@@ -83,7 +83,7 @@ stored by the worker. Google Maps JavaScript loading can incur normal Google usa
   unverified points, safe text/URLs, loading/retry, missing configuration, map load
   and authorization failures, and invalid/expired token pages.
 - Screenshots were visually reviewed; the browser smoke saves them under
-  `.venv/viewer-artifacts/`. Its map is an explicit test double, not a real map.
+  `local-data/viewer-qa/` in the current worktree. Its map is an explicit test double, not a real map.
 - Unit tests block paid provider HTTP calls. Browser tests use synthetic persisted
   data and intercept external requests; **no live Maps API calls are made**.
 - Docker build/start and HTTP smoke passed: healthy API, served JS/CSS assets,

@@ -15,6 +15,18 @@ below are historical snapshots, superseded for rollout status. Do not replay
 completed bootstrap/import/cutover steps or use old saved plans. Human login,
 restore/isolation drills and real customer-data readiness remain unverified.
 
+## CI-006 integrated candidate — not deployed
+
+[CI-006 integration and Phase B gates](CI_006_INTEGRATION_ACCEPTANCE.md) is the current
+local release-candidate reference. It includes CI-002 pin/context and CI-005 source/
+evidence/recovery changes, preserving API/worker, port 8000, Compose storage,
+Cloud Build --no-cache and existing PROD proof delegation. Root remains unchanged;
+non-root is a separate follow-up. No deployed Cloud Run compatibility is claimed.
+
+Review/commit and feature-branch PR CI precede a separately authorized read-only GCP
+audit and controlled DEV/PROD acceptance. Do not use dev/master pushes as a test.
+No cloud mutation, deployment, traffic change or live rollback occurred in CI-006.
+
 ## Historical implementation notes (2026-10-26 to 2026-10-27)
 
 2026-10-27: [DEV bootstrap history and IAP 401 investigation](DEV_AUTH_004_INCIDENT.md).

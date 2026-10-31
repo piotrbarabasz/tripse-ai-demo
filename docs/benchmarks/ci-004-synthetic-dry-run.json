@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-10-29T00:00:00Z",
+  "data_origin": "synthetic",
+  "production_acceptance": false,
+  "destructive_actions_supported": false,
+  "complete": true,
+  "errors": [],
+  "repository": {
+    "name": "projects/tripse-ai/locations/europe-central2/repositories/tripse-ai",
+    "format_observed": "DOCKER",
+    "immutable_tags_observed": true,
+    "cleanup_policy_configuration": "Review original captured repository metadata; not simulated by this tool",
+    "storage_bytes_observed": 512000
+  },
+  "counts": {
+    "images": 6,
+    "packages": 1,
+    "distinct_digest_values": 6,
+    "tags": 4
+  },
+  "size_distribution_bytes": {
+    "min": 100,
+    "median": 100.0,
+    "max": 100
+  },
+  "summed_image_bytes_not_billable_storage": 600,
+  "unresolved_references": [],
+  "images": [
+    {
+      "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "package": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai",
+      "tags": [
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      ],
+      "size_bytes": 100,
+      "uploaded_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "classification": "protected",
+      "safe_to_delete": false,
+      "requires_operator_review": true,
+      "references": [
+        {
+          "kind": "deployed_dev",
+          "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "evidence_status": "valid"
+        },
+        {
+          "kind": "deployed_prod",
+          "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "evidence_status": "valid"
+        }
+      ],
+      "rollback_evidence_status": "operator_asserted_valid_not_release_verification",
+      "reasons": [
+        "Active or rollback reference: retain even if evidence is missing/expired",
+        "Immutable tagged artifact: cleanup cannot delete it"
+      ]
+    },
+    {
+      "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "package": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai",
+      "tags": [
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "size_bytes": 100,
+      "uploaded_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "classification": "protected",
+      "safe_to_delete": false,
+      "requires_operator_review": true,
+      "references": [
+        {
+          "kind": "rollback",
+          "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "evidence_status": "expired"
+        }
+      ],
+      "rollback_evidence_status": "not_verified",
+      "reasons": [
+        "Active or rollback reference: retain even if evidence is missing/expired",
+        "Immutable tagged artifact: cleanup cannot delete it"
+      ]
+    },
+    {
+      "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "package": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai",
+      "tags": [
+        "cccccccccccccccccccccccccccccccccccccccc"
+      ],
+      "size_bytes": 100,
+      "uploaded_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "classification": "historically_retained",
+      "safe_to_delete": false,
+      "requires_operator_review": true,
+      "references": [
+        {
+          "kind": "historical",
+          "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "evidence_status": "expired"
+        }
+      ],
+      "rollback_evidence_status": "not_verified",
+      "reasons": [
+        "Historical/accepted evidence reference: retain",
+        "Immutable tagged artifact: cleanup cannot delete it"
+      ]
+    },
+    {
+      "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "digest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "package": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai",
+      "tags": [
+        "dddddddddddddddddddddddddddddddddddddddd"
+      ],
+      "size_bytes": 100,
+      "uploaded_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "classification": "unclassified",
+      "safe_to_delete": false,
+      "requires_operator_review": true,
+      "references": [],
+      "rollback_evidence_status": "not_verified",
+      "reasons": [
+        "No reference found in supplied snapshot does not establish deletability",
+        "Immutable tagged artifact: cleanup cannot delete it"
+      ]
+    },
+    {
+      "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "digest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "package": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai",
+      "tags": [],
+      "size_bytes": 100,
+      "uploaded_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "classification": "potential_cleanup_candidate",
+      "safe_to_delete": false,
+      "requires_operator_review": true,
+      "references": [],
+      "rollback_evidence_status": "not_verified",
+      "reasons": [
+        "No reference found in supplied snapshot does not establish deletability",
+        "Untagged >=90d with complete attested coverage; explicit operator review still required"
+      ]
+    },
+    {
+      "image": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai@sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "digest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "package": "europe-central2-docker.pkg.dev/tripse-ai/tripse-ai/tripse-ai",
+      "tags": [],
+      "size_bytes": 100,
+      "uploaded_at": "2026-01-01T00:00:00Z",
+      "updated_at": "2026-01-01T00:00:00Z",
+      "classification": "unclassified",
+      "safe_to_delete": false,
+      "requires_operator_review": true,
+      "references": [],
+      "rollback_evidence_status": "not_verified",
+      "reasons": [
+        "No reference found in supplied snapshot does not establish deletability"
+      ]
+    }
+  ]
+}

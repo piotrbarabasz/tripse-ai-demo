@@ -1,0 +1,224 @@
+{
+  "base": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+  "earlier_base": "777e0662da5e57894371529f3af0bdafeb2fed11",
+  "worktrees": [
+    {
+      "task": "CI-001",
+      "path": "D:\\Projects\\tripse-ai-demo",
+      "branch": "ci/ci-001-python-cache",
+      "head": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+      "merge_base_with_integration": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+      "commits_since_common_base": [
+        "e9731635fcf1dc424ccecebecc0299dafb7936b7 ci 1-2 update"
+      ],
+      "status": "",
+      "patches": {
+        "staged": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unstaged": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "combined": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "untracked": []
+    },
+    {
+      "task": "CI-002",
+      "path": "D:\\Projects\\tripse-ai-ci-002",
+      "branch": "ci/ci-002-docker-hardening",
+      "head": "777e0662da5e57894371529f3af0bdafeb2fed11",
+      "merge_base_with_integration": "777e0662da5e57894371529f3af0bdafeb2fed11",
+      "commits_since_common_base": [],
+      "status": " M .dockerignore\n M .gcloudignore\n M Dockerfile\n M docs/ARTIFACT_REGISTRY_CICD_PLAN.md\n M docs/DEPLOY_GCP.md\n M docs/adr/0015-registry-build-cache-evolution.md\n M docs/adr/README.md\n M docs/tracking/worklog.csv\n?? docs/CI_002_DOCKER_OPTIMIZATION.md\n?? tests/test_docker_image_contract.py\n",
+      "patches": {
+        "staged": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unstaged": {
+          "bytes": 12745,
+          "sha256": "666a1d6c28e9aad1a36207d3cb18fe7c54181da66f00a7c9ce368a332b40d1d4"
+        },
+        "combined": {
+          "bytes": 12745,
+          "sha256": "666a1d6c28e9aad1a36207d3cb18fe7c54181da66f00a7c9ce368a332b40d1d4"
+        }
+      },
+      "untracked": [
+        {
+          "path": "docs/CI_002_DOCKER_OPTIMIZATION.md",
+          "sha256": "2bb9e5e301c99a20b79132ce162e0421fee633421f1ea8b56300b5898df559f5",
+          "capture_relative_path": "CI-002/untracked/docs/CI_002_DOCKER_OPTIMIZATION.md"
+        },
+        {
+          "path": "tests/test_docker_image_contract.py",
+          "sha256": "379caa748b01dbb4f81728a32da5716e8f4646ba6f3378a060682d7a0d7421df",
+          "capture_relative_path": "CI-002/untracked/tests/test_docker_image_contract.py.source"
+        }
+      ]
+    },
+    {
+      "task": "CI-003",
+      "path": "D:\\Projects\\tripse-ai-ci-003",
+      "branch": "ci/ci-003-buildx-benchmark",
+      "head": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+      "merge_base_with_integration": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+      "commits_since_common_base": [
+        "e9731635fcf1dc424ccecebecc0299dafb7936b7 ci 1-2 update"
+      ],
+      "status": " M docs/ARTIFACT_REGISTRY_CICD_PLAN.md\n M docs/GITHUB_CICD.md\n M docs/adr/0015-registry-build-cache-evolution.md\n M docs/adr/README.md\n M docs/tracking/worklog.csv\n?? .github/workflows/buildx-benchmark.yml\n?? docs/CI_003_BUILDX_CACHE_BENCHMARK.md\n?? docs/benchmarks/\n?? scripts/benchmark_buildx.py\n?? tests/test_buildx_benchmark.py\n",
+      "patches": {
+        "staged": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unstaged": {
+          "bytes": 10053,
+          "sha256": "ebac0999bce1c55fd39db1f52ac5f55d3bf13d5f31987fecec0c493c3b3beed7"
+        },
+        "combined": {
+          "bytes": 10053,
+          "sha256": "ebac0999bce1c55fd39db1f52ac5f55d3bf13d5f31987fecec0c493c3b3beed7"
+        }
+      },
+      "untracked": [
+        {
+          "path": ".github/workflows/buildx-benchmark.yml",
+          "sha256": "1432efbca9c60bd8e866cba5eecb0d4cb25b10c9d43cef5900bfb273918f8ebb",
+          "capture_relative_path": "CI-003/untracked/.github/workflows/buildx-benchmark.yml"
+        },
+        {
+          "path": "docs/CI_003_BUILDX_CACHE_BENCHMARK.md",
+          "sha256": "0c1a5a9a14b6211b84a9efb59071c83c4f7200a4923f40c5ef7afbcc930f5543",
+          "capture_relative_path": "CI-003/untracked/docs/CI_003_BUILDX_CACHE_BENCHMARK.md"
+        },
+        {
+          "path": "docs/benchmarks/ci-003-local-2026-10-29.json",
+          "sha256": "a4ba5339b47d0b84ffa15a2bb68e44f114b31d9dbd6ae554ace533c835af09c2",
+          "capture_relative_path": "CI-003/untracked/docs/benchmarks/ci-003-local-2026-10-29.json"
+        },
+        {
+          "path": "scripts/benchmark_buildx.py",
+          "sha256": "0143f36e3da8d80bdca1a9aae63330a9084005cc86e7e1e9faaae83aaef42985",
+          "capture_relative_path": "CI-003/untracked/scripts/benchmark_buildx.py.source"
+        },
+        {
+          "path": "tests/test_buildx_benchmark.py",
+          "sha256": "cd5560bc3eb7bd0b586d9f8e6f8219ccf8d69133d62414b5b6164cd990ff3395",
+          "capture_relative_path": "CI-003/untracked/tests/test_buildx_benchmark.py.source"
+        }
+      ]
+    },
+    {
+      "task": "CI-004",
+      "path": "D:\\Projects\\tripse-ai-ci-004",
+      "branch": "ci/ci-004-artifact-registry-audit",
+      "head": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+      "merge_base_with_integration": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+      "commits_since_common_base": [
+        "e9731635fcf1dc424ccecebecc0299dafb7936b7 ci 1-2 update"
+      ],
+      "status": " M docs/ARTIFACT_REGISTRY_CICD_PLAN.md\n M docs/GITHUB_CICD.md\n M docs/adr/0015-registry-build-cache-evolution.md\n M docs/adr/README.md\n M docs/tracking/README.md\n M docs/tracking/worklog.csv\n?? docs/CI_004_ARTIFACT_REGISTRY_AUDIT.md\n?? docs/benchmarks/\n?? scripts/gcp/registry_audit.py\n?? tests/fixtures/registry_audit/\n?? tests/test_registry_audit.py\n",
+      "patches": {
+        "staged": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unstaged": {
+          "bytes": 10620,
+          "sha256": "4eefa663726b82a9cd2f267363b1910ee14d56c27fe5d146b8e792fb0c623c07"
+        },
+        "combined": {
+          "bytes": 10620,
+          "sha256": "4eefa663726b82a9cd2f267363b1910ee14d56c27fe5d146b8e792fb0c623c07"
+        }
+      },
+      "untracked": [
+        {
+          "path": "docs/CI_004_ARTIFACT_REGISTRY_AUDIT.md",
+          "sha256": "b7256ae7e2e1fb9a78ea2708b10d5c56fc505aba5ae2bf22c9f964e062cf095c",
+          "capture_relative_path": "CI-004/untracked/docs/CI_004_ARTIFACT_REGISTRY_AUDIT.md"
+        },
+        {
+          "path": "docs/benchmarks/ci-004-historical-release-evidence.json",
+          "sha256": "688ecdedfd9380a45f717f68473f58353dcf231dd01267ec92353c3eb599dad6",
+          "capture_relative_path": "CI-004/untracked/docs/benchmarks/ci-004-historical-release-evidence.json"
+        },
+        {
+          "path": "docs/benchmarks/ci-004-synthetic-dry-run.json",
+          "sha256": "81f4057fea0c5e68acb8a3eafa531858cb01421e21cc716b63e1f339c4affbce",
+          "capture_relative_path": "CI-004/untracked/docs/benchmarks/ci-004-synthetic-dry-run.json"
+        },
+        {
+          "path": "scripts/gcp/registry_audit.py",
+          "sha256": "9c0c624667a023460b6a3bbd0456181f02872d82c382656af232c570302a7e13",
+          "capture_relative_path": "CI-004/untracked/scripts/gcp/registry_audit.py.source"
+        },
+        {
+          "path": "tests/fixtures/registry_audit/synthetic.json",
+          "sha256": "1523700664e3c2cc930daf895410f0a413c79fb4e797475f90a85f616bfeafc3",
+          "capture_relative_path": "CI-004/untracked/tests/fixtures/registry_audit/synthetic.json"
+        },
+        {
+          "path": "tests/test_registry_audit.py",
+          "sha256": "5b555e1b559b3538f88e0a3954945ca018107da80e7085d8d090c451ba08b5db",
+          "capture_relative_path": "CI-004/untracked/tests/test_registry_audit.py.source"
+        }
+      ]
+    },
+    {
+      "task": "CI-005",
+      "path": "D:\\Projects\\tripse-ai-ci-005",
+      "branch": "ci/ci-005-delivery-hardening",
+      "head": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+      "merge_base_with_integration": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+      "commits_since_common_base": [
+        "e9731635fcf1dc424ccecebecc0299dafb7936b7 ci 1-2 update"
+      ],
+      "status": " M docs/ARTIFACT_REGISTRY_CICD_PLAN.md\n M docs/DEPLOY_GCP.md\n M docs/GITHUB_CICD.md\n M docs/adr/0015-registry-build-cache-evolution.md\n M docs/adr/README.md\n M docs/tracking/worklog.csv\n M scripts/gcp/build_proof.py\n M scripts/gcp/ci.py\n M scripts/gcp/deployment.py\n M tests/test_github_cicd.py\n?? docs/CI_005_DELIVERY_HARDENING.md\n?? docs/benchmarks/\n?? tests/test_delivery_hardening.py\n",
+      "patches": {
+        "staged": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unstaged": {
+          "bytes": 48195,
+          "sha256": "baa49447addb22c66eda359fcb18a44113e11f2b509c938d8632cf670fa37f50"
+        },
+        "combined": {
+          "bytes": 48195,
+          "sha256": "baa49447addb22c66eda359fcb18a44113e11f2b509c938d8632cf670fa37f50"
+        }
+      },
+      "untracked": [
+        {
+          "path": "docs/CI_005_DELIVERY_HARDENING.md",
+          "sha256": "5f7b1270cc8359df93b6629706348265ea3aba4e620ddbebc2b012f3e1c109eb",
+          "capture_relative_path": "CI-005/untracked/docs/CI_005_DELIVERY_HARDENING.md"
+        },
+        {
+          "path": "docs/benchmarks/ci-005-filter-semantics.json",
+          "sha256": "580a475fb76e0732f2f0304a267e00ec72cd7bef67c4051ff5560436ab654025",
+          "capture_relative_path": "CI-005/untracked/docs/benchmarks/ci-005-filter-semantics.json"
+        },
+        {
+          "path": "docs/benchmarks/ci-005-offline-validation.json",
+          "sha256": "e74931f6c8a0f88479c6d0128490937f98f6243c62e40c2dc24249bb187ffa90",
+          "capture_relative_path": "CI-005/untracked/docs/benchmarks/ci-005-offline-validation.json"
+        },
+        {
+          "path": "tests/test_delivery_hardening.py",
+          "sha256": "8bb341d1774ba83009cd3e3e1f7e45ca1724813f9374a432d2108074d8f3907c",
+          "capture_relative_path": "CI-005/untracked/tests/test_delivery_hardening.py.source"
+        }
+      ]
+    }
+  ],
+  "private_capture_note": "Untracked Python source captures use .py.source suffix to prevent pytest collection; bytes/hashes are unchanged."
+}

@@ -8,14 +8,25 @@ below are historical snapshots, superseded for rollout status. Do not replay
 completed bootstrap/import/cutover steps or use old saved plans. Human login,
 restore/isolation drills and real customer-data readiness remain unverified.
 
-## Proposed registry/cache improvements
+## CI-006 reviewed release candidate — PR and hosted CI
 
-[TRIPSE CI-001–CI-005 plan](ARTIFACT_REGISTRY_CICD_PLAN.md) and
-[ADR-0015](adr/0015-registry-build-cache-evolution.md) describe documentation-only
-proposals over this existing pipeline. Artifact Registry and Cloud Build already
-exist in the recorded architecture. Buildx is an optional isolated benchmark,
-not a replacement activated by the plan. Immutable release tags, provenance and
-DEV-to-PROD digest promotion remain unchanged. Do not replay registry bootstrap.
+[CI-006](CI_006_INTEGRATION_ACCEPTANCE.md) combines CI-001–CI-005 in reviewed commit
+`c2f6f988dc88b86914e009e053b606bad3e4ba5d`, published in PR #7 after operator
+approval. CI-001 native pip caching remains in CI/DEV/PROD with both
+requirements as keys and unconditional installation. CI-002 pins Python 3.12 and
+narrows context. CI-003 retains Cloud Build (Option A); only manual benchmark tooling
+and historical results are retained, with no experimental workflow trigger.
+CI-004 provides offline inventory analysis without delete/apply. CI-005 strengthens
+source lookup, evidence and verified private recovery. See task reports for historical
+measurements; isolated test counts are not combined release proof.
+
+CI/Delivery workflows, WIF authority, Environment requirements, branch restrictions,
+concurrency groups, immutable tags and DEV-to-PROD promotion remain unchanged.
+Hosted cache measurements and CI results are recorded separately in CI-006;
+local tests cannot establish hosted performance or current cloud state.
+Read-only GCP audit and deployed DEV/PROD acceptance remain open. Gate A is approved;
+only the integration branch and PR were published. No merge or deployment is authorized.
+ADR-0015 remains proposed. Do not replay registry/bootstrap or push dev/master to test.
 
 ## Historical bootstrap and incident timeline
 
@@ -146,9 +157,13 @@ generation-pinned source archive against the selected committed context plus
 baked SHA. A pre-created misleading SHA tag or altered recipe cannot be promoted
 by a trusted master run. Promotion/rollback proof requires `source_verified=true`
 and records the source build ID; DEV rollback also rechecks actual build source.
-The scan covers the most recent 1,000 successful regional builds; missing/expired
-source or an unrecognized new builder recipe blocks rather than weakening proof.
-For very old evidence, an operator must review source retention and recovery.
+New submissions and DEV rollback use an exact Build ID as a lookup hint, followed
+by full recipe/archive verification. Without a hint, regional discovery filters by
+SUCCESS, exact result image and digest before a 1,000-matching-candidate limit;
+unrelated newer builds no longer occupy that window. Missing history/source or an
+unrecognized recipe fails closed. PROD retains the accepted DEV proof delegation,
+without new Cloud Build/source-bucket permissions. See CI-005/CI-006 for remaining
+retention dependencies and operator acceptance requirements.
 
 Only `release.json` is uploaded, with 90-day retention. It contains no credentials
 or document content. Every successful deployment publishes branch/ref, SHA,

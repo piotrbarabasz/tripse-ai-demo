@@ -1,0 +1,1203 @@
+{
+  "source_sha": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+  "session": "b41c955780",
+  "repeats": 3,
+  "runs": 48,
+  "release_image": false,
+  "hosted_gha": "Not measured",
+  "cloud_build_only": "Not measured",
+  "rows": [
+    {
+      "mode": "no-cache",
+      "scenario": "cold",
+      "samples": 3,
+      "seconds": 24.674952699999267,
+      "dependency_seconds": 15.131417,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "dependency_hits": 0,
+      "image_size_bytes": [
+        76099455,
+        76099701,
+        76099673
+      ]
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "warm",
+      "samples": 3,
+      "seconds": 22.76070179999806,
+      "dependency_seconds": 14.459314,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "dependency_hits": 0,
+      "image_size_bytes": [
+        76099260,
+        76099702,
+        76099717
+      ]
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "source",
+      "samples": 3,
+      "seconds": 23.56818519999797,
+      "dependency_seconds": 15.170068,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "dependency_hits": 0,
+      "image_size_bytes": [
+        76099521,
+        76099545,
+        76099436
+      ]
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "dependencies",
+      "samples": 3,
+      "seconds": 22.909002299998974,
+      "dependency_seconds": 14.800469,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "dependency_hits": 0,
+      "image_size_bytes": [
+        76123644,
+        76123633,
+        76123770
+      ]
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "cold",
+      "samples": 3,
+      "seconds": 24.15222029999859,
+      "dependency_seconds": 15.439744,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "dependency_hits": 0,
+      "image_size_bytes": [
+        76099466,
+        76099214,
+        76099597
+      ]
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "warm",
+      "samples": 3,
+      "seconds": 1.6326800000024377,
+      "dependency_seconds": 0.0,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "dependency_hits": 3,
+      "image_size_bytes": [
+        76099466,
+        76099214,
+        76099597
+      ]
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "source",
+      "samples": 3,
+      "seconds": 1.7465612000014517,
+      "dependency_seconds": 7.8e-05,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "dependency_hits": 3,
+      "image_size_bytes": [
+        76099500,
+        76099231,
+        76099622
+      ]
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "dependencies",
+      "samples": 3,
+      "seconds": 22.69695089999732,
+      "dependency_seconds": 14.635905,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "dependency_hits": 0,
+      "image_size_bytes": [
+        76123457,
+        76123773,
+        76123401
+      ]
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "cold",
+      "samples": 3,
+      "seconds": 36.512035800002195,
+      "dependency_seconds": 15.60788,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "dependency_hits": 0,
+      "image_size_bytes": [
+        76098544,
+        76098462,
+        76098350
+      ]
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "warm",
+      "samples": 3,
+      "seconds": 7.686176399998658,
+      "dependency_seconds": 0.0,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "dependency_hits": 3,
+      "image_size_bytes": [
+        76098544,
+        76098462,
+        76098350
+      ]
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "source",
+      "samples": 3,
+      "seconds": 9.732970699995349,
+      "dependency_seconds": 9.1e-05,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "dependency_hits": 3,
+      "image_size_bytes": [
+        76098571,
+        76098482,
+        76098368
+      ]
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "dependencies",
+      "samples": 3,
+      "seconds": 29.777856799999427,
+      "dependency_seconds": 15.372047,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "dependency_hits": 0,
+      "image_size_bytes": [
+        76122663,
+        76122879,
+        76122408
+      ]
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "cold",
+      "samples": 3,
+      "seconds": 36.32510679999905,
+      "dependency_seconds": 14.502805,
+      "cache_import_seconds": null,
+      "cache_export_seconds": 2.011707,
+      "cache_transfer_span_seconds": 2.011707,
+      "dependency_hits": 0,
+      "image_size_bytes": [
+        76098554,
+        76098690,
+        76098659
+      ]
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "warm",
+      "samples": 3,
+      "seconds": 21.662424900001497,
+      "dependency_seconds": 0.0,
+      "cache_import_seconds": 0.021462,
+      "cache_export_seconds": 2.054155,
+      "cache_transfer_span_seconds": 2.072185,
+      "dependency_hits": 3,
+      "image_size_bytes": [
+        76098554,
+        76098690,
+        76098659
+      ]
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "source",
+      "samples": 3,
+      "seconds": 21.28596010000183,
+      "dependency_seconds": 10.566365,
+      "cache_import_seconds": 0.019924,
+      "cache_export_seconds": 2.201915,
+      "cache_transfer_span_seconds": 2.227745,
+      "dependency_hits": 3,
+      "image_size_bytes": [
+        76098584,
+        76098716,
+        76098679
+      ]
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "dependencies",
+      "samples": 3,
+      "seconds": 40.222028500000306,
+      "dependency_seconds": 14.460777,
+      "cache_import_seconds": 0.018856,
+      "cache_export_seconds": 1.994567,
+      "cache_transfer_span_seconds": 2.013423,
+      "dependency_hits": 0,
+      "image_size_bytes": [
+        76122551,
+        76122723,
+        76121897
+      ]
+    }
+  ],
+  "builder_setup_seconds": [
+    3.1223471999983303,
+    3.4203573999984656,
+    3.035978100000648,
+    3.6929210999951465,
+    3.5218206999998074,
+    3.105890899998485,
+    3.228042800001276,
+    3.183371699997224,
+    2.919902700006787,
+    2.9610299999985727,
+    3.545560700003989,
+    3.37141430000338,
+    3.4194587000019965,
+    3.051728999998886,
+    3.4040213000043877
+  ],
+  "cleanup_errors": [],
+  "same_materialized_base": true,
+  "samples": [
+    {
+      "mode": "docker-cache",
+      "scenario": "cold",
+      "repeat": 0,
+      "seconds": 21.80784869999843,
+      "success": true,
+      "dependency_seconds": 13.946183,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099466,
+      "verified_files": 78
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "warm",
+      "repeat": 0,
+      "seconds": 1.3499656999993022,
+      "success": true,
+      "dependency_seconds": 0.0,
+      "dependency_cached": true,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099466,
+      "verified_files": 78
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "source",
+      "repeat": 0,
+      "seconds": 1.6700583999991068,
+      "success": true,
+      "dependency_seconds": 7e-05,
+      "dependency_cached": true,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099500,
+      "verified_files": 78
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "dependencies",
+      "repeat": 0,
+      "seconds": 21.361967100001493,
+      "success": true,
+      "dependency_seconds": 13.671015,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76123457,
+      "verified_files": 78
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "cold",
+      "repeat": 0,
+      "seconds": 28.594205900000816,
+      "success": true,
+      "dependency_seconds": 16.571311,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099455,
+      "verified_files": 78
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "warm",
+      "repeat": 0,
+      "seconds": 22.76070179999806,
+      "success": true,
+      "dependency_seconds": 14.459314,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099260,
+      "verified_files": 78
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "source",
+      "repeat": 0,
+      "seconds": 22.889230900000257,
+      "success": true,
+      "dependency_seconds": 14.204856,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099521,
+      "verified_files": 78
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "dependencies",
+      "repeat": 0,
+      "seconds": 22.909002299998974,
+      "success": true,
+      "dependency_seconds": 14.800469,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76123644,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "cold",
+      "repeat": 0,
+      "seconds": 36.512035800002195,
+      "success": true,
+      "dependency_seconds": 15.60788,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76098544,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "warm",
+      "repeat": 0,
+      "seconds": 6.984680599998683,
+      "success": true,
+      "dependency_seconds": 0.0,
+      "dependency_cached": true,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76098544,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "source",
+      "repeat": 0,
+      "seconds": 6.793133800001669,
+      "success": true,
+      "dependency_seconds": 7e-05,
+      "dependency_cached": true,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76098571,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "dependencies",
+      "repeat": 0,
+      "seconds": 29.777856799999427,
+      "success": true,
+      "dependency_seconds": 14.996746,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76122663,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "cold",
+      "repeat": 0,
+      "seconds": 36.32510679999905,
+      "success": true,
+      "dependency_seconds": 14.592254,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": 2.067162,
+      "cache_transfer_span_seconds": 2.067162,
+      "image_size_bytes": 76098554,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "warm",
+      "repeat": 0,
+      "seconds": 21.94710390000182,
+      "success": true,
+      "dependency_seconds": 0.0,
+      "dependency_cached": true,
+      "cache_import_seconds": 0.021462,
+      "cache_export_seconds": 1.970207,
+      "cache_transfer_span_seconds": 1.991669,
+      "image_size_bytes": 76098554,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "source",
+      "repeat": 0,
+      "seconds": 25.528996499997447,
+      "success": true,
+      "dependency_seconds": 12.347483,
+      "dependency_cached": true,
+      "cache_import_seconds": 0.02583,
+      "cache_export_seconds": 2.201915,
+      "cache_transfer_span_seconds": 2.227745,
+      "image_size_bytes": 76098584,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "dependencies",
+      "repeat": 0,
+      "seconds": 37.19877880000422,
+      "success": true,
+      "dependency_seconds": 14.077468,
+      "dependency_cached": false,
+      "cache_import_seconds": 0.018589,
+      "cache_export_seconds": 1.900319,
+      "cache_transfer_span_seconds": 1.918908,
+      "image_size_bytes": 76122551,
+      "verified_files": 78
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "cold",
+      "repeat": 1,
+      "seconds": 24.15222029999859,
+      "success": true,
+      "dependency_seconds": 15.439744,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099214,
+      "verified_files": 78
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "warm",
+      "repeat": 1,
+      "seconds": 2.174383999998099,
+      "success": true,
+      "dependency_seconds": 0.0,
+      "dependency_cached": true,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099214,
+      "verified_files": 78
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "source",
+      "repeat": 1,
+      "seconds": 1.7919677999962005,
+      "success": true,
+      "dependency_seconds": 0.000121,
+      "dependency_cached": true,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099231,
+      "verified_files": 78
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "dependencies",
+      "repeat": 1,
+      "seconds": 22.69695089999732,
+      "success": true,
+      "dependency_seconds": 14.635905,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76123773,
+      "verified_files": 78
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "cold",
+      "repeat": 1,
+      "seconds": 22.664644299999054,
+      "success": true,
+      "dependency_seconds": 14.77649,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099701,
+      "verified_files": 78
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "warm",
+      "repeat": 1,
+      "seconds": 22.220974600000773,
+      "success": true,
+      "dependency_seconds": 14.186009,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099702,
+      "verified_files": 78
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "source",
+      "repeat": 1,
+      "seconds": 23.56818519999797,
+      "success": true,
+      "dependency_seconds": 15.170068,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099545,
+      "verified_files": 78
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "dependencies",
+      "repeat": 1,
+      "seconds": 22.148268000004464,
+      "success": true,
+      "dependency_seconds": 14.093232,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76123633,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "cold",
+      "repeat": 1,
+      "seconds": 35.62772699999914,
+      "success": true,
+      "dependency_seconds": 15.419589,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76098462,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "warm",
+      "repeat": 1,
+      "seconds": 7.686176399998658,
+      "success": true,
+      "dependency_seconds": 0.0,
+      "dependency_cached": true,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76098462,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "source",
+      "repeat": 1,
+      "seconds": 9.937010299996473,
+      "success": true,
+      "dependency_seconds": 0.000105,
+      "dependency_cached": true,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76098482,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "dependencies",
+      "repeat": 1,
+      "seconds": 29.53809380000166,
+      "success": true,
+      "dependency_seconds": 15.372047,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76122879,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "cold",
+      "repeat": 1,
+      "seconds": 36.91943629999878,
+      "success": true,
+      "dependency_seconds": 14.096691,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": 2.011707,
+      "cache_transfer_span_seconds": 2.011707,
+      "image_size_bytes": 76098690,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "warm",
+      "repeat": 1,
+      "seconds": 21.662424900001497,
+      "success": true,
+      "dependency_seconds": 0.0,
+      "dependency_cached": true,
+      "cache_import_seconds": 0.01803,
+      "cache_export_seconds": 2.054155,
+      "cache_transfer_span_seconds": 2.072185,
+      "image_size_bytes": 76098690,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "source",
+      "repeat": 1,
+      "seconds": 21.28596010000183,
+      "success": true,
+      "dependency_seconds": 10.394847,
+      "dependency_cached": true,
+      "cache_import_seconds": 0.019924,
+      "cache_export_seconds": 2.24969,
+      "cache_transfer_span_seconds": 2.269614,
+      "image_size_bytes": 76098716,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "dependencies",
+      "repeat": 1,
+      "seconds": 40.222028500000306,
+      "success": true,
+      "dependency_seconds": 14.460777,
+      "dependency_cached": false,
+      "cache_import_seconds": 0.018856,
+      "cache_export_seconds": 1.994567,
+      "cache_transfer_span_seconds": 2.013423,
+      "image_size_bytes": 76122723,
+      "verified_files": 78
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "cold",
+      "repeat": 2,
+      "seconds": 24.866260599999805,
+      "success": true,
+      "dependency_seconds": 15.483532,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099597,
+      "verified_files": 78
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "warm",
+      "repeat": 2,
+      "seconds": 1.6326800000024377,
+      "success": true,
+      "dependency_seconds": 0.0,
+      "dependency_cached": true,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099597,
+      "verified_files": 78
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "source",
+      "repeat": 2,
+      "seconds": 1.7465612000014517,
+      "success": true,
+      "dependency_seconds": 7.8e-05,
+      "dependency_cached": true,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099622,
+      "verified_files": 78
+    },
+    {
+      "mode": "docker-cache",
+      "scenario": "dependencies",
+      "repeat": 2,
+      "seconds": 23.09112659999664,
+      "success": true,
+      "dependency_seconds": 14.668032,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76123401,
+      "verified_files": 78
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "cold",
+      "repeat": 2,
+      "seconds": 24.674952699999267,
+      "success": true,
+      "dependency_seconds": 15.131417,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099673,
+      "verified_files": 78
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "warm",
+      "repeat": 2,
+      "seconds": 24.982533299997158,
+      "success": true,
+      "dependency_seconds": 16.059123,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099717,
+      "verified_files": 78
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "source",
+      "repeat": 2,
+      "seconds": 24.56385489999957,
+      "success": true,
+      "dependency_seconds": 15.936389,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76099436,
+      "verified_files": 78
+    },
+    {
+      "mode": "no-cache",
+      "scenario": "dependencies",
+      "repeat": 2,
+      "seconds": 26.56301579999854,
+      "success": true,
+      "dependency_seconds": 17.052559,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76123770,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "cold",
+      "repeat": 2,
+      "seconds": 39.40901520000625,
+      "success": true,
+      "dependency_seconds": 16.688144,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76098350,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "warm",
+      "repeat": 2,
+      "seconds": 8.441780699999072,
+      "success": true,
+      "dependency_seconds": 0.0,
+      "dependency_cached": true,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76098350,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "source",
+      "repeat": 2,
+      "seconds": 9.732970699995349,
+      "success": true,
+      "dependency_seconds": 9.1e-05,
+      "dependency_cached": true,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76098368,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-internal",
+      "scenario": "dependencies",
+      "repeat": 2,
+      "seconds": 29.81910770000104,
+      "success": true,
+      "dependency_seconds": 15.70093,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": null,
+      "cache_transfer_span_seconds": null,
+      "image_size_bytes": 76122408,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "cold",
+      "repeat": 2,
+      "seconds": 36.26285890000145,
+      "success": true,
+      "dependency_seconds": 14.502805,
+      "dependency_cached": false,
+      "cache_import_seconds": null,
+      "cache_export_seconds": 1.986306,
+      "cache_transfer_span_seconds": 1.986306,
+      "image_size_bytes": 76098659,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "warm",
+      "repeat": 2,
+      "seconds": 20.678716700000223,
+      "success": true,
+      "dependency_seconds": 0.0,
+      "dependency_cached": true,
+      "cache_import_seconds": 0.028487,
+      "cache_export_seconds": 2.206382,
+      "cache_transfer_span_seconds": 2.234869,
+      "image_size_bytes": 76098659,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "source",
+      "repeat": 2,
+      "seconds": 20.98591640000086,
+      "success": true,
+      "dependency_seconds": 10.566365,
+      "dependency_cached": true,
+      "cache_import_seconds": 0.017665,
+      "cache_export_seconds": 2.079901,
+      "cache_transfer_span_seconds": 2.097566,
+      "image_size_bytes": 76098679,
+      "verified_files": 78
+    },
+    {
+      "mode": "buildx-local",
+      "scenario": "dependencies",
+      "repeat": 2,
+      "seconds": 44.903002299994114,
+      "success": true,
+      "dependency_seconds": 16.060354,
+      "dependency_cached": false,
+      "cache_import_seconds": 0.019694,
+      "cache_export_seconds": 2.296223,
+      "cache_transfer_span_seconds": 2.315917,
+      "image_size_bytes": 76121897,
+      "verified_files": 78
+    }
+  ],
+  "environment": {
+    "host": "Windows-11-10.0.22631-SP0",
+    "resources": {
+      "cpus": 8,
+      "memory": 8304398336
+    },
+    "buildx": "github.com/docker/buildx v0.35.0-desktop.2 b554ce1decd8b509893b1e7c6227eabfb923d094",
+    "buildkit_image": "moby/buildkit:v0.31.1@sha256:2caaaf9bc673a82d5b0a87824f8375e6b2b36b55001dad611230516c724e9fba",
+    "default_builder": "Name:          desktop-linux\nDriver:        docker\nLast Activity: 2026-10-29 10:05:03 +0000 UTC\n\nNodes:\nName:             desktop-linux\nEndpoint:         desktop-linux\nStatus:           running\nBuildKit version: v0.31.1\nPlatforms:        linux/amd64, linux/amd64/v2, linux/amd64/v3, linux/arm64, linux/riscv64, linux/ppc64le, linux/s390x, linux/arm/v7, linux/arm/v6\nFeatures:\n Automatically load images to the Docker Engine image store: true\n Cache export:                                               true\n Direct push:                                                true\n Docker exporter:                                            true\n Multi-platform build:                                       true\n OCI exporter:                                               true\nLabels:\n org.mobyproject.buildkit.worker.containerd.namespace: moby\n org.mobyproject.buildkit.worker.containerd.uuid:      41a3eeca-75e4-4c28-80c1-b33edd912127\n org.mobyproject.buildkit.worker.executor:             containerd\n org.mobyproject.buildkit.worker.hostname:             docker-desktop\n org.mobyproject.buildkit.worker.moby.host-gateway-ip: 192.168.65.254\n org.mobyproject.buildkit.worker.network:              host\n org.mobyproject.buildkit.worker.selinux.enabled:      false\n org.mobyproject.buildkit.worker.snapshotter:          overlayfs\nDevices:\n Name:                  docker.com/gpu=webgpu\n Automatically allowed: false\nGC Policy rule#0:\n All:            false\n Filters:        type==source.local type==exec.cachemount type==source.git.checkout\n Keep Duration:  48h0m0s\n Max Used Space: 2.764GiB\nGC Policy rule#1:\n All:            false\n Keep Duration:  1440h0m0s\n Reserved Space: 20GiB\nGC Policy rule#2:\n All:            false\n Reserved Space: 20GiB\nGC Policy rule#3:\n All:            true\n Reserved Space: 20GiB",
+    "docker": {
+      "Client": {
+        "Version": "29.6.1",
+        "ApiVersion": "1.55",
+        "DefaultAPIVersion": "1.55",
+        "GitCommit": "8900f1d",
+        "GoVersion": "go1.26.4",
+        "Os": "windows",
+        "Arch": "amd64",
+        "BuildTime": "Fri Jun 26 11:43:32 2026",
+        "Context": "desktop-linux"
+      },
+      "Server": {
+        "Platform": {
+          "Name": "Docker Desktop 4.81.0 (232925)"
+        },
+        "Version": "29.6.1",
+        "ApiVersion": "1.55",
+        "MinAPIVersion": "1.40",
+        "Os": "linux",
+        "Arch": "amd64",
+        "Components": [
+          {
+            "Name": "Engine",
+            "Version": "29.6.1",
+            "Details": {
+              "ApiVersion": "1.55",
+              "Arch": "amd64",
+              "BuildTime": "Fri Jun 26 11:41:04 2026",
+              "Experimental": "false",
+              "GitCommit": "8ec5ab3",
+              "GoVersion": "go1.26.4",
+              "KernelVersion": "6.18.54.1-microsoft-standard-WSL2",
+              "MinAPIVersion": "1.40",
+              "Module": "github.com/moby/moby/v2",
+              "ModuleVersion": "v2.0.0+unknown",
+              "Os": "linux"
+            }
+          },
+          {
+            "Name": "containerd",
+            "Version": "v2.2.5",
+            "Details": {
+              "GitCommit": "e53c7c1516c3b2bff98eb76f1f4117477e6f4e66"
+            }
+          },
+          {
+            "Name": "runc",
+            "Version": "1.3.6",
+            "Details": {
+              "GitCommit": "v1.3.6-0-g491b69ba"
+            }
+          },
+          {
+            "Name": "docker-init",
+            "Version": "0.19.0",
+            "Details": {
+              "GitCommit": "de40ad0"
+            }
+          }
+        ],
+        "GitCommit": "8ec5ab3",
+        "GoVersion": "go1.26.4",
+        "KernelVersion": "6.18.54.1-microsoft-standard-WSL2",
+        "BuildTime": "2026-06-26T11:41:04.000000000+00:00"
+      }
+    }
+  },
+  "inputs": {
+    "trial-0": {
+      "base": {
+        "source_sha": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+        "synthetic_variant": "base",
+        "trial": "b41c955780-0",
+        "release_image": false,
+        "original_dockerfile_sha256": "90f7c9901655ccf9128174685fa5e7fd351afa17fc0c3df92cdfe48c3ed68af9",
+        "dockerfile_sha256": "c33b0a95fef29fbc7adb311519ba06b294c6b3a30fcb9e15dd41128a160462f0",
+        "requirements_sha256": "54f56ca4a6ef516a8b89c0e5c91748365cfd04552149e78ae2baeb3ab1483c1f",
+        "base_image": "python:3.12-slim@sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+        "platform": "linux/amd64",
+        "manifest_sha256": "f3e8b741dfc517ffcfb204e753922d340b30a3d1fbabc495fcd3c68344e0e21c"
+      },
+      "source": {
+        "source_sha": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+        "synthetic_variant": "source",
+        "trial": "b41c955780-0",
+        "release_image": false,
+        "original_dockerfile_sha256": "90f7c9901655ccf9128174685fa5e7fd351afa17fc0c3df92cdfe48c3ed68af9",
+        "dockerfile_sha256": "c33b0a95fef29fbc7adb311519ba06b294c6b3a30fcb9e15dd41128a160462f0",
+        "requirements_sha256": "54f56ca4a6ef516a8b89c0e5c91748365cfd04552149e78ae2baeb3ab1483c1f",
+        "base_image": "python:3.12-slim@sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+        "platform": "linux/amd64",
+        "manifest_sha256": "a9c0bb8c00d36600135fa5d256f9eb5ca402a794654179f0e11bb8a99764aa14"
+      },
+      "dependencies": {
+        "source_sha": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+        "synthetic_variant": "dependencies",
+        "trial": "b41c955780-0",
+        "release_image": false,
+        "original_dockerfile_sha256": "90f7c9901655ccf9128174685fa5e7fd351afa17fc0c3df92cdfe48c3ed68af9",
+        "dockerfile_sha256": "c33b0a95fef29fbc7adb311519ba06b294c6b3a30fcb9e15dd41128a160462f0",
+        "requirements_sha256": "8ab71bd0f0a1b2202f43331aa58668ec289e8430a69d7a067cca18a3d377ec7d",
+        "base_image": "python:3.12-slim@sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+        "platform": "linux/amd64",
+        "manifest_sha256": "1fa2cca3a70c8a7c5e2af5e8ef98a075a474ad1fd4535193d3df65dc27652b8f"
+      }
+    },
+    "trial-1": {
+      "base": {
+        "source_sha": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+        "synthetic_variant": "base",
+        "trial": "b41c955780-1",
+        "release_image": false,
+        "original_dockerfile_sha256": "90f7c9901655ccf9128174685fa5e7fd351afa17fc0c3df92cdfe48c3ed68af9",
+        "dockerfile_sha256": "c33b0a95fef29fbc7adb311519ba06b294c6b3a30fcb9e15dd41128a160462f0",
+        "requirements_sha256": "5be5713664bac4adcaef5ab846fb4c76435d38ab3cccf3d94de52191580447d6",
+        "base_image": "python:3.12-slim@sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+        "platform": "linux/amd64",
+        "manifest_sha256": "4f54427d3be2e71bc9d1e15dffafdb455c853f0ab4d5e3ded586852a14d348b9"
+      },
+      "source": {
+        "source_sha": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+        "synthetic_variant": "source",
+        "trial": "b41c955780-1",
+        "release_image": false,
+        "original_dockerfile_sha256": "90f7c9901655ccf9128174685fa5e7fd351afa17fc0c3df92cdfe48c3ed68af9",
+        "dockerfile_sha256": "c33b0a95fef29fbc7adb311519ba06b294c6b3a30fcb9e15dd41128a160462f0",
+        "requirements_sha256": "5be5713664bac4adcaef5ab846fb4c76435d38ab3cccf3d94de52191580447d6",
+        "base_image": "python:3.12-slim@sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+        "platform": "linux/amd64",
+        "manifest_sha256": "8c5bb61511717b5d99d41f2afe793668a0f9c65120d2232f8a2ffefe58e5dfbd"
+      },
+      "dependencies": {
+        "source_sha": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+        "synthetic_variant": "dependencies",
+        "trial": "b41c955780-1",
+        "release_image": false,
+        "original_dockerfile_sha256": "90f7c9901655ccf9128174685fa5e7fd351afa17fc0c3df92cdfe48c3ed68af9",
+        "dockerfile_sha256": "c33b0a95fef29fbc7adb311519ba06b294c6b3a30fcb9e15dd41128a160462f0",
+        "requirements_sha256": "b703005f36d410b504d6b1bcd1b104ebb320252f44806ef3ce95760fbf55860a",
+        "base_image": "python:3.12-slim@sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+        "platform": "linux/amd64",
+        "manifest_sha256": "7bc05bc8b87e109458ea0b09f373304778ea6bc419fb8948742af25282feb121"
+      }
+    },
+    "trial-2": {
+      "base": {
+        "source_sha": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+        "synthetic_variant": "base",
+        "trial": "b41c955780-2",
+        "release_image": false,
+        "original_dockerfile_sha256": "90f7c9901655ccf9128174685fa5e7fd351afa17fc0c3df92cdfe48c3ed68af9",
+        "dockerfile_sha256": "c33b0a95fef29fbc7adb311519ba06b294c6b3a30fcb9e15dd41128a160462f0",
+        "requirements_sha256": "ac2e7990454fef62a09fa1cc9f6ba7e478a8418879fc0f8bcfc9b14a37de306b",
+        "base_image": "python:3.12-slim@sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+        "platform": "linux/amd64",
+        "manifest_sha256": "23e5904a04a7f6b6da8ef20babee379ab8c733b5edadc5ce02bf9018dd150d80"
+      },
+      "source": {
+        "source_sha": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+        "synthetic_variant": "source",
+        "trial": "b41c955780-2",
+        "release_image": false,
+        "original_dockerfile_sha256": "90f7c9901655ccf9128174685fa5e7fd351afa17fc0c3df92cdfe48c3ed68af9",
+        "dockerfile_sha256": "c33b0a95fef29fbc7adb311519ba06b294c6b3a30fcb9e15dd41128a160462f0",
+        "requirements_sha256": "ac2e7990454fef62a09fa1cc9f6ba7e478a8418879fc0f8bcfc9b14a37de306b",
+        "base_image": "python:3.12-slim@sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+        "platform": "linux/amd64",
+        "manifest_sha256": "0c6d5780c44a9c13a4ed6aacd4985aec14bcd5e6ab928eae6052e93c9c1d7f2a"
+      },
+      "dependencies": {
+        "source_sha": "e9731635fcf1dc424ccecebecc0299dafb7936b7",
+        "synthetic_variant": "dependencies",
+        "trial": "b41c955780-2",
+        "release_image": false,
+        "original_dockerfile_sha256": "90f7c9901655ccf9128174685fa5e7fd351afa17fc0c3df92cdfe48c3ed68af9",
+        "dockerfile_sha256": "c33b0a95fef29fbc7adb311519ba06b294c6b3a30fcb9e15dd41128a160462f0",
+        "requirements_sha256": "93e0f9247ec2ca2defa1c3d739f8e0a48a7ccf5969f06c8a23bc25076ff22252",
+        "base_image": "python:3.12-slim@sha256:1148dbb014615300fa7e713b2f94f550c0d1c69780c0805f84f093ceee34dd0b",
+        "platform": "linux/amd64",
+        "manifest_sha256": "0dc21e536fe9e561aa7355815a9797939a0c5cdc05f6e0f8e57676625a5b62a1"
+      }
+    }
+  },
+  "worker_acceptance": {
+    "tag": "tripse-ci003-qa:b41c955780-worker-acceptance",
+    "command": [
+      "python",
+      "-m",
+      "app.worker"
+    ],
+    "storage": "new ephemeral tmpfs /data; no volume or bind",
+    "status": "PASS",
+    "exit_code": 0
+  },
+  "cleanup_verification": {
+    "protected_worktrees_unchanged": {
+      "D:\\Projects\\tripse-ai-demo": true,
+      "D:\\Projects\\tripse-ai-ci-002": true
+    },
+    "original_volumes_preserved": true,
+    "owned_containers_remaining": [],
+    "owned_image_tags_remaining": [],
+    "owned_builders_remaining": [],
+    "owned_builder_volumes_remaining": [],
+    "shared_cache_not_pruned": true,
+    "qa_evidence_and_cache_directories_retained": true
+  },
+  "validation": {
+    "make-test": {
+      "exit_code": 0,
+      "seconds": 88.12219239999831
+    },
+    "offline": {
+      "exit_code": 0,
+      "seconds": 3.4617484000045806
+    },
+    "container": {
+      "exit_code": 0,
+      "seconds": 7.7842872999972315
+    },
+    "make-check": {
+      "exit_code": 0,
+      "seconds": 0.9776624999940395
+    },
+    "actionlint": {
+      "exit_code": 0,
+      "seconds": 0.07974330000433838
+    },
+    "diff-check": {
+      "exit_code": 0,
+      "seconds": 0.0770154999991064
+    }
+  }
+}

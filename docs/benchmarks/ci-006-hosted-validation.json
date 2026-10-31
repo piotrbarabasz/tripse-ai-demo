@@ -1,0 +1,483 @@
+{
+  "date": "2026-10-29",
+  "classification": "HOSTED CI VERIFIED",
+  "implementation_rc_sha": "c2f6f988dc88b86914e009e053b606bad3e4ba5d",
+  "tested_pr_merge_sha": "59e5e81f82b56c21fe3ea20d1060ef999a817b25",
+  "branch": "ci/ci-006-integration-acceptance",
+  "pr_url": "https://github.com/piotrbarabasz/tripse-ai-demo/pull/7",
+  "operator_publication_approval": "Explicit user approval after Gate A: masz zgode",
+  "samples": [
+    {
+      "id": 40898383454,
+      "head_sha": "c2f6f988dc88b86914e009e053b606bad3e4ba5d",
+      "head_branch": "ci/ci-006-integration-acceptance",
+      "event": "pull_request",
+      "path": ".github/workflows/ci.yml",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "html_url": "https://github.com/piotrbarabasz/tripse-ai-demo/actions/runs/40898383454",
+      "created_at": "2026-10-29T15:07:41Z",
+      "run_started_at": "2026-10-29T15:07:41Z",
+      "updated_at": "2026-10-29T15:12:05Z",
+      "jobs": [
+        {
+          "id": 123533641846,
+          "name": "Tests and offline contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-29T15:07:44Z",
+          "completed_at": "2026-10-29T15:12:05Z",
+          "runner_name": "GitHub Actions 1000000396",
+          "runner_group_name": "GitHub Actions",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "seconds": 261.0,
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:07:44Z",
+              "completed_at": "2026-10-29T15:07:45Z",
+              "seconds": 1.0
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "number": 2,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:07:45Z",
+              "completed_at": "2026-10-29T15:07:47Z",
+              "seconds": 2.0
+            },
+            {
+              "name": "Set up Python and pip cache",
+              "number": 3,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:07:47Z",
+              "completed_at": "2026-10-29T15:07:48Z",
+              "seconds": 1.0
+            },
+            {
+              "name": "Install Python dependencies",
+              "number": 4,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:07:48Z",
+              "completed_at": "2026-10-29T15:08:02Z",
+              "seconds": 14.0
+            },
+            {
+              "name": "Run pytest",
+              "number": 5,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:08:02Z",
+              "completed_at": "2026-10-29T15:08:31Z",
+              "seconds": 29.0
+            },
+            {
+              "name": "Validate committed image source and offline deployment",
+              "number": 6,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:08:31Z",
+              "completed_at": "2026-10-29T15:08:32Z",
+              "seconds": 1.0
+            },
+            {
+              "name": "Install headless browser",
+              "number": 7,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:08:32Z",
+              "completed_at": "2026-10-29T15:09:00Z",
+              "seconds": 28.0
+            },
+            {
+              "name": "Run browser QA",
+              "number": 8,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:09:00Z",
+              "completed_at": "2026-10-29T15:11:59Z",
+              "seconds": 179.0
+            },
+            {
+              "name": "Run git diff --check",
+              "number": 9,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:11:59Z",
+              "completed_at": "2026-10-29T15:11:59Z",
+              "seconds": 0.0
+            },
+            {
+              "name": "Summarize pip cache and native timings",
+              "number": 10,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:11:59Z",
+              "completed_at": "2026-10-29T15:11:59Z",
+              "seconds": 0.0
+            },
+            {
+              "name": "Post Set up Python and pip cache",
+              "number": 19,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:11:59Z",
+              "completed_at": "2026-10-29T15:12:03Z",
+              "seconds": 4.0
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "number": 20,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:12:03Z",
+              "completed_at": "2026-10-29T15:12:03Z",
+              "seconds": 0.0
+            },
+            {
+              "name": "Complete job",
+              "number": 21,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:12:03Z",
+              "completed_at": "2026-10-29T15:12:03Z",
+              "seconds": 0.0
+            }
+          ],
+          "cache_log_lines": [
+            "2026-10-29T15:07:48.0304077Z pip cache is not found",
+            "2026-10-29T15:11:59.4067815Z   PIP_CACHE_HIT: false",
+            "2026-10-29T15:12:03.1138795Z Cache saved with the key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.15-pip-a728f6b6d5d2f07709b4e3ad4704d6efb1c897055dacd2b0d770ce946e89ffb2"
+          ],
+          "pytest_result_lines": [
+            "2026-10-29T15:08:30.7713224Z 1005 passed, 1 skipped, 1 warning in 28.01s"
+          ],
+          "no_cloud_auth_step": true,
+          "cache_outcome": "miss",
+          "permission_log_lines": [
+            "2026-10-29T15:07:44.9940691Z Contents: read",
+            "2026-10-29T15:07:44.9941117Z Metadata: read"
+          ]
+        }
+      ],
+      "elapsed_attempt_seconds": 264.0
+    },
+    {
+      "id": 40898383454,
+      "head_sha": "c2f6f988dc88b86914e009e053b606bad3e4ba5d",
+      "head_branch": "ci/ci-006-integration-acceptance",
+      "event": "pull_request",
+      "path": ".github/workflows/ci.yml",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 2,
+      "html_url": "https://github.com/piotrbarabasz/tripse-ai-demo/actions/runs/40898383454",
+      "created_at": "2026-10-29T15:07:41Z",
+      "run_started_at": "2026-10-29T15:12:29Z",
+      "updated_at": "2026-10-29T15:17:47Z",
+      "jobs": [
+        {
+          "id": 123536524286,
+          "name": "Tests and offline contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-29T15:12:34Z",
+          "completed_at": "2026-10-29T15:17:46Z",
+          "runner_name": "GitHub Actions 1000000397",
+          "runner_group_name": "GitHub Actions",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "seconds": 312.0,
+          "steps": [
+            {
+              "name": "Set up job",
+              "number": 1,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:12:35Z",
+              "completed_at": "2026-10-29T15:12:36Z",
+              "seconds": 1.0
+            },
+            {
+              "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "number": 2,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:12:36Z",
+              "completed_at": "2026-10-29T15:12:37Z",
+              "seconds": 1.0
+            },
+            {
+              "name": "Set up Python and pip cache",
+              "number": 3,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:12:37Z",
+              "completed_at": "2026-10-29T15:12:41Z",
+              "seconds": 4.0
+            },
+            {
+              "name": "Install Python dependencies",
+              "number": 4,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:12:41Z",
+              "completed_at": "2026-10-29T15:12:55Z",
+              "seconds": 14.0
+            },
+            {
+              "name": "Run pytest",
+              "number": 5,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:12:55Z",
+              "completed_at": "2026-10-29T15:13:33Z",
+              "seconds": 38.0
+            },
+            {
+              "name": "Validate committed image source and offline deployment",
+              "number": 6,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:13:33Z",
+              "completed_at": "2026-10-29T15:13:35Z",
+              "seconds": 2.0
+            },
+            {
+              "name": "Install headless browser",
+              "number": 7,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:13:35Z",
+              "completed_at": "2026-10-29T15:14:11Z",
+              "seconds": 36.0
+            },
+            {
+              "name": "Run browser QA",
+              "number": 8,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:14:11Z",
+              "completed_at": "2026-10-29T15:17:41Z",
+              "seconds": 210.0
+            },
+            {
+              "name": "Run git diff --check",
+              "number": 9,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:17:41Z",
+              "completed_at": "2026-10-29T15:17:41Z",
+              "seconds": 0.0
+            },
+            {
+              "name": "Summarize pip cache and native timings",
+              "number": 10,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:17:41Z",
+              "completed_at": "2026-10-29T15:17:41Z",
+              "seconds": 0.0
+            },
+            {
+              "name": "Post Set up Python and pip cache",
+              "number": 19,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:17:41Z",
+              "completed_at": "2026-10-29T15:17:41Z",
+              "seconds": 0.0
+            },
+            {
+              "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "number": 20,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:17:41Z",
+              "completed_at": "2026-10-29T15:17:42Z",
+              "seconds": 1.0
+            },
+            {
+              "name": "Complete job",
+              "number": 21,
+              "conclusion": "success",
+              "started_at": "2026-10-29T15:17:42Z",
+              "completed_at": "2026-10-29T15:17:42Z",
+              "seconds": 0.0
+            }
+          ],
+          "cache_log_lines": [
+            "2026-10-29T15:12:38.7376401Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.15-pip-a728f6b6d5d2f07709b4e3ad4704d6efb1c897055dacd2b0d770ce946e89ffb2",
+            "2026-10-29T15:12:41.3309122Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.15-pip-a728f6b6d5d2f07709b4e3ad4704d6efb1c897055dacd2b0d770ce946e89ffb2",
+            "2026-10-29T15:17:41.6262770Z   PIP_CACHE_HIT: true"
+          ],
+          "cache_outcome": "exact_hit",
+          "permission_log_lines": [
+            "2026-10-29T15:12:35.6346118Z Contents: read",
+            "2026-10-29T15:12:35.6346760Z Metadata: read"
+          ],
+          "pytest_result_lines": [
+            "2026-10-29T15:13:33.2983755Z 1005 passed, 1 skipped, 1 warning in 36.78s"
+          ],
+          "no_cloud_auth_step": true
+        }
+      ],
+      "elapsed_attempt_seconds": 318.0
+    }
+  ],
+  "historical_pre_cache_baseline": {
+    "id": 123328693692,
+    "conclusion": "success",
+    "started_at": "2026-10-29T07:54:30Z",
+    "completed_at": "2026-10-29T07:58:29Z",
+    "run_id": 40838439862,
+    "commit": "777e0662da5e57894371529f3af0bdafeb2fed11",
+    "seconds": 239,
+    "steps": [
+      {
+        "name": "Set up job",
+        "started_at": "2026-10-29T07:54:31Z",
+        "completed_at": "2026-10-29T07:54:31Z",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "started_at": "2026-10-29T07:54:31Z",
+        "completed_at": "2026-10-29T07:54:33Z",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+        "started_at": "2026-10-29T07:54:33Z",
+        "completed_at": "2026-10-29T07:54:33Z",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run make install-dev",
+        "started_at": "2026-10-29T07:54:33Z",
+        "completed_at": "2026-10-29T07:54:47Z",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run make test",
+        "started_at": "2026-10-29T07:54:47Z",
+        "completed_at": "2026-10-29T07:55:12Z",
+        "conclusion": "success"
+      },
+      {
+        "name": "Validate committed image source and offline deployment",
+        "started_at": "2026-10-29T07:55:12Z",
+        "completed_at": "2026-10-29T07:55:14Z",
+        "conclusion": "success"
+      },
+      {
+        "name": "Install headless browser",
+        "started_at": "2026-10-29T07:55:14Z",
+        "completed_at": "2026-10-29T07:55:31Z",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run make test-browser",
+        "started_at": "2026-10-29T07:55:31Z",
+        "completed_at": "2026-10-29T07:58:26Z",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run git diff --check",
+        "started_at": "2026-10-29T07:58:26Z",
+        "completed_at": "2026-10-29T07:58:26Z",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+        "started_at": "2026-10-29T07:58:26Z",
+        "completed_at": "2026-10-29T07:58:26Z",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "started_at": "2026-10-29T07:58:26Z",
+        "completed_at": "2026-10-29T07:58:26Z",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "started_at": "2026-10-29T07:58:26Z",
+        "completed_at": "2026-10-29T07:58:26Z",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "comparison_limitations": "Two equivalent attempts of the same PR CI and SHA. Historical baseline has different source/test counts and runner timing noise; no demonstrated installation or overall speedup is claimed. Exact hit, fallback and miss are classified from setup logs and action output, not guessed from run order.",
+  "hosted_pytest": {
+    "passed_each_attempt": 1005,
+    "skipped_each_attempt": 1,
+    "warnings_each_attempt": 1,
+    "skip": "Existing Windows PowerShell syntax test; powershell command unavailable on Ubuntu. Passed locally on Windows."
+  },
+  "hosted_coverage": [
+    "Docker build-context/static container contracts",
+    "Provenance lookup/source-byte verification",
+    "Release evidence integrity",
+    "Registry audit fail-closed behavior",
+    "Rollback failure handling",
+    "Existing security boundaries",
+    "Committed-source offline deployment contracts",
+    "All nine browser smoke scripts"
+  ],
+  "local_only": [
+    "Actual Docker container runtime tests",
+    "Additional Phase A API/worker/SQLite/document persistence exercise",
+    "actionlint",
+    "make check/Compose config",
+    "Windows PowerShell syntax validation"
+  ],
+  "security": {
+    "PR_permissions": [
+      "contents:read",
+      "metadata:read"
+    ],
+    "id_token_write": false,
+    "cloud_auth_step": false,
+    "GCP_secrets_or_Environment_binding_in_PR_job": false,
+    "delivery_run_for_RC": false,
+    "source_recipe_allowlist_weakened": false,
+    "cloud_state_inspected": false,
+    "production_authority_or_WIF_changed": false
+  },
+  "cloud_release_accepted": false,
+  "adr_0015": "proposed",
+  "remaining_gates": [
+    "Separately authorized read-only GCP audit",
+    "Controlled DEV deployment acceptance",
+    "Protected PROD promotion"
+  ],
+  "preservation": [
+    {
+      "task": "CI-001",
+      "source_file_set_unchanged": true,
+      "source_hashes_unchanged": true,
+      "head_unchanged": true,
+      "branch_unchanged": true,
+      "status_unchanged": true
+    },
+    {
+      "task": "CI-002",
+      "source_file_set_unchanged": true,
+      "source_hashes_unchanged": true,
+      "head_unchanged": true,
+      "branch_unchanged": true,
+      "status_unchanged": true
+    },
+    {
+      "task": "CI-003",
+      "source_file_set_unchanged": true,
+      "source_hashes_unchanged": true,
+      "head_unchanged": true,
+      "branch_unchanged": true,
+      "status_unchanged": true
+    },
+    {
+      "task": "CI-004",
+      "source_file_set_unchanged": true,
+      "source_hashes_unchanged": true,
+      "head_unchanged": true,
+      "branch_unchanged": true,
+      "status_unchanged": true
+    },
+    {
+      "task": "CI-005",
+      "source_file_set_unchanged": true,
+      "source_hashes_unchanged": true,
+      "head_unchanged": true,
+      "branch_unchanged": true,
+      "status_unchanged": true
+    }
+  ],
+  "prior_shared_ignored_QA_limitation": "Pre-Phase-A contents of three .venv/viewer-artifacts outputs remain unverified. No remediation performed; current QA uses isolated worktree outputs."
+}
