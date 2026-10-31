@@ -1,5 +1,12 @@
 # Rejestr prac i podstawy kosztorysu
 
+2026-10-31: API-001 (user-supplied label) implements offline generated API types,
+runtime guards, same-origin transport and TanStack Query foundation. See
+[contract audit, reproducible commands and validation](../api/api-001.md).
+Business screens and backend/security/storage behavior remain unchanged. Local
+source acceptance is separate from Docker runtime and hosted CI/IAP acceptance;
+no PR, push, merge or deployment is performed. Hours/costs remain unmeasured.
+
 2026-10-31: FRONT-001B (user-supplied task label) integrates private compiled SPA
 serving, bounded health read and versioned image/source provenance. See
 [integration, local evidence and exact rollback](../ui/front-001b-integration.md).

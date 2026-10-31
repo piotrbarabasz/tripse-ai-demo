@@ -30,7 +30,9 @@ def inputs():
 
 
 def test_source_selects_exact_build_inputs_but_never_outputs_or_env(monkeypatch, inputs):
-    unwanted = {name:b"ignored" for name in ("frontend/.env.local", "frontend/dist/index.html", "app/spa_dist/index.html",
+    inputs.update({name: (ROOT/name).read_bytes() for name in (
+        "frontend/src/shared/api/generated/types.gen.ts", "frontend/src/shared/api/generated/zod.gen.ts")})
+    unwanted = {name:b"ignored" for name in ("docs/api/openapi.json", "frontend/scripts/generate-api.mjs", "frontend/.env.local", "frontend/dist/index.html", "app/spa_dist/index.html",
         "frontend/node_modules/pkg/index.js", "frontend/coverage/index.html", "frontend/.vite/cache.ts", "frontend/tsconfig.tsbuildinfo",
         "frontend/src/.cache/file.ts", "frontend/README.md", "frontend/eslint.config.js", "local-data/private.json")}
     monkeypatch.setattr(d, "run", lambda *a, **kw: archive(inputs | unwanted))
@@ -68,8 +70,10 @@ def test_unreviewed_build_inputs_rejected(inputs, attack):
     with pytest.raises(ValueError): validate_frontend_source(inputs)
 
 
-@pytest.mark.parametrize("name", ["frontend/package-lock.json", "frontend/vite.config.ts", "frontend/src/main.tsx", "Dockerfile"])
+@pytest.mark.parametrize("name", ["frontend/package-lock.json", "frontend/vite.config.ts", "frontend/src/main.tsx", "frontend/src/shared/api/generated/types.gen.ts", "frontend/src/shared/api/generated/zod.gen.ts", "Dockerfile"])
 def test_exact_manifest_and_archive_reject_changed_frontend_bytes(inputs, name):
+    if name.startswith("frontend/src/shared/api/generated/"):
+        inputs[name] = (ROOT/name).read_bytes()
     expected = inputs | {"app/_build_version.txt":b"a"*40}
     changed = expected | {name:expected[name]+b"\n"}
     assert proof.context_manifest(changed) != proof.context_manifest(expected)

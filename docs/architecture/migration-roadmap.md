@@ -95,6 +95,13 @@ FRONT-002. The original blueprint and historical ARCH-001 audit remain unchanged
 
 ## API-001 — API client and contracts
 
+**2026-10-31 implementation:** offline isolated OpenAPI export, pinned TypeScript/Zod
+generation, runtime gap guards, same-origin transport and TanStack Query provider/
+conventions implemented without business-screen migration or backend changes.
+Schema/wire/client drift checks join the existing unprivileged PR checks.
+[Current contract gaps and validation evidence](../api/api-001.md) distinguish
+local source acceptance from hosted CI/IAP/container acceptance.
+
 - Dependencies: FRONT-001 build/type tooling; ARCH-001 contract inventory.
 - Scope: offline OpenAPI export, deterministic schema/client generation, typed transport
   wrappers for JSON/HTML/raw bytes, supplemental runtime checks for schema gaps,

@@ -56,7 +56,9 @@ def test_ci_retains_complete_commands_and_no_cloud_credentials():
     job = ci["jobs"]["checks"]
     assert job["permissions"] == {"contents": "read"}
     commands = [s["run"] for s in job["steps"] if "run" in s]
-    assert commands[:-1] == ["make install-dev", "npm ci", "npm run typecheck", "npm run lint",
+    assert commands[:-1] == ["make install-dev", "npm ci",
+        ".venv/bin/python -m scripts.export_openapi --check\n.venv/bin/python -m scripts.export_api_fixtures --check\nnpm --prefix frontend run api:check\n",
+        "npm run typecheck", "npm run lint",
         "npm run test", "npm run build", "make test", ".venv/bin/python -m scripts.gcp.ci offline",
         ".venv/bin/python -m playwright install --with-deps chromium", "make test-browser", "git diff --check"]
     assert not any("google-github-actions/" in s.get("uses", "") for s in job["steps"])

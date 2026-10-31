@@ -1,4 +1,4 @@
-# TRIPSE React frontend — FRONT-001A / FRONT-001B
+# TRIPSE React frontend — FRONT-001A / FRONT-001B / API-001
 
 React shell with FastAPI same-origin integration, 2026-10-31. FRONT-001A supplied
 the shell; FRONT-001B adds private `/app` serving, a bounded health read and the
@@ -76,6 +76,7 @@ frontend/
       NotFoundPage.tsx
     features/hub/               # Hub, module/legacy links, bounded health read/status
     shared/
+      api/                      # generated types/guards, transport, adapters and query conventions
       components/               # PageHeader, ErrorBoundary
       config/                   # navigation metadata, development legacy URLs
       lib/                      # class-name helper
@@ -84,8 +85,10 @@ frontend/
     test/setup.ts
 ```
 
-No empty future feature folders, provider layers, global store or API abstractions
-are created. Future Planner, Documents, Marketing, Automations and Assistant modules
+API-001 adds `shared/api/{generated,client,adapters,query}` and a root
+QueryClientProvider. Generated TypeScript and Zod guards follow actual OpenAPI;
+schema gaps use minimal runtime-checked projections. No empty future feature
+folders or global form store are created. Future Planner, Documents, Marketing, Automations and Assistant modules
 will own their pages/UI/hooks under `features/`; shared code must stay independent
 of their business logic. The app layer owns composition and routing.
 
@@ -170,7 +173,17 @@ The [integration guide](../docs/ui/front-001b-integration.md) documents security
 cache policy, versioned source selection, container limitations and exact rollback.
 Caddy, business APIs, identity policies, data and delivery workflow stay unchanged.
 
-**API-001 and later:** generated OpenAPI client and TanStack Query; real Planner/
+**API-001 implemented:** deterministic isolated offline schema and TypeScript/Zod
+generation, shared JSON/HTML/byte transport, guarded Planner/Studio adapters,
+TanStack Query provider and cancellation/invalidation/retry conventions. Existing
+health UI uses the shared transport. Exact commands, schema gaps, security boundaries
+and evidence: [API-001 guide](../docs/api/api-001.md). Regenerate from the repository
+root with `python -m scripts.export_openapi` and
+`npm --prefix frontend run api:generate`; check with the Python `--check` option
+and `npm --prefix frontend run api:check`. Synthetic wire fixture generation is
+`python -m scripts.export_api_fixtures` (also supports `--check`).
+
+**Later stages:** real Planner/
 Trip Catalog workflows; Document Studio migration including print/PDF parity;
 Marketing data; Assistant orchestration; Automations execution/history/approval.
 No backend APIs, databases, paid providers or infrastructure are added here.

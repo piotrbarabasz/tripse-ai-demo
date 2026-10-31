@@ -33,7 +33,13 @@ versus `sections: []`. [planning_models.py](../../app/planning_models.py) is sep
 from Studio models: do not handwrite one universal Trip type. Optional/null values and
 verification warnings must survive serialization unchanged.
 
-## API-001 generation and acceptance proposal
+## API-001 generation and acceptance
+
+**Implemented 2026-10-31:** [OpenAPI artifact](openapi.json), generated TypeScript/Zod
+guards, same-origin transport, narrow adapters and TanStack Query foundation.
+[Implementation guide](api-001.md) records the full response-model audit, remaining
+gaps, exact commands, CI/provenance treatment and validation. The acceptance design
+below is retained; it does not imply every endpoint now has a complete schema.
 
 1. Generate OpenAPI from create_app using temporary paths, explicit local/mock mode,
    no credentials or production data. Cloud `/openapi.json` stays disabled. Produce a
