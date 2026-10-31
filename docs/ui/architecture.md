@@ -78,7 +78,11 @@ PoC (blueprint section 15), with loading, HTTP/schema errors, timeout and unmoun
 cancellation. Health only proves connectivity; its existing cloud middleware exception
 is unchanged. It cannot establish session/authentication. API-001 reuses its existing
 UI lifecycle with the shared transport and preserves its regression tests.
-BrowserRouter derives `/app` from Vite's `/app/` base and handles both entry forms.
+The router derives `/app` from Vite's `/app/` base and handles both entry forms.
+FRONT-003B uses `createBrowserRouter`/`RouterProvider` with the same route tree and
+basename so `useBlocker` can protect dirty creation forms, including browser Back.
+It is constructed once in main.tsx outside StrictMode; API reads/writes stay in
+TanStack Query. Native document navigations use a beforeunload warning.
 `app/spa.py` owns serving/security presentation, not domain logic. Per-response style
 nonces support Radix scroll-lock CSS without unsafe-inline/eval; main.tsx sets the
 shared get-nonce value before rendering. Local uses `frontend/dist`; the Python-only

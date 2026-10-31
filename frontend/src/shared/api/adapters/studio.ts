@@ -1,6 +1,6 @@
 import "../client/validation-runtime";
-import type { DraftUpdate, LibraryMutation, StatusMutation, ListLibraryApiDocumentStudioLibraryGetData } from "../generated/types.gen";
-import { zDocumentDraftOutput, zLibraryPage, zDocumentSummary } from "../generated/zod.gen";
+import type { DraftRequest, DraftUpdate, LibraryMutation, StatusMutation, ListLibraryApiDocumentStudioLibraryGetData } from "../generated/types.gen";
+import { zDraftRequest, zTripOutput, zCampaignOutput, zDocumentDraftOutput, zLibraryPage, zDocumentSummary } from "../generated/zod.gen";
 import { z } from "zod";
 import { request } from "../client/transport";
 import { accessSchema, assetSchema, templatesSchema } from "./guards";
@@ -12,6 +12,25 @@ export async function readAccess(signal?: AbortSignal) {
 }
 export async function readTemplates(signal?: AbortSignal) {
   return (await request(`${base}/templates`, { json: (value) => templatesSchema.parse(value) }, { signal })).data;
+}
+// Validate complete source contracts, then retain only selector metadata. Private
+// program/pilot fields are not needed in the selector or its query cache.
+export async function readSources(kind: "trip" | "campaign", signal?: AbortSignal) {
+  if (kind === "trip") {
+    return (await request(`${base}/trips`, { json: (value) => z.array(zTripOutput).parse(value).map((row) => ({ source_type: kind, source_id: zDocumentSummary.shape.document_id.parse(row.trip_id), revision: row.revision, title: row.title,
+      summary: `${row.duration_days} dni · ${row.days?.length ?? 0} dni programu · ${row.destinations?.join(", ") || "brak kierunku"}`,
+      incomplete: !row.days?.length, data_origin: row.data_origin })) }, { signal })).data;
+  }
+  return (await request(`${base}/campaigns`, { json: (value) => z.array(zCampaignOutput).parse(value).map((row) => ({ source_type: kind, source_id: zDocumentSummary.shape.document_id.parse(row.campaign_id), revision: row.revision, title: row.title,
+    summary: `${row.items.length} pozycji · ${row.season || "brak sezonu"}`, incomplete: !row.items.length, data_origin: row.data_origin })) }, { signal })).data;
+}
+export async function createDraft(value: DraftRequest, signal?: AbortSignal) {
+  const body = zDraftRequest.parse(value);
+  return (await request(`${base}/drafts`, { json: (response) => zDocumentDraftOutput.parse(response) }, { method: "POST", body: { json: body }, signal })).data;
+}
+export async function readDraft(identifier: string, signal?: AbortSignal) {
+  const validId = zDocumentSummary.shape.document_id.parse(identifier);
+  return (await request(`${base}/drafts/${id(validId)}`, { json: (value) => zDocumentDraftOutput.parse(value) }, { signal })).data;
 }
 export type LibraryFilters = NonNullable<ListLibraryApiDocumentStudioLibraryGetData["query"]>;
 export async function readLibrary(filters: LibraryFilters = {}, signal?: AbortSignal) {

@@ -513,6 +513,22 @@
     gap: 20px;
     justify-items: start;
   }
+  .creation-wizard { display: grid; gap: 20px; max-width: 1120px; }
+  .creation-wizard fieldset { min-width: 0; border: 0; padding: 0; }
+  .creation-wizard legend { font-weight: 600; margin-bottom: 12px; }
+  .creation-wizard h3 { font-weight: 600; margin-bottom: 12px; }
+  .creation-wizard > label { display: grid; gap: 8px; max-width: 640px; }
+  .creation-wizard input:not([type=radio]), .creation-wizard select { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--border); border-radius: 8px; background: white; padding: 10px 12px; }
+  .creation-choice { display: flex; gap: 12px; cursor: pointer; align-items: start; }
+  .creation-choice:has(input:checked) { outline: 2px solid var(--primary); background: var(--muted); }
+  .creation-choice input { margin-top: 5px; accent-color: var(--primary); flex: 0 0 auto; }
+  .creation-choice span { display: grid; gap: 8px; min-width: 0; overflow-wrap: anywhere; }
+  .creation-progress, .creation-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .creation-progress { list-style: none; padding: 0; }
+  .creation-progress li { padding: 8px 12px; border-radius: 8px; background: var(--muted); }
+  .creation-progress [aria-current=step] { background: var(--primary); color: white; }
+  .creation-wizard .document-metadata dd { overflow-wrap: anywhere; }
+  .creation-wizard [role=alertdialog] { position: sticky; top: 12px; z-index: 20; background: white; border: 2px solid var(--primary); padding: 20px; box-shadow: 0 8px 32px #0002; }
   .skip-link {
     position: fixed;
     top: -100px;

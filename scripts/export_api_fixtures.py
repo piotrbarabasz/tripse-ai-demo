@@ -29,6 +29,7 @@ def fixture_text():
         with patch("app.worker.viewer_link", return_value=("A" * 43, "http://localhost/trip/" + "A" * 43, 4102444800)):
             completed_result, _, _ = generate_job_result({"trip_id": accepted["trip_id"], "request_text": SCENARIOS["ojcow"]["text"]})
         trip = post("/api/document-studio/trips", json={"trip_id": "synthetic-trip", "title": "Synthetic source"})
+        campaign = post("/api/document-studio/campaigns", json={"campaign_id": "synthetic-campaign", "title": "Synthetic campaign", "items": [{"trip_id": trip["trip_id"]}]})
         draft = post("/api/document-studio/drafts", json={
             "document_id": "synthetic-draft", "template_id": "offer.private", "source_type": "trip", "source_id": trip["trip_id"],
         })
@@ -47,7 +48,7 @@ def fixture_text():
         assert downloaded.status_code == 200 and downloaded.headers["content-type"] == "image/png"
         values = dict(accepted=accepted, job=job, completed_result=completed_result,
                       capabilities=get("/api/workspace/capabilities"), scenarios=get("/api/demo/scenarios"),
-                      trip=trip, draft=draft, historical=historical,
+                      trip=trip, campaign=campaign, trips=get("/api/document-studio/trips"), campaigns=get("/api/document-studio/campaigns"), draft=draft, historical=historical,
                       status=status, duplicate=duplicate, asset=asset, access=get("/api/document-studio/access"),
                       templates=get("/api/document-studio/templates"), library=get("/api/document-studio/library"),
                       revisions=get("/api/document-studio/library/synthetic-draft/revisions"), health=get("/health"))

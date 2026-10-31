@@ -30,7 +30,7 @@ export const modules = [
     legacy: "/documents/demo",
     legacyLabel: "Otwórz obecne studio",
     detail:
-      "Katalog i biblioteka dostępne. Przeglądaj metadane i historię dokumentów. Tworzenie i edycja w dotychczasowym Studio.",
+      "Katalog, biblioteka i tworzenie dokumentów z zapisanych źródeł. Edycja w dotychczasowym Studio.",
   },
   {
     path: "/marketing",

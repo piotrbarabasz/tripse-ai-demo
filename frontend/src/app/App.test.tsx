@@ -1,8 +1,9 @@
 import { render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter } from "react-router-dom";
+import { createBrowserRouter, createMemoryRouter, MemoryRouter, RouterProvider } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { App, AppRoutes } from "./App";
+import { routes } from "./router";
 import { modules } from "../shared/config/modules";
 import { ErrorBoundary } from "../shared/components/ErrorBoundary";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -29,7 +30,8 @@ afterEach(() => vi.unstubAllGlobals());
 describe("przestrzeń TRIPSE", () => {
   it.each(["/app", "/app/"])("bootstraps the real browser router at %s", (path) => {
     window.history.replaceState(null, "", path);
-    render(<App />);
+    const router = createBrowserRouter(routes, { basename: import.meta.env.BASE_URL.replace(/\/$/, "") });
+    const view = render(<App router={router} />);
     expect(
       screen.getByRole("heading", {
         level: 1,
@@ -37,6 +39,7 @@ describe("przestrzeń TRIPSE", () => {
       }),
     ).toBeVisible();
     expect(screen.getByRole("main")).toBeInTheDocument();
+    view.unmount(); router.dispose();
   });
 
   it("renders an informative Hub with module cards and existing functionality", () => {
@@ -187,5 +190,14 @@ describe("przestrzeń TRIPSE", () => {
     expect(
       screen.getByRole("link", { name: "Wróć do pulpitu" }),
     ).toHaveAttribute("href", "/app/");
+  });
+  it("uses a safe fallback for data-router errors rather than displaying diagnostics", () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    function Broken(): never { throw new Error("private router diagnostic"); }
+    const router = createMemoryRouter([{ ...routes[0], element: <Broken />, children: [] }]);
+    const view = render(<RouterProvider router={router} />);
+    expect(screen.getByRole("alert")).toHaveTextContent("Nie udało się wyświetlić aplikacji");
+    expect(screen.queryByText(/private router diagnostic/)).not.toBeInTheDocument();
+    view.unmount(); router.dispose();
   });
 });

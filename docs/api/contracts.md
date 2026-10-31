@@ -91,3 +91,14 @@ whose document_id differs from the requested resource. This metadata powers deta
 without fetching full draft/snapshot content. No backend/OpenAPI schema or response
 semantics changed. [Legacy hash/preview routes and read-only boundaries](../ui/front-003a-documents.md)
 are verified against the real routers and synthetic browser flow.
+
+FRONT-003B adds `readSources`, `createDraft` and `readDraft` to the same Studio
+adapter. Trip/Campaign arrays, DraftRequest and DocumentDraft use API-001 generated
+Zod schemas; full source responses are validated, then reduced to safe selector
+metadata before query caching. The template projection also validates actual
+confidentiality. Synthetic fixtures now include a real FastAPI Campaign and both
+source lists; no backend/OpenAPI contract changes are needed. Creation explicitly
+sends document_id, source_revision, title, empty editorial_notes and demo_example=false.
+GET read-back matches ID, template, variant, one source identity/revision, title,
+notes, example flag and confidentiality. Stable-ID repeats use DocumentService's
+existing payload-conflict checks, not a new idempotency header. [Recovery details](../ui/front-003b-creation.md).

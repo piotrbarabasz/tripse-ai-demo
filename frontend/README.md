@@ -1,4 +1,4 @@
-# TRIPSE React frontend — FRONT-001A / FRONT-001B / API-001 / FRONT-002 / FRONT-003A
+# TRIPSE React frontend — FRONT-001A / FRONT-001B / API-001 / FRONT-002 / FRONT-003A/B
 
 React shell with FastAPI same-origin integration, 2026-10-31. FRONT-001A supplied
 the shell; FRONT-001B adds private `/app` serving, a bounded health read and the
@@ -110,7 +110,7 @@ of their business logic. The app layer owns composition and routing.
 | `/app/assistant` | Planned module only; no AI requests |
 | Unknown path under `/app` | Not-found page with Hub recovery |
 
-Vite `base: '/app/'` is the source for BrowserRouter's `/app` basename (trimmed
+Vite `base: '/app/'` is the source for the router's `/app` basename (trimmed
 trailing slash accepts both entry forms).
 Fixed desktop navigation uses `aria-current`; below 768px a Radix Dialog drawer
 provides focus containment, Escape/outside dismissal and trigger focus restoration.
@@ -208,7 +208,27 @@ and the [prepared PR description](../docs/ui/front-002-pr.md).
 metadata, cancelable debounced search, server pagination, read-only details/history
 and verified legacy/preview links. No document writes or full draft snapshots are
 loaded by this workspace. The eight-template catalog comes from the existing API;
-creation/editing remains in `/documents/demo`. Access hints and session expiry reuse
+creation was deferred to FRONT-003B; editing remains in `/documents/demo`. Access hints and session expiry reuse
 the existing API-001/FRONT-002 mechanisms. See
 [routes, validation, screenshots, security and B/C/D boundaries](../docs/ui/front-003a-documents.md)
 and the [prepared PR description](../docs/ui/front-003a-pr.md).
+
+**FRONT-003B implemented:** `/app/documents/new` is the three-step editor-only
+creation wizard. Catalog links use `?template=offer.private` (actual server ID)
+so refresh works with the unchanged extensionless SPA fallback. Choose the layout,
+an existing Studio Trip/Campaign and its revision, then confirm the title and
+confidentiality before one POST. No Planner conversion or source editor is added.
+The generated DraftRequest and DocumentDraft validators reuse API-001 transport.
+An in-memory frozen payload/ID survives ambiguous failures; GET verifies the saved
+snapshot, a definite 404 permits an explicit identical retry, and inconclusive
+results permit reads only. Success invalidates Studio queries and links to legacy
+editing and React library/details. No browser storage or automatic mutation replay.
+The root now uses React Router's data router, constructed once before StrictMode,
+for supported dirty-form link/Back blocking; native unload also warns. Form state
+is lost on leaving/reloading and cannot be recovered from storage.
+Run `.venv/Scripts/python.exe tests/browser_react_document_creation_smoke.py`
+after building, or use the complete `python scripts/dev.py test-browser` command.
+See [audit, contracts, validation and rollback](../docs/ui/front-003b-creation.md)
+and the [prepared PR description](../docs/ui/front-003b-pr.md).
+FRONT-003C section editing/revision-aware saves and FRONT-003D assets/preview/PDF
+remain separate work.

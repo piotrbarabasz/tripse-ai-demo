@@ -149,6 +149,18 @@ read-only: no React creation, editing or library mutations. Existing Studio and
 PDF rendering remain unchanged. [A evidence and recommended B/C/D boundaries](../ui/front-003a-documents.md)
 separate catalog/library acceptance from the full migration described below.
 
+**2026-10-31 FRONT-003B implementation:** `/app/documents/new` adds the editor-only
+template/layout → existing Studio source/revision → explicit confirmation wizard.
+Creation uses the existing DocumentService through generated DraftRequest/draft
+contracts. Frozen in-memory IDs/payloads, read-back matching, no automatic writes,
+revision-conflict review and dirty-navigation warnings protect creation. Success
+hands editing to the verified legacy hash route. Query-based template preselection
+preserves the existing SPA fallback policy. [B audit and evidence](../ui/front-003b-creation.md).
+FRONT-003A retains catalog/library/metadata/history; FRONT-003C will own section forms
+and revision-aware editing; FRONT-003D will own React preview/assets/PDF/export and
+visual parity. Source editors, Planner conversion and full migration acceptance
+remain deferred. No backend engine, storage, auth or delivery boundaries change.
+
 - Dependencies: API-001, accepted FRONT-002 coexistence and snapshot/conflict parity.
 - Scope: migrate one workflow at a time: catalog/source picker and examples → library/
   history → source editors → snapshot/section editing and preview controls. Reuse server

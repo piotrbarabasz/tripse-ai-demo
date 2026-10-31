@@ -11,6 +11,7 @@ see [scope differences and open decisions](../architecture/reconciliation.md).
 - [API-001 generation, schema gaps and validation](api-001.md)
 - [FRONT-002 workspace capability and Planner consumer](../ui/front-002-planner.md)
 - [FRONT-003A Studio read adapters and legacy/preview contracts](../ui/front-003a-documents.md)
+- [FRONT-003B source/create/read-back adapters and recovery contracts](../ui/front-003b-creation.md)
 - [Generated local OpenAPI](openapi.json)
 - [Backend architecture](architecture.md)
 - [Current contracts and typed-client plan](contracts.md)

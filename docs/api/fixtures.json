@@ -17,6 +17,84 @@
     "schema_version": 1,
     "width": 2
   },
+  "campaign": {
+    "campaign_id": "synthetic-campaign",
+    "cta": "",
+    "data_origin": "unknown",
+    "description": "",
+    "hero_asset_id": null,
+    "hero_position": {
+      "x": 50.0,
+      "y": 50.0,
+      "zoom": 1.0
+    },
+    "items": [
+      {
+        "badge": "concept",
+        "date_range_or_label": "Termin do ustalenia",
+        "display_title": "",
+        "highlights": [],
+        "image_asset_id": null,
+        "image_position": {
+          "x": 50.0,
+          "y": 50.0,
+          "zoom": 1.0
+        },
+        "leader": null,
+        "publication_status": "draft",
+        "short_hook": "",
+        "trip_id": "synthetic-trip"
+      }
+    ],
+    "layout_variant": "new_trips",
+    "leader": null,
+    "revision": 1,
+    "schema_version": 1,
+    "season": "",
+    "theme": "",
+    "title": "Synthetic campaign",
+    "updated_at": "2026-10-31T00:00:00Z"
+  },
+  "campaigns": [
+    {
+      "campaign_id": "synthetic-campaign",
+      "cta": "",
+      "data_origin": "unknown",
+      "description": "",
+      "hero_asset_id": null,
+      "hero_position": {
+        "x": 50.0,
+        "y": 50.0,
+        "zoom": 1.0
+      },
+      "items": [
+        {
+          "badge": "concept",
+          "date_range_or_label": "Termin do ustalenia",
+          "display_title": "",
+          "highlights": [],
+          "image_asset_id": null,
+          "image_position": {
+            "x": 50.0,
+            "y": 50.0,
+            "zoom": 1.0
+          },
+          "leader": null,
+          "publication_status": "draft",
+          "short_hook": "",
+          "trip_id": "synthetic-trip"
+        }
+      ],
+      "layout_variant": "new_trips",
+      "leader": null,
+      "revision": 1,
+      "schema_version": 1,
+      "season": "",
+      "theme": "",
+      "title": "Synthetic campaign",
+      "updated_at": "2026-10-31T00:00:00Z"
+    }
+  ],
   "capabilities": {
     "can_create_trip": true,
     "planning_mode": "mock",
@@ -1981,5 +2059,23 @@
     "title": "Synthetic source",
     "trip_id": "synthetic-trip",
     "updated_at": "2026-10-31T00:00:00Z"
-  }
+  },
+  "trips": [
+    {
+      "categories": [],
+      "data_origin": "unknown",
+      "days": [],
+      "description": "",
+      "destinations": [],
+      "duration_days": 0,
+      "end_date": null,
+      "revision": 1,
+      "schema_version": 1,
+      "start_date": null,
+      "status": "draft",
+      "title": "Synthetic source",
+      "trip_id": "synthetic-trip",
+      "updated_at": "2026-10-31T00:00:00Z"
+    }
+  ]
 }

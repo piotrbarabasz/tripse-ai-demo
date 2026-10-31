@@ -11,6 +11,8 @@ The [existing server route inventory](../ROUTING.md) is still authoritative.
 | `/app/documents` | Real template catalog, lazy-loaded within the existing shell |
 | `/app/documents/library` | Saved metadata library with server filters and pagination |
 | `/app/documents/library/:documentId` | Read-only metadata/history and new-tab preview links |
+| `/app/documents/new` | Editor-only template/layout → source/revision → explicit creation/recovery wizard |
+| `/app/documents/new?template=offer.private` | Same wizard with a server-provided template ID preselected; invalid IDs fail safely |
 | `/app/marketing`, `/app/automations`, `/app/assistant` | Explicitly planned modules; no business workflows |
 | Unknown extensionless `/app/*` document navigation | Entry HTML with client not-found view |
 | `/app/assets/*` | Private compiled assets; absent assets return HTTP 404 |
@@ -19,10 +21,14 @@ The [existing server route inventory](../ROUTING.md) is still authoritative.
 | `/demo/chat`, `/preview/*` | Existing simulator and separate readonly fixtures retained |
 | `/api/*`, `/internal/*`, `/health`, `/static/*`, `/documents/assets/*` | Existing server contracts, never assigned to React Router |
 
-Vite has `base: '/app/'`; BrowserRouter consumes its value with the trailing slash
+Vite has `base: '/app/'`; the data router consumes its value with the trailing slash
 trimmed as basename, accepting both `/app` and `/app/`. Client links remain under
 that prefix. FastAPI now serves direct nested document navigations and refreshes.
 Unknown views are client-side 404 presentations, not a claim of an HTTP 404 response.
+Template IDs contain dots. Preselection uses a query parameter, keeping direct
+refresh within the existing extensionless HTML-navigation policy without widening
+the asset fallback. FRONT-003B adds supported link/Back blocking and a native
+unload warning for meaningful unsaved input or an unresolved creation attempt.
 
 Loopback dev: http://127.0.0.1:5173/app/; preview: http://127.0.0.1:4173/app/.
 No Vite API proxy is configured. To reach independently running local FastAPI,

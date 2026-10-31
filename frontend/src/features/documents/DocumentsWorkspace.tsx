@@ -15,6 +15,8 @@ import { DocumentActions, DocumentMetadata, ReadError } from "./presentation";
 import { families, statuses } from "./labels";
 import { documentLinks, validDocumentId } from "./links";
 
+import CreationWizard from "./CreationWizard";
+
 type Templates = Awaited<ReturnType<typeof readTemplates>>;
 
 function Catalog({ templates, pending, error, retry, canEdit }: {
@@ -31,6 +33,7 @@ function Catalog({ templates, pending, error, retry, canEdit }: {
             <p className="document-id">{template.template_id}</p><p>{template.description}</p>
             <dl className="document-metadata"><dt>Źródło</dt><dd>{template.source_type === "trip" ? "Wycieczka" : "Kampania"}</dd>
               <dt>Warianty</dt><dd>{template.layout_variants.join(", ")}</dd></dl>
+            {canEdit && <Link className="text-link" to={`/documents/new?template=${encodeURIComponent(template.template_id)}`}>Utwórz dokument<span className="sr-only">: {template.name}</span></Link>}
             {canEdit && <a className="text-link" href={`${legacyHref("/documents/demo")}#templates`}>Tworzenie w dotychczasowym Studio<span className="sr-only">: {template.name}</span></a>}
           </article>)}</div>
       </section>)}
@@ -108,17 +111,18 @@ export default function DocumentsWorkspace() {
   useEffect(() => { document.getElementById("page-title")?.focus(); }, []);
   const canEdit = access.data?.can_edit === true;
   return <>
-    <PageHeader eyebrow="Dokumenty TRIPSE" title="Document Studio">Katalog szablonów i zapisane dokumenty. Tworzenie i edycja pozostają w dotychczasowym Studio.</PageHeader>
+    <PageHeader eyebrow="Dokumenty TRIPSE" title="Document Studio">Katalog, biblioteka i tworzenie dokumentów. Edycja pozostaje w dotychczasowym Studio.</PageHeader>
     <nav className="documents-tabs" aria-label="Widoki Document Studio">
-      <NavLink to="/documents" end>Katalog szablonów</NavLink><NavLink to="/documents/library">Biblioteka dokumentów</NavLink>
+      <NavLink to="/documents" end>Katalog szablonów</NavLink><NavLink to="/documents/library">Biblioteka dokumentów</NavLink>{canEdit && <NavLink to="/documents/new">Utwórz dokument</NavLink>}
     </nav>
     <a className="text-link" href={legacyHref("/documents/demo")}>Otwórz obecne studio</a>
     {expired ? <p role="alert">Sesja wygasła. Zaloguj się ponownie i odśwież stronę.</p> : access.isError ? <ReadError error={access.error} retry={() => { void access.refetch(); }} /> : access.isPending ? <p role="status">Sprawdzanie dostępu do dokumentów…</p> : <>
       <div className="documents-notice"><Badge>{canEdit ? "Sesja z uprawnieniami edytora" : "Dostęp tylko do odczytu"}</Badge>
-        <p>Ten widok służy do przeglądania. Status „Gotowy” i klasyfikacja poufności nie oznaczają zgody na publikację.</p>
+        <p>Dokumenty powstają z zapisanych źródeł Studio. Status „Gotowy” i klasyfikacja poufności nie oznaczają zgody na publikację.</p>
         <a className="text-link" href={`${legacyHref("/documents/demo")}#drafts`}>Otwórz dotychczasową bibliotekę</a>
       </div>
       <Routes>
+        <Route path="new" element={canEdit && templates.isError ? <ReadError error={templates.error} retry={() => { void templates.refetch(); }} /> : <CreationWizard templates={templates.data} canEdit={canEdit} />} />
         <Route index element={<Catalog templates={templates.data} pending={templates.isPending} error={templates.error} retry={() => { void templates.refetch(); }} canEdit={canEdit} />} />
         <Route path="library" element={<Library templates={templates.data} canEdit={canEdit} filters={filters} onFilters={setFilters} />} />
         <Route path="library/:documentId" element={<Details templates={templates.data} canEdit={canEdit} />} />

@@ -26,7 +26,7 @@ export function HubPage() {
           <h2 id="welcome-title">Twoje narzędzia. Wspólny kierunek.</h2>
           <p>
             Zaplanuj podróż, przejrzyj szablony i bibliotekę dokumentów.
-            Tworzenie i edycja dokumentów pozostają w dotychczasowym Studio.
+            Utwórz dokument z zapisanego źródła; edycja pozostaje w dotychczasowym Studio.
           </p>
         </div>
         <Button asChild variant="outline">
@@ -90,7 +90,7 @@ export function HubPage() {
           <strong>Przestrzeń w rozwoju.</strong> Planer obsługuje tworzenie i postęp
           zadań, a plan z mapą otwiera się w obecnym podglądzie. Tryb MOCK lub LIVE
           oraz uprawnienia sprawdzisz w planerze. Katalog i biblioteka dokumentów
-          są dostępne; tworzenie i edycja pozostają w dotychczasowym Studio.
+          oraz tworzenie z zapisanych źródeł są dostępne; edycja pozostaje w dotychczasowym Studio.
           Marketing, Automatyzacje i Asystent są planowane.
         </p>
       </aside>

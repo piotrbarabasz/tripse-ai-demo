@@ -1,16 +1,15 @@
-import { BrowserRouter, useRoutes } from "react-router-dom";
+import type { ComponentProps } from "react";
+import { RouterProvider, useRoutes } from "react-router-dom";
 import { ErrorBoundary } from "../shared/components/ErrorBoundary";
 import { routes } from "./router";
 
 export function AppRoutes() {
   return useRoutes(routes);
 }
-export function App() {
+export function App({ router }: { router: ComponentProps<typeof RouterProvider>["router"] }) {
   return (
     <ErrorBoundary>
-      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-        <AppRoutes />
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </ErrorBoundary>
   );
 }
