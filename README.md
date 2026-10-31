@@ -77,6 +77,10 @@ Szczegóły, zakres i testy: [docs/HUB.md](docs/HUB.md).
 
 ## Decyzje architektoniczne i rejestr prac
 
+[Architecture foundation (ARCH-001)](docs/architecture/README.md) ·
+[UI architecture](docs/ui/README.md) · [API contracts](docs/api/README.md).
+React + TypeScript migration is proposed; the existing demo is unchanged.
+
 [Rejestr ADR i zasady pracy agentów](docs/adr/README.md) ·
 [Rejestr prac](docs/tracking/README.md) ·
 [Audyt repozytorium](docs/tracking/repository-audit.md) ·

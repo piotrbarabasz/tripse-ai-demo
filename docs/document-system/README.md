@@ -64,3 +64,10 @@ Przykładowe PDF-y i grafika **nie są dołączone** do ZIP-a: mogą zawierać d
 ## Nierozstrzygnięte decyzje przed publikacją pierwszej oferty
 
 Oryginalne logo i prawo używania zdjęć; oficjalna paleta i fonty; odpowiedzialny za zatwierdzanie ceny/terminów; dokładny zakres Self-Guide; minimalny zestaw danych pilota; sposób logowania i magazyn danych na GCP; czy docelowo poza PDF wymagane są edytowalne pliki.
+
+## Application architecture navigation
+
+For the current application audit and proposed gradual frontend migration, see
+[ARCH-001 architecture](../architecture/README.md), [UI](../ui/README.md) and
+[API](../api/README.md). Existing document-system designs and historical records
+remain above; React migration is not implemented by this documentation update.

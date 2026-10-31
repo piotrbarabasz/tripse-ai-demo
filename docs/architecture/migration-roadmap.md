@@ -1,0 +1,162 @@
+# Incremental migration roadmap
+
+ARCH-001 proposal, 2026-10-31. Only the documentation stage is performed here.
+Stage IDs below come from the user request; they are not invented GitHub issue numbers.
+Owner acceptance of [ADR-0017](../adr/0017-modular-react-typescript-migration.md) and
+each stage's scope is separate from implementation or deployment acceptance.
+
+## Shared gates
+
+Every implementation stage keeps old URLs, endpoint payloads/statuses, authentication,
+IAP/Origin rules, readonly fixture isolation and demo labels. Use synthetic data and
+mock providers for local regression. Run existing pytest and offline contracts plus
+relevant browser/PDF tests; add focused tests for new boundaries. Record commands and
+limitations. Deployment, cloud changes and master merges need separate authorization.
+
+Retain legacy modules/routes throughout. Rollback removes the new entry/feature or
+links users back to the legacy page; never restores old data over new document saves.
+Avoid storage/schema migration in these stages. A later authorized release can use
+existing accepted-image rollback procedures; this task does not execute them.
+
+## ARCH-001 — architecture and documentation
+
+- Dependencies: source audit on dev; existing ADR/worklog conventions.
+- Scope: audited initial blueprint, UI/API navigation and architecture, proposed ADR,
+  incremental stages and current implementation/verification boundaries.
+- Acceptance: all requested docs exist; source-linked claims distinguish current code
+  from proposals; ADR remains proposed; risks/approvals and FRONT-001 scope explicit.
+- Regression: documentation links/structure, ADR YAML/numbering, worklog CSV,
+  git diff --check and existing relevant tests where supported. No runtime changes.
+- Rollback: revert only ARCH-001 documentation additions/index/tracking edits.
+
+## FRONT-001 — React foundation and app shell
+
+- Dependencies: ARCH-001 and owner agreement on ADR-0017 stack/entry/packaging;
+  separately proposed dev-PR CI improvement before merge, or explicit documented
+  manual checks while that gap remains. No API-001 dependency.
+- Exact scope: create frontend/ with pinned React/TypeScript/Vite, React Router,
+  Tailwind and only shell-required shadcn/ui primitives; lockfile, strict type checking,
+  documented install/dev/build commands. Add bootstrap, providers only as needed,
+  accessible responsive shell/navigation, error boundary and app not-found state.
+  Use real links to existing Hub, Planner and Studio; no business API consumption.
+- Routing: serve compiled same-origin assets and bounded `/app` navigation fallback
+  only in local/cloud_demo, preserving guards. Verify `/app` and deep-link refresh,
+  404 missing chunks, unknown APIs and readonly absence. Keep `/` and legacy URLs.
+  No public Caddy allowlist expansion or auth/header relaxation.
+- Packaging: add deterministic frontend build and copy output into existing Python
+  image; deliberately update release source allowlist, recipe/manifest validation and
+  build tests to include exact frontend sources/lock/config. Document loopback-only
+  dev setup. No cloud resource, deployment or independent hosting changes.
+- Acceptance: clean install, typecheck and production build succeed; shell works with
+  JS loading and deep links under existing security headers; mode/Host/Origin/IAP denial
+  matrix passes; compiled image starts API/worker as before; release provenance accepts
+  intended inputs and rejects unexpected inputs. No secrets in built assets.
+- Regression: existing pytest/offline provenance/container checks plus shell browser
+  smoke in local/mock and mocked cloud compositions. Legacy Hub/planner/Studio/viewer
+  and readonly browser smoke stay green; hosted IAP evidence is a later authorized gate.
+- Rollback: remove `/app` registration/build integration and frontend source additions
+  together; use unchanged legacy routes. Revert recipe/provenance changes as one unit.
+- Excluded: migrated Hub/planner/map/editor/library UI, generated API client or query
+  hooks, assistant, authentication redesign, print CSS/pagination changes, new storage,
+  root-route cutover and deployment. TanStack Query belongs to API-001.
+
+## API-001 — API client and contracts
+
+- Dependencies: FRONT-001 build/type tooling; ARCH-001 contract inventory.
+- Scope: offline OpenAPI export, deterministic schema/client generation, typed transport
+  wrappers for JSON/HTML/raw bytes, supplemental runtime checks for schema gaps,
+  TanStack Query provider and bounded query/mutation conventions. Follow
+  [contracts](../api/contracts.md); preserve server APIs.
+- Acceptance: generated artifacts reproduce from isolated local/mock composition;
+  schema drift check passes; weak responses are explicitly covered; 401/403/404/409/
+  413/422/503, timeout/cancel, cloud idempotency versus local non-idempotency and binary/
+  HTML responses tested. No automatic write retries or public cloud OpenAPI route.
+- Regression: existing backend/security suites plus synthetic adapter contract checks;
+  FRONT-001 shell/legacy smoke. No screen migration required.
+- Rollback: remove unused client/query integration; legacy fetch paths remain intact;
+  no API/data rollback needed.
+
+## FRONT-002 — Hub and Trip Planner migration
+
+- Dependencies: FRONT-001, API-001 and accepted shell/routing contracts.
+- Scope: `/app` Hub and `/app/planner` vertical workflows: mock/live labels, request,
+  durable progress polling, errors and link to existing token viewer. Preserve legacy
+  viewer/maps and simulator; an in-app map/viewer rewrite needs separately bounded scope.
+- Acceptance: synthetic request completes via existing worker/queue; failures/timeouts
+  render safely; duplicate clicks, unmount and terminal polling handled; readonly gets
+  no create path; editor/reader and idempotency behavior match existing APIs. No implied
+  automatic planner-to-Studio conversion. Legacy `/hub` and `/planner` still work.
+- Regression: planner, viewer, hub, demo and cloud auth suites; browser API-worker-viewer
+  flow with mock map/no browser key and responsive/keyboard checks. No live paid calls
+  assumed verified by mock tests.
+- Rollback: remove new feature navigation or `/app/planner`; link to `/planner` and
+  `/hub`. Existing jobs/viewer tokens remain valid; do not delete them.
+
+## FRONT-003 — Document Studio migration
+
+- Dependencies: API-001, accepted FRONT-002 coexistence and snapshot/conflict parity.
+- Scope: migrate one workflow at a time: catalog/source picker and examples → library/
+  history → source editors → snapshot/section editing and preview controls. Reuse server
+  validation, template registry, rendering and browser print; preserve eight template
+  IDs, marketing variants, sections, provenance and private asset handling.
+- Acceptance: synthetic create/edit/save/reload/duplicate/archive/restore/status/history,
+  image rights/upload/crop and stale-revision conflict pass. Preserve null/empty sections,
+  immutable snapshots and operation IDs; dirty navigation and stale preview cancellation
+  work. Cloud reader cannot write. Test history preview against DENY/IAP constraints;
+  use permitted separate windows without weakening policies. No default cutover until
+  feature parity is accepted.
+- Regression: full document/service/library/sections/source tests; browser creation,
+  section, history, marketing and all-template tests; actual PDF text/order/bounds,
+  long-content pagination, image persistence, A4/social and invalid-export gates.
+  Baseline fixtures and existing print pages stay available for comparison.
+- Rollback: route users to `/documents/demo` with existing saved IDs/hashes where
+  supported. Keep revisions/assets and server schemas unchanged; rollback UI only.
+
+## AI-001 — assistant foundation and tool orchestration
+
+- Dependencies: API-001; FRONT-002 for planner tools; FRONT-003 and its acceptance before
+  document writes. Read-only/mock foundation can proceed after API-001 independently
+  of unfinished document screens. Owner-approved tool/confirmation/retention policy.
+- Scope: assistant feature and server orchestrator with explicit typed allowlist,
+  actor-scoped domain operations, mock provider/tool execution, bounded steps and safe
+  audit metadata. [Assistant proposal](../api/assistant-integration.md) defines limits.
+- Acceptance: tool schema/authorization, injection, replay, conflict, cancellation and
+  partial-failure cases pass; user confirms consequential writes against exact arguments
+  and revision. No arbitrary tools or live-cloud provider enablement. Existing mock
+  cloud startup restrictions and readonly absence remain enforced.
+- Regression: existing planner/document/auth suites plus synthetic orchestration tests;
+  assistant browser failure/retry/confirmation flows without paid calls. Live provider,
+  human IAP and cost validation remain separately authorized/unverified.
+- Rollback: disable/remove assistant route/tool registration and navigation; use
+  existing manual workflows. Preserve completed jobs/documents; no compensating delete.
+
+## Separate CI improvement proposal
+
+[ci.yml](../../.github/workflows/ci.yml) currently triggers PR checks only for master.
+Delivery reuses CI on dev/master pushes, which is not a pre-merge dev-PR gate. Propose
+a separate change to check PRs targeting dev and master with existing read-only
+permissions and no deployment credentials. Add frontend lockfile install/type/build,
+schema drift and scoped Markdown/link checks when their tooling exists. Validate
+workflow trigger/permission contracts and required-check configuration separately;
+do not broaden delivery triggers or change protected master policy in ARCH-001.
+
+## ARCH-001 validation record
+
+Executed on 2026-10-31 in the existing Windows Python 3.12 virtual environment:
+
+- `.venv/Scripts/python.exe -m pytest -q`: **1143 passed**, one existing Starlette/
+  AnyIO BlockingPortal deprecation warning, 62.70 seconds.
+- `.venv/Scripts/python.exe -m scripts.gcp.ci offline`: **PASS**, offline source and
+  preview contracts; no cloud credentials or deployment used.
+
+Scoped Markdown structure/local-link checks passed across 18 new/modified Markdown
+files; ADR metadata/nine sections and worklog CSV structure passed. Two pre-existing
+links remain unresolved: root README and document-system README reference the missing
+`docs/DOC_TEMPLATES_006.md`. New links resolve; historical references were not fabricated
+or redirected. `git diff --check` passed after final whitespace cleanup.
+
+Historical test results in other documents do not count as this task's verification.
+Dedicated browser/PDF/container scripts are not rerun for
+this documentation-only change. No GCP deployment, hosted IAP/browser acceptance,
+live provider calls or new React build is performed here. No repository-configured
+Markdown linter was found; scoped structural/local-link checks are used instead.

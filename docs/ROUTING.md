@@ -1,5 +1,8 @@
 # Application routing and navigation — 2026-10-28
 
+Future routing is proposed in [ARCH-001 UI routing](ui/routing.md).
+`/app` is not implemented; this current route inventory remains unchanged.
+
 Canonical navigation is `/` → `/hub` → modules. `GET /` returns a relative
 302 redirect with no-store caching; `/hub` renders directly. Planner UI is
 `/planner`; its HTML, JavaScript and planning API are otherwise unchanged.
