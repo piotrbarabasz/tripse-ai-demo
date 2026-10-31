@@ -142,6 +142,13 @@ See [implementation, validation, limits and rollback](../ui/front-002-planner.md
 
 ## FRONT-003 — Document Studio migration
 
+**2026-10-31 FRONT-003A implementation:** `/app/documents` now provides the real
+eight-template catalog, server-filtered/paginated saved library, metadata/details
+and revision history with safe legacy/new-tab preview links. This increment is
+read-only: no React creation, editing or library mutations. Existing Studio and
+PDF rendering remain unchanged. [A evidence and recommended B/C/D boundaries](../ui/front-003a-documents.md)
+separate catalog/library acceptance from the full migration described below.
+
 - Dependencies: API-001, accepted FRONT-002 coexistence and snapshot/conflict parity.
 - Scope: migrate one workflow at a time: catalog/source picker and examples → library/
   history → source editors → snapshot/section editing and preview controls. Reuse server

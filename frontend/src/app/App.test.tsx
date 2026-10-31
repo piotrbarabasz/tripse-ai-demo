@@ -45,7 +45,8 @@ describe("przestrzeń TRIPSE", () => {
       screen.getByRole("heading", { name: "Moduły TRIPSE" }),
     ).toBeVisible();
     expect(screen.getAllByRole("article")).toHaveLength(5);
-    expect(screen.getAllByText("Migracja planowana")).toHaveLength(1);
+    expect(screen.queryByText("Migracja planowana")).not.toBeInTheDocument();
+    expect(screen.getByText("Katalog i biblioteka dostępne")).toBeVisible();
     expect(screen.getByText("Dostępny planer")).toBeVisible();
     expect(screen.getByRole("link", { name: /Zaplanuj podróż/ })).toHaveAttribute("href", "/planner");
     expect(screen.getAllByText("Moduł planowany")).toHaveLength(3);
@@ -91,16 +92,16 @@ describe("przestrzeń TRIPSE", () => {
     ).toBeVisible();
   });
 
-  it.each(modules)("supports a direct nested route: $path", (module) => {
+  it.each(modules)("supports a direct nested route: $path", async (module) => {
     renderPage(module.path);
     expect(
-      screen.getByRole("heading", { level: 1, name: module.title }),
+      await screen.findByRole("heading", { level: 1, name: module.title }),
     ).toBeVisible();
     if (module.path === "/planner") expect(screen.getByLabelText("Opisz wycieczkę")).toBeVisible();
-    else expect(screen.getByText("Widok planowany")).toBeVisible();
+    else if (module.path !== "/documents") expect(screen.getByText("Widok planowany")).toBeVisible();
     if ("legacy" in module)
       expect(
-        screen.getByRole("link", { name: module.legacyLabel }),
+        await screen.findByRole("link", { name: module.legacyLabel }),
       ).toHaveAttribute("href", module.legacy);
   });
 

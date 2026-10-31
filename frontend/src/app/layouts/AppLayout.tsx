@@ -16,7 +16,7 @@ export function AppLayout() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const title =
-    [home, ...modules].find((module) => module.path === pathname)?.title ??
+    [home, ...modules].find((module) => module.path === pathname || (module.path === "/documents" && pathname.startsWith("/documents/")))?.title ??
     "Nie znaleziono strony";
   useEffect(() => {
     document.title = `${title} — TRIPSE`;

@@ -1,5 +1,12 @@
 # Rejestr prac i podstawy kosztorysu
 
+2026-10-31: FRONT-003A (user-supplied label) delivers the read-only React template
+catalog, saved library, metadata/history and safe legacy/preview links. See
+[scope, validation, access review and rollback](../ui/front-003a-documents.md) and
+[prepared PR description](../ui/front-003a-pr.md). No backend/document writes,
+deployment, push, PR opening or merge is performed. B/C/D creation/editing/export
+acceptance remains separate; hours/costs and ADR approval are not inferred.
+
 2026-10-31: FRONT-002 (user-supplied label) migrates Hub/Planner to React using
 API-001, with a minimal trusted capability, bounded polling, explicit retries and
 existing viewer links. See [implementation/evidence/rollback](../ui/front-002-planner.md)

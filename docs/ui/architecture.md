@@ -1,7 +1,10 @@
 # UI architecture
 
-Status: FRONT-001A shell, FRONT-001B private FastAPI integration, API-001 client/query foundation and FRONT-002 Hub/Planner implemented.
+Status: FRONT-001A shell, FRONT-001B private FastAPI integration, API-001 client/query foundation, FRONT-002 Hub/Planner and FRONT-003A read-only Studio implemented.
 See [FRONT-002 flow, capability security and rollback](front-002-planner.md).
+The [FRONT-003A feature](front-003a-documents.md) owns catalog/library/details under
+`features/documents`, lazy-loads its workspace, and uses generated summary metadata
+without loading editable snapshots. All document writes remain in legacy Studio.
 See [frontend instructions](../../frontend/README.md) and
 [current integration evidence/limits](front-001b-integration.md). ADR-0017 remains proposed.
 See [source audit](../architecture/current-state-audit.md)

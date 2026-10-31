@@ -1,6 +1,7 @@
 import "../client/validation-runtime";
 import type { DraftUpdate, LibraryMutation, StatusMutation, ListLibraryApiDocumentStudioLibraryGetData } from "../generated/types.gen";
-import { zDocumentDraftOutput, zLibraryPage } from "../generated/zod.gen";
+import { zDocumentDraftOutput, zLibraryPage, zDocumentSummary } from "../generated/zod.gen";
+import { z } from "zod";
 import { request } from "../client/transport";
 import { accessSchema, assetSchema, templatesSchema } from "./guards";
 
@@ -17,6 +18,12 @@ export async function readLibrary(filters: LibraryFilters = {}, signal?: AbortSi
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(filters)) if (value != null) query.set(key, String(value));
   return (await request(`${base}/library?${query}`, { json: (value) => zLibraryPage.parse(value) }, { signal })).data;
+}
+
+export async function readRevisions(identifier: string, signal?: AbortSignal) {
+  const validId = zDocumentSummary.shape.document_id.parse(identifier);
+  const schema = z.array(zDocumentSummary).refine((rows) => rows.every((row) => row.document_id === validId));
+  return (await request(`${base}/library/${id(validId)}/revisions`, { json: (value) => schema.parse(value) }, { signal })).data;
 }
 // Revision is the last loaded revision. Never refresh it silently to force a save.
 export async function saveDraft(identifier: string, value: DraftUpdate, signal?: AbortSignal) {

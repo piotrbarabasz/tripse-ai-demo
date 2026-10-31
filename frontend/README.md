@@ -1,4 +1,4 @@
-# TRIPSE React frontend — FRONT-001A / FRONT-001B / API-001 / FRONT-002
+# TRIPSE React frontend — FRONT-001A / FRONT-001B / API-001 / FRONT-002 / FRONT-003A
 
 React shell with FastAPI same-origin integration, 2026-10-31. FRONT-001A supplied
 the shell; FRONT-001B adds private `/app` serving, a bounded health read and the
@@ -102,7 +102,9 @@ of their business logic. The app layer owns composition and routing.
 | --- | --- |
 | `/app`, `/app/` | Hub, welcome copy, five module cards and direct legacy links |
 | `/app/planner` | Operational request form, trusted mode/permissions, job polling and existing viewer link; legacy `/planner` fallback |
-| `/app/documents` | Planned React view with link to existing `/documents/demo` |
+| `/app/documents` | Real template catalog; editor-capable users can continue creation in legacy Studio |
+| `/app/documents/library` | Read-only saved library with server filters/search/sort/pagination |
+| `/app/documents/library/:documentId` | Metadata and revision history; safe legacy and preview links |
 | `/app/marketing` | Planned module only |
 | `/app/automations` | Planned module only |
 | `/app/assistant` | Planned module only; no AI requests |
@@ -187,7 +189,7 @@ root with `python -m scripts.export_openapi` and
 and `npm --prefix frontend run api:check`. Synthetic wire fixture generation is
 `python -m scripts.export_api_fixtures` (also supports `--check`).
 
-**Later stages:** Trip Catalog and plan editing; Document Studio migration including print/PDF parity;
+**Later stages:** Trip Catalog and plan editing; Document Studio creation/editing and full print/PDF parity;
 Marketing data; Assistant orchestration; Automations execution/history/approval.
 FRONT-001 and API-001 add no backend APIs, databases, paid providers or infrastructure.
 
@@ -201,3 +203,12 @@ Completed results use a narrow runtime projection and exact same-origin, expirin
 viewer link. No plan editing, embedded map, Studio migration or catalog is added.
 See [contracts, screenshots, validation and rollback](../docs/ui/front-002-planner.md)
 and the [prepared PR description](../docs/ui/front-002-pr.md).
+
+**FRONT-003A implemented:** lazy-loaded Document Studio catalog/library, real saved
+metadata, cancelable debounced search, server pagination, read-only details/history
+and verified legacy/preview links. No document writes or full draft snapshots are
+loaded by this workspace. The eight-template catalog comes from the existing API;
+creation/editing remains in `/documents/demo`. Access hints and session expiry reuse
+the existing API-001/FRONT-002 mechanisms. See
+[routes, validation, screenshots, security and B/C/D boundaries](../docs/ui/front-003a-documents.md)
+and the [prepared PR description](../docs/ui/front-003a-pr.md).

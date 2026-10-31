@@ -30,7 +30,7 @@ export const modules = [
     legacy: "/documents/demo",
     legacyLabel: "Otwórz obecne studio",
     detail:
-      "Migracja edytora, biblioteki i podglądu dokumentów jest planowana osobno. Dokumenty możesz przygotować w obecnym studio.",
+      "Katalog i biblioteka dostępne. Przeglądaj metadane i historię dokumentów. Tworzenie i edycja w dotychczasowym Studio.",
   },
   {
     path: "/marketing",

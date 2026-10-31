@@ -1,5 +1,11 @@
 # API architecture
 
+FRONT-003A adds a [read-only React Studio consumer](../ui/front-003a-documents.md),
+using existing access, templates, library and generated revision-summary contracts.
+It adds no API route, write operation, storage or service change. Metadata-only
+details reduce unnecessary exposure of editable snapshots and operational fields;
+server authorization and existing preview routes remain authoritative.
+
 FRONT-002 adds only the guarded read-only workspace capability contract to the
 existing composition. [The Planner integration guide](../ui/front-002-planner.md)
 documents actor-derived create permission, mode trust and result projection. Existing

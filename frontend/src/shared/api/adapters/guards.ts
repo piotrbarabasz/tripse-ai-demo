@@ -5,7 +5,7 @@ import { z } from "zod";
 // here. See api.py/templates.py/assets.py and synthetic FastAPI wire fixtures.
 export const accessSchema = z.object({ can_edit: z.boolean() });
 export const templatesSchema = z.array(z.object({
-  template_id: z.string(), name: z.string(),
+  template_id: z.string(), name: z.string(), description: z.string(),
   family: z.enum(["offer", "pilot", "marketing"]),
   source_type: z.enum(["trip", "campaign"]), layout_variants: z.array(z.string()),
 }));

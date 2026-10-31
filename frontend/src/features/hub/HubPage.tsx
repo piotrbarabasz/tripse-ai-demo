@@ -25,8 +25,8 @@ export function HubPage() {
           <p className="eyebrow">Wszystko zaczyna się tutaj</p>
           <h2 id="welcome-title">Twoje narzędzia. Wspólny kierunek.</h2>
           <p>
-            Zaplanuj podróż w nowym planerze. Document Studio otworzysz
-            w dotychczasowym interfejsie; kolejne moduły powstają krok po kroku.
+            Zaplanuj podróż, przejrzyj szablony i bibliotekę dokumentów.
+            Tworzenie i edycja dokumentów pozostają w dotychczasowym Studio.
           </p>
         </div>
         <Button asChild variant="outline">
@@ -53,8 +53,8 @@ export function HubPage() {
                   <module.icon size={23} strokeWidth={1.6} aria-hidden="true" />
                 </span>
                 <Badge>
-                  {module.path === "/planner" ? "Dostępny planer" : "legacy" in module
-                    ? "Migracja planowana"
+                  {module.path === "/planner" ? "Dostępny planer" : module.path === "/documents"
+                    ? "Katalog i biblioteka dostępne"
                     : "Moduł planowany"}
                 </Badge>
               </div>
@@ -63,7 +63,7 @@ export function HubPage() {
               <p className="card-description">{module.description}</p>
               <div className="card-actions">
                 <Link className="text-link" to={module.path}>
-                  {module.path === "/planner" ? "Zaplanuj podróż" : "Poznaj moduł"} <ArrowRight size={16} aria-hidden="true" />
+                  {module.path === "/planner" ? "Zaplanuj podróż" : module.path === "/documents" ? "Przeglądaj dokumenty" : "Poznaj moduł"} <ArrowRight size={16} aria-hidden="true" />
                   <span className="sr-only">: {module.title}</span>
                 </Link>
                 {"legacy" in module && (
@@ -89,8 +89,9 @@ export function HubPage() {
         <p>
           <strong>Przestrzeń w rozwoju.</strong> Planer obsługuje tworzenie i postęp
           zadań, a plan z mapą otwiera się w obecnym podglądzie. Tryb MOCK lub LIVE
-          oraz uprawnienia sprawdzisz w planerze. Dokumenty pozostają w obecnym
-          studio; Marketing, Automatyzacje i Asystent są planowane.
+          oraz uprawnienia sprawdzisz w planerze. Katalog i biblioteka dokumentów
+          są dostępne; tworzenie i edycja pozostają w dotychczasowym Studio.
+          Marketing, Automatyzacje i Asystent są planowane.
         </p>
       </aside>
     </>

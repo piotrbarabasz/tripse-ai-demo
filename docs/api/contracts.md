@@ -83,3 +83,11 @@ FRONT-002 consumes Planner status through a [narrow completed-result projection]
 including same-origin `/trip/{43-character token}` URL and finite future expiry.
 It does not turn opaque `result` into a generated TripPlan. Existing mock scenarios
 use an id/name/text projection guarded against real synthetic FastAPI fixtures.
+
+FRONT-003A reuses Studio access/templates/library reads. The templates projection
+now also validates `description`, present in the backend model and all eight wire
+fixtures. `readRevisions` validates generated DocumentSummary[] and rejects rows
+whose document_id differs from the requested resource. This metadata powers details
+without fetching full draft/snapshot content. No backend/OpenAPI schema or response
+semantics changed. [Legacy hash/preview routes and read-only boundaries](../ui/front-003a-documents.md)
+are verified against the real routers and synthetic browser flow.
