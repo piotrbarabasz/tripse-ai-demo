@@ -34,3 +34,4 @@ frontend/coverage/
 frontend/.vite/
 frontend/.cache/
 frontend/*.tsbuildinfo
+app/spa_dist/

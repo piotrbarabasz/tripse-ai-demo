@@ -17,10 +17,12 @@ def instructions():
             if line.strip() and not line.lstrip().startswith("#")]
 
 
-def test_pinned_official_python_single_stage_keeps_runtime_contract():
+def test_pinned_builder_and_official_python_keep_runtime_contract():
     lines = instructions()
-    assert re.fullmatch(r"FROM python:3\.12-slim@sha256:[a-f0-9]{64}", lines[0])
-    assert sum(line.startswith("FROM ") for line in lines) == 1
+    from scripts.gcp.frontend_build import NODE_IMAGE, PYTHON_IMAGE
+    assert [line for line in lines if line.startswith("FROM ")] == [f"FROM {NODE_IMAGE} AS frontend-build", f"FROM {PYTHON_IMAGE}"]
+    assert "RUN npm run build" in lines
+    assert 'RUN test "$(node --version)" = "v$(tr -d \'\\r\\n\' < .nvmrc)" && npm ci' in lines
     assert "RUN pip install --no-cache-dir -r requirements.txt" in lines
     assert lines.index("COPY requirements.txt .") < lines.index("RUN pip install --no-cache-dir -r requirements.txt") < lines.index("COPY app ./app")
     cmd = json.loads(next(line[4:] for line in lines if line.startswith("CMD ")))
@@ -31,10 +33,13 @@ def test_pinned_official_python_single_stage_keeps_runtime_contract():
 
 def test_only_required_runtime_inputs_are_copied_and_allowlisted():
     copies = [line for line in instructions() if line.startswith("COPY ")]
-    assert copies == ["COPY requirements.txt .", "COPY app ./app", "COPY demo-fixtures/gt-v1 ./demo-fixtures/gt-v1"]
+    assert copies == ["COPY frontend/package.json frontend/package-lock.json frontend/.nvmrc ./",
+        "COPY frontend/index.html frontend/tsconfig.json frontend/vite.config.ts ./", "COPY frontend/src ./src",
+        "COPY requirements.txt .", "COPY app ./app", "COPY demo-fixtures/gt-v1 ./demo-fixtures/gt-v1",
+        "COPY --from=frontend-build /build/frontend/dist ./app/spa_dist"]
     sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     committed = dict(source_files(sha))
-    # CI-002 doesn't require widening the source allowlist or injecting new files.
+    # FRONT-001B widens only commits declaring the versioned frontend recipe.
     assert "requirements.txt" in committed and "app/main.py" in committed
     assert "demo-fixtures/gt-v1/examples.json" in committed
     assert all((ROOT / name).is_file() for name in committed)
@@ -50,6 +55,9 @@ def test_context_excludes_credentials_data_and_local_outputs(filename):
     assert {"data", "data/**"} & patterns
     assert {"tests", "tests/**"} & patterns
     assert not any("!" in line for line in patterns if not line.startswith("#"))
+    assert {"frontend/*.tsbuildinfo"} <= patterns
+    assert {"frontend/dist", "frontend/dist/**"} & patterns
+    assert {"app/spa_dist", "app/spa_dist/**"} & patterns
 
 
 def test_api_worker_share_existing_storage_and_worker_command():

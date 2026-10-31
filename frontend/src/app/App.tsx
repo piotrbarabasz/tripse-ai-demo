@@ -8,7 +8,7 @@ export function AppRoutes() {
 export function App() {
   return (
     <ErrorBoundary>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
         <AppRoutes />
       </BrowserRouter>
     </ErrorBoundary>

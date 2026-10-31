@@ -5,6 +5,7 @@ import { modules } from "../../shared/config/modules";
 import { legacyHref } from "../../shared/config/legacy";
 import { Badge } from "../../shared/ui/badge";
 import { Button } from "../../shared/ui/button";
+import { HealthStatus } from "./HealthStatus";
 
 export function HubPage() {
   return (
@@ -82,6 +83,7 @@ export function HubPage() {
           ))}
         </div>
       </section>
+      <HealthStatus />
       <aside className="workspace-note">
         <span className="note-marker" aria-hidden="true" />
         <p>

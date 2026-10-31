@@ -1,15 +1,34 @@
-# TRIPSE React frontend — FRONT-001A
+# TRIPSE React frontend — FRONT-001A / FRONT-001B
 
-Standalone application shell, 2026-10-31. This directory is independent of the
-existing FastAPI application and legacy interfaces. Nothing is deployed or added
-to the Cloud Run image. ADR-0017 remains proposed; this implementation is evidence
-for review, not blanket architecture approval.
+React shell with FastAPI same-origin integration, 2026-10-31. FRONT-001A supplied
+the shell; FRONT-001B adds private `/app` serving, a bounded health read and the
+multi-stage image/source contract. No deployment is performed. ADR-0017 remains
+proposed; implementation evidence does not imply blanket architecture approval.
 
 ## Run locally
 
 Use Node.js 24 LTS (`.nvmrc` pins the tested version, 24.18.0) and npm 11.
 Node 24 remains supported through April 2028 ([release schedule](https://github.com/nodejs/Release#release-schedule)).
 Keep the pinned patch updated as part of dependency maintenance.
+
+For the integrated application, build once, then start the existing mock backend:
+
+```bash
+cd frontend
+npm ci
+npm run build
+cd ..
+make dev-mock
+```
+
+Open **http://127.0.0.1:8000/app** (or `/app/`). Legacy links and the `/health`
+PoC now use the same origin. Local serving reads `frontend/dist`; the Docker image
+contains only compiled output at `app/spa_dist`. An unbuilt source checkout keeps
+legacy pages working and returns 503 for the SPA entry. Build before running
+`make test-browser`/`make test-all`. Docker runtime acceptance is separately recorded
+in the [integration guide](../docs/ui/front-001b-integration.md).
+
+For standalone HMR development:
 
 ```bash
 cd frontend
@@ -34,12 +53,15 @@ VITE_DEV_BACKEND_ORIGIN=http://127.0.0.1:8000
 
 Restart Vite after changing the variable. It must be an HTTP(S) origin without a
 path, credentials, query or fragment. Use loopback when running the local backend.
-This only changes full-page anchors in development; it sends no API requests and
+This option only changes full-page anchors in development; it does not redirect API requests and
 uses no proxy or forwarded identity headers. Existing FastAPI access checks still
 apply. Without this option links stay relative to the frontend origin, which
 does not serve legacy pages. Production builds always use `/hub`, `/planner`, and
 `/documents/demo`, even if the development variable is present during build.
 All Vite configuration is public: never put secrets in `VITE_*` variables.
+The health PoC always requests `/health` from the current origin. Standalone Vite
+has no health endpoint and displays the explicit connection error; use the compiled
+FastAPI application for this PoC. No proxy, CORS bypass or alternate health origin is added.
 
 ## Structure and ownership
 
@@ -52,7 +74,7 @@ frontend/
       layouts/                  # header, sidebar, mobile drawer, route focus
       ModulePage.tsx            # generic planned-module presentation
       NotFoundPage.tsx
-    features/hub/HubPage.tsx    # informative landing page, module/legacy links
+    features/hub/               # Hub, module/legacy links, bounded health read/status
     shared/
       components/               # PageHeader, ErrorBoundary
       config/                   # navigation metadata, development legacy URLs
@@ -79,15 +101,16 @@ of their business logic. The app layer owns composition and routing.
 | `/app/assistant` | Planned module only; no AI requests |
 | Unknown path under `/app` | Not-found page with Hub recovery |
 
-Vite `base: '/app/'` is the single source for the BrowserRouter basename.
+Vite `base: '/app/'` is the source for BrowserRouter's `/app` basename (trimmed
+trailing slash accepts both entry forms).
 Fixed desktop navigation uses `aria-current`; below 768px a Radix Dialog drawer
 provides focus containment, Escape/outside dismissal and trigger focus restoration.
 Route transitions move focus to the new heading and update the document title.
 A skip link, semantic landmarks and visible keyboard focus are included.
 Desktop collapse is intentionally omitted: the compact fixed navigation fits the
 current six destinations. The drawer scrolls on short screens. PageHeader,
-Button, Badge, Sheet and ErrorBoundary are reusable; no loading primitive is needed
-because the shell makes no remote reads. Proposed navy/warm accent tokens are
+Button, Badge, Sheet and ErrorBoundary are reusable. HealthStatus owns its bounded
+loading/error/timeout presentation and aborts on unmount. Proposed navy/warm accent tokens are
 adapted locally without importing legacy CSS, scripts, fonts, images or print styles.
 
 ## Validation and CI
@@ -104,8 +127,9 @@ npm run preview
 Tests cover bootstrap, Hub, all module routes, client navigation/active state,
 not-found recovery, route focus, mobile dismissal/focus containment, named semantic
 navigation, error recovery and development/production legacy URL policy.
-See [local verification evidence](../docs/ui/front-001a-validation.md) for actual
-results and browser limitations. No hosted checks are inferred from local tests.
+See [FRONT-001B verification and rollback](../docs/ui/front-001b-integration.md)
+for current results/screenshots and [historical FRONT-001A evidence](../docs/ui/front-001a-validation.md).
+No hosted acceptance is inferred from local or mocked-cloud tests.
 
 The existing CI `checks` job installs SHA-pinned setup-node, uses `.nvmrc`, runs
 `npm ci`, typecheck, lint, tests and build. Existing Python/offline/browser gates,
@@ -127,25 +151,24 @@ UI primitives, error/not-found states, local toolchain and unprivileged CI valid
 The Hub has no fabricated metrics, authentication identity or permission claims.
 Module screens are explicitly placeholders, not migrated workflows.
 
-**FRONT-001B recommended exact scope:**
+**FRONT-001B implemented in source:**
 
-1. Add same-origin compiled `/app` assets and a prefix-bounded HTML navigation
+1. Same-origin compiled `/app` assets and a prefix-bounded HTML navigation
    fallback to FastAPI in local/cloud_demo only. Preserve readonly isolation and
    all legacy/API/internal behavior. Missing assets must return 404, not HTML.
-2. Add deterministic Node build and compiled output to the existing Cloud Run
+2. Pinned multi-stage Node build and compiled output in the existing Python
    image; update source allowlists, build recipe/manifests and provenance tests
    together. Do not add a separate frontend service.
-3. Validate IAP, CSP, Host/Origin, asset MIME/cache behavior, authentication/session
-   failure and all security denial cases without relaxing existing guards.
-4. Add the bounded read-only same-origin `/health` PoC with validated response,
+3. Local and offline cloud tests for IAP, CSP, Host/Origin, MIME/cache and denial
+   behavior, including compiled browser tests with a nonce-protected drawer.
+4. Bounded read-only same-origin `/health` PoC with validated response,
    loading/error/auth/cancellation states; no business mutations.
-5. Run local compiled-image/worker and legacy/browser regressions, then explicitly
-   authorized hosted IAP, chunk and deep-link acceptance with evidence and rollback.
+5. Local compiled FastAPI and legacy browser regressions. Container runtime and
+   hosted Cloud Run/IAP acceptance remain separate evidence gates, not claimed complete.
 
-This is the explicit split of the combined FRONT-001 roadmap. FRONT-001A does not
-register FastAPI routes, package assets, change Caddy/auth/CSP, or prove hosted
-acceptance. A Vite dev/preview fallback is not evidence for production fallback.
-The read-only health PoC remains outstanding in FRONT-001B.
+The [integration guide](../docs/ui/front-001b-integration.md) documents security,
+cache policy, versioned source selection, container limitations and exact rollback.
+Caddy, business APIs, identity policies, data and delivery workflow stay unchanged.
 
 **API-001 and later:** generated OpenAPI client and TanStack Query; real Planner/
 Trip Catalog workflows; Document Studio migration including print/PDF parity;

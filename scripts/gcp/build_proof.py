@@ -52,6 +52,9 @@ def context_manifest(files):
 
 def expected_source(sha):
     d.image_tag(sha)
+    # source_files applies the versioned Docker frontend input contract. The
+    # existing exact manifest/archive comparison now covers Node pin, lockfile,
+    # configs and source bytes too; pre-integration releases retain their context.
     files = dict(d.source_files(sha))
     policy = HISTORICAL_CONTEXTS.get(sha)
     if policy is not None:

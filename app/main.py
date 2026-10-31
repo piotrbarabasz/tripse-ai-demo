@@ -36,7 +36,7 @@ class TripStatus(BaseModel):
 
 
 def create_app(database_path=None, *, waha_settings=None, document_data_path=None, document_fixtures_path=None,
-               cloud_components=None):
+               cloud_components=None, frontend_dist=None):
     from app.cloud_preview import CloudSettings, create_preview_app
     cloud = CloudSettings.from_env()
     if cloud is not None and cloud.mode == "readonly_demo":
@@ -110,6 +110,8 @@ def create_app(database_path=None, *, waha_settings=None, document_data_path=Non
     app.include_router(document_router(document_repository, access_policy=access_policy, asset_store=asset_store, cloud_mode=bool(cloud)))
     from app.hub import hub_router
     app.include_router(hub_router(access_policy=access_policy, cloud_mode=bool(cloud)))
+    from app.spa import register_spa
+    register_spa(app, access_policy=access_policy, directory=frontend_dist)
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
     @app.get("/health")

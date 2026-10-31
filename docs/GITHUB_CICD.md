@@ -188,6 +188,16 @@ unrecognized recipe fails closed. PROD retains the accepted DEV proof delegation
 without new Cloud Build/source-bucket permissions. See CI-005/CI-006 for remaining
 retention dependencies and operator acceptance requirements.
 
+FRONT-001B extends the committed image context with a versioned frontend recipe.
+Only Dockerfiles declaring `TRIPSE_FRONTEND_BUILD_V1` include the exact frontend
+package/lock/config/source inputs. Historical Python-only releases keep their old
+contexts, preserving accepted-release promotion/rollback. The outer Cloud Build
+Docker command, builder identity and generation-pinned archive proof stay unchanged;
+the checked Dockerfile now contains digest-pinned Node and Python stages. Compiled
+dist, caches, node_modules and `.env` files are excluded. The existing context SHA256
+manifest/exact archive checks cover frontend bytes too. No new acceptance-artifact
+schema or trusted identity is introduced. See [integration guide](ui/front-001b-integration.md).
+
 Only `release.json` is uploaded, with 90-day retention. It contains no credentials
 or document content. Every successful deployment publishes branch/ref, SHA,
 digest, revision, 100% traffic, environment, mode, URL, acceptance, previous SHA,

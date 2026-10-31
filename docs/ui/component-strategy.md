@@ -10,7 +10,9 @@ Hub owns the landing page/cards. Tokens in `frontend/src/styles/globals.css` ada
 the proposed navy `#172b41`, warm accent `#e5a01d` and system font guidance. No external
 font/image requests, legacy CSS imports or document print changes. Desktop navigation
 is fixed; mobile navigation scrolls and handles Escape, focus containment/return,
-route-heading focus and active links. The shell needs no remote loading primitive.
+route-heading focus and active links. FRONT-001B adds feature-owned HealthStatus for
+the bounded read-only PoC and a per-response CSP style nonce for Radix runtime styles,
+without weakening script policy.
 Exact dependencies, attribution and verification limits: [frontend README](../../frontend/README.md)
 and [validation](front-001a-validation.md).
 

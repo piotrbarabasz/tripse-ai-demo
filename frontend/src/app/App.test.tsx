@@ -1,7 +1,7 @@
 import { render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { App, AppRoutes } from "./App";
 import { modules } from "../shared/config/modules";
 import { ErrorBoundary } from "../shared/components/ErrorBoundary";
@@ -14,9 +14,19 @@ function renderPage(path = "/") {
   );
 }
 
+// Shell tests exercise navigation. Health behavior is tested with controlled
+// responses separately; no live network requests or asynchronous status changes.
+beforeEach(() =>
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(() => new Promise<Response>(() => undefined)),
+  ),
+);
+afterEach(() => vi.unstubAllGlobals());
+
 describe("przestrzeń TRIPSE", () => {
-  it("bootstraps the real browser router under the Vite base", () => {
-    window.history.replaceState(null, "", "/app/");
+  it.each(["/app", "/app/"])("bootstraps the real browser router at %s", (path) => {
+    window.history.replaceState(null, "", path);
     render(<App />);
     expect(
       screen.getByRole("heading", {

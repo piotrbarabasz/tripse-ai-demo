@@ -1,8 +1,8 @@
 # UI architecture
 
-Status: FRONT-001A standalone shell implemented locally; backend hosting remains
-FRONT-001B. See [frontend instructions](../../frontend/README.md) and
-[validation record](front-001a-validation.md). ADR-0017 remains proposed.
+Status: FRONT-001A shell plus FRONT-001B private FastAPI integration implemented.
+See [frontend instructions](../../frontend/README.md) and
+[current integration evidence/limits](front-001b-integration.md). ADR-0017 remains proposed.
 See [source audit](../architecture/current-state-audit.md)
 for current scripts and [ADR-0017](../adr/0017-modular-react-typescript-migration.md)
 for decisions requiring approval.
@@ -64,10 +64,16 @@ loading/empty/error states and unsaved-change protections. See [component strate
 
 FRONT-001A supplies an informative Hub with module cards and direct legacy links;
 full operational Hub/Planner workflows remain FRONT-002. It performs no API reads.
-The bounded same-origin `/health` PoC (blueprint section 15), loading/error/session
-handling and compiled asset hosting belong to FRONT-001B. This explicit split of the
-combined FRONT-001 is authorized by the FRONT-001A request; it does not complete the
-combined stage or API-001. BrowserRouter derives its basename from Vite's `/app/` base.
+FRONT-001B adds compiled private assets/navigation and the same-origin `/health`
+PoC (blueprint section 15), with loading, HTTP/schema errors, timeout and unmount
+cancellation. Health only proves connectivity; its existing cloud middleware exception
+is unchanged. It cannot establish session/authentication. API-001 remains separate.
+BrowserRouter derives `/app` from Vite's `/app/` base and handles both entry forms.
+`app/spa.py` owns serving/security presentation, not domain logic. Per-response style
+nonces support Radix scroll-lock CSS without unsafe-inline/eval; main.tsx sets the
+shared get-nonce value before rendering. Local uses `frontend/dist`; the Python-only
+runtime image uses `app/spa_dist`. Node stays in the pinned builder stage. Exact
+committed inputs and historical contexts are checked by the versioned source contract.
 
 Build-time configuration is public. Never put IAP assertions, provider keys or backend
 credentials into Vite variables. Build output uses same-origin URLs; no CDN/runtime
