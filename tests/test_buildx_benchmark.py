@@ -39,6 +39,19 @@ def test_rejects_unidentified_source(sha):
         b.inputs(sha, 'base')
 
 
+def test_runtime_manifest_preserves_exact_source_and_excludes_tooling():
+    compile(b.AUDIT, '<runtime-audit>', 'exec')
+    manifest = {'files': {'app/main.py':'source-hash', 'requirements.txt':'requirements-hash',
+                         'frontend/package.json':'build-only'}, 'builder_images':['pinned-node']}
+    compiled = {'app/spa_dist/index.html':'index-hash', 'app/spa_dist/assets/index-abcdefgh.js':'js-hash'}
+    files = {'app/main.py':'source-hash', 'requirements.txt':'requirements-hash'} | compiled
+    b.validate_runtime_files(manifest, {'files':files, 'compiled':compiled})
+    for changed in (files | {'frontend/package.json':'build-only'}, files | {'app/node_modules/tool.js':'tool'},
+                    files | {'app/main.py':'altered'}, {'app/main.py':'source-hash'}):
+        with pytest.raises(ValueError): b.validate_runtime_files(manifest, {'files':changed, 'compiled':compiled})
+    with pytest.raises(ValueError): b.validate_runtime_files(manifest, {'files':files, 'compiled':{}})
+
+
 def test_trial_salt_is_shared_by_methods_but_invalidates_prior_dependency_cache(sha):
     first, first_meta = b.inputs(sha, 'base', 'trial-1')
     again, _ = b.inputs(sha, 'base', 'trial-1')
@@ -117,11 +130,18 @@ def test_integration_excludes_automatic_experiment_and_keeps_production_builder(
     b'FROM python:3.12-slim@sha256:' + b'a'*64 + b'\nCOPY app /app\n'])
 def test_committed_pin_is_preserved_exactly_with_or_without_leading_comments(monkeypatch,sha,recipe):
     source = dict(b.source_files(sha));source['Dockerfile'] = recipe
+    # This fixture intentionally swaps in a working recipe before its commit;
+    # supply its exact working input set as well. Release builds still use Git.
+    from scripts.gcp.frontend_build import MARKER, is_frontend_input
+    if MARKER in recipe:
+        source.update({p.relative_to(ROOT).as_posix():p.read_bytes()
+                       for p in (ROOT/'frontend').rglob('*')
+                       if p.is_file() and is_frontend_input(p.relative_to(ROOT).as_posix())})
     monkeypatch.setattr(b,'source_files',lambda _:source.items())
     files, manifest = b.inputs(sha,'base')
     assert files['Dockerfile'] == recipe
     assert manifest['dockerfile_sha256'] == manifest['original_dockerfile_sha256']
-    assert manifest['base_image'] == next(line[5:] for line in recipe.decode().splitlines() if line.startswith('FROM '))
+    assert manifest['base_image'] == [line[5:] for line in recipe.decode().splitlines() if line.startswith('FROM ')][-1]
 
 
 @pytest.mark.parametrize('recipe', [b'FROM python:3.13-slim', b'FROM example/other@sha256:' + b'a'*64,

@@ -29,6 +29,13 @@ gha-creds-*.json
 output
 tmp
 node_modules
+**/node_modules/**
+frontend/dist/**
+frontend/coverage/**
+frontend/.vite/**
+frontend/.cache/**
+frontend/*.tsbuildinfo
+app/spa_dist/**
 .mypy_cache
 .ruff_cache
 .coverage

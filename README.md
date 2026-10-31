@@ -1,9 +1,10 @@
 # Tripse AI Trip Planner — Demo v0.1
 
-Nowy panel React (FRONT-001A): zobacz [frontend/README.md](frontend/README.md).
-Uruchom osobno `cd frontend`, `npm ci`, `npm run dev`, potem otwórz
-http://127.0.0.1:5173/app/. To lokalna powłoka aplikacji; dotychczasowe interfejsy
-FastAPI i wdrożenia pozostają bez zmian. Integracja serwowania należy do FRONT-001B.
+Panel React (FRONT-001A/B): [frontend/README.md](frontend/README.md).
+W `frontend/` uruchom `npm ci` i `npm run build`, następnie z katalogu głównego
+`make dev-mock` i otwórz http://127.0.0.1:8000/app. Dotychczasowe interfejsy pozostają
+dostępne. [Integracja, weryfikacja i rollback](docs/ui/front-001b-integration.md)
+opisują nowy build obrazu i niepotwierdzone jeszcze bramki kontenerowe/hostowane.
 
 ## Quick Start — GNU Make
 

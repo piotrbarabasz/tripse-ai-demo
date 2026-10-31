@@ -311,16 +311,33 @@ def source_files(sha):
     """Allowlisted committed files, never the working directory or developer data."""
     archive = run(["git", "archive", sha], binary=True)
     with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
+        from scripts.gcp.frontend_build import MARKER, is_frontend_input, validate_frontend_source
+        try:
+            recipe_member = tar.getmember("Dockerfile")
+            if not recipe_member.isfile():
+                raise ValueError("Unsafe source archive entry")
+            recipe = tar.extractfile(recipe_member).read()
+        except KeyError:
+            recipe = b""
+        frontend = MARKER in recipe
+        selected = {}
         for member in tar.getmembers():
             name = member.name
             allowed = name in {"Dockerfile", "requirements.txt", ".dockerignore", ".gcloudignore"} or name.startswith(("app/", "demo-fixtures/gt-v1/"))
+            # Exact frontend build inputs, including src tests because the strict
+            # build typechecks them. Never accept dist/caches/local configuration.
+            allowed = allowed or (frontend and is_frontend_input(name))
+            if name.startswith("app/spa_dist/"):
+                allowed = False
             if not allowed or member.isdir():
                 continue
             if not member.isfile():
                 raise ValueError("Unsafe source archive entry")
             content = tar.extractfile(member).read()
             validate_source_file(name, content)
+            selected[name] = content
             yield name, content
+        validate_frontend_source(selected)
 
 
 def validate_source_file(name, content):

@@ -37,6 +37,13 @@ existing accepted-image rollback procedures; this task does not execute them.
 
 ## FRONT-001 — React foundation and app shell
 
+**FRONT-001B implementation update:** compiled private FastAPI `/app` serving,
+read-only health UI, pinned multi-stage image recipe and versioned frontend source
+provenance are now implemented. Local compiled browser and offline cloud/IAP-double
+checks pass. Docker daemon and hosted Cloud Run acceptance are unavailable in this
+session; the combined stage is not declared fully deployment-accepted. Current
+evidence and rollback: [integration guide](../ui/front-001b-integration.md).
+
 **2026-10-31 scope update:** the commissioned FRONT-001A request splits this combined
 stage. A implements only the standalone React bootstrap, responsive shell, informative
 Hub, five module placeholders, legacy anchors and local build/CI checks. B retains

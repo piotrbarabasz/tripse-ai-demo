@@ -66,6 +66,13 @@ błędem, jeśli brakuje wymaganego dla nich narzędzia.
 
 ## Quick Start
 
+FRONT-001B: before compiled SPA/browser QA, run `npm ci` and `npm run build` in
+`frontend/`. `make dev-mock` then serves http://127.0.0.1:8000/app.
+`make test-browser` includes the compiled SPA smoke alongside all existing browser
+scripts. `make test-container` includes frontend image-content/local-serving checks
+and readonly exclusion; it requires a working Linux Docker daemon. See
+[integration/rollback/evidence](ui/front-001b-integration.md).
+
 Z katalogu repozytorium, bez aktywowania virtualenv:
 
 ```text

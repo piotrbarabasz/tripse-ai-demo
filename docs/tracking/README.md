@@ -1,5 +1,13 @@
 # Rejestr prac i podstawy kosztorysu
 
+2026-10-31: FRONT-001B (user-supplied task label) integrates private compiled SPA
+serving, bounded health read and versioned image/source provenance. See
+[integration, local evidence and exact rollback](../ui/front-001b-integration.md).
+Local/mock-cloud tests and browser evidence are separate from unavailable Docker
+runtime and hosted IAP acceptance. No cloud change, deployment, push, PR opening or
+merge is performed; the branch and [PR description](../ui/front-001b-pr.md) are prepared.
+No measured hours/costs or ADR approval are inferred.
+
 2026-10-31: FRONT-001A (user-supplied task label) adds the standalone React shell,
 informative Hub, module placeholders, legacy navigation and frontend checks to the
 existing unprivileged CI job. [Local evidence](../ui/front-001a-validation.md) records

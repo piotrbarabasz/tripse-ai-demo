@@ -1,8 +1,10 @@
 # UI documentation
 
-Existing UI: Vanilla JavaScript served by FastAPI. FRONT-001A adds a standalone React
-shell under `frontend/`, with no FastAPI or deployment integration. See
-[startup and scope](../../frontend/README.md) and [local validation](front-001a-validation.md).
+Existing UI: Vanilla JavaScript served by FastAPI. FRONT-001A adds the React shell;
+FRONT-001B serves its compiled output privately under `/app`, adds the health PoC
+and image/source contracts. See [startup](../../frontend/README.md),
+[current integration/rollback/evidence](front-001b-integration.md) and
+[historical FRONT-001A validation](front-001a-validation.md).
 ARCH-001 future migration proposals and ADR-0017 retain their proposed status.
 
 Later stages remain migration proposals, not owner-approved implementation decisions. The
