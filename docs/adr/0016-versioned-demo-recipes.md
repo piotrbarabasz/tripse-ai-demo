@@ -60,7 +60,8 @@ Nie mierzono godzin ani kosztów; nie uruchamiano płatnych API.
 
 ## 8. Powiązane taski, PR, commity i dokumenty
 
-Task DOC-TEMPLATES-006; [raport](../DOC_TEMPLATES_006.md),
+Task DOC-TEMPLATES-006; historyczny raport `../DOC_TEMPLATES_006.md` jest
+niedostępny w repozytorium. Bieżąca [instrukcja Studio](../DOCUMENT_STUDIO.md),
 [macierz](../audits/DOC_TEMPLATES_006_COVERAGE.md),
 [ADR-0003](0003-document-snapshots.md), [ADR-0014](0014-document-library-history.md).
 Baza: 53947b4; brak nowego commita i PR, brak dowodu akceptacji ADR.
@@ -75,3 +76,4 @@ przechowywania wzorców. Wtedy ponownie ocenić własność, migracje i uprawnie
 | Data | Autor | Zmiana i uzasadnienie | Powiązanie |
 |---|---|---|---|
 | 2026-10-28 | Codex | Propozycja i implementacja lokalnego katalogu/receptur | DOC-TEMPLATES-006 |
+| 2026-10-31 | Codex | Oznaczenie niedostępnego raportu i dodanie działającej instrukcji; bez zmiany statusu lub dowodów odbioru | ARCH-001 final review |

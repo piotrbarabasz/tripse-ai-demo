@@ -23,8 +23,8 @@ task opisuje pracę, a [worklog](../tracking/worklog.csv) jej udokumentowany prz
 | [ADR-0013](0013-canonical-hub-navigation.md) | Canonical Hub homepage and explicit planner navigation | proposed | Implemented locally; API/access contracts preserved; not deployed |
 | [ADR-0014](0014-document-library-history.md) | Biblioteka dokumentów, metadane i zachowane rewizje | proposed | Implementacja lokalna JSON/GCS; bez wdrożenia chmurowego |
 | [ADR-0015](0015-registry-build-cache-evolution.md) | Rozwój istniejącego Artifact Registry i cache CI/CD | proposed | CI-001–005 w lokalnym RC CI-006; Phase B hosted/cloud niezweryfikowana |
-
 | [ADR-0016](0016-versioned-demo-recipes.md) | Wersjonowane receptury DEMO i niezależne kopie | proposed | Implementacja lokalna; bez seedowania DEV/PROD |
+| [ADR-0017](0017-modular-react-typescript-migration.md) | Gradual modular React + TypeScript migration at /app | proposed | Documentation only; frontend implementation pending |
 
 ADR-0001–0007 sporządzono retrospektywnie 25.10.2026. Kod potwierdza
 implementację, ale dostępne repozytorium nie zawiera jednoznacznej akceptacji
@@ -41,7 +41,7 @@ Powiązane aspekty jednej decyzji można połączyć, jak FastAPI i izolację mo
 
 ## Numeracja i metadane
 
-- Następny wolny numer: **ADR-0017**. Sprawdź rejestr i pliki przed nadaniem numeru;
+- Następny wolny numer: **ADR-0018**. Sprawdź rejestr i pliki przed nadaniem numeru;
   po dodaniu wpisu zaktualizuj tę wskazówkę. Nie używaj ponownie opublikowanego numeru.
 - Plik: `0011-short-decision-name.md`; nagłówek i YAML: `ADR-0011`.
 - Skopiuj [szablon](template.md). Wypełnij wszystkie dziewięć sekcji.
@@ -114,6 +114,9 @@ oszczędności, cen API ani rachunków. Zasady liczb: [estimates.md](../tracking
 Sam ten standard nie wdraża automatycznej walidacji CI ani wieloosobowego workflow.
 
 ## Historia zmian standardu
+
+2026-10-31: ARCH-001 adds proposed ADR-0017 for gradual frontend migration;
+documentation only, no status changes to historical decisions.
 
 | Data | Autor | Zmiana | Podstawa |
 |---|---|---|---|

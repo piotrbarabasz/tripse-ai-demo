@@ -77,6 +77,11 @@ Szczegóły, zakres i testy: [docs/HUB.md](docs/HUB.md).
 
 ## Decyzje architektoniczne i rejestr prac
 
+[Architecture foundation (ARCH-001)](docs/architecture/README.md) ·
+[Documentation index](docs/README.md) ·
+[UI architecture](docs/ui/README.md) · [API contracts](docs/api/README.md).
+React + TypeScript migration is proposed; the existing demo is unchanged.
+
 [Rejestr ADR i zasady pracy agentów](docs/adr/README.md) ·
 [Rejestr prac](docs/tracking/README.md) ·
 [Audyt repozytorium](docs/tracking/repository-audit.md) ·
@@ -306,4 +311,4 @@ verification blockers recorded in DEV_DEPLOY.md.
 **Zakres i terminy:** max. 1 dzień pracy, bez przerabiania tego na produkcyjny system. Przyszłe moduły intencji, edycji tras i multi-agent orchestration odkładamy.
 
 Przykładowe dokumenty GT v1: `/documents/demo#examples` — dziewięć konfiguracji,
-kopie do edycji i PDF. [DOC-TEMPLATES-006](docs/DOC_TEMPLATES_006.md).
+kopie do edycji i PDF. [Instrukcja przykładów DOC-TEMPLATES-006](docs/DOCUMENT_STUDIO.md#dziewięć-gotowych-przykładów--doc-templates-006).

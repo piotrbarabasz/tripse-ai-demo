@@ -22,7 +22,9 @@ zostały wycofane z aktywnych fixture’ów; zapisane snapshoty i rewizje nadal
 można otwierać. API z `demo_example=true` odsyła do nowego katalogu. Historyczne
 instrukcje i testy 10/15 dni poniżej opisują starsze przebiegi/regresje.
 
-[Raport, pełny manifest, struktury i instrukcja DEV](DOC_TEMPLATES_006.md) ·
+Historyczny raport `DOC_TEMPLATES_006.md` jest niedostępny w repozytorium;
+nie zastępujemy go domniemanymi wynikami. Zweryfikowane odnośniki:
+[manifest przykładów](../demo-fixtures/gt-v1/examples.json) ·
 [receptury i CLI](../demo-fixtures/README.md) ·
 [macierz Ground Truth](audits/DOC_TEMPLATES_006_COVERAGE.md).
 GET `/api/document-studio/examples` zwraca manifest; GET

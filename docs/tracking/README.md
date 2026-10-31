@@ -1,5 +1,16 @@
 # Rejestr prac i podstawy kosztorysu
 
+2026-10-31: [ARCH-001](../architecture/README.md) records a documentation-only source
+audit and proposed React migration. Stage IDs ARCH-001, FRONT-001, API-001, FRONT-002,
+FRONT-003 and AI-001 are user-supplied task labels, not verified GitHub issue IDs.
+Implementation/deployment and ADR acceptance remain separate gates.
+
+ARCH-001 closure: the original 446-line blueprint is restored unchanged and its source
+reconciliation is complete. See [crosswalk and open decisions](../architecture/reconciliation.md)
+for blueprint DOCS-001/ADR-FE-001/FRONT-004/AUTO-001 labels versus commissioned stages.
+The final closure row completes the earlier in_progress review; historical rows remain
+dated observations. Future implementation and ADR approval are not marked complete.
+
 2026-10-28 operational milestone: [DEV/PROD release](../RELEASE_2026_10_28.md)
 is automatically accepted. Earlier worklog rows retain their dated observations.
 The new row uses existing GITHUB-CICD-001 for the completed deployment milestone,

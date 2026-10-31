@@ -175,3 +175,17 @@ approved applies, real DEV build after IAM hardening, negative IAM/restore drill
 exact-master DEV acceptance and approved PROD release/canary. Costs include Actions,
 build/registry/source/log retention, Run, GCS versions and Firestore PITR/Tasks.
 No data copying or live provider enablement. See [runbook](../PROD_BOOTSTRAP_001.md).
+
+## ARCH-001 — future migration work packages (2026-10-31)
+
+[Roadmap](../architecture/migration-roadmap.md) and
+[ADR-0017](../adr/0017-modular-react-typescript-migration.md) define future scope:
+frontend toolchain/shell and deterministic release provenance; offline API schema/client
+maintenance; Hub/planner parity; Studio/editor/history and PDF parity; assistant tool
+authorization, confirmations and evaluation. Include temporary dual-UI maintenance,
+dependency updates, dev-PR CI coverage and browser regression effort in later estimates.
+The reconciled blueprint also retains later Trip Catalog/conversion, a dedicated
+Marketing workspace, AUTO-001 job/history/approval UI and form-library evaluation.
+These future work packages are not included implicitly in FRONT-001 shell scope.
+No hours, financial amounts, performance gains or ongoing provider costs were measured
+or estimated in ARCH-001. Live AI/cloud validation requires a separate bounded scope.
