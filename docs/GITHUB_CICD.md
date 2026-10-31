@@ -1,5 +1,11 @@
 # GITHUB-CICD-001 — GitHub Actions delivery
 
+CI-007 update, 2026-10-31: [DEV PR quality gate](CI_007_DEV_PR_GATE.md) extends the
+existing unprivileged CI trigger to PRs targeting **dev and master**, including forks
+subject to GitHub workflow-approval policy. Local validation and hosted acceptance are
+tracked separately. Delivery behavior after merge is unchanged; branch-protection
+settings are not enabled or verified by this source change.
+
 Current state - 2026-10-28: private DEV and PROD `cloud_demo` delivery is
 accepted in [master run 40614584902](RELEASE_2026_10_28.md). That evidence record
 includes artifact IDs, isolated infrastructure, operator-verified IAM/Organization
@@ -104,7 +110,8 @@ still does not change feature mode. Missing resources/auth block deployment.
 
 | Event | Tests | Cloud access | Result |
 |---|---|---|---|
-| PR to master, including fork PR | CI + offline/image source + all browser smoke | none | no deployment |
+| PR targeting dev, including fork PR | CI + offline/image source + all browser smoke | none | checks only; no deployment |
+| PR targeting master, including fork PR | same existing CI pipeline | none | checks only; no deployment |
 | Push to dev | same CI first | development WIF only | build exact SHA, deploy DEV, deployed acceptance |
 | Push to master / merge commit | same CI first | development, then approved production | exact master SHA accepted on DEV; same digest promoted |
 | Other branch push | none (optional independent CI) | none | no automatic deployment |
@@ -119,6 +126,22 @@ checkout of arbitrary PR code is used. Delivery jobs receive only read contents,
 read Actions evidence and `id-token: write`. All third-party Actions are pinned
 to full upstream commit SHAs. Action versions were resolved during implementation;
 upgrades require review. No personal/reusable human token is a GitHub Secret.
+
+CI-007 adds no path exclusions, jobs, pipeline copies, frontend commands or deployment
+credentials. workflow_call and workflow_dispatch remain available. A PR event cannot
+start Delivery, which accepts only dev/master pushes and explicit manual dispatches.
+Merging a PR into dev creates a push and can run DEV deployment after checks; merging
+into master retains the existing master/accepted-DEV/protected-PROD process. Feature
+branch pushes have no automatic deployment. Adding pre-merge CI does not change that
+post-merge authorization model.
+
+To make dev PR CI mandatory, an administrator must configure the dev branch rule/ruleset
+to require the actual GitHub Actions check published by a successful PR run (job name
+`Tests and offline contracts`; verify the exact displayed context before selecting it).
+Choose any up-to-date-branch/merge policy separately and preserve existing master and
+environment protections. No GitHub rule or bypass setting is changed here; enforcement
+and hosted fork/workflow approvals remain unverified until inspected. See CI-007 for
+the hosted acceptance checklist.
 
 Repository branch pushes are trusted DEV code: anyone allowed to push can execute
 code with DEV deployer authority. Restrict repository write access accordingly.

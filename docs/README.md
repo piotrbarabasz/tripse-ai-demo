@@ -14,6 +14,7 @@ React migration and the long-term product architecture are proposed; no new UI i
 - [Current routing](ROUTING.md), [Hub](HUB.md), [planning](PLANNING.md), [viewer](VIEWER.md)
 - [CI/CD](GITHUB_CICD.md), [deployment/rollback](DEPLOY_GCP.md),
   [historical accepted release and limits](RELEASE_2026_10_28.md)
+- [CI-007 DEV PR quality gate — local validation, hosted acceptance pending](CI_007_DEV_PR_GATE.md)
 
 ## Mapping the blueprint's proposed documentation structure
 

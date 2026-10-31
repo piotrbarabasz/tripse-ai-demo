@@ -97,8 +97,11 @@ overwrite unsaved edits. Local/browser mocks do not prove hosted IAP/chunk/previ
 ## 6. Dług techniczny i ograniczenia
 
 Track incomplete OpenAPI responses, planner/Studio model mismatch, shared cloud-demo
-document scope, framing/header compatibility, dev-PR CI gap, script globals and repeated
+document scope, framing/header compatibility, CI gate acceptance, script globals and repeated
 upload/polling logic in the [technical audit risk register](../architecture/current-state-audit.md).
+[CI-007](../CI_007_DEV_PR_GATE.md) extends the dev/master PR trigger locally; hosted
+acceptance and required-check enforcement still need evidence. Earlier dev-PR gap
+observations remain historical. This compatible CI extension needs no new ADR.
 Acceptance requires existing routes/security/print gates, deterministic builds/schema,
 mode-specific routing tests, verified provenance and stage-specific rollback. No default
 route cutover or legacy removal until separate parity acceptance. No security changes
@@ -143,3 +146,4 @@ legacy cutover; no unmeasured numeric performance threshold is asserted.
 | 2026-10-31 | Codex | New documentation-only migration proposal grounded in source audit | ARCH-001 |
 | 2026-10-31 | Codex | Separate technical audit from pending original vision; retain proposed status and original requirements for review | ARCH-001 final review |
 | 2026-10-31 | Codex | Reconcile restored original sections 0–15; retain stage crosswalk, form preferences, future modules and concrete first tool workflow without owner approval | ARCH-001 closure |
+| 2026-10-31 | Codex | Link separate CI-007 dev PR gate; distinguish local source change from hosted acceptance and branch protection | CI-007 |
