@@ -31,7 +31,8 @@ def inputs():
 
 def test_source_selects_exact_build_inputs_but_never_outputs_or_env(monkeypatch, inputs):
     inputs.update({name: (ROOT/name).read_bytes() for name in (
-        "frontend/src/shared/api/generated/types.gen.ts", "frontend/src/shared/api/generated/zod.gen.ts")})
+        "frontend/src/shared/api/generated/types.gen.ts", "frontend/src/shared/api/generated/zod.gen.ts",
+        "frontend/src/features/planner/PlannerPage.tsx", "frontend/src/features/planner/result.ts")})
     unwanted = {name:b"ignored" for name in ("docs/api/openapi.json", "frontend/scripts/generate-api.mjs", "frontend/.env.local", "frontend/dist/index.html", "app/spa_dist/index.html",
         "frontend/node_modules/pkg/index.js", "frontend/coverage/index.html", "frontend/.vite/cache.ts", "frontend/tsconfig.tsbuildinfo",
         "frontend/src/.cache/file.ts", "frontend/README.md", "frontend/eslint.config.js", "local-data/private.json")}

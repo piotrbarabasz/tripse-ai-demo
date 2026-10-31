@@ -118,6 +118,14 @@ local source acceptance from hosted CI/IAP/container acceptance.
 
 ## FRONT-002 — Hub and Trip Planner migration
 
+**2026-10-31 implementation:** operational `/app/planner` form, trusted authenticated
+runtime capabilities, explicit submission/retry semantics, bounded status polling
+and narrow validated result/viewer projection; Hub Planner card now available.
+Legacy Planner/viewer and Studio remain intact. API-001 is reused and its 401 cache
+clearing now exposes a session-failure flag to mounted React observers. No storage,
+maps implementation, auth mechanism or deployment change.
+See [implementation, validation, limits and rollback](../ui/front-002-planner.md).
+
 - Dependencies: FRONT-001, API-001 and accepted shell/routing contracts.
 - Scope: `/app` Hub and `/app/planner` vertical workflows: mock/live labels, request,
   durable progress polling, errors and link to existing token viewer. Preserve legacy

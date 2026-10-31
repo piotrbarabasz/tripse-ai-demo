@@ -18,7 +18,7 @@ export const modules = [
     legacy: "/planner",
     legacyLabel: "Otwórz obecny planer",
     detail:
-      "Planowanie tras i katalog wycieczek będą rozwijane w kolejnych etapach. Obecny planer jest dostępny w dotychczasowym interfejsie.",
+      "Przygotuj plan, obserwuj postęp zadania i otwórz istniejący podgląd z mapą. Tryb i dostęp sprawdzane są przez usługę. Katalog wycieczek pozostaje planowany.",
   },
   {
     path: "/documents",

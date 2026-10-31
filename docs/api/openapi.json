@@ -3456,6 +3456,38 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "WorkspaceCapabilities": {
+        "additionalProperties": false,
+        "properties": {
+          "can_create_trip": {
+            "title": "Can Create Trip",
+            "type": "boolean"
+          },
+          "planning_mode": {
+            "enum": [
+              "mock",
+              "live"
+            ],
+            "title": "Planning Mode",
+            "type": "string"
+          },
+          "runtime_mode": {
+            "enum": [
+              "local",
+              "cloud_demo"
+            ],
+            "title": "Runtime Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "runtime_mode",
+          "can_create_trip",
+          "planning_mode"
+        ],
+        "title": "WorkspaceCapabilities",
+        "type": "object"
       }
     }
   },
@@ -5168,6 +5200,24 @@
           }
         },
         "summary": "Receive"
+      }
+    },
+    "/api/workspace/capabilities": {
+      "get": {
+        "operationId": "workspace_capabilities_api_workspace_capabilities_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceCapabilities"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Workspace Capabilities"
       }
     },
     "/demo/chat": {

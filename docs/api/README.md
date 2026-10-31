@@ -9,6 +9,7 @@ The [original blueprint](../architecture/TRIPSE_ARCHITECTURE_BLUEPRINT.md) has b
 see [scope differences and open decisions](../architecture/reconciliation.md).
 
 - [API-001 generation, schema gaps and validation](api-001.md)
+- [FRONT-002 workspace capability and Planner consumer](../ui/front-002-planner.md)
 - [Generated local OpenAPI](openapi.json)
 - [Backend architecture](architecture.md)
 - [Current contracts and typed-client plan](contracts.md)

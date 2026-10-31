@@ -850,6 +850,15 @@ export const zHttpValidationError = z.object({
     detail: z.array(zValidationError).optional()
 });
 
+/**
+ * WorkspaceCapabilities
+ */
+export const zWorkspaceCapabilities = z.object({
+    can_create_trip: z.boolean(),
+    planning_mode: z.enum(['mock', 'live']),
+    runtime_mode: z.enum(['local', 'cloud_demo'])
+});
+
 export const zMessagesApiDemoConversationsConversationGetPath = z.object({
     conversation: z.uuid()
 });
@@ -1114,6 +1123,11 @@ export const zGetTripApiTripsTripIdGetResponse = zTripStatus;
 export const zDataApiViewerTokenGetPath = z.object({
     token: z.string()
 });
+
+/**
+ * Successful Response
+ */
+export const zWorkspaceCapabilitiesApiWorkspaceCapabilitiesGetResponse = zWorkspaceCapabilities;
 
 /**
  * Successful Response

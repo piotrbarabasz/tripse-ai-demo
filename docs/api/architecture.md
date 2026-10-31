@@ -1,5 +1,12 @@
 # API architecture
 
+FRONT-002 adds only the guarded read-only workspace capability contract to the
+existing composition. [The Planner integration guide](../ui/front-002-planner.md)
+documents actor-derived create permission, mode trust and result projection. Existing
+Planner endpoints/worker/storage/viewer behavior stays unchanged; readonly has no
+capability route. React queries consume API-001 and stop on session failure while
+the in-memory private cache is cleared.
+
 Current: [main.create_app](../../app/main.py) chooses local/cloud_demo composition or
 the separate readonly_demo app. Routers adapt transport to job storage, viewer lookup,
 demo messaging and document services. Retain this modular FastAPI backend; React is

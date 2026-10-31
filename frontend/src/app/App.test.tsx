@@ -5,12 +5,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { App, AppRoutes } from "./App";
 import { modules } from "../shared/config/modules";
 import { ErrorBoundary } from "../shared/components/ErrorBoundary";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { createApiQueryClient } from "../shared/api/query/client";
 
 function renderPage(path = "/") {
   return render(
-    <MemoryRouter initialEntries={[path]}>
+    <QueryClientProvider client={createApiQueryClient()}><MemoryRouter initialEntries={[path]}>
       <AppRoutes />
-    </MemoryRouter>,
+    </MemoryRouter></QueryClientProvider>,
   );
 }
 
@@ -43,7 +45,9 @@ describe("przestrzeń TRIPSE", () => {
       screen.getByRole("heading", { name: "Moduły TRIPSE" }),
     ).toBeVisible();
     expect(screen.getAllByRole("article")).toHaveLength(5);
-    expect(screen.getAllByText("Migracja planowana")).toHaveLength(2);
+    expect(screen.getAllByText("Migracja planowana")).toHaveLength(1);
+    expect(screen.getByText("Dostępny planer")).toBeVisible();
+    expect(screen.getByRole("link", { name: /Zaplanuj podróż/ })).toHaveAttribute("href", "/planner");
     expect(screen.getAllByText("Moduł planowany")).toHaveLength(3);
     expect(
       screen.getByRole("link", { name: /Otwórz obecny planer/ }),
@@ -92,7 +96,8 @@ describe("przestrzeń TRIPSE", () => {
     expect(
       screen.getByRole("heading", { level: 1, name: module.title }),
     ).toBeVisible();
-    expect(screen.getByText("Widok planowany")).toBeVisible();
+    if (module.path === "/planner") expect(screen.getByLabelText("Opisz wycieczkę")).toBeVisible();
+    else expect(screen.getByText("Widok planowany")).toBeVisible();
     if ("legacy" in module)
       expect(
         screen.getByRole("link", { name: module.legacyLabel }),

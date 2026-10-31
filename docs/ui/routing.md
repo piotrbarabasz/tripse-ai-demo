@@ -7,7 +7,8 @@ The [existing server route inventory](../ROUTING.md) is still authoritative.
 | URL | Behavior in this stage |
 | --- | --- |
 | `/app`, `/app/` | Compiled entry on the existing FastAPI origin in local/cloud_demo |
-| `/app/planner`, `/app/documents` | Planned React views with full-page links to legacy tools |
+| `/app/planner` | Operational React request/status flow; full-page existing token viewer and legacy fallback |
+| `/app/documents` | Planned React view with full-page link to legacy Studio |
 | `/app/marketing`, `/app/automations`, `/app/assistant` | Explicitly planned modules; no business workflows |
 | Unknown extensionless `/app/*` document navigation | Entry HTML with client not-found view |
 | `/app/assets/*` | Private compiled assets; absent assets return HTTP 404 |
@@ -48,6 +49,7 @@ See [CSP/source contracts, evidence limits and rollback](front-001b-integration.
 Compiled-image and authorized hosted IAP/chunk acceptance remain outstanding.
 
 This explicitly splits the [combined FRONT-001 roadmap](../architecture/migration-roadmap.md).
-Real Planner, Studio, Marketing, Automations and Assistant workflows remain later work;
+FRONT-002 implements the [Planner request/status/viewer flow](front-002-planner.md).
+Studio, Marketing, Automations and Assistant React workflows remain later work;
 client placeholders do not reserve or modify FastAPI routes or permission contracts.
 Legacy links use ordinary anchors; client navigation stays under the app basename.

@@ -1718,6 +1718,24 @@ export type ValidationError = {
     type: string;
 };
 
+/**
+ * WorkspaceCapabilities
+ */
+export type WorkspaceCapabilities = {
+    /**
+     * Can Create Trip
+     */
+    can_create_trip: boolean;
+    /**
+     * Planning Mode
+     */
+    planning_mode: 'mock' | 'live';
+    /**
+     * Runtime Mode
+     */
+    runtime_mode: 'local' | 'cloud_demo';
+};
+
 export type MessagesApiDemoConversationsConversationGetData = {
     body?: never;
     path: {
@@ -2823,6 +2841,22 @@ export type ReceiveApiWebhooksWahaPostResponses = {
      */
     200: unknown;
 };
+
+export type WorkspaceCapabilitiesApiWorkspaceCapabilitiesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/workspace/capabilities';
+};
+
+export type WorkspaceCapabilitiesApiWorkspaceCapabilitiesGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: WorkspaceCapabilities;
+};
+
+export type WorkspaceCapabilitiesApiWorkspaceCapabilitiesGetResponse = WorkspaceCapabilitiesApiWorkspaceCapabilitiesGetResponses[keyof WorkspaceCapabilitiesApiWorkspaceCapabilitiesGetResponses];
 
 export type PageDemoChatGetData = {
     body?: never;

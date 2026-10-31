@@ -14,10 +14,24 @@ export const apiKeys = {
   library: (filters: LibraryFilters) => ["private-api", "studio", "library", filters] as const,
 };
 
+// Cache removal intentionally discards query data, including the failing query.
+// Keep only an observable session-failure flag so mounted UIs do not fall back to
+// a fresh pending query and hide the 401 or refetch it after cache removal.
+const sessions = new WeakMap<QueryClient, { failed: boolean; listeners: Set<() => void> }>();
+export function sessionFailed(client: QueryClient): boolean { return sessions.get(client)?.failed ?? false; }
+export function subscribeSession(client: QueryClient, listener: () => void): () => void {
+  const state = sessions.get(client);
+  state?.listeners.add(listener);
+  return () => { state?.listeners.delete(listener); };
+}
+
 export function createApiQueryClient(onSessionFailure?: () => void): QueryClient {
   const sessionError = (error: Error) => {
     if (error instanceof ApiError && error.kind === "unauthenticated") {
+      const state = sessions.get(client);
+      if (state) state.failed = true;
       client.clear(); // also aborts active reads; no private persisted cache
+      state?.listeners.forEach((listener) => listener());
       onSessionFailure?.();
     }
   };
@@ -29,6 +43,7 @@ export function createApiQueryClient(onSessionFailure?: () => void): QueryClient
       mutations: { retry: false, networkMode: "always" },
     },
   });
+  sessions.set(client, { failed: false, listeners: new Set() });
   return client;
 }
 
@@ -46,8 +61,8 @@ export function libraryQuery(filters: LibraryFilters = {}) {
   return queryOptions({ queryKey: apiKeys.library(filters), queryFn: ({ signal }) => readLibrary(filters, signal) });
 }
 
-export function createTripMutation(target: PlannerTarget) {
-  return { mutationFn: (body: TripRequest) => createTrip(body, target), retry: false as const };
+export function createTripMutation(target: PlannerTarget, signal?: AbortSignal) {
+  return { mutationFn: (body: TripRequest) => createTrip(body, target, signal), retry: false as const };
 }
 
 export function saveDraftMutation(client: QueryClient, identifier: string) {

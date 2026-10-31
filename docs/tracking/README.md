@@ -1,5 +1,12 @@
 # Rejestr prac i podstawy kosztorysu
 
+2026-10-31: FRONT-002 (user-supplied label) migrates Hub/Planner to React using
+API-001, with a minimal trusted capability, bounded polling, explicit retries and
+existing viewer links. See [implementation/evidence/rollback](../ui/front-002-planner.md)
+and [prepared PR description](../ui/front-002-pr.md). No PR, push, merge or deployment
+is performed; local/mock/offline acceptance is distinct from hosted acceptance.
+No measured hours/costs or ADR approval is inferred.
+
 2026-10-31: API-001 (user-supplied label) implements offline generated API types,
 runtime guards, same-origin transport and TanStack Query foundation. See
 [contract audit, reproducible commands and validation](../api/api-001.md).

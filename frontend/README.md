@@ -1,4 +1,4 @@
-# TRIPSE React frontend — FRONT-001A / FRONT-001B / API-001
+# TRIPSE React frontend — FRONT-001A / FRONT-001B / API-001 / FRONT-002
 
 React shell with FastAPI same-origin integration, 2026-10-31. FRONT-001A supplied
 the shell; FRONT-001B adds private `/app` serving, a bounded health read and the
@@ -21,7 +21,11 @@ cd ..
 make dev-mock
 ```
 
-Open **http://127.0.0.1:8000/app** (or `/app/`). Legacy links and the `/health`
+Open **http://localhost:8000/app** (or `/app/`). This matches the existing default
+`PUBLIC_BASE_URL` used by the worker's viewer links. If you choose another origin
+(including `127.0.0.1`, HTTPS or a different port), configure `PUBLIC_BASE_URL` to
+that exact browser origin for both API and worker; the React Planner rejects viewer
+URLs from another origin. Legacy links and the `/health`
 PoC now use the same origin. Local serving reads `frontend/dist`; the Docker image
 contains only compiled output at `app/spa_dist`. An unbuilt source checkout keeps
 legacy pages working and returns 503 for the SPA entry. Build before running
@@ -97,7 +101,7 @@ of their business logic. The app layer owns composition and routing.
 | Route | Current behavior |
 | --- | --- |
 | `/app`, `/app/` | Hub, welcome copy, five module cards and direct legacy links |
-| `/app/planner` | Planned React view with link to existing `/planner` |
+| `/app/planner` | Operational request form, trusted mode/permissions, job polling and existing viewer link; legacy `/planner` fallback |
 | `/app/documents` | Planned React view with link to existing `/documents/demo` |
 | `/app/marketing` | Planned module only |
 | `/app/automations` | Planned module only |
@@ -183,7 +187,17 @@ root with `python -m scripts.export_openapi` and
 and `npm --prefix frontend run api:check`. Synthetic wire fixture generation is
 `python -m scripts.export_api_fixtures` (also supports `--check`).
 
-**Later stages:** real Planner/
-Trip Catalog workflows; Document Studio migration including print/PDF parity;
+**Later stages:** Trip Catalog and plan editing; Document Studio migration including print/PDF parity;
 Marketing data; Assistant orchestration; Automations execution/history/approval.
-No backend APIs, databases, paid providers or infrastructure are added here.
+FRONT-001 and API-001 add no backend APIs, databases, paid providers or infrastructure.
+
+**FRONT-002 implemented:** operational Hub/Planner migration using API-001. The
+minimal guarded `/api/workspace/capabilities` endpoint confirms runtime mode and
+create permission; creation is disabled when that check is unavailable. Creates
+never retry automatically, cloud manual retries retain their operation UUID, and
+local retries explicitly warn of duplication. Polling stops on errors/terminal
+state/unmount and pauses after two minutes, with a GET-only manual refresh.
+Completed results use a narrow runtime projection and exact same-origin, expiring
+viewer link. No plan editing, embedded map, Studio migration or catalog is added.
+See [contracts, screenshots, validation and rollback](../docs/ui/front-002-planner.md)
+and the [prepared PR description](../docs/ui/front-002-pr.md).

@@ -1,6 +1,7 @@
 # UI architecture
 
-Status: FRONT-001A shell, FRONT-001B private FastAPI integration and API-001 client/query foundation implemented.
+Status: FRONT-001A shell, FRONT-001B private FastAPI integration, API-001 client/query foundation and FRONT-002 Hub/Planner implemented.
+See [FRONT-002 flow, capability security and rollback](front-002-planner.md).
 See [frontend instructions](../../frontend/README.md) and
 [current integration evidence/limits](front-001b-integration.md). ADR-0017 remains proposed.
 See [source audit](../architecture/current-state-audit.md)
@@ -67,7 +68,8 @@ the React DOM. Later feature migrations preserve Polish labels, keyboard behavio
 loading/empty/error states and unsaved-change protections. See [component strategy](component-strategy.md).
 
 FRONT-001A supplies an informative Hub with module cards and direct legacy links;
-full operational Hub/Planner workflows remain FRONT-002. It performs no API reads.
+full operational Hub/Planner workflows were delivered separately in FRONT-002.
+The historical FRONT-001A shell performed no API reads.
 FRONT-001B adds compiled private assets/navigation and the same-origin `/health`
 PoC (blueprint section 15), with loading, HTTP/schema errors, timeout and unmount
 cancellation. Health only proves connectivity; its existing cloud middleware exception

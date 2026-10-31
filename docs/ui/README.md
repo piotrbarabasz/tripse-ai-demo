@@ -12,6 +12,7 @@ Later stages remain migration proposals, not owner-approved implementation decis
 see [scope differences and open decisions](../architecture/reconciliation.md).
 
 - [Architecture and module boundaries](architecture.md)
+- [FRONT-002 operational Hub/Planner, security and validation](front-002-planner.md)
 - [API-001 client, query conventions and schema gaps](../api/api-001.md)
 - [Routing and coexistence](routing.md)
 - [Component and styling strategy](component-strategy.md)

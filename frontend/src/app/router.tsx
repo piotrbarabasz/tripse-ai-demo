@@ -1,4 +1,5 @@
 import { HubPage } from "../features/hub/HubPage";
+import { PlannerPage } from "../features/planner/PlannerPage";
 import { modules } from "../shared/config/modules";
 import { AppLayout } from "./layouts/AppLayout";
 import { ModulePage } from "./ModulePage";
@@ -11,7 +12,7 @@ export const routes = [
       { index: true, element: <HubPage /> },
       ...modules.map((module) => ({
         path: module.path.slice(1),
-        element: <ModulePage module={module} />,
+        element: module.path === "/planner" ? <PlannerPage /> : <ModulePage module={module} />,
       })),
       { path: "*", element: <NotFoundPage /> },
     ],

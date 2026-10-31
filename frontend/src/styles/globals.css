@@ -49,6 +49,32 @@
   }
 }
 @layer components {
+  .planner-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr); gap: 24px; align-items: start; }
+  .planner-main { min-width: 0; }
+  .planner-panel { padding: 28px; border: 1px solid var(--border); border-radius: var(--radius); background: white; min-width: 0; margin-bottom: 24px; }
+  .planner-panel h2 { font-size: 21px; font-weight: 650; }
+  .planner-panel p { margin: 14px 0; }
+  .planner-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .planner-note, .planner-field-help { font-size: 13px; color: var(--muted-foreground); }
+  .planner-panel form { margin-top: 24px; }
+  .planner-panel label { display: block; font-weight: 650; font-size: 15px; margin-bottom: 10px; }
+  .planner-panel textarea { width: 100%; padding: 14px; border: 1px solid #96a7b0; border-radius: 10px; resize: vertical; min-height: 170px; line-height: 1.7; background: #fcfdfd; }
+  .planner-panel textarea:disabled { background: var(--muted); color: var(--muted-foreground); }
+  .planner-panel [aria-invalid="true"] { border-color: #a23624; }
+  .planner-panel [role="alert"] { color: #923523; }
+  .planner-field-help { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-bottom: 18px; }
+  .planner-field-help p { margin: 7px 0; }
+  .planner-examples { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .planner-examples legend { font-size: 13px; font-weight: 650; padding-bottom: 10px; }
+  .planner-examples button { font-size: 12px; }
+  .planner-guide { background: #f0f4f5; }
+  .planner-guide ol { list-style: decimal; padding-left: 22px; line-height: 1.8; margin-top: 18px; }
+  .planner-guide .text-link { display: flex; margin-top: 16px; }
+  .planner-job-id { overflow-wrap: anywhere; font-size: 13px; color: var(--muted-foreground); }
+  .planner-panel > [role="status"] { font-weight: 600; }
+  .planner-actions, .planner-result { display: flex; flex-wrap: wrap; gap: 12px; align-items: start; margin-top: 20px; }
+  .planner-result { flex-direction: column; margin-bottom: 20px; }
+  .planner-result p { margin: 0; }
   .health-panel {
     display: flex;
     align-items: start;
@@ -502,6 +528,8 @@
     }
   }
   @media (max-width: 767px) {
+  .planner-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .planner-panel { padding: 20px; }
     .desktop-sidebar {
       display: none;
     }

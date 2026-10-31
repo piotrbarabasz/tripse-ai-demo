@@ -7,6 +7,7 @@ new versioned API. Authoritative definitions: [main.py](../../app/main.py),
 
 | Surface | Existing request/response semantics to preserve |
 | --- | --- |
+| `GET /api/workspace/capabilities` (FRONT-002) | Strict generated WorkspaceCapabilities `{runtime_mode: local/cloud_demo, can_create_trip: bool, planning_mode: mock/live}`. Existing local guard or verified cloud membership; cloud write hint derives from server actor. Private/no-store, no identity/infra/key fields, absent in readonly. Creation fails closed when unavailable. |
 | `POST /api/trips` | TripRequest `{text}` trims whitespace, 1–10000 characters, forbids extra fields. 202 TripAccepted `{trip_id: UUID, status: queued}` and Location header. cloud_demo accepts UUID Idempotency-Key; local ignores it. |
 | `GET /api/trips/{trip_id}` | TripStatus: trip_id, request_text, queued/running/completed/failed, nullable result/error, created_at/updated_at. Invalid UUID 422, absent/inaccessible job 404. `result` is currently dict/null, not a complete OpenAPI TripPlan response schema. |
 | `GET /api/viewer/{token}` | `{plan, maps}` JSON; removes request_text/viewer_url, includes browser-only map config. Invalid/expired token 404. Token must match the 43-character format; cloud outer auth still applies. No response_model. |
@@ -77,3 +78,8 @@ parallel handwritten business DTO set. API-001 replaces that boundary where appr
 with deterministic generated coverage. Supplemental types for current schema gaps are
 explicit temporary exceptions to the blueprint's no-duplicated-contracts goal, with
 runtime/fixture validation and removal when server schemas cover them.
+
+FRONT-002 consumes Planner status through a [narrow completed-result projection](../ui/front-002-planner.md),
+including same-origin `/trip/{43-character token}` URL and finite future expiry.
+It does not turn opaque `result` into a generated TripPlan. Existing mock scenarios
+use an id/name/text projection guarded against real synthetic FastAPI fixtures.

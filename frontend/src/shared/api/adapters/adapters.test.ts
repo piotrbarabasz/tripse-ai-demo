@@ -1,8 +1,8 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { z } from "zod";
-import { zDocumentDraftOutput, zLibraryPage, zTripAccepted, zTripStatus, zTripOutput, zDocumentSummary } from "../generated/zod.gen";
+import { zDocumentDraftOutput, zLibraryPage, zTripAccepted, zTripStatus, zTripOutput, zDocumentSummary, zWorkspaceCapabilities } from "../generated/zod.gen";
 import { accessSchema, assetSchema, templatesSchema } from "./guards";
-import { createTrip, readJob } from "./planner";
+import { createTrip, readJob, scenariosSchema } from "./planner";
 import { readAccess, readTemplates, readLibrary, saveDraft, setDocumentStatus, duplicateDocument, previewDraft, uploadImage, downloadImage } from "./studio";
 import { parseHealth } from "../../../features/hub/health";
 import { fixture } from "../test-fixtures";
@@ -22,6 +22,8 @@ it("validates generated and supplemental contracts against synthetic FastAPI fix
   expect(templatesSchema.parse(fixture.templates)).toHaveLength(8);
   expect(assetSchema.parse(fixture.asset).media_type).toBe("image/png");
   expect(parseHealth(fixture.health)).toEqual({ status: "ok", generation_mode: "mock" });
+  expect(zWorkspaceCapabilities.parse(fixture.capabilities)).toEqual({ runtime_mode: "local", planning_mode: "mock", can_create_trip: true });
+  expect(scenariosSchema.parse(fixture.scenarios).scenarios).toHaveLength(3);
 });
 
 it("preserves nullable versus empty sections and rejects missing/untyped wire values", () => {

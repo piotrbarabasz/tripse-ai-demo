@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from typing import Literal
 from uuid import UUID
 
-from fastapi import FastAPI, HTTPException, Response, Request
+from fastapi import Depends, FastAPI, HTTPException, Response, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, ConfigDict, StringConstraints
@@ -33,6 +33,13 @@ class TripStatus(BaseModel):
     error: str | None
     created_at: str
     updated_at: str
+
+
+class WorkspaceCapabilities(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    runtime_mode: Literal["local", "cloud_demo"]
+    can_create_trip: bool
+    planning_mode: Literal["mock", "live"]
 
 
 def create_app(database_path=None, *, waha_settings=None, document_data_path=None, document_fixtures_path=None,
@@ -113,6 +120,19 @@ def create_app(database_path=None, *, waha_settings=None, document_data_path=Non
     from app.spa import register_spa
     register_spa(app, access_policy=access_policy, directory=frontend_dist)
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+    @app.get("/api/workspace/capabilities", response_model=WorkspaceCapabilities,
+             dependencies=[Depends(access_policy)])
+    def workspace_capabilities(request: Request, response: Response):
+        mode = "mock" if cloud else os.getenv("PLANNING_MODE", "live")
+        if mode not in {"mock", "live"}:
+            raise HTTPException(503, "Planning configuration unavailable")
+        response.headers["Cache-Control"] = "private, no-store"
+        return WorkspaceCapabilities(
+            runtime_mode="cloud_demo" if cloud else "local",
+            can_create_trip=bool(getattr(request.state, "can_edit", False)) if cloud else True,
+            planning_mode=mode,
+        )
 
     @app.get("/health")
     def health():

@@ -25,8 +25,8 @@ export function HubPage() {
           <p className="eyebrow">Wszystko zaczyna się tutaj</p>
           <h2 id="welcome-title">Twoje narzędzia. Wspólny kierunek.</h2>
           <p>
-            Nowa przestrzeń pracy powstaje krok po kroku. Dostępne narzędzia
-            otworzysz w dotychczasowym interfejsie.
+            Zaplanuj podróż w nowym planerze. Document Studio otworzysz
+            w dotychczasowym interfejsie; kolejne moduły powstają krok po kroku.
           </p>
         </div>
         <Button asChild variant="outline">
@@ -53,7 +53,7 @@ export function HubPage() {
                   <module.icon size={23} strokeWidth={1.6} aria-hidden="true" />
                 </span>
                 <Badge>
-                  {"legacy" in module
+                  {module.path === "/planner" ? "Dostępny planer" : "legacy" in module
                     ? "Migracja planowana"
                     : "Moduł planowany"}
                 </Badge>
@@ -63,7 +63,7 @@ export function HubPage() {
               <p className="card-description">{module.description}</p>
               <div className="card-actions">
                 <Link className="text-link" to={module.path}>
-                  Poznaj moduł <ArrowRight size={16} aria-hidden="true" />
+                  {module.path === "/planner" ? "Zaplanuj podróż" : "Poznaj moduł"} <ArrowRight size={16} aria-hidden="true" />
                   <span className="sr-only">: {module.title}</span>
                 </Link>
                 {"legacy" in module && (
@@ -87,9 +87,10 @@ export function HubPage() {
       <aside className="workspace-note">
         <span className="note-marker" aria-hidden="true" />
         <p>
-          <strong>Przestrzeń w rozwoju.</strong> Nowy panel łączy nawigację.
-          Planowanie i dokumenty pozostają w obecnych narzędziach, a pozostałe
-          moduły są zapowiedzią kolejnych etapów.
+          <strong>Przestrzeń w rozwoju.</strong> Planer obsługuje tworzenie i postęp
+          zadań, a plan z mapą otwiera się w obecnym podglądzie. Tryb MOCK lub LIVE
+          oraz uprawnienia sprawdzisz w planerze. Dokumenty pozostają w obecnym
+          studio; Marketing, Automatyzacje i Asystent są planowane.
         </p>
       </aside>
     </>

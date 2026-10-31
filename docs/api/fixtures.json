@@ -17,6 +17,169 @@
     "schema_version": 1,
     "width": 2
   },
+  "capabilities": {
+    "can_create_trip": true,
+    "planning_mode": "mock",
+    "runtime_mode": "local"
+  },
+  "completed_result": {
+    "days": [
+      {
+        "demo_geometry": [
+          [
+            19.945,
+            50.0647
+          ],
+          [
+            19.8293,
+            50.2106
+          ],
+          [
+            19.8316,
+            50.1964
+          ],
+          [
+            19.7795,
+            50.2445
+          ],
+          [
+            19.945,
+            50.0647
+          ]
+        ],
+        "distance_km": 70.0,
+        "distance_meters": 70000,
+        "drive_minutes": 100.0,
+        "duration_seconds": 6000.0,
+        "encoded_polyline": null,
+        "google_maps_url": null,
+        "number": 1,
+        "routing_status": "demo",
+        "stops": [
+          {
+            "description": "Początek i koniec wycieczki.",
+            "lat": 50.0647,
+            "lng": 19.945,
+            "name": "Kraków",
+            "place_id": "demo:ojcow:0",
+            "query": "Kraków",
+            "source": "demo_fixture",
+            "verification_status": "demo"
+          },
+          {
+            "description": "Spacer po Dolinie Prądnika.",
+            "lat": 50.2106,
+            "lng": 19.8293,
+            "name": "Ojców",
+            "place_id": "demo:ojcow:1",
+            "query": "Ojców",
+            "source": "demo_fixture",
+            "verification_status": "demo"
+          },
+          {
+            "description": "Formacje skalne; fragment pieszy.",
+            "lat": 50.1964,
+            "lng": 19.8316,
+            "name": "Brama Krakowska",
+            "place_id": "demo:ojcow:2",
+            "query": "Brama Krakowska",
+            "source": "demo_fixture",
+            "verification_status": "demo"
+          },
+          {
+            "description": "Przykładowy przystanek przy zamku.",
+            "lat": 50.2445,
+            "lng": 19.7795,
+            "name": "Pieskowa Skała",
+            "place_id": "demo:ojcow:3",
+            "query": "Pieskowa Skała",
+            "source": "demo_fixture",
+            "verification_status": "demo"
+          },
+          {
+            "description": "Początek i koniec wycieczki.",
+            "lat": 50.0647,
+            "lng": 19.945,
+            "name": "Kraków",
+            "place_id": "demo:ojcow:0",
+            "query": "Kraków",
+            "source": "demo_fixture",
+            "verification_status": "demo"
+          }
+        ],
+        "warnings": [
+          "Linia jest schematem, nie przebiegiem drogi. Czasy i dystanse są przykładowe."
+        ]
+      }
+    ],
+    "demo_scenario": "ojcow",
+    "generation_mode": "mock",
+    "is_mock": true,
+    "places": [
+      {
+        "description": "Początek i koniec wycieczki.",
+        "lat": 50.0647,
+        "lng": 19.945,
+        "name": "Kraków",
+        "place_id": "demo:ojcow:0",
+        "query": "Kraków",
+        "source": "demo_fixture",
+        "verification_status": "demo"
+      },
+      {
+        "description": "Spacer po Dolinie Prądnika.",
+        "lat": 50.2106,
+        "lng": 19.8293,
+        "name": "Ojców",
+        "place_id": "demo:ojcow:1",
+        "query": "Ojców",
+        "source": "demo_fixture",
+        "verification_status": "demo"
+      },
+      {
+        "description": "Formacje skalne; fragment pieszy.",
+        "lat": 50.1964,
+        "lng": 19.8316,
+        "name": "Brama Krakowska",
+        "place_id": "demo:ojcow:2",
+        "query": "Brama Krakowska",
+        "source": "demo_fixture",
+        "verification_status": "demo"
+      },
+      {
+        "description": "Przykładowy przystanek przy zamku.",
+        "lat": 50.2445,
+        "lng": 19.7795,
+        "name": "Pieskowa Skała",
+        "place_id": "demo:ojcow:3",
+        "query": "Pieskowa Skała",
+        "source": "demo_fixture",
+        "verification_status": "demo"
+      }
+    ],
+    "request_text": "Zaplanuj 1 dzień: Kraków → Ojców → Kraków. Natura, maksymalnie 2 godziny jazdy dziennie.",
+    "requirements": {
+      "days": 1,
+      "end": "Kraków",
+      "max_daily_drive_min": 120,
+      "preferences": [
+        "natura",
+        "krótki wyjazd"
+      ],
+      "required_places": [],
+      "start": "Kraków"
+    },
+    "status": "completed",
+    "title": "Ojców · 1 dzień",
+    "trip_id": "00000000-0000-4000-8000-000000000001",
+    "unresolved_places": [],
+    "verification_status": "unverified",
+    "viewer_expires_at": 4102444800,
+    "viewer_url": "http://localhost/trip/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "warnings": [
+      "DEMO — dane przykładowe. Bez wywołań OpenAI i Google. Miejsca, godziny otwarcia i dostępność nie są zweryfikowane."
+    ]
+  },
   "draft": {
     "archived_at": null,
     "campaign_snapshot": null,
@@ -923,6 +1086,34 @@
       "updated_by": null
     }
   ],
+  "scenarios": {
+    "cases": {
+      "delivery": "Ponowienie wysyłki",
+      "expired": "Wygasły link",
+      "failure": "Awaria planowania",
+      "limit": "Przekroczony limit jazdy",
+      "missing": "Nieznalezione miejsce",
+      "routing": "Błąd trasy",
+      "success": "Pełny plan"
+    },
+    "scenarios": [
+      {
+        "id": "mountains",
+        "name": "Karkonosze · 2 dni",
+        "text": "Zaplanuj 2 dni: Wrocław → Karpacz → Szklarska Poręba → Wrocław. Natura, maksymalnie 3 godziny jazdy dziennie."
+      },
+      {
+        "id": "ojcow",
+        "name": "Ojców · 1 dzień",
+        "text": "Zaplanuj 1 dzień: Kraków → Ojców → Kraków. Natura, maksymalnie 2 godziny jazdy dziennie."
+      },
+      {
+        "id": "coast",
+        "name": "Trójmiasto · 2 dni",
+        "text": "Zaplanuj 2 dni: Gdańsk → Sopot → Gdynia → Gdańsk. Rodzinny wyjazd, maksymalnie 2 godziny jazdy dziennie."
+      }
+    ]
+  },
   "status": {
     "archived_at": null,
     "campaign_snapshot": null,

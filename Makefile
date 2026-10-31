@@ -39,7 +39,7 @@ Docker:
   docker-waha      Start existing whatsapp profile (configure WAHA first)
 Testing / Quality:
   test, test-unit   Standard pytest suite
-  test-browser     All 10 browser smoke scripts; temporary API/worker as needed
+  test-browser     All 11 browser smoke scripts; temporary API/worker as needed
   test-container   Existing optional local Docker Cloud Preview smoke
   test-all         pytest -> browser smoke -> container smoke (requires Docker)
   check            git diff --check; Docker Compose config (no new linter)
