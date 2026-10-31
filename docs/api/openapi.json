@@ -1,0 +1,5265 @@
+{
+  "components": {
+    "schemas": {
+      "Campaign-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "campaign_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Campaign Id",
+            "type": "string"
+          },
+          "cta": {
+            "default": "",
+            "title": "Cta",
+            "type": "string"
+          },
+          "data_origin": {
+            "default": "unknown",
+            "enum": [
+              "business",
+              "demo",
+              "synthetic_test",
+              "unknown"
+            ],
+            "title": "Data Origin",
+            "type": "string"
+          },
+          "description": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Description",
+            "type": "string"
+          },
+          "hero_asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hero Asset Id"
+          },
+          "hero_position": {
+            "$ref": "#/components/schemas/ImagePosition"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CampaignItem"
+            },
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          },
+          "layout_variant": {
+            "default": "new_trips",
+            "enum": [
+              "new_trips",
+              "theme_collection"
+            ],
+            "title": "Layout Variant",
+            "type": "string"
+          },
+          "leader": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leader"
+          },
+          "revision": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "season": {
+            "default": "",
+            "title": "Season",
+            "type": "string"
+          },
+          "theme": {
+            "default": "",
+            "title": "Theme",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "items"
+        ],
+        "title": "Campaign",
+        "type": "object"
+      },
+      "Campaign-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "campaign_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Campaign Id",
+            "type": "string"
+          },
+          "cta": {
+            "default": "",
+            "title": "Cta",
+            "type": "string"
+          },
+          "data_origin": {
+            "default": "unknown",
+            "enum": [
+              "business",
+              "demo",
+              "synthetic_test",
+              "unknown"
+            ],
+            "title": "Data Origin",
+            "type": "string"
+          },
+          "description": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Description",
+            "type": "string"
+          },
+          "hero_asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hero Asset Id"
+          },
+          "hero_position": {
+            "$ref": "#/components/schemas/ImagePosition"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CampaignItem"
+            },
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          },
+          "layout_variant": {
+            "default": "new_trips",
+            "enum": [
+              "new_trips",
+              "theme_collection"
+            ],
+            "title": "Layout Variant",
+            "type": "string"
+          },
+          "leader": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leader"
+          },
+          "revision": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "season": {
+            "default": "",
+            "title": "Season",
+            "type": "string"
+          },
+          "theme": {
+            "default": "",
+            "title": "Theme",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "items"
+        ],
+        "title": "Campaign",
+        "type": "object"
+      },
+      "CampaignItem": {
+        "additionalProperties": false,
+        "properties": {
+          "badge": {
+            "default": "concept",
+            "enum": [
+              "concept",
+              "new",
+              "pilot"
+            ],
+            "title": "Badge",
+            "type": "string"
+          },
+          "date_range_or_label": {
+            "default": "Termin do ustalenia",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Date Range Or Label",
+            "type": "string"
+          },
+          "display_title": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Display Title",
+            "type": "string"
+          },
+          "highlights": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Highlights",
+            "type": "array"
+          },
+          "image_asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Asset Id"
+          },
+          "image_position": {
+            "$ref": "#/components/schemas/ImagePosition"
+          },
+          "leader": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leader"
+          },
+          "publication_status": {
+            "default": "draft",
+            "enum": [
+              "draft",
+              "approved"
+            ],
+            "title": "Publication Status",
+            "type": "string"
+          },
+          "short_hook": {
+            "default": "",
+            "maxLength": 500,
+            "title": "Short Hook",
+            "type": "string"
+          },
+          "trip_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Trip Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "trip_id"
+        ],
+        "title": "CampaignItem",
+        "type": "object"
+      },
+      "DayLogistics": {
+        "additionalProperties": false,
+        "properties": {
+          "accommodation_entry_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accommodation Entry Id"
+          },
+          "activity_minutes": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activity Minutes"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date"
+          },
+          "drive_km": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drive Km"
+          },
+          "drive_minutes": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drive Minutes"
+          },
+          "elevation_gain_m": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Elevation Gain M"
+          },
+          "organizational_notes": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Organizational Notes",
+            "type": "string"
+          },
+          "plan_b": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Plan B",
+            "type": "string"
+          },
+          "route_end": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Route End",
+            "type": "string"
+          },
+          "route_start": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Route Start",
+            "type": "string"
+          },
+          "source": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Source",
+            "type": "string"
+          },
+          "time_zone": {
+            "default": "",
+            "title": "Time Zone",
+            "type": "string"
+          },
+          "verification_status": {
+            "default": "unverified",
+            "enum": [
+              "unverified",
+              "proposed",
+              "verified",
+              "rejected"
+            ],
+            "title": "Verification Status",
+            "type": "string"
+          },
+          "walk_km": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Walk Km"
+          }
+        },
+        "title": "DayLogistics",
+        "type": "object"
+      },
+      "DayOverride": {
+        "additionalProperties": false,
+        "properties": {
+          "day_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Day Id",
+            "type": "string"
+          },
+          "description": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Description",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "day_id"
+        ],
+        "title": "DayOverride",
+        "type": "object"
+      },
+      "DocumentDraft-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "archived_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived At"
+          },
+          "campaign_snapshot": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Campaign-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "campaign_trip_snapshots": {
+            "items": {
+              "$ref": "#/components/schemas/Trip-Input"
+            },
+            "title": "Campaign Trip Snapshots",
+            "type": "array"
+          },
+          "confidentiality": {
+            "enum": [
+              "public",
+              "client",
+              "internal",
+              "internal_restricted"
+            ],
+            "title": "Confidentiality",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "data_origin": {
+            "default": "unknown",
+            "enum": [
+              "business",
+              "demo",
+              "synthetic_test",
+              "unknown"
+            ],
+            "title": "Data Origin",
+            "type": "string"
+          },
+          "date_label": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Date Label",
+            "type": "string"
+          },
+          "day_overrides": {
+            "items": {
+              "$ref": "#/components/schemas/DayOverride"
+            },
+            "title": "Day Overrides",
+            "type": "array"
+          },
+          "demo_example": {
+            "default": false,
+            "title": "Demo Example",
+            "type": "boolean"
+          },
+          "document_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Document Id",
+            "type": "string"
+          },
+          "document_status": {
+            "default": "draft",
+            "enum": [
+              "draft",
+              "in_review",
+              "ready",
+              "archived"
+            ],
+            "title": "Document Status",
+            "type": "string"
+          },
+          "duplicated_from_document_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duplicated From Document Id"
+          },
+          "editorial_notes": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Editorial Notes",
+            "type": "string"
+          },
+          "language": {
+            "const": "pl",
+            "default": "pl",
+            "title": "Language",
+            "type": "string"
+          },
+          "last_library_operation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LibraryOperation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "layout_variant": {
+            "default": "standard",
+            "title": "Layout Variant",
+            "type": "string"
+          },
+          "offer_data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OfferData-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "offer_details": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OfferDetails"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pilot_data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PilotData"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revision": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "sections": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DocumentSection-Input"
+                },
+                "maxItems": 500,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sections"
+          },
+          "status": {
+            "const": "draft",
+            "default": "draft",
+            "title": "Status",
+            "type": "string"
+          },
+          "template_id": {
+            "title": "Template Id",
+            "type": "string"
+          },
+          "template_version": {
+            "title": "Template Version",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "trip_snapshot": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Trip-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By"
+          }
+        },
+        "required": [
+          "title",
+          "template_id",
+          "template_version",
+          "confidentiality"
+        ],
+        "title": "DocumentDraft",
+        "type": "object"
+      },
+      "DocumentDraft-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "archived_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived At"
+          },
+          "campaign_snapshot": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Campaign-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "campaign_trip_snapshots": {
+            "items": {
+              "$ref": "#/components/schemas/Trip-Output"
+            },
+            "title": "Campaign Trip Snapshots",
+            "type": "array"
+          },
+          "confidentiality": {
+            "enum": [
+              "public",
+              "client",
+              "internal",
+              "internal_restricted"
+            ],
+            "title": "Confidentiality",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "data_origin": {
+            "default": "unknown",
+            "enum": [
+              "business",
+              "demo",
+              "synthetic_test",
+              "unknown"
+            ],
+            "title": "Data Origin",
+            "type": "string"
+          },
+          "date_label": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Date Label",
+            "type": "string"
+          },
+          "day_overrides": {
+            "items": {
+              "$ref": "#/components/schemas/DayOverride"
+            },
+            "title": "Day Overrides",
+            "type": "array"
+          },
+          "demo_example": {
+            "default": false,
+            "title": "Demo Example",
+            "type": "boolean"
+          },
+          "document_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Document Id",
+            "type": "string"
+          },
+          "document_status": {
+            "default": "draft",
+            "enum": [
+              "draft",
+              "in_review",
+              "ready",
+              "archived"
+            ],
+            "title": "Document Status",
+            "type": "string"
+          },
+          "duplicated_from_document_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duplicated From Document Id"
+          },
+          "editorial_notes": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Editorial Notes",
+            "type": "string"
+          },
+          "language": {
+            "const": "pl",
+            "default": "pl",
+            "title": "Language",
+            "type": "string"
+          },
+          "last_library_operation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LibraryOperation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "layout_variant": {
+            "default": "standard",
+            "title": "Layout Variant",
+            "type": "string"
+          },
+          "offer_data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OfferData-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "offer_details": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OfferDetails"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pilot_data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PilotData"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revision": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "sections": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DocumentSection-Output"
+                },
+                "maxItems": 500,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sections"
+          },
+          "status": {
+            "const": "draft",
+            "default": "draft",
+            "title": "Status",
+            "type": "string"
+          },
+          "template_id": {
+            "title": "Template Id",
+            "type": "string"
+          },
+          "template_version": {
+            "title": "Template Version",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "trip_snapshot": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Trip-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By"
+          }
+        },
+        "required": [
+          "title",
+          "template_id",
+          "template_version",
+          "confidentiality"
+        ],
+        "title": "DocumentDraft",
+        "type": "object"
+      },
+      "DocumentSection-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "body": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Body",
+            "type": "string"
+          },
+          "columns": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Columns",
+            "type": "array"
+          },
+          "day_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Day Id"
+          },
+          "images": {
+            "items": {
+              "$ref": "#/components/schemas/SectionImage"
+            },
+            "maxItems": 20,
+            "title": "Images",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            "maxItems": 200,
+            "title": "Items",
+            "type": "array"
+          },
+          "kind": {
+            "default": "text",
+            "enum": [
+              "text",
+              "list",
+              "image",
+              "gallery",
+              "table",
+              "callout",
+              "day",
+              "logistics",
+              "knowledge",
+              "source"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "knowledge": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/KnowledgeContent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "logistics": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DayLogistics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "order": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Order",
+            "type": "integer"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "rows": {
+            "items": {
+              "items": {
+                "maxLength": 20000,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "maxItems": 200,
+            "title": "Rows",
+            "type": "array"
+          },
+          "section_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Section Id",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "visible": {
+            "default": true,
+            "title": "Visible",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "DocumentSection",
+        "type": "object"
+      },
+      "DocumentSection-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "body": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Body",
+            "type": "string"
+          },
+          "columns": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Columns",
+            "type": "array"
+          },
+          "day_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Day Id"
+          },
+          "images": {
+            "items": {
+              "$ref": "#/components/schemas/SectionImage"
+            },
+            "maxItems": 20,
+            "title": "Images",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "maxLength": 20000,
+              "type": "string"
+            },
+            "maxItems": 200,
+            "title": "Items",
+            "type": "array"
+          },
+          "kind": {
+            "default": "text",
+            "enum": [
+              "text",
+              "list",
+              "image",
+              "gallery",
+              "table",
+              "callout",
+              "day",
+              "logistics",
+              "knowledge",
+              "source"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "knowledge": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/KnowledgeContent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "logistics": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DayLogistics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "order": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Order",
+            "type": "integer"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "rows": {
+            "items": {
+              "items": {
+                "maxLength": 20000,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "maxItems": 200,
+            "title": "Rows",
+            "type": "array"
+          },
+          "section_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Section Id",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "visible": {
+            "default": true,
+            "title": "Visible",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "DocumentSection",
+        "type": "object"
+      },
+      "DocumentSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "archived_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived At"
+          },
+          "confidentiality": {
+            "enum": [
+              "public",
+              "client",
+              "internal",
+              "internal_restricted"
+            ],
+            "title": "Confidentiality",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "document_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Document Id",
+            "type": "string"
+          },
+          "document_status": {
+            "enum": [
+              "draft",
+              "in_review",
+              "ready",
+              "archived"
+            ],
+            "title": "Document Status",
+            "type": "string"
+          },
+          "duplicated_from_document_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duplicated From Document Id"
+          },
+          "family": {
+            "enum": [
+              "offer",
+              "pilot",
+              "marketing"
+            ],
+            "title": "Family",
+            "type": "string"
+          },
+          "layout_variant": {
+            "title": "Layout Variant",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "source_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "source_title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Source Title",
+            "type": "string"
+          },
+          "source_type": {
+            "enum": [
+              "trip",
+              "campaign"
+            ],
+            "title": "Source Type",
+            "type": "string"
+          },
+          "template_id": {
+            "title": "Template Id",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "updated_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By"
+          }
+        },
+        "required": [
+          "document_id",
+          "title",
+          "template_id",
+          "family",
+          "layout_variant",
+          "confidentiality",
+          "source_type",
+          "source_id",
+          "source_title",
+          "document_status",
+          "archived_at",
+          "revision",
+          "created_at",
+          "updated_at",
+          "created_by",
+          "updated_by",
+          "duplicated_from_document_id"
+        ],
+        "title": "DocumentSummary",
+        "type": "object"
+      },
+      "DraftRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "demo_example": {
+            "default": false,
+            "title": "Demo Example",
+            "type": "boolean"
+          },
+          "document_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Id"
+          },
+          "editorial_notes": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Editorial Notes",
+            "type": "string"
+          },
+          "layout_variant": {
+            "default": "standard",
+            "title": "Layout Variant",
+            "type": "string"
+          },
+          "source_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "source_revision": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Revision"
+          },
+          "source_type": {
+            "enum": [
+              "trip",
+              "campaign"
+            ],
+            "title": "Source Type",
+            "type": "string"
+          },
+          "template_id": {
+            "title": "Template Id",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "template_id",
+          "source_type",
+          "source_id"
+        ],
+        "title": "DraftRequest",
+        "type": "object"
+      },
+      "DraftUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "campaign_snapshot": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Campaign-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "date_label": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Date Label",
+            "type": "string"
+          },
+          "day_overrides": {
+            "items": {
+              "$ref": "#/components/schemas/DayOverride"
+            },
+            "title": "Day Overrides",
+            "type": "array"
+          },
+          "document_status": {
+            "default": "draft",
+            "enum": [
+              "draft",
+              "in_review",
+              "ready"
+            ],
+            "title": "Document Status",
+            "type": "string"
+          },
+          "editorial_notes": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Editorial Notes",
+            "type": "string"
+          },
+          "offer_data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OfferData-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "offer_details": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OfferDetails"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pilot_data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PilotData"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revision": {
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "sections": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DocumentSection-Input"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sections"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "revision",
+          "title"
+        ],
+        "title": "DraftUpdate",
+        "type": "object"
+      },
+      "EducationalGoal": {
+        "additionalProperties": false,
+        "properties": {
+          "day_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Day Id"
+          },
+          "description": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Description",
+            "type": "string"
+          },
+          "pillar": {
+            "enum": [
+              "education",
+              "nature",
+              "integration"
+            ],
+            "title": "Pillar",
+            "type": "string"
+          },
+          "stop_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Id"
+          }
+        },
+        "required": [
+          "pillar"
+        ],
+        "title": "EducationalGoal",
+        "type": "object"
+      },
+      "ExampleCopyRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "operation_id": {
+            "format": "uuid",
+            "title": "Operation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation_id"
+        ],
+        "title": "ExampleCopyRequest",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HotelData": {
+        "additionalProperties": false,
+        "properties": {
+          "amenities": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Amenities",
+            "type": "array"
+          },
+          "common_spaces": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Common Spaces",
+            "type": "string"
+          },
+          "conference_rooms": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Conference Rooms",
+            "type": "string"
+          },
+          "location": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Location",
+            "type": "string"
+          },
+          "name_or_standard": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Name Or Standard",
+            "type": "string"
+          },
+          "photo_asset_ids": {
+            "items": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Photo Asset Ids",
+            "type": "array"
+          },
+          "room_types": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Room Types",
+            "type": "string"
+          },
+          "source": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "default": "unknown",
+            "enum": [
+              "unknown",
+              "proposed",
+              "confirmed"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "title": "HotelData",
+        "type": "object"
+      },
+      "ImagePosition": {
+        "additionalProperties": false,
+        "properties": {
+          "x": {
+            "default": 50,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "default": 50,
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Y",
+            "type": "number"
+          },
+          "zoom": {
+            "default": 1,
+            "maximum": 3.0,
+            "minimum": 1.0,
+            "title": "Zoom",
+            "type": "number"
+          }
+        },
+        "title": "ImagePosition",
+        "type": "object"
+      },
+      "KnowledgeContent": {
+        "additionalProperties": false,
+        "properties": {
+          "connection": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Connection",
+            "type": "string"
+          },
+          "culture": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Culture",
+            "type": "string"
+          },
+          "facts": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Facts",
+            "type": "string"
+          },
+          "geology_nature": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Geology Nature",
+            "type": "string"
+          },
+          "history": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "History",
+            "type": "string"
+          },
+          "observations": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Observations",
+            "type": "string"
+          },
+          "part": {
+            "default": "attractions",
+            "enum": [
+              "attractions",
+              "context",
+              "narrative"
+            ],
+            "title": "Part",
+            "type": "string"
+          },
+          "pilot_notes": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Pilot Notes",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeSource"
+            },
+            "maxItems": 100,
+            "title": "Sources",
+            "type": "array"
+          },
+          "stop_ids": {
+            "items": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "type": "string"
+            },
+            "title": "Stop Ids",
+            "type": "array"
+          },
+          "stories": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Stories",
+            "type": "string"
+          },
+          "verification_status": {
+            "default": "unverified",
+            "enum": [
+              "unverified",
+              "proposed",
+              "verified",
+              "rejected"
+            ],
+            "title": "Verification Status",
+            "type": "string"
+          }
+        },
+        "title": "KnowledgeContent",
+        "type": "object"
+      },
+      "KnowledgeSource": {
+        "additionalProperties": false,
+        "properties": {
+          "checked_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked On"
+          },
+          "reference": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reference"
+        ],
+        "title": "KnowledgeSource",
+        "type": "object"
+      },
+      "LibraryMutation": {
+        "additionalProperties": false,
+        "properties": {
+          "operation_id": {
+            "format": "uuid",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "revision",
+          "operation_id"
+        ],
+        "title": "LibraryMutation",
+        "type": "object"
+      },
+      "LibraryOperation": {
+        "additionalProperties": false,
+        "properties": {
+          "base_revision": {
+            "minimum": 1.0,
+            "title": "Base Revision",
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "archive",
+              "restore",
+              "status"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "operation_id": {
+            "title": "Operation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "operation_id",
+          "kind",
+          "base_revision"
+        ],
+        "title": "LibraryOperation",
+        "type": "object"
+      },
+      "LibraryPage": {
+        "additionalProperties": false,
+        "properties": {
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DocumentSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit",
+          "has_more"
+        ],
+        "title": "LibraryPage",
+        "type": "object"
+      },
+      "MarketingPreviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "campaign": {
+            "$ref": "#/components/schemas/Campaign-Input"
+          },
+          "output_format": {
+            "default": "a4",
+            "enum": [
+              "a4",
+              "social"
+            ],
+            "title": "Output Format",
+            "type": "string"
+          }
+        },
+        "required": [
+          "campaign"
+        ],
+        "title": "MarketingPreviewRequest",
+        "type": "object"
+      },
+      "Message": {
+        "properties": {
+          "case": {
+            "default": "success",
+            "enum": [
+              "success",
+              "limit",
+              "missing",
+              "routing",
+              "failure",
+              "delivery",
+              "expired"
+            ],
+            "title": "Case",
+            "type": "string"
+          },
+          "conversation": {
+            "format": "uuid",
+            "title": "Conversation",
+            "type": "string"
+          },
+          "message_id": {
+            "format": "uuid",
+            "title": "Message Id",
+            "type": "string"
+          },
+          "text": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "conversation",
+          "message_id",
+          "text"
+        ],
+        "title": "Message",
+        "type": "object"
+      },
+      "OfferData-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "accommodation": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Accommodation",
+            "type": "string"
+          },
+          "concept_only": {
+            "default": false,
+            "title": "Concept Only",
+            "type": "boolean"
+          },
+          "cover_asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Asset Id"
+          },
+          "cover_position": {
+            "$ref": "#/components/schemas/ImagePosition"
+          },
+          "cta": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Cta",
+            "type": "string"
+          },
+          "excluded": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Excluded",
+            "type": "array"
+          },
+          "highlights": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Highlights",
+            "type": "array"
+          },
+          "included": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Included",
+            "type": "array"
+          },
+          "photo_asset_ids": {
+            "items": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Photo Asset Ids",
+            "type": "array"
+          },
+          "price": {
+            "$ref": "#/components/schemas/OfferPrice-Input"
+          },
+          "summary": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Summary",
+            "type": "string"
+          },
+          "transport": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Transport",
+            "type": "string"
+          }
+        },
+        "title": "OfferData",
+        "type": "object"
+      },
+      "OfferData-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "accommodation": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Accommodation",
+            "type": "string"
+          },
+          "concept_only": {
+            "default": false,
+            "title": "Concept Only",
+            "type": "boolean"
+          },
+          "cover_asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Asset Id"
+          },
+          "cover_position": {
+            "$ref": "#/components/schemas/ImagePosition"
+          },
+          "cta": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Cta",
+            "type": "string"
+          },
+          "excluded": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Excluded",
+            "type": "array"
+          },
+          "highlights": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Highlights",
+            "type": "array"
+          },
+          "included": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Included",
+            "type": "array"
+          },
+          "photo_asset_ids": {
+            "items": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Photo Asset Ids",
+            "type": "array"
+          },
+          "price": {
+            "$ref": "#/components/schemas/OfferPrice-Output"
+          },
+          "summary": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Summary",
+            "type": "string"
+          },
+          "transport": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Transport",
+            "type": "string"
+          }
+        },
+        "title": "OfferData",
+        "type": "object"
+      },
+      "OfferDetails": {
+        "additionalProperties": false,
+        "properties": {
+          "age_group": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Age Group",
+            "type": "string"
+          },
+          "goals": {
+            "items": {
+              "$ref": "#/components/schemas/EducationalGoal"
+            },
+            "title": "Goals",
+            "type": "array"
+          },
+          "group_size": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Group Size"
+          },
+          "hotel": {
+            "$ref": "#/components/schemas/HotelData"
+          },
+          "materials": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Materials",
+            "type": "string"
+          },
+          "meals_events": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Meals Events",
+            "type": "string"
+          },
+          "online_briefing": {
+            "default": "Do uzgodnienia — briefing online nie jest gwarantowaną usługą.",
+            "maxLength": 20000,
+            "title": "Online Briefing",
+            "type": "string"
+          },
+          "organization_scope": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Organization Scope",
+            "type": "string"
+          },
+          "route_summary": {
+            "$ref": "#/components/schemas/RouteSummary"
+          },
+          "safety_requirements": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Safety Requirements",
+            "type": "string"
+          },
+          "self_arrangements": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Self Arrangements",
+            "type": "string"
+          },
+          "supervision": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Supervision",
+            "type": "string"
+          },
+          "support": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Support",
+            "type": "string"
+          },
+          "team_building": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Team Building",
+            "type": "string"
+          },
+          "variants": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Variants",
+            "type": "string"
+          },
+          "workshops": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Workshops",
+            "type": "string"
+          }
+        },
+        "title": "OfferDetails",
+        "type": "object"
+      },
+      "OfferPrice-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "assumptions": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Assumptions",
+            "type": "string"
+          },
+          "currency": {
+            "default": "PLN",
+            "enum": [
+              "PLN",
+              "EUR",
+              "USD"
+            ],
+            "title": "Currency",
+            "type": "string"
+          },
+          "participant_count": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Participant Count"
+          },
+          "source": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "default": "unknown",
+            "enum": [
+              "unknown",
+              "example",
+              "confirmed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "unit": {
+            "default": "person",
+            "enum": [
+              "person",
+              "group"
+            ],
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "title": "OfferPrice",
+        "type": "object"
+      },
+      "OfferPrice-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "assumptions": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Assumptions",
+            "type": "string"
+          },
+          "currency": {
+            "default": "PLN",
+            "enum": [
+              "PLN",
+              "EUR",
+              "USD"
+            ],
+            "title": "Currency",
+            "type": "string"
+          },
+          "participant_count": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Participant Count"
+          },
+          "source": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "default": "unknown",
+            "enum": [
+              "unknown",
+              "example",
+              "confirmed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "unit": {
+            "default": "person",
+            "enum": [
+              "person",
+              "group"
+            ],
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "title": "OfferPrice",
+        "type": "object"
+      },
+      "OperationalEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "booking_reference": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Booking Reference",
+            "type": "string"
+          },
+          "carrier": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Carrier"
+          },
+          "day_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Day Id"
+          },
+          "destination": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Destination"
+          },
+          "details": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Details",
+            "type": "string"
+          },
+          "end_local": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Local"
+          },
+          "end_time_zone": {
+            "default": "",
+            "maxLength": 100,
+            "title": "End Time Zone",
+            "type": "string"
+          },
+          "entry_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Entry Id",
+            "type": "string"
+          },
+          "flight_number": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flight Number"
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin"
+          },
+          "source": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Source",
+            "type": "string"
+          },
+          "start_local": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Local"
+          },
+          "status": {
+            "default": "unknown",
+            "enum": [
+              "unknown",
+              "planned",
+              "confirmed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "time_zone": {
+            "default": "",
+            "maxLength": 100,
+            "title": "Time Zone",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "travel_group": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Travel Group"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "OperationalEntry",
+        "type": "object"
+      },
+      "OrganizationContact": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "value": {
+            "maxLength": 1000,
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "value"
+        ],
+        "title": "OrganizationContact",
+        "type": "object"
+      },
+      "PilotData": {
+        "additionalProperties": false,
+        "properties": {
+          "accommodations": {
+            "items": {
+              "$ref": "#/components/schemas/OperationalEntry"
+            },
+            "title": "Accommodations",
+            "type": "array"
+          },
+          "activity_bookings": {
+            "items": {
+              "$ref": "#/components/schemas/OperationalEntry"
+            },
+            "title": "Activity Bookings",
+            "type": "array"
+          },
+          "contacts": {
+            "items": {
+              "$ref": "#/components/schemas/OrganizationContact"
+            },
+            "title": "Contacts",
+            "type": "array"
+          },
+          "flights": {
+            "items": {
+              "$ref": "#/components/schemas/OperationalEntry"
+            },
+            "title": "Flights",
+            "type": "array"
+          },
+          "internal_notes": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Internal Notes",
+            "type": "string"
+          },
+          "leader": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Leader",
+            "type": "string"
+          },
+          "meeting": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Meeting",
+            "type": "string"
+          },
+          "open_items": {
+            "items": {
+              "$ref": "#/components/schemas/OperationalEntry"
+            },
+            "title": "Open Items",
+            "type": "array"
+          },
+          "participant_count": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Participant Count"
+          },
+          "schedule": {
+            "items": {
+              "$ref": "#/components/schemas/OperationalEntry"
+            },
+            "title": "Schedule",
+            "type": "array"
+          },
+          "transfers": {
+            "items": {
+              "$ref": "#/components/schemas/OperationalEntry"
+            },
+            "title": "Transfers",
+            "type": "array"
+          }
+        },
+        "title": "PilotData",
+        "type": "object"
+      },
+      "RouteSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "drive_km": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drive Km"
+          },
+          "end": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "End",
+            "type": "string"
+          },
+          "intensity": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Intensity",
+            "type": "string"
+          },
+          "regions": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Regions",
+            "type": "array"
+          },
+          "source": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Source",
+            "type": "string"
+          },
+          "start": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Start",
+            "type": "string"
+          },
+          "verification_status": {
+            "default": "unverified",
+            "enum": [
+              "unverified",
+              "proposed",
+              "verified",
+              "rejected"
+            ],
+            "title": "Verification Status",
+            "type": "string"
+          },
+          "walk_km": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Walk Km"
+          }
+        },
+        "title": "RouteSummary",
+        "type": "object"
+      },
+      "SectionImage": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Id"
+          },
+          "caption": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Caption",
+            "type": "string"
+          },
+          "position": {
+            "$ref": "#/components/schemas/ImagePosition"
+          }
+        },
+        "title": "SectionImage",
+        "type": "object"
+      },
+      "StatusMutation": {
+        "additionalProperties": false,
+        "properties": {
+          "document_status": {
+            "enum": [
+              "draft",
+              "in_review",
+              "ready"
+            ],
+            "title": "Document Status",
+            "type": "string"
+          },
+          "operation_id": {
+            "format": "uuid",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "revision": {
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "revision",
+          "operation_id",
+          "document_status"
+        ],
+        "title": "StatusMutation",
+        "type": "object"
+      },
+      "Stop": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Description",
+            "type": "string"
+          },
+          "estimated_visit_duration_min": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Visit Duration Min"
+          },
+          "location": {
+            "default": "",
+            "title": "Location",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "place_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Place Id"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "stop_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Stop Id",
+            "type": "string"
+          },
+          "verification_status": {
+            "default": "unverified",
+            "enum": [
+              "unverified",
+              "proposed",
+              "verified",
+              "rejected"
+            ],
+            "title": "Verification Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "Stop",
+        "type": "object"
+      },
+      "Trip-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "categories": {
+            "items": {
+              "enum": [
+                "private",
+                "self_guide",
+                "school",
+                "incentive",
+                "group",
+                "other"
+              ],
+              "type": "string"
+            },
+            "maxItems": 6,
+            "title": "Categories",
+            "type": "array"
+          },
+          "data_origin": {
+            "default": "unknown",
+            "enum": [
+              "business",
+              "demo",
+              "synthetic_test",
+              "unknown"
+            ],
+            "title": "Data Origin",
+            "type": "string"
+          },
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/TripDay"
+            },
+            "title": "Days",
+            "type": "array"
+          },
+          "description": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Description",
+            "type": "string"
+          },
+          "destinations": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Destinations",
+            "type": "array"
+          },
+          "duration_days": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Duration Days",
+            "type": "integer"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "revision": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
+          "status": {
+            "default": "draft",
+            "enum": [
+              "idea",
+              "draft",
+              "planned",
+              "confirmed",
+              "completed",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "trip_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Trip Id",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "Trip",
+        "type": "object"
+      },
+      "Trip-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "categories": {
+            "items": {
+              "enum": [
+                "private",
+                "self_guide",
+                "school",
+                "incentive",
+                "group",
+                "other"
+              ],
+              "type": "string"
+            },
+            "maxItems": 6,
+            "title": "Categories",
+            "type": "array"
+          },
+          "data_origin": {
+            "default": "unknown",
+            "enum": [
+              "business",
+              "demo",
+              "synthetic_test",
+              "unknown"
+            ],
+            "title": "Data Origin",
+            "type": "string"
+          },
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/TripDay"
+            },
+            "title": "Days",
+            "type": "array"
+          },
+          "description": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Description",
+            "type": "string"
+          },
+          "destinations": {
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Destinations",
+            "type": "array"
+          },
+          "duration_days": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Duration Days",
+            "type": "integer"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "revision": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
+          "status": {
+            "default": "draft",
+            "enum": [
+              "idea",
+              "draft",
+              "planned",
+              "confirmed",
+              "completed",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "trip_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Trip Id",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "Trip",
+        "type": "object"
+      },
+      "TripAccepted": {
+        "properties": {
+          "status": {
+            "const": "queued",
+            "default": "queued",
+            "title": "Status",
+            "type": "string"
+          },
+          "trip_id": {
+            "format": "uuid",
+            "title": "Trip Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "trip_id"
+        ],
+        "title": "TripAccepted",
+        "type": "object"
+      },
+      "TripDay": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date"
+          },
+          "day_id": {
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+            "title": "Day Id",
+            "type": "string"
+          },
+          "day_number": {
+            "minimum": 1.0,
+            "title": "Day Number",
+            "type": "integer"
+          },
+          "internal_notes": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Internal Notes",
+            "type": "string"
+          },
+          "public_description": {
+            "default": "",
+            "maxLength": 20000,
+            "title": "Public Description",
+            "type": "string"
+          },
+          "stops": {
+            "items": {
+              "$ref": "#/components/schemas/Stop"
+            },
+            "title": "Stops",
+            "type": "array"
+          },
+          "time_zone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time Zone"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "day_number",
+          "title"
+        ],
+        "title": "TripDay",
+        "type": "object"
+      },
+      "TripPreviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "draft": {
+            "$ref": "#/components/schemas/DocumentDraft-Input"
+          },
+          "output_format": {
+            "default": "a4",
+            "enum": [
+              "a4",
+              "social"
+            ],
+            "title": "Output Format",
+            "type": "string"
+          }
+        },
+        "required": [
+          "draft"
+        ],
+        "title": "TripPreviewRequest",
+        "type": "object"
+      },
+      "TripRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "maxLength": 10000,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "TripRequest",
+        "type": "object"
+      },
+      "TripStatus": {
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "request_text": {
+            "title": "Request Text",
+            "type": "string"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          },
+          "status": {
+            "enum": [
+              "queued",
+              "running",
+              "completed",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "trip_id": {
+            "format": "uuid",
+            "title": "Trip Id",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "trip_id",
+          "request_text",
+          "status",
+          "result",
+          "error",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "TripStatus",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Tripse AI Trip Planner Demo v0.1",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/demo/conversations/{conversation}": {
+      "get": {
+        "operationId": "messages_api_demo_conversations__conversation__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "conversation",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Conversation",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Messages"
+      }
+    },
+    "/api/demo/messages": {
+      "post": {
+        "operationId": "send_api_demo_messages_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Message"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Send"
+      }
+    },
+    "/api/demo/scenarios": {
+      "get": {
+        "operationId": "scenarios_api_demo_scenarios_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Scenarios"
+      }
+    },
+    "/api/document-studio/access": {
+      "get": {
+        "operationId": "access_api_document_studio_access_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Access"
+      }
+    },
+    "/api/document-studio/assets": {
+      "get": {
+        "operationId": "asset_list_api_document_studio_assets_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Asset List"
+      },
+      "post": {
+        "operationId": "upload_asset_api_document_studio_assets_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "filename",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "Filename",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "rights_confirmed",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Rights Confirmed",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Asset"
+      }
+    },
+    "/api/document-studio/assets/{identifier}/content": {
+      "get": {
+        "operationId": "asset_content_api_document_studio_assets__identifier__content_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Asset Content"
+      }
+    },
+    "/api/document-studio/campaigns": {
+      "get": {
+        "operationId": "campaigns_api_document_studio_campaigns_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Campaign-Output"
+                  },
+                  "title": "Response Campaigns Api Document Studio Campaigns Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Campaigns"
+      },
+      "post": {
+        "operationId": "create_campaign_api_document_studio_campaigns_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Campaign-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Campaign-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Campaign"
+      }
+    },
+    "/api/document-studio/campaigns/{identifier}": {
+      "get": {
+        "operationId": "campaign_api_document_studio_campaigns__identifier__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Campaign-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Campaign"
+      },
+      "put": {
+        "operationId": "update_campaign_api_document_studio_campaigns__identifier__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Campaign-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Campaign-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Campaign"
+      }
+    },
+    "/api/document-studio/campaigns/{identifier}/preview": {
+      "get": {
+        "operationId": "preview_campaign_api_document_studio_campaigns__identifier__preview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "output_format",
+            "required": false,
+            "schema": {
+              "default": "a4",
+              "enum": [
+                "a4",
+                "social"
+              ],
+              "title": "Output Format",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preview Campaign"
+      }
+    },
+    "/api/document-studio/drafts": {
+      "get": {
+        "operationId": "drafts_api_document_studio_drafts_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentDraft-Output"
+                  },
+                  "title": "Response Drafts Api Document Studio Drafts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Drafts"
+      },
+      "post": {
+        "operationId": "create_draft_api_document_studio_drafts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDraft-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Draft"
+      }
+    },
+    "/api/document-studio/drafts/{identifier}": {
+      "get": {
+        "operationId": "draft_api_document_studio_drafts__identifier__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDraft-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Draft"
+      },
+      "put": {
+        "operationId": "update_draft_api_document_studio_drafts__identifier__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDraft-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Draft"
+      }
+    },
+    "/api/document-studio/drafts/{identifier}/preview": {
+      "get": {
+        "operationId": "preview_draft_api_document_studio_drafts__identifier__preview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "output_format",
+            "required": false,
+            "schema": {
+              "default": "a4",
+              "enum": [
+                "a4",
+                "social"
+              ],
+              "title": "Output Format",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preview Draft"
+      }
+    },
+    "/api/document-studio/examples": {
+      "get": {
+        "operationId": "examples_api_document_studio_examples_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Examples"
+      }
+    },
+    "/api/document-studio/examples/{identifier}/copy": {
+      "post": {
+        "operationId": "example_copy_api_document_studio_examples__identifier__copy_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExampleCopyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDraft-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Example Copy"
+      }
+    },
+    "/api/document-studio/examples/{identifier}/preview": {
+      "get": {
+        "operationId": "example_preview_api_document_studio_examples__identifier__preview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "title": "Identifier",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "output_format",
+            "required": false,
+            "schema": {
+              "default": "a4",
+              "enum": [
+                "a4",
+                "social"
+              ],
+              "title": "Output Format",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Example Preview"
+      }
+    },
+    "/api/document-studio/library": {
+      "get": {
+        "operationId": "list_library_api_document_studio_library_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 200,
+              "title": "Search",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "family",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "offer",
+                    "pilot",
+                    "marketing"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Family"
+            }
+          },
+          {
+            "in": "query",
+            "name": "template_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Template Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "document_status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "draft",
+                    "in_review",
+                    "ready",
+                    "archived"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Document Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "archived",
+            "required": false,
+            "schema": {
+              "default": "exclude",
+              "enum": [
+                "exclude",
+                "include",
+                "only"
+              ],
+              "title": "Archived",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "default": "updated_at",
+              "enum": [
+                "title",
+                "created_at",
+                "updated_at"
+              ],
+              "title": "Sort",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "default": "desc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "title": "Direction",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Library"
+      }
+    },
+    "/api/document-studio/library/{identifier}/archive": {
+      "post": {
+        "operationId": "archive_document_api_document_studio_library__identifier__archive_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibraryMutation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Archive Document"
+      }
+    },
+    "/api/document-studio/library/{identifier}/duplicate": {
+      "post": {
+        "operationId": "duplicate_document_api_document_studio_library__identifier__duplicate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibraryMutation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Duplicate Document"
+      }
+    },
+    "/api/document-studio/library/{identifier}/restore": {
+      "post": {
+        "operationId": "restore_document_api_document_studio_library__identifier__restore_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibraryMutation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Restore Document"
+      }
+    },
+    "/api/document-studio/library/{identifier}/revisions": {
+      "get": {
+        "operationId": "document_revisions_api_document_studio_library__identifier__revisions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentSummary"
+                  },
+                  "title": "Response Document Revisions Api Document Studio Library  Identifier  Revisions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Document Revisions"
+      }
+    },
+    "/api/document-studio/library/{identifier}/revisions/{revision}": {
+      "get": {
+        "operationId": "document_revision_api_document_studio_library__identifier__revisions__revision__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "revision",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "title": "Revision",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Document Revision"
+      }
+    },
+    "/api/document-studio/library/{identifier}/revisions/{revision}/preview": {
+      "get": {
+        "operationId": "revision_preview_api_document_studio_library__identifier__revisions__revision__preview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "revision",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "title": "Revision",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "output_format",
+            "required": false,
+            "schema": {
+              "default": "a4",
+              "enum": [
+                "a4",
+                "social"
+              ],
+              "title": "Output Format",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revision Preview"
+      }
+    },
+    "/api/document-studio/library/{identifier}/status": {
+      "post": {
+        "operationId": "document_status_api_document_studio_library__identifier__status_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusMutation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Document Status"
+      }
+    },
+    "/api/document-studio/marketing/preview": {
+      "post": {
+        "operationId": "preview_marketing_api_document_studio_marketing_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarketingPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preview Marketing"
+      }
+    },
+    "/api/document-studio/marketing/validate": {
+      "post": {
+        "operationId": "validate_marketing_api_document_studio_marketing_validate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarketingPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Validate Marketing"
+      }
+    },
+    "/api/document-studio/templates": {
+      "get": {
+        "operationId": "templates_api_document_studio_templates_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Templates"
+      }
+    },
+    "/api/document-studio/trip-documents/initialize": {
+      "post": {
+        "operationId": "initialize_sections_api_document_studio_trip_documents_initialize_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Initialize Sections"
+      }
+    },
+    "/api/document-studio/trip-documents/preview": {
+      "post": {
+        "operationId": "preview_trip_document_api_document_studio_trip_documents_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preview Trip Document"
+      }
+    },
+    "/api/document-studio/trip-documents/validate": {
+      "post": {
+        "operationId": "validate_trip_document_api_document_studio_trip_documents_validate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Validate Trip Document"
+      }
+    },
+    "/api/document-studio/trips": {
+      "get": {
+        "operationId": "trips_api_document_studio_trips_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Trip-Output"
+                  },
+                  "title": "Response Trips Api Document Studio Trips Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Trips"
+      },
+      "post": {
+        "operationId": "create_trip_api_document_studio_trips_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Trip-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trip-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Trip"
+      }
+    },
+    "/api/document-studio/trips/{identifier}": {
+      "get": {
+        "operationId": "trip_api_document_studio_trips__identifier__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trip-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Trip"
+      },
+      "put": {
+        "operationId": "update_trip_api_document_studio_trips__identifier__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "identifier",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$",
+              "title": "Identifier",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Trip-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trip-Output"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Trip"
+      }
+    },
+    "/api/trips": {
+      "post": {
+        "operationId": "create_trip_api_trips_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TripAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Trip"
+      }
+    },
+    "/api/trips/{trip_id}": {
+      "get": {
+        "operationId": "get_trip_api_trips__trip_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "trip_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Trip Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TripStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Trip"
+      }
+    },
+    "/api/viewer/{token}": {
+      "get": {
+        "operationId": "data_api_viewer__token__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Data"
+      }
+    },
+    "/api/webhooks/waha": {
+      "post": {
+        "operationId": "receive_api_webhooks_waha_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Receive"
+      }
+    },
+    "/demo/chat": {
+      "get": {
+        "operationId": "page_demo_chat_get",
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Page"
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/planner": {
+      "get": {
+        "operationId": "create_page_planner_get",
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Create Page"
+      }
+    },
+    "/trip/{token}": {
+      "get": {
+        "operationId": "page_trip__token__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Page"
+      }
+    }
+  }
+}

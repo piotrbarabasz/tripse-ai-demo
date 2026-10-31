@@ -1,3 +1,5 @@
+import { request } from "../../shared/api/client/transport";
+
 export type HealthStatus = { status: "ok"; generation_mode: "mock" | "live" };
 
 // Both local and cloud /health responses contain these fields. Deliberately
@@ -17,24 +19,5 @@ export function parseHealth(value: unknown): HealthStatus {
 }
 
 export async function readHealth(signal: AbortSignal): Promise<HealthStatus> {
-  const response = await fetch("/health", {
-    method: "GET",
-    signal,
-    credentials: "same-origin",
-    cache: "no-store",
-    redirect: "error",
-    headers: { Accept: "application/json" },
-  });
-  if (!response.ok) throw new Error("health-http-error");
-  if (
-    !response.headers
-      .get("content-type")
-      ?.split(";")[0]
-      ?.trim()
-      .endsWith("/json")
-  ) {
-    throw new Error("invalid-health-content-type");
-  }
-  const value: unknown = await response.json();
-  return parseHealth(value);
+  return (await request("/health", { json: parseHealth }, { signal })).data;
 }

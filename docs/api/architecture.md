@@ -22,7 +22,10 @@ operational properties. Migration does not replace them or promise transactions 
 document head/history objects. Existing cloud document data is shared demo data, not a
 new per-customer tenant store.
 
-Proposed API-001 client layer separates generated transport types from feature mappings.
+Implemented API-001 client layer separates generated transport types from feature mappings.
+The [implementation guide](api-001.md) documents offline composition, generated Zod
+guards, temporary gap projections and the in-memory query provider. Existing backend
+response semantics and local/cloud/readonly composition remain unchanged.
 Use same-origin relative URLs and preserve status/headers. Narrow adapters handle binary
 uploads, HTML previews and weakly specified JSON responses; do not pretend all endpoints
 are generated, fully typed JSON. TanStack Query belongs in frontend hooks, not backend

@@ -43,6 +43,11 @@ jobs:
       - name: Install frontend dependencies
         working-directory: frontend
         run: npm ci
+      - name: Check offline API schema and generated client drift
+        run: |
+          .venv/bin/python -m scripts.export_openapi --check
+          .venv/bin/python -m scripts.export_api_fixtures --check
+          npm --prefix frontend run api:check
       - name: Validate frontend TypeScript
         working-directory: frontend
         run: npm run typecheck

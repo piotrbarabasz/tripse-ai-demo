@@ -1,6 +1,6 @@
 # UI architecture
 
-Status: FRONT-001A shell plus FRONT-001B private FastAPI integration implemented.
+Status: FRONT-001A shell, FRONT-001B private FastAPI integration and API-001 client/query foundation implemented.
 See [frontend instructions](../../frontend/README.md) and
 [current integration evidence/limits](front-001b-integration.md). ADR-0017 remains proposed.
 See [source audit](../architecture/current-state-audit.md)
@@ -44,11 +44,15 @@ api, hooks and lib map here to shared/ui, app shell, shared/api and feature-owne
 This is a proposed organization choice, not a backend rename or owner-approved taxonomy.
 Create future feature folders only when implementing their approved use cases.
 
-TanStack Query will own remote reads, polling, invalidation and mutation state after
-API-001. Local form edits, dirty state and preview requests remain feature-owned;
+API-001 now supplies TanStack Query at the application boundary and reusable
+remote read/polling/invalidation/mutation options. See the
+[API client guide](../api/api-001.md) for concrete usage and remaining schema gaps.
+Local form edits, dirty state and preview requests remain feature-owned;
 never refetch over unsaved fields. Use revision-aware save responses to update cache;
-409 presents a conflict instead of silently overwriting. Cache keys distinguish mode,
-resource and filters; clear private data on session/auth failure. No persistent query
+409 presents a conflict instead of silently overwriting. Cache keys distinguish
+domain/resource and filters within one same-origin application composition; recreate
+the client if a future mode/identity switch is introduced. Clear private data on
+session failure (401). No persistent query
 cache, token storage or customer payload logging by default.
 
 Domain rules remain in FastAPI services/models. React renders validation results and
@@ -67,7 +71,8 @@ full operational Hub/Planner workflows remain FRONT-002. It performs no API read
 FRONT-001B adds compiled private assets/navigation and the same-origin `/health`
 PoC (blueprint section 15), with loading, HTTP/schema errors, timeout and unmount
 cancellation. Health only proves connectivity; its existing cloud middleware exception
-is unchanged. It cannot establish session/authentication. API-001 remains separate.
+is unchanged. It cannot establish session/authentication. API-001 reuses its existing
+UI lifecycle with the shared transport and preserves its regression tests.
 BrowserRouter derives `/app` from Vite's `/app/` base and handles both entry forms.
 `app/spa.py` owns serving/security presentation, not domain logic. Per-response style
 nonces support Radix scroll-lock CSS without unsafe-inline/eval; main.tsx sets the

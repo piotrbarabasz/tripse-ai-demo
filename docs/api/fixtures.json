@@ -1,0 +1,1794 @@
+{
+  "accepted": {
+    "status": "queued",
+    "trip_id": "00000000-0000-4000-8000-000000000001"
+  },
+  "access": {
+    "can_edit": true
+  },
+  "asset": {
+    "asset_id": "synthetic-asset",
+    "created_at": "2026-10-31T00:00:00Z",
+    "height": 2,
+    "media_type": "image/png",
+    "original_name": "synthetic.png",
+    "revision": 1,
+    "rights_confirmed": true,
+    "schema_version": 1,
+    "width": 2
+  },
+  "draft": {
+    "archived_at": null,
+    "campaign_snapshot": null,
+    "campaign_trip_snapshots": [],
+    "confidentiality": "client",
+    "created_at": "2026-10-31T00:00:00Z",
+    "created_by": null,
+    "data_origin": "unknown",
+    "date_label": "",
+    "day_overrides": [],
+    "demo_example": false,
+    "document_id": "synthetic-draft",
+    "document_status": "draft",
+    "duplicated_from_document_id": null,
+    "editorial_notes": "",
+    "language": "pl",
+    "last_library_operation": null,
+    "layout_variant": "standard",
+    "offer_data": {
+      "accommodation": "",
+      "concept_only": false,
+      "cover_asset_id": null,
+      "cover_position": {
+        "x": 50.0,
+        "y": 50.0,
+        "zoom": 1.0
+      },
+      "cta": "",
+      "excluded": [],
+      "highlights": [],
+      "included": [],
+      "photo_asset_ids": [],
+      "price": {
+        "amount": null,
+        "assumptions": "",
+        "currency": "PLN",
+        "participant_count": null,
+        "source": "",
+        "status": "unknown",
+        "unit": "person"
+      },
+      "summary": "",
+      "transport": ""
+    },
+    "offer_details": {
+      "age_group": "",
+      "goals": [],
+      "group_size": null,
+      "hotel": {
+        "amenities": [],
+        "common_spaces": "",
+        "conference_rooms": "",
+        "location": "",
+        "name_or_standard": "",
+        "photo_asset_ids": [],
+        "room_types": "",
+        "source": "",
+        "status": "unknown"
+      },
+      "materials": "",
+      "meals_events": "",
+      "online_briefing": "Do uzgodnienia — briefing online nie jest gwarantowaną usługą.",
+      "organization_scope": "",
+      "route_summary": {
+        "drive_km": null,
+        "end": "",
+        "intensity": "",
+        "regions": [],
+        "source": "",
+        "start": "",
+        "verification_status": "unverified",
+        "walk_km": null
+      },
+      "safety_requirements": "",
+      "self_arrangements": "",
+      "supervision": "",
+      "support": "",
+      "team_building": "",
+      "variants": "",
+      "workshops": ""
+    },
+    "pilot_data": null,
+    "revision": 1,
+    "schema_version": 1,
+    "sections": [
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 0,
+        "role": "cover",
+        "rows": [],
+        "section_id": "synthetic-section-1",
+        "title": "Okładka",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 1,
+        "role": "summary",
+        "rows": [],
+        "section_id": "synthetic-section-2",
+        "title": "Podsumowanie wyprawy",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 2,
+        "role": "highlights",
+        "rows": [],
+        "section_id": "synthetic-section-3",
+        "title": "Najważniejsze atrakcje i wyróżniki",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 3,
+        "role": "program",
+        "rows": [],
+        "section_id": "synthetic-section-4",
+        "title": "Program dzień po dniu",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 4,
+        "role": "accommodation",
+        "rows": [],
+        "section_id": "synthetic-section-5",
+        "title": "Zakwaterowanie",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 5,
+        "role": "transport",
+        "rows": [],
+        "section_id": "synthetic-section-6",
+        "title": "Transport",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 6,
+        "role": "included",
+        "rows": [],
+        "section_id": "synthetic-section-7",
+        "title": "Świadczenia w cenie",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 7,
+        "role": "excluded",
+        "rows": [],
+        "section_id": "synthetic-section-8",
+        "title": "Świadczenia poza ceną",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 8,
+        "role": "price",
+        "rows": [],
+        "section_id": "synthetic-section-9",
+        "title": "Cena i warunki",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 9,
+        "role": "cta",
+        "rows": [],
+        "section_id": "synthetic-section-10",
+        "title": "Kontakt / CTA",
+        "visible": true
+      }
+    ],
+    "status": "draft",
+    "template_id": "offer.private",
+    "template_version": "0.5.0",
+    "title": "Synthetic source",
+    "trip_snapshot": {
+      "categories": [],
+      "data_origin": "unknown",
+      "days": [],
+      "description": "",
+      "destinations": [],
+      "duration_days": 0,
+      "end_date": null,
+      "revision": 1,
+      "schema_version": 1,
+      "start_date": null,
+      "status": "draft",
+      "title": "Synthetic source",
+      "trip_id": "synthetic-trip",
+      "updated_at": "2026-10-31T00:00:00Z"
+    },
+    "updated_at": "2026-10-31T00:00:00Z",
+    "updated_by": null
+  },
+  "duplicate": {
+    "archived_at": null,
+    "campaign_snapshot": null,
+    "campaign_trip_snapshots": [],
+    "confidentiality": "client",
+    "created_at": "2026-10-31T00:00:00Z",
+    "created_by": null,
+    "data_origin": "unknown",
+    "date_label": "",
+    "day_overrides": [],
+    "demo_example": false,
+    "document_id": "0aad476d32675788af252dbd7326c3df",
+    "document_status": "draft",
+    "duplicated_from_document_id": "synthetic-draft",
+    "editorial_notes": "",
+    "language": "pl",
+    "last_library_operation": null,
+    "layout_variant": "standard",
+    "offer_data": {
+      "accommodation": "",
+      "concept_only": false,
+      "cover_asset_id": null,
+      "cover_position": {
+        "x": 50.0,
+        "y": 50.0,
+        "zoom": 1.0
+      },
+      "cta": "",
+      "excluded": [],
+      "highlights": [],
+      "included": [],
+      "photo_asset_ids": [],
+      "price": {
+        "amount": null,
+        "assumptions": "",
+        "currency": "PLN",
+        "participant_count": null,
+        "source": "",
+        "status": "unknown",
+        "unit": "person"
+      },
+      "summary": "",
+      "transport": ""
+    },
+    "offer_details": {
+      "age_group": "",
+      "goals": [],
+      "group_size": null,
+      "hotel": {
+        "amenities": [],
+        "common_spaces": "",
+        "conference_rooms": "",
+        "location": "",
+        "name_or_standard": "",
+        "photo_asset_ids": [],
+        "room_types": "",
+        "source": "",
+        "status": "unknown"
+      },
+      "materials": "",
+      "meals_events": "",
+      "online_briefing": "Do uzgodnienia — briefing online nie jest gwarantowaną usługą.",
+      "organization_scope": "",
+      "route_summary": {
+        "drive_km": null,
+        "end": "",
+        "intensity": "",
+        "regions": [],
+        "source": "",
+        "start": "",
+        "verification_status": "unverified",
+        "walk_km": null
+      },
+      "safety_requirements": "",
+      "self_arrangements": "",
+      "supervision": "",
+      "support": "",
+      "team_building": "",
+      "variants": "",
+      "workshops": ""
+    },
+    "pilot_data": null,
+    "revision": 1,
+    "schema_version": 1,
+    "sections": [
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 0,
+        "role": "cover",
+        "rows": [],
+        "section_id": "synthetic-section-1",
+        "title": "Okładka",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 1,
+        "role": "summary",
+        "rows": [],
+        "section_id": "synthetic-section-2",
+        "title": "Podsumowanie wyprawy",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 2,
+        "role": "highlights",
+        "rows": [],
+        "section_id": "synthetic-section-3",
+        "title": "Najważniejsze atrakcje i wyróżniki",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 3,
+        "role": "program",
+        "rows": [],
+        "section_id": "synthetic-section-4",
+        "title": "Program dzień po dniu",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 4,
+        "role": "accommodation",
+        "rows": [],
+        "section_id": "synthetic-section-5",
+        "title": "Zakwaterowanie",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 5,
+        "role": "transport",
+        "rows": [],
+        "section_id": "synthetic-section-6",
+        "title": "Transport",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 6,
+        "role": "included",
+        "rows": [],
+        "section_id": "synthetic-section-7",
+        "title": "Świadczenia w cenie",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 7,
+        "role": "excluded",
+        "rows": [],
+        "section_id": "synthetic-section-8",
+        "title": "Świadczenia poza ceną",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 8,
+        "role": "price",
+        "rows": [],
+        "section_id": "synthetic-section-9",
+        "title": "Cena i warunki",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 9,
+        "role": "cta",
+        "rows": [],
+        "section_id": "synthetic-section-10",
+        "title": "Kontakt / CTA",
+        "visible": true
+      }
+    ],
+    "status": "draft",
+    "template_id": "offer.private",
+    "template_version": "0.5.0",
+    "title": "Synthetic source — kopia",
+    "trip_snapshot": {
+      "categories": [],
+      "data_origin": "unknown",
+      "days": [],
+      "description": "",
+      "destinations": [],
+      "duration_days": 0,
+      "end_date": null,
+      "revision": 1,
+      "schema_version": 1,
+      "start_date": null,
+      "status": "draft",
+      "title": "Synthetic source",
+      "trip_id": "synthetic-trip",
+      "updated_at": "2026-10-31T00:00:00Z"
+    },
+    "updated_at": "2026-10-31T00:00:00Z",
+    "updated_by": null
+  },
+  "health": {
+    "generation_mode": "mock",
+    "status": "ok"
+  },
+  "historical": {
+    "archived_at": null,
+    "campaign_snapshot": null,
+    "campaign_trip_snapshots": [],
+    "confidentiality": "client",
+    "created_at": "2026-10-31T00:00:00Z",
+    "created_by": null,
+    "data_origin": "unknown",
+    "date_label": "",
+    "day_overrides": [],
+    "demo_example": false,
+    "document_id": "synthetic-draft",
+    "document_status": "draft",
+    "duplicated_from_document_id": null,
+    "editorial_notes": "",
+    "language": "pl",
+    "last_library_operation": null,
+    "layout_variant": "standard",
+    "offer_data": {
+      "accommodation": "",
+      "concept_only": false,
+      "cover_asset_id": null,
+      "cover_position": {
+        "x": 50.0,
+        "y": 50.0,
+        "zoom": 1.0
+      },
+      "cta": "",
+      "excluded": [],
+      "highlights": [],
+      "included": [],
+      "photo_asset_ids": [],
+      "price": {
+        "amount": null,
+        "assumptions": "",
+        "currency": "PLN",
+        "participant_count": null,
+        "source": "",
+        "status": "unknown",
+        "unit": "person"
+      },
+      "summary": "",
+      "transport": ""
+    },
+    "offer_details": {
+      "age_group": "",
+      "goals": [],
+      "group_size": null,
+      "hotel": {
+        "amenities": [],
+        "common_spaces": "",
+        "conference_rooms": "",
+        "location": "",
+        "name_or_standard": "",
+        "photo_asset_ids": [],
+        "room_types": "",
+        "source": "",
+        "status": "unknown"
+      },
+      "materials": "",
+      "meals_events": "",
+      "online_briefing": "Do uzgodnienia — briefing online nie jest gwarantowaną usługą.",
+      "organization_scope": "",
+      "route_summary": {
+        "drive_km": null,
+        "end": "",
+        "intensity": "",
+        "regions": [],
+        "source": "",
+        "start": "",
+        "verification_status": "unverified",
+        "walk_km": null
+      },
+      "safety_requirements": "",
+      "self_arrangements": "",
+      "supervision": "",
+      "support": "",
+      "team_building": "",
+      "variants": "",
+      "workshops": ""
+    },
+    "pilot_data": null,
+    "revision": 1,
+    "schema_version": 1,
+    "sections": [
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 0,
+        "role": "cover",
+        "rows": [],
+        "section_id": "synthetic-section-1",
+        "title": "Okładka",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 1,
+        "role": "summary",
+        "rows": [],
+        "section_id": "synthetic-section-2",
+        "title": "Podsumowanie wyprawy",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 2,
+        "role": "highlights",
+        "rows": [],
+        "section_id": "synthetic-section-3",
+        "title": "Najważniejsze atrakcje i wyróżniki",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 3,
+        "role": "program",
+        "rows": [],
+        "section_id": "synthetic-section-4",
+        "title": "Program dzień po dniu",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 4,
+        "role": "accommodation",
+        "rows": [],
+        "section_id": "synthetic-section-5",
+        "title": "Zakwaterowanie",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 5,
+        "role": "transport",
+        "rows": [],
+        "section_id": "synthetic-section-6",
+        "title": "Transport",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 6,
+        "role": "included",
+        "rows": [],
+        "section_id": "synthetic-section-7",
+        "title": "Świadczenia w cenie",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 7,
+        "role": "excluded",
+        "rows": [],
+        "section_id": "synthetic-section-8",
+        "title": "Świadczenia poza ceną",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 8,
+        "role": "price",
+        "rows": [],
+        "section_id": "synthetic-section-9",
+        "title": "Cena i warunki",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 9,
+        "role": "cta",
+        "rows": [],
+        "section_id": "synthetic-section-10",
+        "title": "Kontakt / CTA",
+        "visible": true
+      }
+    ],
+    "status": "draft",
+    "template_id": "offer.private",
+    "template_version": "0.5.0",
+    "title": "Synthetic source",
+    "trip_snapshot": {
+      "categories": [],
+      "data_origin": "unknown",
+      "days": [],
+      "description": "",
+      "destinations": [],
+      "duration_days": 0,
+      "end_date": null,
+      "revision": 1,
+      "schema_version": 1,
+      "start_date": null,
+      "status": "draft",
+      "title": "Synthetic source",
+      "trip_id": "synthetic-trip",
+      "updated_at": "2026-10-31T00:00:00Z"
+    },
+    "updated_at": "2026-10-31T00:00:00Z",
+    "updated_by": null
+  },
+  "job": {
+    "created_at": "2026-10-31T00:00:00Z",
+    "error": null,
+    "request_text": "Synthetic contract trip",
+    "result": null,
+    "status": "queued",
+    "trip_id": "00000000-0000-4000-8000-000000000001",
+    "updated_at": "2026-10-31T00:00:00Z"
+  },
+  "library": {
+    "has_more": false,
+    "items": [
+      {
+        "archived_at": null,
+        "confidentiality": "client",
+        "created_at": "2026-10-31T00:00:00Z",
+        "created_by": null,
+        "document_id": "0aad476d32675788af252dbd7326c3df",
+        "document_status": "draft",
+        "duplicated_from_document_id": "synthetic-draft",
+        "family": "offer",
+        "layout_variant": "standard",
+        "revision": 1,
+        "source_id": "synthetic-trip",
+        "source_title": "Synthetic source",
+        "source_type": "trip",
+        "template_id": "offer.private",
+        "title": "Synthetic source — kopia",
+        "updated_at": "2026-10-31T00:00:00Z",
+        "updated_by": null
+      },
+      {
+        "archived_at": null,
+        "confidentiality": "client",
+        "created_at": "2026-10-31T00:00:00Z",
+        "created_by": null,
+        "document_id": "synthetic-draft",
+        "document_status": "in_review",
+        "duplicated_from_document_id": null,
+        "family": "offer",
+        "layout_variant": "standard",
+        "revision": 2,
+        "source_id": "synthetic-trip",
+        "source_title": "Synthetic source",
+        "source_type": "trip",
+        "template_id": "offer.private",
+        "title": "Synthetic source",
+        "updated_at": "2026-10-31T00:00:00Z",
+        "updated_by": null
+      }
+    ],
+    "limit": 50,
+    "offset": 0,
+    "total": 2
+  },
+  "revisions": [
+    {
+      "archived_at": null,
+      "confidentiality": "client",
+      "created_at": "2026-10-31T00:00:00Z",
+      "created_by": null,
+      "document_id": "synthetic-draft",
+      "document_status": "in_review",
+      "duplicated_from_document_id": null,
+      "family": "offer",
+      "layout_variant": "standard",
+      "revision": 2,
+      "source_id": "synthetic-trip",
+      "source_title": "Synthetic source",
+      "source_type": "trip",
+      "template_id": "offer.private",
+      "title": "Synthetic source",
+      "updated_at": "2026-10-31T00:00:00Z",
+      "updated_by": null
+    },
+    {
+      "archived_at": null,
+      "confidentiality": "client",
+      "created_at": "2026-10-31T00:00:00Z",
+      "created_by": null,
+      "document_id": "synthetic-draft",
+      "document_status": "draft",
+      "duplicated_from_document_id": null,
+      "family": "offer",
+      "layout_variant": "standard",
+      "revision": 1,
+      "source_id": "synthetic-trip",
+      "source_title": "Synthetic source",
+      "source_type": "trip",
+      "template_id": "offer.private",
+      "title": "Synthetic source",
+      "updated_at": "2026-10-31T00:00:00Z",
+      "updated_by": null
+    }
+  ],
+  "status": {
+    "archived_at": null,
+    "campaign_snapshot": null,
+    "campaign_trip_snapshots": [],
+    "confidentiality": "client",
+    "created_at": "2026-10-31T00:00:00Z",
+    "created_by": null,
+    "data_origin": "unknown",
+    "date_label": "",
+    "day_overrides": [],
+    "demo_example": false,
+    "document_id": "synthetic-draft",
+    "document_status": "in_review",
+    "duplicated_from_document_id": null,
+    "editorial_notes": "",
+    "language": "pl",
+    "last_library_operation": {
+      "base_revision": 1,
+      "kind": "status",
+      "operation_id": "00000000-0000-4000-8000-000000000002"
+    },
+    "layout_variant": "standard",
+    "offer_data": {
+      "accommodation": "",
+      "concept_only": false,
+      "cover_asset_id": null,
+      "cover_position": {
+        "x": 50.0,
+        "y": 50.0,
+        "zoom": 1.0
+      },
+      "cta": "",
+      "excluded": [],
+      "highlights": [],
+      "included": [],
+      "photo_asset_ids": [],
+      "price": {
+        "amount": null,
+        "assumptions": "",
+        "currency": "PLN",
+        "participant_count": null,
+        "source": "",
+        "status": "unknown",
+        "unit": "person"
+      },
+      "summary": "",
+      "transport": ""
+    },
+    "offer_details": {
+      "age_group": "",
+      "goals": [],
+      "group_size": null,
+      "hotel": {
+        "amenities": [],
+        "common_spaces": "",
+        "conference_rooms": "",
+        "location": "",
+        "name_or_standard": "",
+        "photo_asset_ids": [],
+        "room_types": "",
+        "source": "",
+        "status": "unknown"
+      },
+      "materials": "",
+      "meals_events": "",
+      "online_briefing": "Do uzgodnienia — briefing online nie jest gwarantowaną usługą.",
+      "organization_scope": "",
+      "route_summary": {
+        "drive_km": null,
+        "end": "",
+        "intensity": "",
+        "regions": [],
+        "source": "",
+        "start": "",
+        "verification_status": "unverified",
+        "walk_km": null
+      },
+      "safety_requirements": "",
+      "self_arrangements": "",
+      "supervision": "",
+      "support": "",
+      "team_building": "",
+      "variants": "",
+      "workshops": ""
+    },
+    "pilot_data": null,
+    "revision": 2,
+    "schema_version": 1,
+    "sections": [
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 0,
+        "role": "cover",
+        "rows": [],
+        "section_id": "synthetic-section-1",
+        "title": "Okładka",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 1,
+        "role": "summary",
+        "rows": [],
+        "section_id": "synthetic-section-2",
+        "title": "Podsumowanie wyprawy",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 2,
+        "role": "highlights",
+        "rows": [],
+        "section_id": "synthetic-section-3",
+        "title": "Najważniejsze atrakcje i wyróżniki",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 3,
+        "role": "program",
+        "rows": [],
+        "section_id": "synthetic-section-4",
+        "title": "Program dzień po dniu",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 4,
+        "role": "accommodation",
+        "rows": [],
+        "section_id": "synthetic-section-5",
+        "title": "Zakwaterowanie",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 5,
+        "role": "transport",
+        "rows": [],
+        "section_id": "synthetic-section-6",
+        "title": "Transport",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 6,
+        "role": "included",
+        "rows": [],
+        "section_id": "synthetic-section-7",
+        "title": "Świadczenia w cenie",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 7,
+        "role": "excluded",
+        "rows": [],
+        "section_id": "synthetic-section-8",
+        "title": "Świadczenia poza ceną",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 8,
+        "role": "price",
+        "rows": [],
+        "section_id": "synthetic-section-9",
+        "title": "Cena i warunki",
+        "visible": true
+      },
+      {
+        "body": "",
+        "columns": [],
+        "day_id": null,
+        "images": [],
+        "items": [],
+        "kind": "source",
+        "knowledge": null,
+        "logistics": null,
+        "order": 9,
+        "role": "cta",
+        "rows": [],
+        "section_id": "synthetic-section-10",
+        "title": "Kontakt / CTA",
+        "visible": true
+      }
+    ],
+    "status": "draft",
+    "template_id": "offer.private",
+    "template_version": "0.5.0",
+    "title": "Synthetic source",
+    "trip_snapshot": {
+      "categories": [],
+      "data_origin": "unknown",
+      "days": [],
+      "description": "",
+      "destinations": [],
+      "duration_days": 0,
+      "end_date": null,
+      "revision": 1,
+      "schema_version": 1,
+      "start_date": null,
+      "status": "draft",
+      "title": "Synthetic source",
+      "trip_id": "synthetic-trip",
+      "updated_at": "2026-10-31T00:00:00Z"
+    },
+    "updated_at": "2026-10-31T00:00:00Z",
+    "updated_by": null
+  },
+  "templates": [
+    {
+      "audience": "Klient prywatny",
+      "confidentiality": "client",
+      "default_sections": [
+        {
+          "binding": "cover",
+          "required": true,
+          "role": "cover",
+          "title": "Okładka"
+        },
+        {
+          "binding": "summary",
+          "required": true,
+          "role": "summary",
+          "title": "Podsumowanie wyprawy"
+        },
+        {
+          "binding": "highlights",
+          "required": true,
+          "role": "highlights",
+          "title": "Najważniejsze atrakcje i wyróżniki"
+        },
+        {
+          "binding": "program",
+          "required": true,
+          "role": "program",
+          "title": "Program dzień po dniu"
+        },
+        {
+          "binding": "accommodation",
+          "required": true,
+          "role": "accommodation",
+          "title": "Zakwaterowanie"
+        },
+        {
+          "binding": "transport",
+          "required": true,
+          "role": "transport",
+          "title": "Transport"
+        },
+        {
+          "binding": "included",
+          "required": true,
+          "role": "included",
+          "title": "Świadczenia w cenie"
+        },
+        {
+          "binding": "excluded",
+          "required": true,
+          "role": "excluded",
+          "title": "Świadczenia poza ceną"
+        },
+        {
+          "binding": "price",
+          "required": true,
+          "role": "price",
+          "title": "Cena i warunki"
+        },
+        {
+          "binding": "cta",
+          "required": true,
+          "role": "cta",
+          "title": "Kontakt / CTA"
+        }
+      ],
+      "description": "Program i opis indywidualnego wyjazdu.",
+      "family": "offer",
+      "layout_variants": [
+        "standard"
+      ],
+      "name": "Wyjazd indywidualny",
+      "source_type": "trip",
+      "template_id": "offer.private",
+      "template_version": "0.5.0"
+    },
+    {
+      "audience": "Podróżnik samodzielny",
+      "confidentiality": "client",
+      "default_sections": [
+        {
+          "binding": "cover",
+          "required": true,
+          "role": "cover",
+          "title": "Self-Guide — bez pilota na miejscu"
+        },
+        {
+          "binding": "self_guide",
+          "required": true,
+          "role": "how",
+          "title": "Jak działa Self-Guide?"
+        },
+        {
+          "binding": "route_summary",
+          "required": false,
+          "role": "route_summary",
+          "title": "Podsumowanie trasy"
+        },
+        {
+          "binding": "organization_scope",
+          "required": true,
+          "role": "scope",
+          "title": "Organizacja po stronie TRIPSE"
+        },
+        {
+          "binding": "self_arrangements",
+          "required": true,
+          "role": "own",
+          "title": "Co klient organizuje samodzielnie?"
+        },
+        {
+          "binding": "program",
+          "required": true,
+          "role": "program",
+          "title": "Program dzień po dniu"
+        },
+        {
+          "binding": "transport",
+          "required": true,
+          "role": "transport",
+          "title": "Transport i przemieszczanie się"
+        },
+        {
+          "binding": "accommodation",
+          "required": true,
+          "role": "accommodation",
+          "title": "Zakwaterowanie"
+        },
+        {
+          "binding": "materials",
+          "required": true,
+          "role": "materials",
+          "title": "Materiały i mapy dla uczestników"
+        },
+        {
+          "binding": "support",
+          "required": true,
+          "role": "support",
+          "title": "Zakres wsparcia"
+        },
+        {
+          "binding": "online_briefing",
+          "required": false,
+          "role": "briefing",
+          "title": "Briefing online — do uzgodnienia"
+        },
+        {
+          "binding": "included",
+          "required": true,
+          "role": "included",
+          "title": "Świadczenia w cenie"
+        },
+        {
+          "binding": "excluded",
+          "required": true,
+          "role": "excluded",
+          "title": "Świadczenia poza ceną"
+        },
+        {
+          "binding": "price",
+          "required": true,
+          "role": "price",
+          "title": "Wycena i warunki"
+        },
+        {
+          "binding": "cta",
+          "required": true,
+          "role": "cta",
+          "title": "Kontakt"
+        }
+      ],
+      "description": "Wyjazd bez pilota; zakres wsparcia wymaga ustalenia.",
+      "family": "offer",
+      "layout_variants": [
+        "standard"
+      ],
+      "name": "Self-Guide",
+      "source_type": "trip",
+      "template_id": "offer.self_guide",
+      "template_version": "0.5.0"
+    },
+    {
+      "audience": "Szkoła",
+      "confidentiality": "client",
+      "default_sections": [
+        {
+          "binding": "cover",
+          "required": true,
+          "role": "cover",
+          "title": "Wycieczka szkolna"
+        },
+        {
+          "binding": "school_group",
+          "required": true,
+          "role": "group",
+          "title": "Informacje o grupie"
+        },
+        {
+          "binding": "education",
+          "required": true,
+          "role": "education",
+          "title": "Edukacja"
+        },
+        {
+          "binding": "nature",
+          "required": true,
+          "role": "nature",
+          "title": "Przyroda"
+        },
+        {
+          "binding": "integration",
+          "required": true,
+          "role": "integration",
+          "title": "Integracja"
+        },
+        {
+          "binding": "program",
+          "required": true,
+          "role": "program",
+          "title": "Program wycieczki"
+        },
+        {
+          "binding": "workshops",
+          "required": true,
+          "role": "activities",
+          "title": "Aktywności i warsztaty"
+        },
+        {
+          "binding": "transport",
+          "required": true,
+          "role": "transport",
+          "title": "Transport"
+        },
+        {
+          "binding": "accommodation",
+          "required": true,
+          "role": "accommodation",
+          "title": "Wyżywienie i zakwaterowanie"
+        },
+        {
+          "binding": "supervision",
+          "required": true,
+          "role": "supervision",
+          "title": "Organizacja i odpowiedzialność opiekunów"
+        },
+        {
+          "binding": "safety_requirements",
+          "required": false,
+          "role": "safety",
+          "title": "Wymagania i bezpieczeństwo organizacyjne"
+        },
+        {
+          "binding": "included",
+          "required": true,
+          "role": "included",
+          "title": "Świadczenia w cenie"
+        },
+        {
+          "binding": "excluded",
+          "required": true,
+          "role": "excluded",
+          "title": "Poza ceną"
+        },
+        {
+          "binding": "price",
+          "required": true,
+          "role": "price",
+          "title": "Cena i warunki"
+        },
+        {
+          "binding": "cta",
+          "required": true,
+          "role": "cta",
+          "title": "Kontakt"
+        }
+      ],
+      "description": "Program edukacyjny i integracyjny.",
+      "family": "offer",
+      "layout_variants": [
+        "standard"
+      ],
+      "name": "Wycieczka szkolna",
+      "source_type": "trip",
+      "template_id": "offer.school",
+      "template_version": "0.5.0"
+    },
+    {
+      "audience": "Firma",
+      "confidentiality": "client",
+      "default_sections": [
+        {
+          "binding": "cover",
+          "required": true,
+          "role": "cover",
+          "title": "Wyjazd firmowy / incentive"
+        },
+        {
+          "binding": "summary",
+          "required": true,
+          "role": "summary",
+          "title": "Cel wyjazdu dla zespołu"
+        },
+        {
+          "binding": "highlights",
+          "required": true,
+          "role": "highlights",
+          "title": "Najważniejsze doświadczenia"
+        },
+        {
+          "binding": "team_group",
+          "required": false,
+          "role": "team_group",
+          "title": "Parametry zespołu"
+        },
+        {
+          "binding": "program",
+          "required": true,
+          "role": "program",
+          "title": "Program dzień po dniu"
+        },
+        {
+          "binding": "hotel",
+          "required": true,
+          "role": "hotel",
+          "title": "Hotel / nocleg / infrastruktura obiektu"
+        },
+        {
+          "binding": "team_building",
+          "required": false,
+          "role": "team",
+          "title": "Integracja i team building"
+        },
+        {
+          "binding": "workshops",
+          "required": false,
+          "role": "workshops",
+          "title": "Szkolenia, warsztaty i spotkania"
+        },
+        {
+          "binding": "meals_events",
+          "required": false,
+          "role": "meals",
+          "title": "Posiłki i wydarzenia wieczorne"
+        },
+        {
+          "binding": "transport",
+          "required": true,
+          "role": "transport",
+          "title": "Transport i logistyka"
+        },
+        {
+          "binding": "included",
+          "required": true,
+          "role": "included",
+          "title": "W cenie"
+        },
+        {
+          "binding": "excluded",
+          "required": true,
+          "role": "excluded",
+          "title": "Poza ceną"
+        },
+        {
+          "binding": "variants",
+          "required": true,
+          "role": "variants",
+          "title": "Warianty"
+        },
+        {
+          "binding": "price",
+          "required": true,
+          "role": "price",
+          "title": "Wycena i warunki"
+        },
+        {
+          "binding": "cta",
+          "required": true,
+          "role": "cta",
+          "title": "Kontakt"
+        }
+      ],
+      "description": "Program wyjazdu zespołowego.",
+      "family": "offer",
+      "layout_variants": [
+        "standard"
+      ],
+      "name": "Wyjazd firmowy / incentive",
+      "source_type": "trip",
+      "template_id": "offer.incentive",
+      "template_version": "0.5.0"
+    },
+    {
+      "audience": "Odbiorca marketingu",
+      "confidentiality": "public",
+      "default_sections": [
+        {
+          "binding": "collection",
+          "required": true,
+          "role": "collection",
+          "title": "Kolekcja wyjazdów"
+        }
+      ],
+      "description": "Kolekcja wielu kierunków z jednej kampanii.",
+      "family": "marketing",
+      "layout_variants": [
+        "new_trips",
+        "theme_collection"
+      ],
+      "name": "Nowości / kolekcje",
+      "source_type": "campaign",
+      "template_id": "marketing.collection",
+      "template_version": "0.5.0"
+    },
+    {
+      "audience": "Pilot",
+      "confidentiality": "internal_restricted",
+      "default_sections": [
+        {
+          "binding": "cover",
+          "required": true,
+          "role": "cover",
+          "title": "Informacje o wyjeździe"
+        },
+        {
+          "binding": "pilot_group",
+          "required": true,
+          "role": "group",
+          "title": "Pilot i grupa"
+        },
+        {
+          "binding": "flights",
+          "required": true,
+          "role": "flights",
+          "title": "Przyloty / wyloty"
+        },
+        {
+          "binding": "transfers",
+          "required": true,
+          "role": "transfers",
+          "title": "Transfery i punkty zbiórki"
+        },
+        {
+          "binding": "accommodations",
+          "required": true,
+          "role": "accommodations",
+          "title": "Noclegi"
+        },
+        {
+          "binding": "activity_bookings",
+          "required": true,
+          "role": "bookings",
+          "title": "Rezerwacje atrakcji"
+        },
+        {
+          "binding": "program",
+          "required": true,
+          "role": "program",
+          "title": "Program każdego dnia"
+        },
+        {
+          "binding": "contacts",
+          "required": true,
+          "role": "contacts",
+          "title": "Kontakty organizacyjne"
+        },
+        {
+          "binding": "open_items",
+          "required": true,
+          "role": "open",
+          "title": "Sprawy do potwierdzenia"
+        },
+        {
+          "binding": "internal_notes",
+          "required": false,
+          "role": "notes",
+          "title": "Notatki pilota"
+        }
+      ],
+      "description": "Skrót programu dla pilota. Logistyka do uzupełnienia.",
+      "family": "pilot",
+      "layout_variants": [
+        "standard"
+      ],
+      "name": "Rozpiska podstawowa",
+      "source_type": "trip",
+      "template_id": "pilot.basic",
+      "template_version": "0.5.0"
+    },
+    {
+      "audience": "Pilot",
+      "confidentiality": "internal_restricted",
+      "default_sections": [
+        {
+          "binding": "cover",
+          "required": true,
+          "role": "cover",
+          "title": "Metryka wyjazdu"
+        },
+        {
+          "binding": "pilot_group",
+          "required": false,
+          "role": "group",
+          "title": "Pilot i grupa"
+        },
+        {
+          "binding": "route",
+          "required": true,
+          "role": "route",
+          "title": "Tabela całej trasy"
+        },
+        {
+          "binding": "flights",
+          "required": true,
+          "role": "flights",
+          "title": "Transport i loty"
+        },
+        {
+          "binding": "transfers",
+          "required": true,
+          "role": "transfers",
+          "title": "Transfery"
+        },
+        {
+          "binding": "accommodations",
+          "required": true,
+          "role": "accommodations",
+          "title": "Noclegi i rezerwacje"
+        },
+        {
+          "binding": "activity_bookings",
+          "required": true,
+          "role": "bookings",
+          "title": "Rezerwacje atrakcji"
+        },
+        {
+          "binding": "contacts",
+          "required": true,
+          "role": "contacts",
+          "title": "Kontakty organizacyjne"
+        },
+        {
+          "binding": "open_items",
+          "required": true,
+          "role": "open",
+          "title": "Sprawy do potwierdzenia"
+        }
+      ],
+      "description": "Wielodniowy program. Harmonogram i ryzyka do uzupełnienia.",
+      "family": "pilot",
+      "layout_variants": [
+        "standard"
+      ],
+      "name": "Rozpiska zaawansowana",
+      "source_type": "trip",
+      "template_id": "pilot.advanced",
+      "template_version": "0.5.0"
+    },
+    {
+      "audience": "Pilot",
+      "confidentiality": "internal",
+      "default_sections": [
+        {
+          "binding": "cover",
+          "required": true,
+          "role": "cover",
+          "title": "Materiały merytoryczne — program i źródła"
+        }
+      ],
+      "description": "Miejsca programu jako baza do opracowania wiedzy ze źródłami.",
+      "family": "pilot",
+      "layout_variants": [
+        "standard"
+      ],
+      "name": "Materiały merytoryczne",
+      "source_type": "trip",
+      "template_id": "pilot.knowledge",
+      "template_version": "0.5.0"
+    }
+  ],
+  "trip": {
+    "categories": [],
+    "data_origin": "unknown",
+    "days": [],
+    "description": "",
+    "destinations": [],
+    "duration_days": 0,
+    "end_date": null,
+    "revision": 1,
+    "schema_version": 1,
+    "start_date": null,
+    "status": "draft",
+    "title": "Synthetic source",
+    "trip_id": "synthetic-trip",
+    "updated_at": "2026-10-31T00:00:00Z"
+  }
+}
