@@ -12,7 +12,9 @@ Poniżej zachowano wymagania docelowe i inspiracje; nie oznaczają automatycznej
 
 Aktualizacja DOC-TEMPLATES-006: lokalny szablon 0.5.0, uzupełniony przykład GT v1
 i kopia do edycji przez `#examples`. Pola, kolejność oraz granice weryfikacji:
-[raport implementacji](../../../DOC_TEMPLATES_006.md). Specyfikacja poniżej
+[current Studio guidance](../../../DOCUMENT_STUDIO.md).
+Historical report `docs/DOC_TEMPLATES_006.md` is unavailable; the guidance does
+not replace its acceptance evidence. Specyfikacja poniżej
 nie oznacza zatwierdzenia biznesowego Ground Truth.
 
 ## 1. Cel i odbiorca

@@ -1,6 +1,6 @@
 # UI architecture
 
-Status: proposed, ARCH-001. See [source audit](../architecture/TRIPSE_ARCHITECTURE_BLUEPRINT.md)
+Status: proposed, ARCH-001. See [source audit](../architecture/current-state-audit.md)
 for current scripts and [ADR-0017](../adr/0017-modular-react-typescript-migration.md)
 for decisions requiring approval.
 

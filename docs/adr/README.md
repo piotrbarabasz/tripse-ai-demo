@@ -23,7 +23,6 @@ task opisuje pracę, a [worklog](../tracking/worklog.csv) jej udokumentowany prz
 | [ADR-0013](0013-canonical-hub-navigation.md) | Canonical Hub homepage and explicit planner navigation | proposed | Implemented locally; API/access contracts preserved; not deployed |
 | [ADR-0014](0014-document-library-history.md) | Biblioteka dokumentów, metadane i zachowane rewizje | proposed | Implementacja lokalna JSON/GCS; bez wdrożenia chmurowego |
 | [ADR-0015](0015-registry-build-cache-evolution.md) | Rozwój istniejącego Artifact Registry i cache CI/CD | proposed | CI-001–005 w lokalnym RC CI-006; Phase B hosted/cloud niezweryfikowana |
-
 | [ADR-0016](0016-versioned-demo-recipes.md) | Wersjonowane receptury DEMO i niezależne kopie | proposed | Implementacja lokalna; bez seedowania DEV/PROD |
 | [ADR-0017](0017-modular-react-typescript-migration.md) | Gradual modular React + TypeScript migration at /app | proposed | Documentation only; frontend implementation pending |
 

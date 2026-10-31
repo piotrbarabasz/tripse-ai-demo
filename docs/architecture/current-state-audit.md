@@ -1,8 +1,10 @@
-# TRIPSE architecture blueprint — initial draft
+# TRIPSE current-state technical audit
 
-Status: **initial draft based on repository audit**, 2026-10-31, ARCH-001.
-No existing architecture blueprint was found in the working tree. This is a new source
-document, not a reconstruction of an unavailable design. Audited baseline: `dev`,
+Status: **source-code audit**, 2026-10-31, ARCH-001; separated during final review.
+This document was initially saved under the blueprint filename. It is not the original
+user-authored product vision. That source is still unavailable in this review session;
+see [reconciliation status](reconciliation.md). All technical findings are retained.
+Audited baseline: `dev`,
 commit `0956ea2`; documentation prepared on `docs/arch-001-foundation`.
 Source observations below describe code, not a new claim of hosted acceptance.
 

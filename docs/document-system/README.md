@@ -8,7 +8,7 @@
 i eksport serwerowy opisane dalej pozostają propozycjami.
 **Lokalizacja:** `docs/document-system/` w repozytorium `tripse-ai-demo`.
 
-Bieżący etap [DOC-TEMPLATES-006](../DOC_TEMPLATES_006.md): dziewięć chronionych
+Bieżący etap [DOC-TEMPLATES-006 — instrukcja przykładów](../DOCUMENT_STUDIO.md#dziewięć-gotowych-przykładów--doc-templates-006): dziewięć chronionych
 przykładów GT v1, kopie do istniejących edytorów, szablony 0.5.0.
 [Ground Truth](general/template-content-ground-truth.md) pozostaje **DRAFT / DO WALIDACJI Z TRIPSE**.
 

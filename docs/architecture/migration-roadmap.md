@@ -5,6 +5,11 @@ Stage IDs below come from the user request; they are not invented GitHub issue n
 Owner acceptance of [ADR-0017](../adr/0017-modular-react-typescript-migration.md) and
 each stage's scope is separate from implementation or deployment acceptance.
 
+Final review is pending the original user-authored architecture vision. The
+[current-state audit](current-state-audit.md) is preserved separately; see
+[reconciliation status](reconciliation.md) for source authority and unresolved input.
+Compare and retain original requirements before declaring ARCH-001 ready for a PR.
+
 ## Shared gates
 
 Every implementation stage keeps old URLs, endpoint payloads/statuses, authentication,
@@ -21,7 +26,7 @@ existing accepted-image rollback procedures; this task does not execute them.
 ## ARCH-001 — architecture and documentation
 
 - Dependencies: source audit on dev; existing ADR/worklog conventions.
-- Scope: audited initial blueprint, UI/API navigation and architecture, proposed ADR,
+- Scope: preserved current-state audit and original target vision, UI/API architecture, proposed ADR,
   incremental stages and current implementation/verification boundaries.
 - Acceptance: all requested docs exist; source-linked claims distinguish current code
   from proposals; ADR remains proposed; risks/approvals and FRONT-001 scope explicit.
@@ -140,7 +145,17 @@ schema drift and scoped Markdown/link checks when their tooling exists. Validate
 workflow trigger/permission contracts and required-check configuration separately;
 do not broaden delivery triggers or change protected master policy in ARCH-001.
 
+Delivery has no documentation-path exclusion. Merging this branch into dev creates a
+push that can run DEV deployment after CI and existing environment controls. Recommend
+an eventual PR to dev only after original-source reconciliation, with owner coordination
+of merge/delivery timing. No PR, merge, deployment or workflow change is authorized by
+this documentation review. See [merge considerations](reconciliation.md).
+
 ## ARCH-001 validation record
+
+The following records the initial documentation pass at `71f59fa`. Final-review
+checks and unresolved original-source restoration are recorded in reconciliation.md;
+historical link findings below describe the earlier state, before navigation cleanup.
 
 Executed on 2026-10-31 in the existing Windows Python 3.12 virtual environment:
 

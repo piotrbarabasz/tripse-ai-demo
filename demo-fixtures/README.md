@@ -41,4 +41,6 @@ włączanych przez testy regresji. Nie są kopiowane do kontekstu obrazu Cloud B
 Nie usuwaj zapisanych dokumentów, assetów ani danych użytkownika po prefiksie
 lub samym `data_origin`.
 
-Pełny manifest, struktury, utrzymanie DEV i wyniki: [DOC_TEMPLATES_006](../docs/DOC_TEMPLATES_006.md).
+[Manifest przykładów](gt-v1/examples.json) i [instrukcja Studio](../docs/DOCUMENT_STUDIO.md).
+Historyczny raport `docs/DOC_TEMPLATES_006.md` jest niedostępny; powyższe źródła
+nie zastępują jego wyników ani dowodów akceptacji.

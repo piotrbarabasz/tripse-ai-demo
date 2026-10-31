@@ -1,5 +1,11 @@
 # DOC-TEMPLATES-006 — macierz pokrycia Ground Truth
 
+Uwaga z przeglądu 2026-10-31: wskazany niżej raport `../DOC_TEMPLATES_006.md`
+jest niedostępny. Zachowano pierwotny opis i nazwę raportu. Ta macierz pozostaje
+audytem przed implementacją, a nie dowodem odbioru. Bieżąca
+[instrukcja Studio](../DOCUMENT_STUDIO.md) i [manifest przykładów](../../demo-fixtures/gt-v1/examples.json)
+pomagają w nawigacji, ale nie zastępują historycznych wyników.
+
 Audyt przed implementacją, baza `53947b4`, 2026-10-28. Ground Truth przeczytany w całości; pozostaje DRAFT / DO WALIDACJI Z TRIPSE. MUST oznacza kompletność finalnego dokumentu, nie blokadę zapisu draftu. Kolumny opisują stan zastany; wynik i dowody po implementacji w `../DOC_TEMPLATES_006.md`.
 
 | Template | GT section | Model | Editor | Save | Renderer | Validation | Status | Required change |

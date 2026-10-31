@@ -16,13 +16,17 @@ Implementation: documentation only. Character: new proposal. Owner acceptance:
 not recorded. Existing frontend/backend behavior remains the current baseline.
 Uses the repository [ADR template](template.md) and [standard](README.md).
 
+Final review: the source audit is preserved separately from the original user-authored
+target vision, which is unavailable in this session. [Reconciliation](../architecture/reconciliation.md)
+must compare the original before finalizing this proposal. No approval is inferred.
+
 ## 1. Kontekst i problem
 
 The current Vanilla JavaScript UI has separate entry points, direct DOM rendering,
 window globals and coupled fetch/form/workflow state. FastAPI already exposes reusable
 domain services and typed document models. Migration must preserve demonstrations,
 document rendering, local/cloud/readonly security and GCP delivery. Source evidence:
-[initial blueprint/audit](../architecture/TRIPSE_ARCHITECTURE_BLUEPRINT.md).
+[current-state audit](../architecture/current-state-audit.md).
 
 ## 2. Rozważane alternatywy
 
@@ -77,7 +81,7 @@ overwrite unsaved edits. Local/browser mocks do not prove hosted IAP/chunk/previ
 
 Track incomplete OpenAPI responses, planner/Studio model mismatch, shared cloud-demo
 document scope, framing/header compatibility, dev-PR CI gap, script globals and repeated
-upload/polling logic in the [blueprint risk register](../architecture/TRIPSE_ARCHITECTURE_BLUEPRINT.md).
+upload/polling logic in the [technical audit risk register](../architecture/current-state-audit.md).
 Acceptance requires existing routes/security/print gates, deterministic builds/schema,
 mode-specific routing tests, verified provenance and stage-specific rollback. No default
 route cutover or legacy removal until separate parity acceptance. No security changes
@@ -117,3 +121,4 @@ legacy cutover; no unmeasured numeric performance threshold is asserted.
 | Data | Autor | Zmiana i uzasadnienie | Powiązanie |
 | --- | --- | --- | --- |
 | 2026-10-31 | Codex | New documentation-only migration proposal grounded in source audit | ARCH-001 |
+| 2026-10-31 | Codex | Separate technical audit from pending original vision; retain proposed status and original requirements for review | ARCH-001 final review |

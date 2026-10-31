@@ -5,7 +5,8 @@ Stan implementacji lokalnej 2026-10-28: Wszystkie osiem ID poniżej ma zaimpleme
 Szczegóły operacyjne: [Document Studio](../../DOCUMENT_STUDIO.md).
 
 Katalog gotowych dziewięciu przykładów: `/documents/demo#examples`;
-[manifest i zakres GT](../../DOC_TEMPLATES_006.md).
+[manifest przykładów](../../../demo-fixtures/gt-v1/examples.json) i
+[macierz zakresu GT przed implementacją](../../audits/DOC_TEMPLATES_006_COVERAGE.md).
 
 ## Konwencja
 

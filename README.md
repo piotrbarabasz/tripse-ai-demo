@@ -310,4 +310,4 @@ verification blockers recorded in DEV_DEPLOY.md.
 **Zakres i terminy:** max. 1 dzień pracy, bez przerabiania tego na produkcyjny system. Przyszłe moduły intencji, edycji tras i multi-agent orchestration odkładamy.
 
 Przykładowe dokumenty GT v1: `/documents/demo#examples` — dziewięć konfiguracji,
-kopie do edycji i PDF. [DOC-TEMPLATES-006](docs/DOC_TEMPLATES_006.md).
+kopie do edycji i PDF. [Instrukcja przykładów DOC-TEMPLATES-006](docs/DOCUMENT_STUDIO.md#dziewięć-gotowych-przykładów--doc-templates-006).
