@@ -37,6 +37,16 @@ existing accepted-image rollback procedures; this task does not execute them.
 
 ## FRONT-001 — React foundation and app shell
 
+**2026-10-31 scope update:** the commissioned FRONT-001A request splits this combined
+stage. A implements only the standalone React bootstrap, responsive shell, informative
+Hub, five module placeholders, legacy anchors and local build/CI checks. B retains
+FastAPI `/app` assets/fallback, image packaging, provenance, IAP/CSP/Host/Origin
+integration, read-only `/health` PoC and compiled/hosted acceptance. No part of B is
+claimed complete by A. See [exact split and recommended B scope](../../frontend/README.md)
+and [local evidence](../ui/front-001a-validation.md). The requirements below describe
+the combined stage; ADR-0017 remains proposed and future full Hub/Planner work remains
+FRONT-002. The original blueprint and historical ARCH-001 audit remain unchanged.
+
 - Dependencies: ARCH-001 and owner agreement on ADR-0017 stack/entry/packaging;
   CI-007 dev-PR CI gate hosted acceptance and any required-check configuration before
   relying on mandatory PR enforcement. Local source change alone does not verify

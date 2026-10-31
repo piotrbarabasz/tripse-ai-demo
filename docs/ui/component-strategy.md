@@ -1,6 +1,18 @@
 # Component and styling strategy
 
-Status: proposed, subject to [ADR-0017](../adr/0017-modular-react-typescript-migration.md).
+Status: FRONT-001A implements the shell subset below; future migration guidance
+remains proposed under [ADR-0017](../adr/0017-modular-react-typescript-migration.md).
+
+Implemented: repository-owned shadcn/ui Button, Badge and Sheet adaptations;
+Radix Dialog supplies drawer accessibility. PageHeader and ErrorBoundary are shared;
+app-owned Navigation/AppLayout compose desktop sidebar, mobile drawer and header.
+Hub owns the landing page/cards. Tokens in `frontend/src/styles/globals.css` adapt
+the proposed navy `#172b41`, warm accent `#e5a01d` and system font guidance. No external
+font/image requests, legacy CSS imports or document print changes. Desktop navigation
+is fixed; mobile navigation scrolls and handles Escape, focus containment/return,
+route-heading focus and active links. The shell needs no remote loading primitive.
+Exact dependencies, attribution and verification limits: [frontend README](../../frontend/README.md)
+and [validation](front-001a-validation.md).
 
 Use Tailwind CSS for the new application UI and selected shadcn/ui source components
 for accessible primitives. Keep copied primitive code small, owned by the repository

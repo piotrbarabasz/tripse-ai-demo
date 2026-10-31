@@ -1,5 +1,10 @@
 # Tripse AI Trip Planner — Demo v0.1
 
+Nowy panel React (FRONT-001A): zobacz [frontend/README.md](frontend/README.md).
+Uruchom osobno `cd frontend`, `npm ci`, `npm run dev`, potem otwórz
+http://127.0.0.1:5173/app/. To lokalna powłoka aplikacji; dotychczasowe interfejsy
+FastAPI i wdrożenia pozostają bez zmian. Integracja serwowania należy do FRONT-001B.
+
 ## Quick Start — GNU Make
 
 Python 3.12+ i GNU Make; nie trzeba aktywować `.venv` ani instalować Bash na Windows.
