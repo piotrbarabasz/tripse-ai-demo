@@ -34,7 +34,9 @@ def test_source_selects_exact_build_inputs_but_never_outputs_or_env(monkeypatch,
         "frontend/src/shared/api/generated/types.gen.ts", "frontend/src/shared/api/generated/zod.gen.ts",
         "frontend/src/features/planner/PlannerPage.tsx", "frontend/src/features/planner/result.ts",
         "frontend/src/features/documents/DocumentsWorkspace.tsx", "frontend/src/features/documents/links.ts",
-        "frontend/src/features/documents/CreationWizard.tsx", "frontend/src/features/documents/creation.ts")})
+        "frontend/src/features/documents/CreationWizard.tsx", "frontend/src/features/documents/creation.ts",
+        "frontend/src/features/documents/DocumentEditor.tsx", "frontend/src/features/documents/SectionForm.tsx",
+        "frontend/src/features/documents/UnsavedWarning.tsx", "frontend/src/features/documents/editing.ts")})
     unwanted = {name:b"ignored" for name in ("docs/api/openapi.json", "frontend/scripts/generate-api.mjs", "frontend/.env.local", "frontend/dist/index.html", "app/spa_dist/index.html",
         "frontend/node_modules/pkg/index.js", "frontend/coverage/index.html", "frontend/.vite/cache.ts", "frontend/tsconfig.tsbuildinfo",
         "frontend/src/.cache/file.ts", "frontend/README.md", "frontend/eslint.config.js", "local-data/private.json")}

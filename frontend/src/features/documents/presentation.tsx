@@ -36,6 +36,7 @@ export function DocumentActions({ row, canEdit, detail = true }: { row: Document
     {detail && <Link className="text-link" to={links.detail}>Szczegóły i historia<span className="sr-only">: {row.title}</span></Link>}
     <a className="text-link" href={links.preview} target="_blank" rel="noopener noreferrer">Podgląd A4 (nowa karta)<span className="sr-only">: {row.title}</span></a>
     <a className="text-link" href={links.history}>Historia w dotychczasowym Studio<span className="sr-only">: {row.title}</span></a>
+    {canEdit && row.document_status !== "archived" && row.archived_at === null && <Link className="text-link" to={links.reactEditor}>Edytuj w React<span className="sr-only">: {row.title}</span></Link>}
     {canEdit && row.document_status !== "archived" && row.archived_at === null &&
       <a className="text-link" href={links.editor}>Edytuj w dotychczasowym Studio<span className="sr-only">: {row.title}</span></a>}
   </div>;

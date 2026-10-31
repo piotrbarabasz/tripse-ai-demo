@@ -1,6 +1,6 @@
 import "../client/validation-runtime";
 import type { DraftRequest, DraftUpdate, LibraryMutation, StatusMutation, ListLibraryApiDocumentStudioLibraryGetData } from "../generated/types.gen";
-import { zDraftRequest, zTripOutput, zCampaignOutput, zDocumentDraftOutput, zLibraryPage, zDocumentSummary } from "../generated/zod.gen";
+import { zDraftRequest, zDraftUpdate, zTripOutput, zCampaignOutput, zDocumentDraftOutput, zLibraryPage, zDocumentSummary } from "../generated/zod.gen";
 import { z } from "zod";
 import { request } from "../client/transport";
 import { accessSchema, assetSchema, templatesSchema } from "./guards";
@@ -45,8 +45,10 @@ export async function readRevisions(identifier: string, signal?: AbortSignal) {
   return (await request(`${base}/library/${id(validId)}/revisions`, { json: (value) => schema.parse(value) }, { signal })).data;
 }
 // Revision is the last loaded revision. Never refresh it silently to force a save.
-export async function saveDraft(identifier: string, value: DraftUpdate, signal?: AbortSignal) {
-  return (await request(`${base}/drafts/${id(identifier)}`, { json: (body) => zDocumentDraftOutput.parse(body) }, { method: "PUT", body: { json: value }, signal })).data;
+export async function saveDraft(identifier: string, value: DraftUpdate | z.input<typeof zDraftUpdate>, signal?: AbortSignal) {
+  const validId = zDocumentSummary.shape.document_id.parse(identifier);
+  zDraftUpdate.parse(value); // Validate, but do NOT serialize parsed optional defaults.
+  return (await request(`${base}/drafts/${id(validId)}`, { json: (body) => zDocumentDraftOutput.parse(body) }, { method: "PUT", body: { json: value }, signal })).data;
 }
 // Keep the operation UUID stable for one user intent. A conflict must be reviewed.
 export async function setDocumentStatus(identifier: string, value: StatusMutation, signal?: AbortSignal) {

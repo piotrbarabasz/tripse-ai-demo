@@ -183,8 +183,8 @@ make check
 
 `test` i `test-unit` to ten sam standardowy `python -m pytest -q`, łącznie
 z obecnymi testami integracyjnymi offline. Testy nie czytają głównego `.env`.
-`test-browser` uruchamia kolejno wszystkie trzynaście skryptów:
-React tworzenie dokumentu, React katalog/biblioteka Document Studio, React Planner, SPA, viewer, Hub, Studio, marketing, pilot/oferta, Cloud Preview, authenticated cloud demo,
+`test-browser` uruchamia kolejno wszystkie czternaście skryptów:
+React edytor dokumentu, React tworzenie dokumentu, React katalog/biblioteka Document Studio, React Planner, SPA, viewer, Hub, Studio, marketing, pilot/oferta, Cloud Preview, authenticated cloud demo,
 GT templates i starszy symulator. `browser_gt_templates.py` sprawdza dziewięć
 przykładów: otwarcie/kopia/edycja/zapis/ponowne otwarcie/podgląd w lokalnym JSON
 i symulowanym GCS (18 przepływów), a także 11 rzeczywistych PDF-ów. Wymaga
@@ -197,7 +197,7 @@ test nie podłącza się do Twojej aktywnej bazy ani nie zatrzymuje istniejąceg
 Pozostałe skrypty samodzielnie wybierają porty. Wyniki/screenshoty/PDF pozostają
 w dotychczasowych ignorowanych katalogach skryptów.
 
-`test-all`: pytest → trzynaście browser smoke → istniejący Docker container smoke.
+`test-all`: pytest → czternaście browser smoke → istniejący Docker container smoke.
 Potrzebuje zależności dev, Chromium i działającego Dockera. Niczego nie pomija
 po cichu; pierwszy błąd przerywa wykonanie. `check`: `git diff --check` oraz
 `docker compose -f compose.yaml config --quiet`; wymaga Git i Compose, bez startu

@@ -102,3 +102,17 @@ sends document_id, source_revision, title, empty editorial_notes and demo_exampl
 GET read-back matches ID, template, variant, one source identity/revision, title,
 notes, example flag and confidentiality. Stable-ID repeats use DocumentService's
 existing payload-conflict checks, not a new idempotency header. [Recovery details](../ui/front-003b-creation.md).
+
+FRONT-003C consumes existing GET/PUT drafts with generated output and DraftUpdate
+validators. `saveDraft` validates the input but serializes the original narrow object,
+never the Zod result containing optional defaults. This preserves `exclude_unset`:
+title/revision are required; only changed date_label/editorial_notes/day_overrides/
+sections are added. Status, business objects and source snapshots are omitted.
+Changed sections are complete intended arrays with stable IDs and all unedited
+properties. The templates guard now retains actual default_sections roles/bindings/
+required flags from existing wire fixtures; no frontend template registry is added.
+Verified success requires exactly baseline revision + 1 and the intended content,
+including unchanged fields, followed by a matching stored GET. Only server-owned
+updated_at/updated_by/last_library_operation and revision are exempt from baseline
+content equality. Ambiguous writes require explicit GET inspection; 409 never
+changes the revision behind the user's back. [Exact contracts and limitations](../ui/front-003c-editor.md).

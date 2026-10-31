@@ -11,6 +11,7 @@ The [existing server route inventory](../ROUTING.md) is still authoritative.
 | `/app/documents` | Real template catalog, lazy-loaded within the existing shell |
 | `/app/documents/library` | Saved metadata library with server filters and pagination |
 | `/app/documents/library/:documentId` | Read-only metadata/history and new-tab preview links |
+| `/app/documents/:documentId/edit` | Editor-only persisted draft, typed sections, explicit revision-safe save and recovery |
 | `/app/documents/new` | Editor-only template/layout → source/revision → explicit creation/recovery wizard |
 | `/app/documents/new?template=offer.private` | Same wizard with a server-provided template ID preselected; invalid IDs fail safely |
 | `/app/marketing`, `/app/automations`, `/app/assistant` | Explicitly planned modules; no business workflows |

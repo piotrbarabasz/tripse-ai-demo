@@ -161,6 +161,19 @@ and revision-aware editing; FRONT-003D will own React preview/assets/PDF/export 
 visual parity. Source editors, Planner conversion and full migration acceptance
 remain deferred. No backend engine, storage, auth or delivery boundaries change.
 
+**2026-10-31 FRONT-003C implementation:** `/app/documents/:documentId/edit` now
+supports explicit revision-safe core/section editing across the existing templates.
+Immutable loaded baseline, separate form, narrow exclude_unset payloads, verified
+saved revision and unchanged-content checks, no automatic retries, conflict review
+and in-memory uncertain-save recovery preserve data. Library/B creation link to it.
+Typed table/logistics/knowledge forms and binding/required-role protection reuse actual
+models/template metadata; legacy null sections are not migrated automatically.
+[C compatibility matrix and evidence](../ui/front-003c-editor.md) explicitly retain
+advanced offer/Pilot/Marketing business forms and image management in legacy Studio.
+A remains catalog/library/history, B creation, C supported editing; D integrated
+preview/private assets/A4/social/PDF parity is still deferred. The existing saved
+preview and legacy editor remain available without iframe/CSP/security changes.
+
 - Dependencies: API-001, accepted FRONT-002 coexistence and snapshot/conflict parity.
 - Scope: migrate one workflow at a time: catalog/source picker and examples → library/
   history → source editors → snapshot/section editing and preview controls. Reuse server

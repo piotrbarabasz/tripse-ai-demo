@@ -1,4 +1,4 @@
-# TRIPSE React frontend — FRONT-001A / FRONT-001B / API-001 / FRONT-002 / FRONT-003A/B
+# TRIPSE React frontend — FRONT-001A / FRONT-001B / API-001 / FRONT-002 / FRONT-003A/B/C
 
 React shell with FastAPI same-origin integration, 2026-10-31. FRONT-001A supplied
 the shell; FRONT-001B adds private `/app` serving, a bounded health read and the
@@ -189,7 +189,7 @@ root with `python -m scripts.export_openapi` and
 and `npm --prefix frontend run api:check`. Synthetic wire fixture generation is
 `python -m scripts.export_api_fixtures` (also supports `--check`).
 
-**Later stages:** Trip Catalog and plan editing; Document Studio creation/editing and full print/PDF parity;
+**Later stages:** Trip Catalog and plan editing; advanced document business-field editing and full print/PDF parity;
 Marketing data; Assistant orchestration; Automations execution/history/approval.
 FRONT-001 and API-001 add no backend APIs, databases, paid providers or infrastructure.
 
@@ -230,5 +230,36 @@ Run `.venv/Scripts/python.exe tests/browser_react_document_creation_smoke.py`
 after building, or use the complete `python scripts/dev.py test-browser` command.
 See [audit, contracts, validation and rollback](../docs/ui/front-003b-creation.md)
 and the [prepared PR description](../docs/ui/front-003b-pr.md).
-FRONT-003C section editing/revision-aware saves and FRONT-003D assets/preview/PDF
-remain separate work.
+FRONT-003C adds the editing increment below; FRONT-003D assets/preview/PDF remains
+separate work. A/B descriptions record their original implementation boundaries.
+
+**FRONT-003C implemented:** `/app/documents/:documentId/edit` loads a persisted
+draft into an immutable baseline and separate in-memory form. Library/details and
+creation success link to it; invalid identifiers, readers and archived documents
+have no editable form. Manual **Zapisz zmiany** sends the loaded revision and only
+changed supported groups, validates the response and verifies stored content by GET.
+No autosave, background form replacement, automatic retry or browser persistence.
+Successful saves update revision/timestamp and invalidate Studio/library/history.
+409 preserves local input for explicit inspection/discard; ambiguous failures lock
+the attempt for GET-only recovery. A confirmed unchanged baseline permits a deliberate
+same-payload retry under the server's existing revision CAS.
+
+Supported fields: title/date label/editorial notes, day-ID-preserving overrides,
+section title/body/visibility/order and custom section structure. Typed forms cover
+text/list/callout/day, structured tables, image/gallery captions with retained
+attachments/crops, source notes with fixed bindings, Pilot advanced logistics and
+Pilot knowledge with evidence/date validation. Required roles/types/day/knowledge
+parts are protected. Legacy null sections are retained without automatic migration.
+Desktop structure/workspace/information columns collapse to accessible mobile details.
+Existing data-router blocking and native unload warnings protect unsaved input,
+including navigation to legacy editing. Preview opens the saved document in a new
+tab, without embedding HTML or claiming to include unsaved changes.
+
+Advanced offer price/hotel/benefits, shared Pilot operational records/contacts,
+Marketing campaign/item composition, image uploads/crops and business status changes
+remain legacy workflows. No advanced objects or source snapshots are serialized in
+unrelated updates. No backend/schema/storage/auth/renderer/dependency/delivery changes.
+See [eight-template compatibility, contracts, validation and rollback](../docs/ui/front-003c-editor.md)
+and the [prepared PR description](../docs/ui/front-003c-pr.md).
+Run `.venv/Scripts/python.exe tests/browser_react_document_editor_smoke.py` after
+building, or `python scripts/dev.py test-browser` for all 14 browser scripts.

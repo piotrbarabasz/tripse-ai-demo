@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useBeforeUnload, useBlocker, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../../shared/ui/button";
 import { readSources } from "../../shared/api/adapters/studio";
@@ -9,24 +9,12 @@ import { legacyHref } from "../../shared/config/legacy";
 import { documentLinks } from "./links";
 import { families } from "./labels";
 import { ReadError } from "./presentation";
+import { UnsavedWarning } from "./UnsavedWarning";
 import { creationIntent, submitCreation, verifyCreation } from "./creation";
 import type { Intent, Outcome, Source, Template } from "./creation";
 
 const sourceName = (kind: "trip" | "campaign") => kind === "trip" ? "Wycieczka" : "Kampania";
 const confidentiality = { public: "Publiczne", client: "Dla klienta", internal: "Wewnętrzne", internal_restricted: "Wewnętrzne — ograniczony dostęp" };
-
-function LeaveWarning({ dirty }: { dirty: boolean }) {
-  useBeforeUnload((event) => { if (dirty) { event.preventDefault(); event.returnValue = ""; } });
-  const blocker = useBlocker(dirty);
-  const stay = useRef<HTMLButtonElement>(null);
-  useEffect(() => { if (blocker.state === "blocked") stay.current?.focus(); }, [blocker.state]);
-  return blocker.state === "blocked" ? <section role="alertdialog" aria-labelledby="leave-title" aria-describedby="leave-description" className="documents-notice">
-    <h3 id="leave-title">Opuścić tworzenie dokumentu?</h3>
-    <p id="leave-description">Formularz i dane odzyskiwania są tylko w pamięci tej strony. Utracisz je po wyjściu. Jeśli zapis był wysłany, dokument może już istnieć — najpierw sprawdź wynik.</p>
-    <Button ref={stay} onClick={() => blocker.reset()}>Zostań w formularzu</Button>
-    <Button variant="outline" onClick={() => blocker.proceed()}>Opuść formularz</Button>
-  </section> : null;
-}
 
 export default function CreationWizard({ templates, canEdit }: { templates: Template[] | undefined; canEdit: boolean }) {
   const [params] = useSearchParams();
@@ -96,14 +84,14 @@ function Wizard({ templates, initialTemplate }: { templates: Template[]; initial
   const permissionFailure = failure instanceof ApiError && ["forbidden", "unauthenticated"].includes(failure.kind);
   const filtered = sources.data?.filter((item) => `${item.title} ${item.summary}`.toLocaleLowerCase("pl").includes(search.toLocaleLowerCase("pl")));
   return <section aria-labelledby="creation-title" className="creation-wizard">
-    <LeaveWarning dirty={dirty} />
+    <UnsavedWarning dirty={dirty} />
     <h2 id="creation-title" className="documents-section-title" ref={heading} tabIndex={-1}>{saved ? "Dokument został zapisany" : "Utwórz dokument"}</h2>
     {!saved && <ol className="creation-progress" aria-label="Etapy tworzenia">{["Typ dokumentu", "Źródło", "Potwierdzenie"].map((label, index) => <li key={label} aria-current={step === index + 1 ? "step" : undefined}>{index + 1}. {label}</li>)}</ol>}
     {saved ? <div className="document-card" role="status">
       <h3>{saved.title}</h3><p>{template?.name} · {saved.template_id} · Rewizja {saved.revision}</p>
       <p>Zweryfikowano zapis i zgodność migawki ze wskazaną rewizją źródła. Edycja dokumentu odbywa się w dotychczasowym Studio.</p>
       {documentLinks(saved.document_id ?? "", saved.revision) && <div className="creation-actions"><Button asChild><a href={documentLinks(saved.document_id ?? "", saved.revision)!.editor}>Otwórz dokument w edytorze</a></Button>
-        <Link className="text-link" to={documentLinks(saved.document_id ?? "", saved.revision)!.detail}>Szczegóły dokumentu</Link><Link className="text-link" to="/documents/library">Wróć do biblioteki</Link></div>}
+        <Link className="text-link" to={documentLinks(saved.document_id ?? "", saved.revision)!.reactEditor}>Edytuj w React</Link><Link className="text-link" to={documentLinks(saved.document_id ?? "", saved.revision)!.detail}>Szczegóły dokumentu</Link><Link className="text-link" to="/documents/library">Wróć do biblioteki</Link></div>}
     </div> : <>
       {!intent && step === 1 && <>
         <fieldset><legend>Wybierz szablon</legend>{Object.entries(families).map(([family, label]) => <section aria-label={label} key={family}><h3>{label}</h3><div className="documents-grid">{templates.filter((item) => item.family === family).map((item) =>

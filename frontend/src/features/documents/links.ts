@@ -14,6 +14,7 @@ export function documentLinks(identifier: string, revision?: number) {
   const id = encodeURIComponent(identifier);
   return {
     detail: `/documents/library/${id}`,
+    reactEditor: `/documents/${id}/edit`,
     editor: `${legacyHref("/documents/demo")}#edit-draft/${id}`,
     history: `${legacyHref("/documents/demo")}#revisions/${id}`,
     preview: revision === undefined ? `/api/document-studio/drafts/${id}/preview` :

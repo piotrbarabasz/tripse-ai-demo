@@ -30,7 +30,7 @@ export const modules = [
     legacy: "/documents/demo",
     legacyLabel: "Otwórz obecne studio",
     detail:
-      "Katalog, biblioteka i tworzenie dokumentów z zapisanych źródeł. Edycja w dotychczasowym Studio.",
+      "Katalog, tworzenie i edycja treści dokumentów. Zaawansowane pola i zdjęcia pozostają w dotychczasowym Studio.",
   },
   {
     path: "/marketing",

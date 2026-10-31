@@ -529,6 +529,26 @@
   .creation-progress [aria-current=step] { background: var(--primary); color: white; }
   .creation-wizard .document-metadata dd { overflow-wrap: anywhere; }
   .creation-wizard [role=alertdialog] { position: sticky; top: 12px; z-index: 20; background: white; border: 2px solid var(--primary); padding: 20px; box-shadow: 0 8px 32px #0002; }
+  .document-editor { display: grid; gap: 20px; }
+  .document-editor h2 { font-size: 24px; font-weight: 650; }
+  .document-editor h3, .document-editor legend { font-weight: 650; margin-bottom: 12px; }
+  .document-editor fieldset { border: 0; padding: 0; min-width: 0; }
+  .document-editor label { display: grid; gap: 8px; margin: 14px 0; font-size: 14px; }
+  .document-editor input:not([type=checkbox]), .document-editor select, .document-editor textarea { width: 100%; min-width: 0; border: 1px solid #96a7b0; border-radius: 8px; background: white; min-height: 44px; padding: 10px; }
+  .document-editor textarea { min-height: 110px; resize: vertical; }
+  .document-editor .editor-check { display: flex; align-items: center; gap: 10px; }
+  .editor-toolbar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .editor-grid { display: grid; grid-template-columns: minmax(160px, .8fr) minmax(0, 2fr) minmax(180px, 1fr); gap: 18px; align-items: start; }
+  .editor-grid > * { min-width: 0; padding: 20px; border: 1px solid var(--border); border-radius: var(--radius); background: white; overflow-wrap: anywhere; }
+  .editor-grid summary, .editor-workspace summary { cursor: pointer; font-weight: 600; min-height: 44px; }
+  .editor-structure nav { display: grid; gap: 8px; margin: 15px 0; }
+  .editor-structure button { white-space: normal; text-align: left; justify-content: start; overflow-wrap: anywhere; }
+  .editor-structure [aria-current=true] { outline: 2px solid var(--primary); background: var(--muted); }
+  .editor-information .document-metadata { grid-template-columns: minmax(0, 1fr); }
+  .editor-content:disabled { opacity: .8; }
+  .unsaved-warning { position: sticky; top: 12px; z-index: 20; background: white; border: 2px solid var(--primary); }
+  @media (max-width: 1200px) { .editor-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); } .editor-information { grid-column: 1 / -1; } }
+  @media (max-width: 767px) { .editor-grid { grid-template-columns: minmax(0, 1fr); } .editor-information { grid-column: auto; } }
   .skip-link {
     position: fixed;
     top: -100px;

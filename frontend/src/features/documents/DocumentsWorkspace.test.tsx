@@ -138,7 +138,8 @@ it("shows read-only metadata/history and verified legacy/preview links without l
   const api = network(); page("/documents/library/synthetic-draft");
   expect(await screen.findByRole("heading", { name: "Rewizja 2" })).toBeVisible();
   expect(screen.getByRole("heading", { name: "Rewizja 1" })).toBeVisible();
-  expect(screen.getByRole("link", { name: /Edytuj w/ })).toHaveAttribute("href", "/documents/demo#edit-draft/synthetic-draft");
+  expect(screen.getByRole("link", { name: /Edytuj w dotychczasowym/ })).toHaveAttribute("href", "/documents/demo#edit-draft/synthetic-draft");
+  expect(screen.getByRole("link", { name: /Edytuj w React/ })).toHaveAttribute("href", "/documents/synthetic-draft/edit");
   expect(screen.getByRole("link", { name: /Historia w dotychczasowym/ })).toHaveAttribute("href", "/documents/demo#revisions/synthetic-draft");
   const preview = screen.getByRole("link", { name: "Podgląd rewizji 1 (nowa karta)" });
   expect(preview).toHaveAttribute("href", "/api/document-studio/library/synthetic-draft/revisions/1/preview");

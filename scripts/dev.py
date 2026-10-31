@@ -20,6 +20,7 @@ import webbrowser
 
 ROOT = Path(__file__).resolve().parents[1]
 BROWSERS = (
+    "browser_react_document_editor_smoke.py",
     "browser_react_document_creation_smoke.py",
     "browser_react_documents_smoke.py",
     "browser_react_planner_smoke.py",

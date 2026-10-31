@@ -16,6 +16,7 @@ import { families, statuses } from "./labels";
 import { documentLinks, validDocumentId } from "./links";
 
 import CreationWizard from "./CreationWizard";
+import DocumentEditor from "./DocumentEditor";
 
 type Templates = Awaited<ReturnType<typeof readTemplates>>;
 
@@ -111,7 +112,7 @@ export default function DocumentsWorkspace() {
   useEffect(() => { document.getElementById("page-title")?.focus(); }, []);
   const canEdit = access.data?.can_edit === true;
   return <>
-    <PageHeader eyebrow="Dokumenty TRIPSE" title="Document Studio">Katalog, biblioteka i tworzenie dokumentów. Edycja pozostaje w dotychczasowym Studio.</PageHeader>
+    <PageHeader eyebrow="Dokumenty TRIPSE" title="Document Studio">Katalog, tworzenie i edycja treści dokumentów. Zaawansowane pola oraz zdjęcia edytujesz w dotychczasowym Studio.</PageHeader>
     <nav className="documents-tabs" aria-label="Widoki Document Studio">
       <NavLink to="/documents" end>Katalog szablonów</NavLink><NavLink to="/documents/library">Biblioteka dokumentów</NavLink>{canEdit && <NavLink to="/documents/new">Utwórz dokument</NavLink>}
     </nav>
@@ -122,6 +123,7 @@ export default function DocumentsWorkspace() {
         <a className="text-link" href={`${legacyHref("/documents/demo")}#drafts`}>Otwórz dotychczasową bibliotekę</a>
       </div>
       <Routes>
+        <Route path=":documentId/edit" element={canEdit && templates.isError ? <ReadError error={templates.error} retry={() => { void templates.refetch(); }} /> : <DocumentEditor canEdit={canEdit} templates={templates.data} />} />
         <Route path="new" element={canEdit && templates.isError ? <ReadError error={templates.error} retry={() => { void templates.refetch(); }} /> : <CreationWizard templates={templates.data} canEdit={canEdit} />} />
         <Route index element={<Catalog templates={templates.data} pending={templates.isPending} error={templates.error} retry={() => { void templates.refetch(); }} canEdit={canEdit} />} />
         <Route path="library" element={<Library templates={templates.data} canEdit={canEdit} filters={filters} onFilters={setFilters} />} />

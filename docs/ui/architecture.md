@@ -83,6 +83,11 @@ FRONT-003B uses `createBrowserRouter`/`RouterProvider` with the same route tree 
 basename so `useBlocker` can protect dirty creation forms, including browser Back.
 It is constructed once in main.tsx outside StrictMode; API reads/writes stay in
 TanStack Query. Native document navigations use a beforeunload warning.
+FRONT-003C reuses that guard for the editor, including legacy fallback navigation.
+The form adopts a baseline once and only replaces it after verified save or confirmed
+discard. Infinite-stale editor queries cannot silently replace local changes when
+another consumer invalidates/refetches them. State and frozen save attempts remain
+component-local; all reads/writes use the existing generated adapters and Query client.
 `app/spa.py` owns serving/security presentation, not domain logic. Per-response style
 nonces support Radix scroll-lock CSS without unsafe-inline/eval; main.tsx sets the
 shared get-nonce value before rendering. Local uses `frontend/dist`; the Python-only
