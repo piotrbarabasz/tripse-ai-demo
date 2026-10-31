@@ -1,5 +1,12 @@
 # Rejestr prac i podstawy kosztorysu
 
+2026-10-31: FRONT-001A (user-supplied task label) adds the standalone React shell,
+informative Hub, module placeholders, legacy navigation and frontend checks to the
+existing unprivileged CI job. [Local evidence](../ui/front-001a-validation.md) records
+tests and unavailable browser QA. [Frontend instructions](../../frontend/README.md)
+define the explicit FRONT-001A/B split. No backend/deployment integration, hosted CI,
+PR, push or merge is performed; ADR-0017 remains proposed. Hours/costs are unmeasured.
+
 2026-10-31: [CI-007 DEV PR gate](../CI_007_DEV_PR_GATE.md) is a user-supplied task ID.
 Local trigger/tests/docs work and real GitHub-hosted acceptance are tracked separately;
 Definition of Done remains pending until a dev PR completes the existing CI pipeline

@@ -35,6 +35,26 @@ jobs:
             requirements-dev.txt
       - name: Install Python dependencies
         run: make install-dev
+      - name: Set up frontend Node.js LTS
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: frontend/.nvmrc
+          package-manager-cache: false
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Validate frontend TypeScript
+        working-directory: frontend
+        run: npm run typecheck
+      - name: Lint frontend
+        working-directory: frontend
+        run: npm run lint
+      - name: Test frontend
+        working-directory: frontend
+        run: npm run test
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
       - name: Run pytest
         run: make test
       - name: Validate committed image source and offline deployment

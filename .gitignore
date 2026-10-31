@@ -26,3 +26,11 @@ local-data/
 *.tfvars
 *.tfplan
 gha-creds-*.json
+
+# Standalone React frontend (FRONT-001A)
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/.vite/
+frontend/.cache/
+frontend/*.tsbuildinfo

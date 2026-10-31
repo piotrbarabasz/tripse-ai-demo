@@ -1,14 +1,19 @@
 # UI architecture
 
-Status: proposed, ARCH-001. See [source audit](../architecture/current-state-audit.md)
+Status: FRONT-001A standalone shell implemented locally; backend hosting remains
+FRONT-001B. See [frontend instructions](../../frontend/README.md) and
+[validation record](front-001a-validation.md). ADR-0017 remains proposed.
+See [source audit](../architecture/current-state-audit.md)
 for current scripts and [ADR-0017](../adr/0017-modular-react-typescript-migration.md)
 for decisions requiring approval.
 
 Target requirements: [blueprint sections 1, 3, 6–8](../architecture/TRIPSE_ARCHITECTURE_BLUEPRINT.md).
 See the [reconciliation crosswalk](../architecture/reconciliation.md) for stage IDs and
-deliberate differences in module names/layout; none are implemented directories yet.
+deliberate differences in module names/layout. FRONT-001A implements `app`,
+`features/hub`, `shared/{ui,components,config,lib}` and `styles`; future feature,
+provider and API folders below are created only when needed.
 
-Proposed source layout (directories below do not exist yet):
+Target source layout (includes future directories):
 
 ```text
 frontend/
@@ -57,10 +62,12 @@ and ordinary links to legacy workflows. It does not import global legacy scripts
 the React DOM. Later feature migrations preserve Polish labels, keyboard behavior,
 loading/empty/error states and unsaved-change protections. See [component strategy](component-strategy.md).
 
-The shell PoC makes one bounded same-origin read of `/health` (blueprint section 15),
-with loading/error/session handling. It does not introduce business writes or replace
-API-001. Full Hub is scheduled in commissioned FRONT-002 rather than silently included
-in the blueprint's first-phase shell; owner scope confirmation remains open.
+FRONT-001A supplies an informative Hub with module cards and direct legacy links;
+full operational Hub/Planner workflows remain FRONT-002. It performs no API reads.
+The bounded same-origin `/health` PoC (blueprint section 15), loading/error/session
+handling and compiled asset hosting belong to FRONT-001B. This explicit split of the
+combined FRONT-001 is authorized by the FRONT-001A request; it does not complete the
+combined stage or API-001. BrowserRouter derives its basename from Vite's `/app/` base.
 
 Build-time configuration is public. Never put IAP assertions, provider keys or backend
 credentials into Vite variables. Build output uses same-origin URLs; no CDN/runtime

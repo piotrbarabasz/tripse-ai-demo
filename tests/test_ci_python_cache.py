@@ -56,10 +56,23 @@ def test_ci_retains_complete_commands_and_no_cloud_credentials():
     job = ci["jobs"]["checks"]
     assert job["permissions"] == {"contents": "read"}
     commands = [s["run"] for s in job["steps"] if "run" in s]
-    assert commands[:-1] == ["make install-dev", "make test", ".venv/bin/python -m scripts.gcp.ci offline",
+    assert commands[:-1] == ["make install-dev", "npm ci", "npm run typecheck", "npm run lint",
+        "npm run test", "npm run build", "make test", ".venv/bin/python -m scripts.gcp.ci offline",
         ".venv/bin/python -m playwright install --with-deps chromium", "make test-browser", "git diff --check"]
     assert not any("google-github-actions/" in s.get("uses", "") for s in job["steps"])
     assert not any("secrets." in str(s) for s in job["steps"])
+
+
+def test_frontend_checks_use_locked_loopback_app_toolchain_in_same_unprivileged_job():
+    job = workflow("ci.yml")["jobs"]["checks"]
+    setup = next(s for s in job["steps"] if s.get("uses", "").startswith("actions/setup-node@"))
+    assert setup["with"] == {"node-version-file": "frontend/.nvmrc", "package-manager-cache": "false"}
+    assert "if" not in setup
+    for command in ("npm ci", "npm run typecheck", "npm run lint", "npm run test", "npm run build"):
+        step = next(s for s in job["steps"] if s.get("run") == command)
+        assert step["working-directory"] == "frontend"
+        assert "if" not in step and "continue-on-error" not in step
+        assert job["steps"].index(setup) < job["steps"].index(step)
 
 
 @pytest.mark.parametrize("outcome,expected", [("true", "Exact dependency-key hit (warm)"),

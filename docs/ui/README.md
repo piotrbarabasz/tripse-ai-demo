@@ -1,9 +1,11 @@
 # UI documentation
 
-Current UI: Vanilla JavaScript served by FastAPI. Proposed React migration: ARCH-001,
-2026-10-31; no frontend implementation is included.
+Existing UI: Vanilla JavaScript served by FastAPI. FRONT-001A adds a standalone React
+shell under `frontend/`, with no FastAPI or deployment integration. See
+[startup and scope](../../frontend/README.md) and [local validation](front-001a-validation.md).
+ARCH-001 future migration proposals and ADR-0017 retain their proposed status.
 
-These are migration proposals, not owner-approved implementation decisions. The
+Later stages remain migration proposals, not owner-approved implementation decisions. The
 [original blueprint](../architecture/TRIPSE_ARCHITECTURE_BLUEPRINT.md) has been reconciled;
 see [scope differences and open decisions](../architecture/reconciliation.md).
 
