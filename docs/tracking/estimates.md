@@ -184,5 +184,8 @@ frontend toolchain/shell and deterministic release provenance; offline API schem
 maintenance; Hub/planner parity; Studio/editor/history and PDF parity; assistant tool
 authorization, confirmations and evaluation. Include temporary dual-UI maintenance,
 dependency updates, dev-PR CI coverage and browser regression effort in later estimates.
+The reconciled blueprint also retains later Trip Catalog/conversion, a dedicated
+Marketing workspace, AUTO-001 job/history/approval UI and form-library evaluation.
+These future work packages are not included implicitly in FRONT-001 shell scope.
 No hours, financial amounts, performance gains or ongoing provider costs were measured
 or estimated in ARCH-001. Live AI/cloud validation requires a separate bounded scope.

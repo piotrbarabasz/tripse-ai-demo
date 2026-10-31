@@ -2,8 +2,9 @@
 
 Status: **source-code audit**, 2026-10-31, ARCH-001; separated during final review.
 This document was initially saved under the blueprint filename. It is not the original
-user-authored product vision. That source is still unavailable in this review session;
-see [reconciliation status](reconciliation.md). All technical findings are retained.
+user-authored product vision. The [original blueprint](TRIPSE_ARCHITECTURE_BLUEPRINT.md)
+is now restored separately; see [completed reconciliation](reconciliation.md).
+All technical findings below are retained; the blueprint does not supersede this audit.
 Audited baseline: `dev`,
 commit `0956ea2`; documentation prepared on `docs/arch-001-foundation`.
 Source observations below describe code, not a new claim of hosted acceptance.

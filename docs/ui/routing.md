@@ -3,6 +3,12 @@
 Status: proposed. The [existing route inventory](../ROUTING.md) remains the current
 contract. ARCH-001 adds no routes.
 
+Blueprint sections 7 and 11 use a different stage breakdown. IDs here retain the
+commissioned roadmap: Planner in FRONT-002, Studio in FRONT-003; see
+[stage mapping](../architecture/reconciliation.md). Future Marketing, Automations and
+Assistant routes require scoped tasks and permission design; no such URLs are reserved
+or registered by ARCH-001. Initial shell health PoC does not change `/health` access.
+
 | URL | Current behavior | Proposed migration ownership |
 | --- | --- | --- |
 | `/`, `/hub` | 302 to Hub; legacy Hub | Retain; FRONT-002 adds a new Hub under `/app`, no default redirect cutover. |

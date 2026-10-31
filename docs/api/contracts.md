@@ -55,3 +55,19 @@ verification warnings must survive serialization unchanged.
 6. Validate synthetic happy/error/auth/conflict/upload/HTML cases against FastAPI and
    generated adapters. Existing endpoint routes, schemas and security tests remain
    gates; no business-screen migration belongs in API-001.
+
+## Future contracts, not current endpoints
+
+Blueprint sections 7–9 propose shared job/status and tool contracts. Agree a versioning
+standard for genuinely new APIs (for example /api/v1) without renaming existing routes.
+Keep current queued/running/completed/failed semantics and channel-specific identity;
+new approval/history/retry semantics need compatible schemas and authorization tests.
+SSE is conditional on product need and auth/reconnect/proxy design; polling remains
+the baseline. No Marketing, Automations or Assistant endpoint described by the vision
+is represented here as implemented. See [domain workflow boundaries](architecture.md).
+
+The FRONT-001 read-only health PoC is a small validated adapter; it must not become a
+parallel handwritten business DTO set. API-001 replaces that boundary where appropriate
+with deterministic generated coverage. Supplemental types for current schema gaps are
+explicit temporary exceptions to the blueprint's no-duplicated-contracts goal, with
+runtime/fixture validation and removal when server schemas cover them.

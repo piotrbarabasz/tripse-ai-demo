@@ -4,6 +4,13 @@ Status: **proposal**, AI-001. Current OpenAIPlanner produces structured trip dra
 the mock WhatsApp simulator and WAHA adapter are not a general assistant tool platform.
 No assistant endpoints, conversations or tool registry are implemented by ARCH-001.
 
+Target: [blueprint section 8](../architecture/TRIPSE_ARCHITECTURE_BLUEPRINT.md).
+The first complete AI-001 workflow creates an editable DocumentDraft from an existing
+permitted Studio trip and returns document ID, revision and missing-field warnings.
+A raw TripPlan needs a separately scoped conversion adapter. A read-only mock scaffold
+is an intermediate result; synthetic authorized draft persistence is required for
+AI-001 completion. There is no automatic sending to a customer.
+
 Proposed flow: React assistant feature → authenticated FastAPI orchestration boundary
 → explicit typed tool registry → existing domain services/job adapters → structured
 tool results. Model output proposes operations; server code decides whether they are
@@ -24,6 +31,13 @@ deletion, arbitrary HTTP/SQL, shell execution or IAM tools. Browser print remain
 existing explicit user operation. Tool results are data, never executable instructions.
 Treat retrieved text/documents as untrusted content that cannot extend the tool allowlist
 or override permissions. Enforce arguments/results via schemas and reject unknown tools.
+
+Keep three explicit tool classes: read, draft/write and external/high-impact. Owner
+review determines draft-save confirmation UX; external/high-impact operations always
+need separate authority and confirmation. A contextual panel and full-screen assistant
+are future UI options, not two implementations required by the shell. Retain proposed
+campaign preparation tools and AUTO-001 history/retry/approval after their domain and
+authorization contracts are scoped. No React Flow or graph engine is implied.
 
 The orchestrator must propagate verified actor context and repeat relevant authorization;
 direct service calls otherwise bypass router/middleware checks. Preserve reader/editor

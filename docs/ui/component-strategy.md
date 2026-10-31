@@ -7,6 +7,13 @@ for accessible primitives. Keep copied primitive code small, owned by the reposi
 and reviewed for keyboard/focus behavior and dependency cost. Do not install a whole
 component catalog or redesign the document brand during the shell stage.
 
+Blueprint sections 3.2 and 6 additionally prefer React Hook Form + Zod for form UX;
+evaluate/pin them with the first substantial form migration, subject to ADR-0017 review.
+Pydantic stays authoritative; client schemas must not become a second domain contract.
+React Flow is optional only for a proven diagram/editor use case, not an automatic
+Automations dependency. Redux, Next.js/SSR, Node BFF and LangGraph are not baseline
+dependencies. Record PoC/accessibility/maintenance evidence before stack acceptance.
+
 Three boundaries:
 
 - Shared primitives: buttons, inputs, dialogs, labels, status/error messages. Accept

@@ -16,9 +16,10 @@ Implementation: documentation only. Character: new proposal. Owner acceptance:
 not recorded. Existing frontend/backend behavior remains the current baseline.
 Uses the repository [ADR template](template.md) and [standard](README.md).
 
-Final review: the source audit is preserved separately from the original user-authored
-target vision, which is unavailable in this session. [Reconciliation](../architecture/reconciliation.md)
-must compare the original before finalizing this proposal. No approval is inferred.
+Final review: the [original blueprint](../architecture/TRIPSE_ARCHITECTURE_BLUEPRINT.md)
+has been restored unchanged and reconciled, especially sections 1, 3, 5–11 and 15.
+The [reconciliation](../architecture/reconciliation.md) records stage/module differences
+and open owner decisions. Documentation completion does not imply architecture approval.
 
 ## 1. Kontekst i problem
 
@@ -47,6 +48,18 @@ screens, keeping print CSS/rendering isolated. Introduce TanStack Query and an o
 generated typed OpenAPI client in API-001 with explicit adapters for incomplete schemas,
 HTML and binary responses.
 
+Retain blueprint React Hook Form + Zod as a preference for substantial form features,
+subject to PoC/owner review; backend Pydantic remains authoritative. React Flow is
+conditional on a justified diagram requirement. Do not add Redux, SSR/Next.js, Node BFF
+or LangGraph speculatively. FRONT-001 proves the core stack with a shell and one bounded
+read-only health endpoint; no generated client or business workflow is needed there.
+
+Retain future Marketing, Automations and Trip Catalog/reuse domains alongside Documents,
+Hub/Planner and Assistant. The smaller commissioned migration stages are not the whole
+product vision. Roadmap IDs deliberately retain the commission's combined Hub/Planner
+and Studio numbering; blueprint stage aliases and the first-phase Hub difference are
+explicit in reconciliation and require owner confirmation before implementation issues.
+
 Retain modular FastAPI, domain models/services, storage/job adapters and existing APIs.
 Assistant orchestration uses explicit server tools with verified actor context and
 domain services. Start mock-only; no arbitrary provider/storage access from UI/model.
@@ -54,6 +67,10 @@ Package compiled frontend in the existing FastAPI/Cloud Run image and same origi
 no new service/resource. Extend build source/provenance contracts deliberately later.
 Preserve legacy routes and private boundaries; readonly_demo does not gain `/app`.
 Stages and acceptance requirements: [roadmap](../architecture/migration-roadmap.md).
+AI-001's first completed workflow is an authorized editable draft from an existing
+Studio trip with revision/missing-field results, not just a read-only scaffold. Planner
+conversion and external sending remain separately scoped; retain future AUTO-001 history/
+approval UX without introducing a workflow engine by default.
 
 ## 4. Uzasadnienie
 
@@ -90,6 +107,7 @@ are implicitly approved by adopting a UI framework.
 ## 7. Wpływ na kosztorys
 
 Work packages: shell/toolchain/provenance; client/schema; Hub/planner; Studio/PDF parity;
+later Trip Catalog/conversion, Marketing workspace and AUTO-001 history/approval;
 assistant controls/evaluation; dependency maintenance and CI/browser coverage. Dual UI
 maintenance is temporary but unquantified. Hosted build/runtime and eventual AI costs
 need measured separate validation. No estimated hours or monetary amounts are asserted.
@@ -98,7 +116,9 @@ See [estimation rules](../tracking/estimates.md).
 ## 8. Powiązane taski, PR, commity i dokumenty
 
 Tasks: ARCH-001, FRONT-001, API-001, FRONT-002, FRONT-003, AI-001 from user request;
-no linked GitHub issues or new PR/commit yet. Audited base dev `0956ea2`.
+no verified linked GitHub issues. Initial documentation commit `71f59fa`; closure starts
+from `3921c84`, which supplies the original blueprint filename. No new closure commit
+or PR is created here. Audited base dev `0956ea2`.
 [UI](../ui/README.md), [API](../api/README.md), [roadmap](../architecture/migration-roadmap.md),
 [worklog](../tracking/worklog.csv). Preserve existing
 [ADR-0001](0001-modular-fastapi.md), [ADR-0004](0004-controlled-html-browser-pdf.md),
@@ -122,3 +142,4 @@ legacy cutover; no unmeasured numeric performance threshold is asserted.
 | --- | --- | --- | --- |
 | 2026-10-31 | Codex | New documentation-only migration proposal grounded in source audit | ARCH-001 |
 | 2026-10-31 | Codex | Separate technical audit from pending original vision; retain proposed status and original requirements for review | ARCH-001 final review |
+| 2026-10-31 | Codex | Reconcile restored original sections 0–15; retain stage crosswalk, form preferences, future modules and concrete first tool workflow without owner approval | ARCH-001 closure |

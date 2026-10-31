@@ -4,7 +4,8 @@ ARCH-001, 2026-10-31: existing FastAPI behavior and proposed client/assistant bo
 No endpoint or authentication contract changes are implemented here.
 
 Current contracts come from the source audit; client/assistant design remains proposed.
-Original product-vision reconciliation is pending; see [source/status distinctions](../architecture/reconciliation.md).
+The [original blueprint](../architecture/TRIPSE_ARCHITECTURE_BLUEPRINT.md) has been reconciled;
+see [scope differences and open decisions](../architecture/reconciliation.md).
 
 - [Backend architecture](architecture.md)
 - [Current contracts and typed-client plan](contracts.md)

@@ -5,10 +5,11 @@ Stage IDs below come from the user request; they are not invented GitHub issue n
 Owner acceptance of [ADR-0017](../adr/0017-modular-react-typescript-migration.md) and
 each stage's scope is separate from implementation or deployment acceptance.
 
-Final review is pending the original user-authored architecture vision. The
-[current-state audit](current-state-audit.md) is preserved separately; see
-[reconciliation status](reconciliation.md) for source authority and unresolved input.
-Compare and retain original requirements before declaring ARCH-001 ready for a PR.
+The [original blueprint](TRIPSE_ARCHITECTURE_BLUEPRINT.md) has been read and reconciled
+with the [current-state audit](current-state-audit.md). This roadmap retains the task IDs
+commissioned for ARCH-001; blueprint section 11 uses different IDs for Planner and Studio.
+Use the [stage crosswalk and owner decisions](reconciliation.md) before creating future
+tasks. Documentation reconciliation is complete; architecture acceptance is still pending.
 
 ## Shared gates
 
@@ -43,7 +44,10 @@ existing accepted-image rollback procedures; this task does not execute them.
   Tailwind and only shell-required shadcn/ui primitives; lockfile, strict type checking,
   documented install/dev/build commands. Add bootstrap, providers only as needed,
   accessible responsive shell/navigation, error boundary and app not-found state.
-  Use real links to existing Hub, Planner and Studio; no business API consumption.
+  Use real links to existing Hub, Planner and Studio. Include the blueprint section 15
+  PoC: one bounded, read-only same-origin GET `/health`, with loading/error states and
+  response validation; no mutation or business workflow. This thin PoC is not the
+  generated API client or TanStack Query integration, which remain in API-001.
 - Routing: serve compiled same-origin assets and bounded `/app` navigation fallback
   only in local/cloud_demo, preserving guards. Verify `/app` and deep-link refresh,
   404 missing chunks, unknown APIs and readonly absence. Keep `/` and legacy URLs.
@@ -55,7 +59,9 @@ existing accepted-image rollback procedures; this task does not execute them.
 - Acceptance: clean install, typecheck and production build succeed; shell works with
   JS loading and deep links under existing security headers; mode/Host/Origin/IAP denial
   matrix passes; compiled image starts API/worker as before; release provenance accepts
-  intended inputs and rejects unexpected inputs. No secrets in built assets.
+  intended inputs and rejects unexpected inputs. PoC health success/failure/cancellation
+  and authentication/session expiry are handled without bypassing existing policies.
+  Validate Vite base, hashed chunk/cache busting and CSP. No secrets in built assets.
 - Regression: existing pytest/offline provenance/container checks plus shell browser
   smoke in local/mock and mocked cloud compositions. Legacy Hub/planner/Studio/viewer
   and readonly browser smoke stay green; hosted IAP evidence is a later authorized gate.
@@ -64,6 +70,10 @@ existing accepted-image rollback procedures; this task does not execute them.
 - Excluded: migrated Hub/planner/map/editor/library UI, generated API client or query
   hooks, assistant, authentication redesign, print CSS/pagination changes, new storage,
   root-route cutover and deployment. TanStack Query belongs to API-001.
+  React Hook Form/Zod are preferred for later form-heavy features; React Flow is
+  conditional on a justified diagram requirement. Do not install them for an empty shell.
+  The blueprint section 7 first-phase Hub is scoped here to shell landing/navigation;
+  full Hub migration remains FRONT-002. Owner confirmation of this split is outstanding.
 
 ## API-001 — API client and contracts
 
@@ -104,6 +114,8 @@ existing accepted-image rollback procedures; this task does not execute them.
   history → source editors → snapshot/section editing and preview controls. Reuse server
   validation, template registry, rendering and browser print; preserve eight template
   IDs, marketing variants, sections, provenance and private asset handling.
+  This includes existing campaign/marketing.collection parity, not the entire future
+  Marketing workspace or automated publication. Blueprint FRONT-004 maps to this task.
 - Acceptance: synthetic create/edit/save/reload/duplicate/archive/restore/status/history,
   image rights/upload/crop and stale-revision conflict pass. Preserve null/empty sections,
   immutable snapshots and operation IDs; dirty navigation and stale preview cancellation
@@ -125,15 +137,39 @@ existing accepted-image rollback procedures; this task does not execute them.
 - Scope: assistant feature and server orchestrator with explicit typed allowlist,
   actor-scoped domain operations, mock provider/tool execution, bounded steps and safe
   audit metadata. [Assistant proposal](../api/assistant-integration.md) defines limits.
+  First vertical workflow, per blueprint section 8: create an editable document draft
+  from an existing permitted Studio trip, returning ID, revision and missing-field
+  warnings; never send to a customer. A raw planner result needs a separately scoped
+  planner-to-Studio adapter before it can be used as a source.
 - Acceptance: tool schema/authorization, injection, replay, conflict, cancellation and
   partial-failure cases pass; user confirms consequential writes against exact arguments
   and revision. No arbitrary tools or live-cloud provider enablement. Existing mock
   cloud startup restrictions and readonly absence remain enforced.
+  A read-only mock scaffold is an interim milestone, not completion of AI-001: the
+  authorized draft workflow must pass synthetic persistence/duplicate/conflict tests.
 - Regression: existing planner/document/auth suites plus synthetic orchestration tests;
   assistant browser failure/retry/confirmation flows without paid calls. Live provider,
   human IAP and cost validation remain separately authorized/unverified.
 - Rollback: disable/remove assistant route/tool registration and navigation; use
   existing manual workflows. Preserve completed jobs/documents; no compensating delete.
+
+## Retained future product scope — not implemented
+
+Blueprint sections 1, 6, 9 and 11 also retain Trip Catalog/reuse, a dedicated Marketing
+workspace, Automations and shared operational history. They are not deleted by the
+smaller commissioned stages. Marketing needs its own later scoped task; no task ID is
+invented here. Its initial dependency is API-001 plus accepted campaign/document parity;
+acceptance must cover campaign composition, snapshots, rights, permissions and failure
+states. Regression includes existing marketing/browser/PDF cases; rollback returns to
+legacy campaign workflows without deleting saved data. External publication stays gated.
+
+Blueprint AUTO-001 is future scope after stable job/tool contracts and approval policy:
+task history/results/errors, safe retry and explicit approval/audit presentation. It
+does not imply a new workflow engine. Acceptance requires actor-scoped visibility,
+idempotent replay, denied unauthorized approvals and partial-failure recovery; regress
+existing queue/auth/idempotency cases. Rollback disables the panel, retaining jobs and
+audit records. UI-free backend operations must remain usable from manual workflows.
+Neither Marketing nor AUTO-001 is part of FRONT-001 or claimed complete in ARCH-001.
 
 ## Separate CI improvement proposal
 
@@ -147,14 +183,14 @@ do not broaden delivery triggers or change protected master policy in ARCH-001.
 
 Delivery has no documentation-path exclusion. Merging this branch into dev creates a
 push that can run DEV deployment after CI and existing environment controls. Recommend
-an eventual PR to dev only after original-source reconciliation, with owner coordination
+an eventual documentation PR to dev, with owner coordination
 of merge/delivery timing. No PR, merge, deployment or workflow change is authorized by
 this documentation review. See [merge considerations](reconciliation.md).
 
 ## ARCH-001 validation record
 
 The following records the initial documentation pass at `71f59fa`. Final-review
-checks and unresolved original-source restoration are recorded in reconciliation.md;
+checks and completed original-source reconciliation are recorded in reconciliation.md;
 historical link findings below describe the earlier state, before navigation cleanup.
 
 Executed on 2026-10-31 in the existing Windows Python 3.12 virtual environment:
